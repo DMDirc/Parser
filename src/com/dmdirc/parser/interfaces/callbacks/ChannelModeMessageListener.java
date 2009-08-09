@@ -51,8 +51,8 @@ public interface ChannelModeMessageListener extends CallbackInterface {
 	 * @see com.dmdirc.parser.irc.ProcessMessage#callChannelModeMessage
 	 */
 	void onChannelModeMessage(@FakableSource Parser tParser,
-            char prefix,
             @FakableSource ChannelInfo cChannel,
+            char prefix,
             @FakableArgument ChannelClientInfo cChannelClient,
             String sMessage,
             @FakableSource String sHost);

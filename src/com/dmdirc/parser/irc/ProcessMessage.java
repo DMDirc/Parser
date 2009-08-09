@@ -316,7 +316,7 @@ public class ProcessMessage extends IRCProcessor {
      * @return true if a method was called, false otherwise
      */
     protected boolean callChannelModeNotice(final char prefix, final ChannelInfo cChannel, final ChannelClientInfo cChannelClient, final String sMessage, final String sHost) {
-        return getCallbackManager().getCallbackType(ChannelModeNoticeListener.class).call(prefix, cChannel, cChannelClient, sMessage, sHost);
+        return getCallbackManager().getCallbackType(ChannelModeNoticeListener.class).call(cChannel, prefix, cChannelClient, sMessage, sHost);
     }
     
     /**
@@ -331,7 +331,7 @@ public class ProcessMessage extends IRCProcessor {
      * @return true if a method was called, false otherwise
      */
     protected boolean callChannelModeMessage(final char prefix, final ChannelInfo cChannel, final ChannelClientInfo cChannelClient, final String sMessage, final String sHost) {
-        return getCallbackManager().getCallbackType(ChannelModeMessageListener.class).call(prefix, cChannel, cChannelClient, sMessage, sHost);
+        return getCallbackManager().getCallbackType(ChannelModeMessageListener.class).call(cChannel, prefix, cChannelClient, sMessage, sHost);
     }
     
     /**
