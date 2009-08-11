@@ -22,6 +22,7 @@
 
 package com.dmdirc.parser.irc.outputqueue;
 
+import com.dmdirc.parser.common.QueuePriority;
 import java.io.PrintWriter;
 import java.util.concurrent.BlockingQueue;
 
@@ -62,7 +63,61 @@ public abstract class QueueHandler extends Thread {
         out.printf("%s\r\n", line);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * Get a new QueueItem for the given line and priority.
+     * By default this will just create a new QueueItem with the given
+     * parameters, but QueueHandlers are free to override it if they need to
+     * instead produce subclasses of QueueItem or do anything else with the
+     * data given.
+     *
+     * @param line Line to send
+     * @param priority Priority of the line.
+     * @return A QueueItem for teh given parameters
+     */
+    public QueueItem getQueueItem(final String line, final QueuePriority priority) {
+        return new QueueItem(this, line, priority);
+    }
+
+    /**
+     * Compare two QueueItems for sorting purposes.
+     * This is called by the default QueueItem in its compareTo method. The
+     * calling object will be the first parameter, the object to compare it to
+     * will be second.
+     * This allows QueueHandlers to sort items differently if needed.
+     *
+     * The default implementation works as follows:
+     * Compare based on priorty firstly, if the priorities are the same,
+     * compare based on the order the items were added to the queue.
+     *
+     * If an item has been in the queue longer than 10 seconds, it will not
+     * check its priority and soley position itself based on adding order.
+     *
+     * @param mainObject Main object we are comparing against.
+     * @param otherObject Object we are comparing to.
+     * @return A QueueItem for teh given parameters
+     */
+    public int compareQueueItem(final QueueItem mainObject, final QueueItem otherObject) {
+        if (mainObject.getTime() < 10 * 1000 && mainObject.getPriority().compareTo(otherObject.getPriority()) != 0) {
+            return mainObject.getPriority().compareTo(otherObject.getPriority());
+        }
+
+        if (mainObject.getItemNumber() > otherObject.getItemNumber()) {
+            return 1;
+        } else if (mainObject.getItemNumber() < otherObject.getItemNumber()) {
+            return -1;
+        } else {
+            // This can't happen.
+            return 0;
+        }
+    }
+
+    /**
+     * This is the main even loop of the queue.
+     * It needs to handle pulling items out of the queue and calling
+     * sendLine.
+     * 
+     * It also needs to handle any delays in sending that it deems needed.
+     */
     @Override
     public abstract void run();
 }

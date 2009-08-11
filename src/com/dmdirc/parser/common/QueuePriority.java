@@ -28,10 +28,10 @@ package com.dmdirc.parser.common;
  * @author shane
  */
 public enum QueuePriority {
-    /** Low priority. */
-    LOW,
+    /** High priority. */
+    HIGH,
     /** Normal priority. */
     NORMAL,
-    /** High Priority. */
-    HIGH;
+    /** Low Priority. */
+    LOW;
 }

@@ -30,14 +30,23 @@ import com.dmdirc.parser.common.QueuePriority;
  * @author shane
  */
 public class QueueItem implements Comparable<QueueItem> {
+    /** Global Item Number*/
+    private static long number = 0L;
+
     /** Line to send */
     private final String line;
 
     /** Time this line was added. */
     private final long time;
 
+    /** Item Number */
+    private final long itemNumber;
+
     /** What is the priority of this line? */
     private final QueuePriority priority;
+
+    /** Our handler. */
+    private final QueueHandler handler;
 
     /**
      * Get the value of line
@@ -58,6 +67,15 @@ public class QueueItem implements Comparable<QueueItem> {
     }
 
     /**
+     * Get the number of this item
+     *
+     * @return the value of itemNumber
+     */
+    public long getItemNumber() {
+        return itemNumber;
+    }
+
+    /**
      * Get the value of priority
      *
      * @return the value of priority
@@ -67,42 +85,31 @@ public class QueueItem implements Comparable<QueueItem> {
     }
 
     /**
-     * Create a new QueuePriority
+     * Create a new QueueItem
      *
+     * @param handler Handler for this QueueItem
      * @param line Line to send
      * @param priority
      */
-    public QueueItem(final String line, final QueuePriority priority) {
+    public QueueItem(final QueueHandler handler, final String line, final QueuePriority priority) {
+        this.handler = handler;
         this.line = line;
         this.priority = priority;
 
         this.time = System.currentTimeMillis();
+        this.itemNumber = number++;
     }
 
     /**
      * Compare objects.
-     * Compare based on priorty firstly, if the priorities are the same,
-     * compare based on time added.
+     * This will use the compareQueueItem method of the current QueueHandler.
      *
-     * If an item has been in the queue longer than 10 seconds, it will not
-     * check its priority and soley position itself based on time.
-     * 
      * @param o Object to compare to
      * @return Position of this item in reference to the given item.
      */
     @Override
     public int compareTo(final QueueItem o) {
-        if (this.getTime() < 10 * 1000 && this.getPriority().compareTo(o.getPriority()) > 0) {
-            return 1;
-        }
-
-        if (this.getTime() < o.getTime()) {
-            return 1;
-        } else if (this.getTime() > o.getTime()) {
-            return -1;
-        } else {
-            return 0;
-        }
+        return handler.compareQueueItem(this, o);
     }
 
     /** {@inheritDoc} */

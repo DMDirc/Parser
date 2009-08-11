@@ -35,7 +35,7 @@ import java.util.concurrent.PriorityBlockingQueue;
  */
 public class OutputQueue {
     /** PrintWriter for sending output. */
-    private PrintWriter out;
+    private PrintWriter out = null;
 
     /** Is queueing enabled? */
     private boolean queueEnabled = true;
@@ -44,14 +44,23 @@ public class OutputQueue {
     private BlockingQueue<QueueItem> queue = new PriorityBlockingQueue<QueueItem>();
 
     /** Thread for the sending queue. */
-    private Thread queueThread;
+    private QueueHandler queueHandler;
+
+    /** The QueueFactory for this OutputQueue. */
+    private QueueFactory queueFactory = PriorityQueueHandler.getFactory();
+    // private QueueFactory queueFactory = SimpleRateLimitedQueueHandler.getFactory();
 
     /**
      * Create a new OutputQueue
-     * 
-     * @param outputStream PrintWriter to use to actually send stuff.
      */
-    public OutputQueue (final OutputStream outputStream) {
+    public OutputQueue() { }
+
+    /**
+     * Set the output stream for this queue.
+     *
+     * @param outputStream Output Stream to use.
+     */
+    public void setOutputStream(final OutputStream outputStream) {
         this.out = new PrintWriter(outputStream, true);
     }
 
@@ -65,6 +74,27 @@ public class OutputQueue {
     }
 
     /**
+     * Set the QueueFactory.
+     * Changing this will not change an existing QueueHandler unless queueing is
+     * disabled and reenabled.
+     * If this is called before the first lien of output is queued then there is
+     * no need to disable and reenable the queue.
+     *
+     * @param manager New QueueFactory to use.
+     */
+    public void setQueueManager(final QueueFactory manager) {
+        queueFactory = manager;
+    }
+
+    /**
+     * Get the QueueFactory.
+     * @return The current QueueFactory.
+     */
+    public QueueFactory getQueueManager() {
+        return queueFactory;
+    }
+
+    /**
      * Set if queueing is enabled.
      * if this is changed from enabled to disabled, all currently queued items
      * will be sent immediately!
@@ -72,12 +102,15 @@ public class OutputQueue {
      * @param queueEnabled new value for queueEnabled
      */
     public void setQueueEnabled(final boolean queueEnabled) {
+        if (out == null) {
+            throw new NullPointerException("No output stream has been set.");
+        }
         final boolean old = this.queueEnabled;
         this.queueEnabled = queueEnabled;
 
         if (old != queueEnabled && old) {
-            queueThread.interrupt();
-            queueThread = null;
+            queueHandler.interrupt();
+            queueHandler = null;
 
             while (!queue.isEmpty()) {
                 try {
@@ -94,12 +127,21 @@ public class OutputQueue {
      */
     public void clearQueue() {
         this.queueEnabled = false;
-        if (queueThread != null) {
-            queueThread.interrupt();
-            queueThread = null;
+        if (queueHandler != null) {
+            queueHandler.interrupt();
+            queueHandler = null;
         }
 
         queue.clear();
+    }
+
+    /**
+     * Get the number of items currently in the queue.
+     *
+     * @return Number of items in the queue.
+     */
+    public int queueCount() {
+        return queue.size();
     }
 
     /**
@@ -122,26 +164,18 @@ public class OutputQueue {
      * @param priority Priority of item (ignored if queue is disabled)
      */
     public void sendLine(final String line, final QueuePriority priority) {
+        if (out == null) {
+            throw new NullPointerException("No output stream has been set.");
+        }
         if (queueEnabled) {
-            queue.add(new QueueItem(line, priority));
-
-            if (queueThread == null || !queueThread.isAlive()) {
-                queueThread = getQueueHandler(queue, out);
-                queueThread.start();
+            if (queueHandler == null || !queueHandler.isAlive()) {
+                queueHandler = queueFactory.getQueueHandler(this, queue, out);
+                queueHandler.start();
             }
+
+            queue.add(queueHandler.getQueueItem(line, priority));
         } else {
             out.printf("%s\r\n", line);
         }
-    }
-
-    /**
-     * Get a new QueueHandler instance as needed.
-     * 
-     * @param queue The queue to handle.
-     * @param out Where to send crap.
-     * @return the new queue handler object.
-     */
-    private QueueHandler getQueueHandler(final BlockingQueue<QueueItem> queue, final PrintWriter out) {
-        return new PriorityQueueHandler(this, queue, out);
     }
 }

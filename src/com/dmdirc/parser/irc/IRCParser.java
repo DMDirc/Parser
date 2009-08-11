@@ -294,9 +294,32 @@ public class IRCParser implements SecureParser, Runnable {
      * @param myDetails Client information.
      */
     public IRCParser(final MyInfo myDetails, final ServerInfo serverDetails) {
+        out = new OutputQueue();
         if (myDetails != null) { this.me = myDetails; }
         if (serverDetails != null) { this.server = serverDetails; }
         resetState();
+    }
+
+    /**
+     * Get the current OutputQueue
+     *
+     * @return the current OutputQueue
+     */
+    public OutputQueue getOut() {
+        return out;
+    }
+
+    /**
+     * Set the OutputQueue
+     *
+     * @param out the new current OutputQueue
+     */
+    public void setOut(final OutputQueue out) throws IRCParserException {
+        if (currentSocketState == SocketState.CLOSED) {
+            this.out = out;
+        } else {
+            throw new IRCParserException("OutputQueue can only be changed when disconnected.");
+        }
     }
 
     /**
@@ -710,7 +733,7 @@ public class IRCParser implements SecureParser, Runnable {
         }
 
         callDebugInfo(DEBUG_SOCKET, "\t-> Opening socket output stream PrintWriter");
-        out = new OutputQueue(socket.getOutputStream());
+        out.setOutputStream(socket.getOutputStream());
         out.setQueueEnabled(true);
         callDebugInfo(DEBUG_SOCKET, "\t-> Opening socket input stream BufferedReader");
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -725,7 +748,7 @@ public class IRCParser implements SecureParser, Runnable {
             sendString("PASS " + server.getPassword());
         }
         sendString("NICK " + me.getNickname());
-    thinkNickname = me.getNickname();
+        thinkNickname = me.getNickname();
         String localhost;
         try {
             localhost = InetAddress.getLocalHost().getHostAddress();
@@ -1853,7 +1876,7 @@ public class IRCParser implements SecureParser, Runnable {
                 setPingNeeded(true);
                 pingCountDown = pingCountDownLength;
                 lastPingValue = String.valueOf(System.currentTimeMillis());
-                if (sendString("PING " + lastPingValue)) {
+                if (sendString("PING " + lastPingValue, QueuePriority.HIGH)) {
                     callPingSent();
                 }
             }

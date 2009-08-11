@@ -31,8 +31,28 @@ import java.util.concurrent.BlockingQueue;
  * @author shane
  */
 public class PriorityQueueHandler extends QueueHandler {
+    /**
+     * Get a QueueFactory that produces PriorityQueueHandlers
+     *
+     * @return a QueueFactory that produces PrirortyQueueHandlers.
+     */
+    public static QueueFactory getFactory() {
+        return new QueueFactory(){
+            /** {@inheritDoc} */
+            @Override
+            public QueueHandler getQueueHandler(final OutputQueue outputQueue, final BlockingQueue<QueueItem> queue, final PrintWriter out) {
+                return new PriorityQueueHandler(outputQueue, queue, out);
+            }
+        };
+    }
 
-
+    /**
+     * Create a new PriorityQueueHandler
+     *
+     * @param outputQueue Owner of this Queue Handler
+     * @param queue Queue to use
+     * @param out Output Stream to use
+     */
     public PriorityQueueHandler(final OutputQueue outputQueue, final BlockingQueue<QueueItem> queue, final PrintWriter out) {
         super(outputQueue, queue, out);
     }
