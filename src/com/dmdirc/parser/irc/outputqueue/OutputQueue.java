@@ -80,18 +80,28 @@ public class OutputQueue {
      * If this is called before the first lien of output is queued then there is
      * no need to disable and reenable the queue.
      *
-     * @param manager New QueueFactory to use.
+     * @param factory New QueueFactory to use.
      */
-    public void setQueueManager(final QueueFactory manager) {
-        queueFactory = manager;
+    public void setQueueFactory(final QueueFactory factory) {
+        queueFactory = factory;
     }
 
     /**
      * Get the QueueFactory.
+     *
      * @return The current QueueFactory.
      */
     public QueueFactory getQueueManager() {
         return queueFactory;
+    }
+
+    /**
+     * Get the QueueHandler.
+     *
+     * @return The current QueueHandler if there is one, else null.
+     */
+    public QueueHandler getQueueHandler() {
+        return queueHandler;
     }
 
     /**
