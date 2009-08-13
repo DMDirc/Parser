@@ -30,13 +30,14 @@ package com.dmdirc.parser.irc;
  */
 public enum SocketState {
 
-    /** Socket is not created yet. */
-    NULL,
+    /** Socket is Open. */
+    OPEN,
+    /** Socket is Opening. */
+    OPENING,
     /** Socket is closing, don't process any more lines. */
     CLOSING,
     /** Socket is closed. */
     CLOSED,
-    /** Socket is Open. */
-    OPEN;
-
+    /** Socket is not created yet. */
+    NULL;
 }

@@ -305,21 +305,8 @@ public class IRCParser implements SecureParser, Runnable {
      *
      * @return the current OutputQueue
      */
-    public OutputQueue getOut() {
+    public OutputQueue getOutputQueue() {
         return out;
-    }
-
-    /**
-     * Set the OutputQueue
-     *
-     * @param out the new current OutputQueue
-     */
-    public void setOut(final OutputQueue out) throws IRCParserException {
-        if (currentSocketState == SocketState.CLOSED) {
-            this.out = out;
-        } else {
-            throw new IRCParserException("OutputQueue can only be changed when disconnected.");
-        }
     }
 
     /**
@@ -409,7 +396,7 @@ public class IRCParser implements SecureParser, Runnable {
     public ProcessingManager getProcessingManager() { return myProcessingManager;    }
 
     /** {@inheritDoc} */
-        @Override
+    @Override
     public CallbackManager<IRCParser> getCallbackManager() { return myCallbackManager;    }
 
     /**
@@ -680,7 +667,7 @@ public class IRCParser implements SecureParser, Runnable {
 
             final Proxy.Type proxyType = Proxy.Type.SOCKS;
             socket = new Socket(new Proxy(proxyType, new InetSocketAddress(server.getProxyHost(), server.getProxyPort())));
-            currentSocketState = SocketState.OPEN;
+            currentSocketState = SocketState.OPENING;
             if (server.getProxyUser() != null && !server.getProxyUser().isEmpty()) {
                 IRCAuthenticator.getIRCAuthenticator().addAuthentication(server);
             }
@@ -699,7 +686,7 @@ public class IRCParser implements SecureParser, Runnable {
                     }
                 }
 
-                currentSocketState = SocketState.OPEN;
+                currentSocketState = SocketState.OPENING;
                 socket.connect(new InetSocketAddress(server.getHost(), server.getPort()));
             }
         }
@@ -729,12 +716,13 @@ public class IRCParser implements SecureParser, Runnable {
                 }
             }
 
-            currentSocketState = SocketState.OPEN;
+            currentSocketState = SocketState.OPENING;
         }
 
         callDebugInfo(DEBUG_SOCKET, "\t-> Opening socket output stream PrintWriter");
         out.setOutputStream(socket.getOutputStream());
         out.setQueueEnabled(true);
+        currentSocketState = SocketState.OPEN;
         callDebugInfo(DEBUG_SOCKET, "\t-> Opening socket input stream BufferedReader");
         in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         callDebugInfo(DEBUG_SOCKET, "\t-> Socket Opened");
@@ -834,7 +822,7 @@ public class IRCParser implements SecureParser, Runnable {
     /** {@inheritDoc} */
         @Override
     public int getLocalPort() {
-        if (currentSocketState == SocketState.OPEN) {
+        if (currentSocketState == SocketState.OPENING || currentSocketState == SocketState.OPEN) {
             return socket.getLocalPort();
         } else {
             return 0;
@@ -1636,10 +1624,10 @@ public class IRCParser implements SecureParser, Runnable {
     /** {@inheritDoc} */
     @Override
     public void disconnect(final String message) {
-                if (currentSocketState == SocketState.OPEN) {
-                        currentSocketState = SocketState.CLOSING;
-                        if (got001) { quit(message); }
-                }
+        if (currentSocketState == SocketState.OPENING || currentSocketState == SocketState.OPEN) {
+            currentSocketState = SocketState.CLOSING;
+            if (got001) { quit(message); }
+        }
 
         try {
             if (socket != null) { socket.close(); }
@@ -1849,7 +1837,9 @@ public class IRCParser implements SecureParser, Runnable {
      * @param timer The timer that called this.
      */
     protected void pingTimerTask(final Timer timer) {
-        if (!getCheckServerPing()) {
+        // If user no longer wants server ping to be checked, or the socket is
+        // closed then cancel the time and do nothing else.
+        if (!getCheckServerPing() || getSocketState() != SocketState.OPEN) {
             pingTimerSem.acquireUninterruptibly();
             if (pingTimer != null && pingTimer.equals(timer)) {
                 pingTimer.cancel();
