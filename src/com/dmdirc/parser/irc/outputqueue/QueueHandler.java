@@ -24,6 +24,7 @@ package com.dmdirc.parser.irc.outputqueue;
 
 import com.dmdirc.parser.common.QueuePriority;
 import java.io.PrintWriter;
+import java.util.Comparator;
 import java.util.concurrent.BlockingQueue;
 
 /**
@@ -31,7 +32,7 @@ import java.util.concurrent.BlockingQueue;
  *
  * @author shane
  */
-public abstract class QueueHandler extends Thread {
+public abstract class QueueHandler extends Thread implements Comparator<QueueItem> {
     /** Queue we are handling. */
     protected final BlockingQueue<QueueItem> queue;
 
@@ -96,7 +97,7 @@ public abstract class QueueHandler extends Thread {
      * @param otherObject Object we are comparing to.
      * @return A QueueItem for teh given parameters
      */
-    public int compareQueueItem(final QueueItem mainObject, final QueueItem otherObject) {
+    public int compare(final QueueItem mainObject, final QueueItem otherObject) {
         if (mainObject.getTime() < 10 * 1000 && mainObject.getPriority().compareTo(otherObject.getPriority()) != 0) {
             return mainObject.getPriority().compareTo(otherObject.getPriority());
         }

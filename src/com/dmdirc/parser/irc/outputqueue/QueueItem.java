@@ -109,7 +109,7 @@ public class QueueItem implements Comparable<QueueItem> {
      */
     @Override
     public int compareTo(final QueueItem o) {
-        return handler.compareQueueItem(this, o);
+        return handler.compare(this, o);
     }
 
     /** {@inheritDoc} */

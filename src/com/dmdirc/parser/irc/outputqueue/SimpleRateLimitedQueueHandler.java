@@ -182,11 +182,11 @@ public class SimpleRateLimitedQueueHandler extends QueueHandler {
      * used.
      */
     @Override
-    public int compareQueueItem(final QueueItem mainObject, final QueueItem otherObject) {
+    public int compare(final QueueItem mainObject, final QueueItem otherObject) {
         if (mainObject.getPriority().compareTo(otherObject.getPriority()) != 0) {
             return mainObject.getPriority().compareTo(otherObject.getPriority());
         } else {
-            return super.compareQueueItem(mainObject, otherObject);
+            return super.compare(mainObject, otherObject);
         }
     }
 
