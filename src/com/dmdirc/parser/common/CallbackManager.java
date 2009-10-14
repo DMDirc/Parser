@@ -38,7 +38,7 @@ import java.util.Map;
  */
 public abstract class CallbackManager<T extends Parser> {
 
-    protected static final Class[] CLASSES = {
+    static final Class[] CLASSES = {
         AwayStateListener.class, OtherAwayStateListener.class,
         ChannelOtherAwayStateListener.class, ChannelActionListener.class,
         ChannelCtcpListener.class, ChannelCtcpReplyListener.class,
