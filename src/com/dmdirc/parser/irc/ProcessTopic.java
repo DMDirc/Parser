@@ -78,6 +78,7 @@ public class ProcessTopic extends IRCProcessor {
      * @return true if a method was called, false otherwise
      */
     protected boolean callChannelTopic(final ChannelInfo cChannel, final boolean bIsJoinTopic) {
+        ((IRCChannelInfo)cChannel).setHadTopic();
         return getCallbackManager().getCallbackType(ChannelTopicListener.class).call(cChannel, bIsJoinTopic);
     }
     

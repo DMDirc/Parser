@@ -24,6 +24,7 @@ package com.dmdirc.parser.irc;
 
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.callbacks.ChannelNamesListener;
+import com.dmdirc.parser.interfaces.callbacks.ChannelTopicListener;
 
 /**
  * Process a Names reply.
@@ -43,6 +44,10 @@ public class ProcessNames extends IRCProcessor {
             iChannel = getChannel(token[3]);
             if (iChannel == null) { return; }
             
+            if (!iChannel.hadTopic()) {
+                callChannelTopic(iChannel, true);
+            }
+
             iChannel.setAddingNames(false);
             callChannelGotNames(iChannel);
             
@@ -102,6 +107,19 @@ public class ProcessNames extends IRCProcessor {
         }
     }
     
+    /**
+     * Callback to all objects implementing the ChannelTopic Callback.
+     *
+     * @see IChannelTopic
+     * @param cChannel Channel that topic was set on
+     * @param bIsJoinTopic True when getting topic on join, false if set by user/server
+     * @return true if a method was called, false otherwise
+     */
+    protected boolean callChannelTopic(final ChannelInfo cChannel, final boolean bIsJoinTopic) {
+        ((IRCChannelInfo)cChannel).setHadTopic();
+        return getCallbackManager().getCallbackType(ChannelTopicListener.class).call(cChannel, bIsJoinTopic);
+    }
+
     /**
      * Callback to all objects implementing the ChannelGotNames Callback.
      *

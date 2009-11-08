@@ -60,6 +60,8 @@ public class IRCChannelInfo implements ChannelInfo {
     private String sTopicUser = "";
     /** Unixtimestamp representing time when the topic was set. */
     private long nTopicTime = 0;
+    /** Has this channel ever had a topic? */
+    private boolean hadTopic = false;
     
     /** Known boolean-modes for channel. */
     private long nModes;
@@ -191,7 +193,24 @@ public class IRCChannelInfo implements ChannelInfo {
             }
         }
     }
+
     
+    /**
+     * Has this channel ever had a topic? (even an empty one!)
+     * 
+     * @return True if a topic has ever been known for this channel.
+     */
+    public synchronized boolean hadTopic() {
+        return hadTopic;
+    }
+
+    /**
+     * Change the value of hadTopic to true.
+     */
+    public synchronized void setHadTopic() {
+        this.hadTopic = true;
+    }
+
     /**
      * Have we ever asked the server for this channels listmodes?
      *
