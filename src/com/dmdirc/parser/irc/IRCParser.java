@@ -48,6 +48,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Socket;
+import java.net.URI;
 import java.net.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -269,12 +270,12 @@ public class IRCParser implements SecureParser, Runnable {
     private String bindIP = "";
     
     /** This is list containing 001 - 005 inclusive. */
-    private List<String> serverInformationLines = new LinkedList<String>();
+    private final List<String> serverInformationLines = new LinkedList<String>();
 
     /**
      * Default constructor, ServerInfo and MyInfo need to be added separately (using IRC.me and IRC.server).
      */
-    public IRCParser() { this(null, null); }
+    public IRCParser() { this((MyInfo) null); }
     /**
      * Constructor with ServerInfo, MyInfo needs to be added separately (using IRC.me).
      *
@@ -286,7 +287,7 @@ public class IRCParser implements SecureParser, Runnable {
      *
      * @param myDetails Client information.
      */
-    public IRCParser(final MyInfo myDetails) { this(myDetails, null); }
+    public IRCParser(final MyInfo myDetails) { this(myDetails, (ServerInfo) null); }
     /**
      * Constructor with ServerInfo and MyInfo.
      *
@@ -298,6 +299,18 @@ public class IRCParser implements SecureParser, Runnable {
         if (myDetails != null) { this.me = myDetails; }
         if (serverDetails != null) { this.server = serverDetails; }
         resetState();
+    }
+
+    /**
+     * Creates a new IRCParser with the specified client details which will
+     * connect to the specified URI.
+     *
+     * @since 0.6.3m3
+     * @param myDetails The client details to use
+     * @param uri The URI to connect to
+     */
+    public IRCParser(final MyInfo myDetails, final URI uri) {
+        this(myDetails, new ServerInfo(uri));
     }
 
     /**

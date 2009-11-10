@@ -22,6 +22,8 @@
 
 package com.dmdirc.parser.irc;
 
+import java.net.URI;
+
 /**
  * Contains Server information.
  * 
@@ -70,6 +72,24 @@ public class ServerInfo {
         host = serverHost;
         port = serverPort;
         password = serverPass;
+    }
+
+    /**
+     * Creates a new ServerInfo which will represent the server described by
+     * the specified URI.
+     *
+     * @param uri The URI of the server
+     * @since 0.6.3m3
+     */
+    public ServerInfo(final URI uri) {
+        host = uri.getHost();
+        port = uri.getPort();
+
+        if ("ircs".equals(uri.getScheme())) {
+            setSSL(true);
+        }
+
+        // TODO (uris): Parse passwords
     }
     
     /**
