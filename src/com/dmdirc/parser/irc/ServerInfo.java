@@ -79,7 +79,7 @@ public class ServerInfo {
      * the specified URI.
      *
      * @param uri The URI of the server
-     * @since 0.6.3m3
+     * @since 0.6.4
      */
     public ServerInfo(final URI uri) {
         host = uri.getHost();
