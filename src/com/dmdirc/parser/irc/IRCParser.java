@@ -305,7 +305,7 @@ public class IRCParser implements SecureParser, Runnable {
      * Creates a new IRCParser with the specified client details which will
      * connect to the specified URI.
      *
-     * @since 0.6.3m3
+     * @since 0.6.4
      * @param myDetails The client details to use
      * @param uri The URI to connect to
      */
