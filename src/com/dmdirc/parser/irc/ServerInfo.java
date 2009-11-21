@@ -79,7 +79,7 @@ public class ServerInfo {
      * the specified URI.
      *
      * @param uri The URI of the server
-     * @since 0.6.4
+     * @since 0.6.3
      */
     public ServerInfo(final URI uri) {
         host = uri.getHost();
@@ -89,7 +89,7 @@ public class ServerInfo {
             setSSL(true);
         }
 
-        // TODO (uris): Parse passwords
+        password = uri.getUserInfo() == null ? "" : uri.getUserInfo();
     }
     
     /**
