@@ -23,6 +23,7 @@
 package com.dmdirc.parser.irc;
 
 import com.dmdirc.parser.common.ChannelListModeItem;
+import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.ClientInfo;
@@ -607,7 +608,7 @@ public class IRCChannelInfo implements ChannelInfo {
             // May need a param
             if (myParser.prefixModes.containsKey(mode)) {
                 modestr = modestr + " " + parameter;
-            } else {
+            } else if (myParser.chanModesOther.containsKey(mode)) {
                 modeint = myParser.chanModesOther.get(mode);
                 if ((modeint & IRCParser.MODE_LIST) == IRCParser.MODE_LIST) {
                     modestr = modestr + " " + parameter;
@@ -628,6 +629,8 @@ public class IRCChannelInfo implements ChannelInfo {
                     }
                     modestr = modestr + " " + parameter;
                 }
+            } else {
+                myParser.callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Trying to alter unknown mode.  positive: '"+positive+"' | mode: '"+mode+"' | parameter: '"+parameter+"' ", ""));
             }
         }
         myParser.callDebugInfo(IRCParser.DEBUG_INFO, "Queueing mode: %s", modestr);
