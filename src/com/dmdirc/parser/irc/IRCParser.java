@@ -875,7 +875,7 @@ public class IRCParser implements SecureParser, Runnable {
      */
     public static String[] tokeniseLine(final String line) {
         if (line == null) {
-            return new String[]{"", }; // Return empty string[]
+            return new String[]{""}; // Return empty string[]
         }
 
         final int lastarg = line.indexOf(" :");
@@ -890,6 +890,7 @@ public class IRCParser implements SecureParser, Runnable {
             tokens = line.split(" ");
         }
 
+        if (tokens.length < 1) { tokens = new String[]{""}; }
         return tokens;
     }
 
