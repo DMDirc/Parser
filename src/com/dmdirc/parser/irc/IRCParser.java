@@ -763,10 +763,11 @@ public class IRCParser implements SecureParser, Runnable {
      * Handle an onConnect error.
      *
      * @param e Exception to handle
+     * @param isUserError Is this a user error?
      */
-    private void handleConnectException(final Exception e) {
+    private void handleConnectException(final Exception e, final boolean isUserError) {
         callDebugInfo(DEBUG_SOCKET, "Error Connecting (" + e.getMessage() + "), Aborted");
-        final ParserError ei = new ParserError(ParserError.ERROR_ERROR, "Exception with server socket", getLastLine());
+        final ParserError ei = new ParserError(ParserError.ERROR_ERROR + (isUserError ? ParserError.ERROR_USER : 0), "Exception with server socket", getLastLine());
         ei.setException(e);
         callConnectError(ei);
         
@@ -788,16 +789,16 @@ public class IRCParser implements SecureParser, Runnable {
         try {
          connect();
         } catch (UnknownHostException e) {
-            handleConnectException(e);
+            handleConnectException(e, true);
             return;
         } catch (IOException e) {
-            handleConnectException(e);
+            handleConnectException(e, true);
             return;
         } catch (NoSuchAlgorithmException e) {
-            handleConnectException(e);
+            handleConnectException(e, false);
             return;
         } catch (KeyManagementException e) {
-            handleConnectException(e);
+            handleConnectException(e, false);
             return;
         }
 
