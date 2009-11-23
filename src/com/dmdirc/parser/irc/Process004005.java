@@ -65,10 +65,11 @@ public class Process004005 extends IRCProcessor {
         } else if (sParam.equals("005")) {
             // 005
             for (int i = 3; i < token.length ; i++) {
-                String[] Bits = token[i].split("=",2);
-                final boolean isNegation = (Bits[0].charAt(0) == '-');
-                final String sKey = (isNegation) ? Bits[0].substring(1).toUpperCase() : Bits[0].toUpperCase();
-                final String sValue = (Bits.length == 2) ? Bits[1] : "";
+                String[] bits = token[i].split("=",2);
+                if (bits[0].isEmpty()) { continue; }
+                final boolean isNegation = (bits[0].charAt(0) == '-');
+                final String sKey = (isNegation) ? bits[0].substring(1).toUpperCase() : bits[0].toUpperCase();
+                final String sValue = (bits.length == 2) ? bits[1] : "";
                 callDebugInfo(IRCParser.DEBUG_INFO, "%s => %s",sKey,sValue);
                 if (isNegation) {
                     myParser.h005Info.remove(sKey);
