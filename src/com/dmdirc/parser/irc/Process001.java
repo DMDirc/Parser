@@ -24,6 +24,7 @@ package com.dmdirc.parser.irc;
 
 import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.interfaces.callbacks.ServerReadyListener;
+import java.net.URI;
 
 /**
  * Process a 001 message.
@@ -68,6 +69,15 @@ public class Process001 extends IRCProcessor {
         
         callServerReady();
         myParser.startPingTimer();
+
+        final URI uri = myParser.server.getURI();
+        if (uri != null) {
+            String channelString = uri.getPath();
+            if (!uri.getFragment().isEmpty()) { channelString += "#" + uri.getFragment(); }
+            if (channelString.startsWith("/")) { channelString = channelString.substring(1); }
+            
+            myParser.joinChannel(channelString, true);
+        }
     }
     
     /**
