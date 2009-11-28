@@ -57,6 +57,8 @@ public class ServerInfo {
     private String proxyUser = "";
     /** Proxy password if required. */
     private String proxyPass = "";
+    /** URI used to create this ServerInfo if applicable */
+    private URI uri = null;
     
     /** Constructor using Default values. */
     public ServerInfo () { }
@@ -82,6 +84,23 @@ public class ServerInfo {
      * @since 0.6.3
      */
     public ServerInfo(final URI uri) {
+        setURI(uri);
+    }
+    
+    /**
+     * Get the URI for this ServerInfo if created with one.
+     *
+     * @return URI for this ServerInfo
+     */
+    public URI getURI() { return uri; }
+    
+    /**
+     * Set the URI for this ServerInfo.
+     * This will overwrite host/port/password and isSSL.
+     *
+     * @param uri URI to use to configure this ServerInfo
+     */
+    public void setURI(final URI uri) {
         host = uri.getHost();
         port = uri.getPort();
 
@@ -91,7 +110,7 @@ public class ServerInfo {
 
         password = uri.getUserInfo() == null ? "" : uri.getUserInfo();
     }
-    
+
     /**
      * Set the hostname.
      *
