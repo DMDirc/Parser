@@ -25,8 +25,12 @@ package com.dmdirc.parser.irc;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.List;
+
+import java.util.concurrent.Semaphore;
 
 /**
  * Handles proxy authentication for the parser.
@@ -47,7 +51,13 @@ public class IRCAuthenticator extends Authenticator {
     
     /** List of authentication replies. */
     private final Map<String,PasswordAuthentication> replies = new HashMap<String,PasswordAuthentication>();
-    
+
+    /** List of servers for each host. */
+    private final Map<String, List<ServerInfo>> owners = new HashMap<String, List<ServerInfo>>();
+
+    /** Semaphore for connection limiting. */
+    private final Semaphore mySemaphore = new Semaphore(1, true);
+
     /**
      * Create a new IRCAuthenticator.
      *
@@ -55,16 +65,6 @@ public class IRCAuthenticator extends Authenticator {
      * Authenticator.
      */
     private IRCAuthenticator() {
-/*        try {
-            final Field field = Authenticator.class.getDeclaredField("theAuthenticator");
-            field.setAccessible(true);
-            final Object authenticator = field.get(null);
-            if (authenticator instanceof Authenticator) {
-                oldAuthenticator = (Authenticator)authenticator;
-            }
-        } catch (NoSuchFieldException nsfe) {
-        } catch (IllegalAccessException iae) {
-        }*/
         Authenticator.setDefault(this);
     }
     
@@ -76,6 +76,9 @@ public class IRCAuthenticator extends Authenticator {
     public static synchronized IRCAuthenticator getIRCAuthenticator() {
         if (me == null) {
             me = new IRCAuthenticator();
+        } else {
+            // Make ourself the default authenticator again just incase.
+            Authenticator.setDefault(me);
         }
         return me;
     }
@@ -86,32 +89,59 @@ public class IRCAuthenticator extends Authenticator {
      * @param server ServerInfo object with proxy details.
      */
     public void addAuthentication(final ServerInfo server) {
-        addAuthentication(server.getProxyHost(), server.getProxyPort(), server.getProxyUser(), server.getProxyPass());
+        final String host = server.getProxyHost();
+        final int port = server.getProxyPort();
+        final String username = server.getProxyUser();
+        final String password = server.getProxyPass();
+
+        if (username == null || password == null || username.isEmpty() || password.isEmpty()) { return; }
+        
+        final PasswordAuthentication pass = new PasswordAuthentication(username, password.toCharArray());
+        final String fullhost = host.toLowerCase()+":"+port;
+
+        // Delete old username/password if one exists and then add the new one
+        replies.remove(fullhost);
+        replies.put(fullhost, pass);
+
+        // Store which servers are associated with which proxy
+        final List<ServerInfo> servers = owners.containsKey(fullhost) ? owners.get(fullhost) : new ArrayList<ServerInfo>();
+        owners.remove(fullhost);
+        servers.add(server);
+        owners.put(fullhost, servers);
     }
 
     /**
-     * Add a host to authenticate for.
+     * Get a copy of the semaphore
      *
-     * @param host Hostname
-     * @param port Port
-     * @param username Username to return for authentication
-     * @param password Password to return for authentication
+     * @return the IRCAuthenticator semaphore.
      */
-    public void addAuthentication(final String host, final int port, final String username, final String password) {
-        if (username == null || password == null || username.isEmpty() || password.isEmpty()) {
-            return;
-        }
-        final PasswordAuthentication pass = new PasswordAuthentication(username, password.toCharArray());
+    public Semaphore getSemaphore() {
+        return mySemaphore;
+    }
+
+    /**
+     * Remove a server to authenticate for.
+     *
+     * @param server ServerInfo object with proxy details.
+     */
+    public void removeAuthentication(final ServerInfo server) {
+        final String host = server.getProxyHost();
+        final int port = server.getProxyPort();
+
         final String fullhost = host.toLowerCase()+":"+port;
-        
-        if (replies.containsKey(fullhost)) {
+
+        // See if any other servers are associated with this proxy.
+        final List<ServerInfo> servers = owners.containsKey(fullhost) ? owners.get(fullhost) : new ArrayList<ServerInfo>();
+        servers.remove(server);
+        if (servers.size() == 0) {
+            // No more servers need this authentication info, remove.
+            owners.remove(fullhost);
             replies.remove(fullhost);
         }
-        
-        replies.put(fullhost, pass);
     }
     
     /** {@inheritDoc} */
+    @Override
     protected PasswordAuthentication getPasswordAuthentication() {
         /*
          * getRequestingHost: 85.234.138.2

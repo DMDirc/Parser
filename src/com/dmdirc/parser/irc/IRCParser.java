@@ -681,10 +681,14 @@ public class IRCParser implements SecureParser, Runnable {
             final Proxy.Type proxyType = Proxy.Type.SOCKS;
             socket = new Socket(new Proxy(proxyType, new InetSocketAddress(server.getProxyHost(), server.getProxyPort())));
             currentSocketState = SocketState.OPENING;
-            if (server.getProxyUser() != null && !server.getProxyUser().isEmpty()) {
-                IRCAuthenticator.getIRCAuthenticator().addAuthentication(server);
-            }
+
+            final IRCAuthenticator ia = IRCAuthenticator.getIRCAuthenticator();
+
+            try { ia.getSemaphore().acquire(); } catch (InterruptedException ex) { }
+            ia.addAuthentication(server);
             socket.connect(new InetSocketAddress(server.getHost(), server.getPort()));
+            ia.removeAuthentication(server);
+            ia.getSemaphore().release();
         } else {
             callDebugInfo(DEBUG_SOCKET, "Not using Proxy");
             if (!server.getSSL()) {
