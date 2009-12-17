@@ -24,6 +24,7 @@ package com.dmdirc.parser.interfaces;
 
 import com.dmdirc.parser.common.ChannelListModeItem;
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * Holds information about a channel and allows various operations to be
@@ -182,6 +183,14 @@ public interface ChannelInfo {
      * @return The number of clients known in this channel
      */
     int getChannelClientCount();
+
+    /**
+     * Retrieves a {@link Map} which can be used to store arbitrary data
+     * about the channel client.
+     *
+     * @return A map used for storing arbitrary data
+     */
+    Map<Object, Object> getMap();
 
     /**
      * Retrieves the parser which created this ChannelInfo.
