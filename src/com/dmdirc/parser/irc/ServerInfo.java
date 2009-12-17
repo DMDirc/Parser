@@ -23,6 +23,7 @@
 package com.dmdirc.parser.irc;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * Contains Server information.
@@ -88,11 +89,51 @@ public class ServerInfo {
     }
     
     /**
-     * Get the URI for this ServerInfo if created with one.
+     * Get the URI for this ServerInfo.
+     * This will return a new URI based on this ServerInfo.
+     * Protocol/Password/Host and Port are derived from the getXXXXX() methods
+     * the path, query and fragment from the
      *
      * @return URI for this ServerInfo
      */
-    public URI getURI() { return uri; }
+    public URI getURI() {
+        final StringBuilder uriString = new StringBuilder();
+
+        uriString.append(isSSL ? "irc://" : "ircs://");
+        if (!password.isEmpty()) {
+            uriString.append(password);
+            uriString.append("@");
+        }
+        uriString.append(host);
+        uriString.append(":");
+        uriString.append(port);
+        if (uri != null) {
+            if (!uri.getRawPath().isEmpty()) {
+                uriString.append(uri.getRawPath());
+            }
+            if (uri.getRawQuery() != null) {
+                uriString.append("?");
+                uriString.append(uri.getRawQuery());
+            }
+            if (uri.getRawFragment() != null) {
+                uriString.append("#");
+                uriString.append(uri.getRawFragment());
+            }
+        }
+        try {
+            return new URI(uriString.toString());
+        } catch (URISyntaxException ex) {
+            // Creating the new URI shouldn't fail unless the user passed
+            // stupid settings to setXXXX()
+            // In this case, try to return any given URI, else a blank one.
+            try {
+                return (uri != null) ? uri : new URI("");
+            } catch (URISyntaxException ex2) {
+                /* This can't ever happen. */
+                return null;
+            }
+        }
+    }
     
     /**
      * Set the URI for this ServerInfo.
@@ -101,8 +142,9 @@ public class ServerInfo {
      * @param uri URI to use to configure this ServerInfo
      */
     public void setURI(final URI uri) {
+        this.uri = uri;
         host = uri.getHost();
-        port = uri.getPort();
+        port = uri.getPort() > 0 ? uri.getPort() : 6667;
 
         if ("ircs".equals(uri.getScheme())) {
             setSSL(true);
