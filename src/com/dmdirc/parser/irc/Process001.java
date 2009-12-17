@@ -73,7 +73,8 @@ public class Process001 extends IRCProcessor {
         final URI uri = myParser.server.getURI();
         if (uri != null) {
             String channelString = uri.getPath();
-            if (!uri.getFragment().isEmpty()) { channelString += "#" + uri.getFragment(); }
+            if (uri.getRawQuery() != null && !uri.getRawQuery().isEmpty()) { channelString += "?" + uri.getRawQuery(); }
+            if (uri.getRawFragment() != null && !uri.getRawFragment().isEmpty()) { channelString += "#" + uri.getRawFragment(); }
             if (channelString.startsWith("/")) { channelString = channelString.substring(1); }
             
             myParser.joinChannel(channelString, true);
