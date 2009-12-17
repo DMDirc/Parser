@@ -322,11 +322,8 @@ public class IRCParser implements SecureParser, Runnable {
         return out;
     }
 
-    /**
-     * Get the current Value of bindIP.
-     *
-     * @return Value of bindIP ("" for default IP)
-     */
+    /** {@inheritDoc} */
+    @Override
     public String getBindIP() { return bindIP; }
 
     /** {@inheritDoc} */
