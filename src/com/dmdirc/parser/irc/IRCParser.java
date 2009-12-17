@@ -330,6 +330,10 @@ public class IRCParser implements SecureParser, Runnable {
     @Override
     public void setBindIP(final String ip) { bindIP = ip; }
 
+    /** {@inheritDoc} */
+    @Override
+    public URI getURI() { return server.getURI(); }
+
     /**
      * Get the current Value of createFake.
      *
@@ -388,7 +392,6 @@ public class IRCParser implements SecureParser, Runnable {
      * @param newValue New value to set addLastLine
      */
     public void setAddLastLine(final boolean newValue) { addLastLine = newValue; }
-
 
     /**
      * Get the current socket State.
