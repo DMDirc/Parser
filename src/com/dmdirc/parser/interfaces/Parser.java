@@ -26,6 +26,7 @@ import com.dmdirc.parser.common.IgnoreList;
 import com.dmdirc.parser.common.CallbackManager;
 
 import com.dmdirc.parser.common.QueuePriority;
+import java.net.URI;
 import java.util.Collection;
 
 /**
@@ -156,6 +157,14 @@ public interface Parser extends Runnable {
      * @return True if the channel name is valid, false otherwise
      */
     boolean isValidChannelName(String name);
+
+    /**
+     * Get a URI that shows where this parser is connected to.
+     *
+     * @return URI that shows where this parser is connected to.
+     */
+    URI getURI();
+
 
     /**
      * Retrieves the name of the server that this parser is connected to.
