@@ -76,6 +76,13 @@ public interface Parser extends Runnable {
     Collection<? extends ChannelInfo> getChannels();
 
     /**
+     * Get the IP address that this parser will bind to
+     *
+     * @return IP that this parser is bound to ("" for default IP)
+     */
+    String getBindIP();
+
+    /**
      * Set the IP address that this parser will bind to
      *
      * @param ip IP to bind to
