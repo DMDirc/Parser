@@ -86,7 +86,7 @@ public class IRCChannelInfo implements ChannelInfo {
     /** Modes waiting to be sent to the server. */
     private final List<String> lModeQueue = new LinkedList<String>();
     /** A Map to allow applications to attach misc data to this object */
-    private Map myMap;
+    private Map<Object, Object> myMap;
     
     /** Queue of requested list modes */
     private final Queue<Character> listModeQueue = new LinkedList<Character>();
@@ -244,16 +244,13 @@ public class IRCChannelInfo implements ChannelInfo {
      *
      * @param newMap New Map to attatch.
      */
-    public void setMap(final Map newMap) {
+    public void setMap(final Map<Object, Object> newMap) {
         myMap = newMap;
     }
     
-    /**
-     * Get the Map object attatched to this object.
-     *
-     * @return Map to attatched to this.
-     */
-    public Map getMap() {
+    /** {@inheritDoc} */
+    @Override
+    public Map<Object, Object> getMap() {
         return myMap;
     }
     

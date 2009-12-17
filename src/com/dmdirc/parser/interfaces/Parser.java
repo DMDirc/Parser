@@ -28,6 +28,7 @@ import com.dmdirc.parser.common.CallbackManager;
 import com.dmdirc.parser.common.QueuePriority;
 import java.net.URI;
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * A parser connects to a back-end chat system and handles all communication
@@ -89,6 +90,14 @@ public interface Parser extends Runnable {
      * @param ip IP to bind to
      */
     void setBindIP(String ip);
+
+    /**
+     * Retrieves a {@link Map} which can be used to store arbitrary data
+     * about the client.
+     *
+     * @return A map used for storing arbitrary data
+     */
+    Map<Object, Object> getMap();
 
     /**
      * Determines the maximimum length a message of the specified type may be.

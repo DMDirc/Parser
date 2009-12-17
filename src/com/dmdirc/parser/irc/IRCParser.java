@@ -55,6 +55,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -232,6 +233,9 @@ public class IRCParser implements SecureParser, Runnable {
     /** Current Socket State. */
     protected SocketState currentSocketState = SocketState.NULL;
 
+    /** Map to store arbitrary data. */
+    private Map<Object, Object> myMap = new HashMap<Object, Object>();
+
     /** This is the socket used for reading from/writing to the IRC server. */
     private Socket socket;
     /** Used for writing to the server. */
@@ -333,6 +337,10 @@ public class IRCParser implements SecureParser, Runnable {
     /** {@inheritDoc} */
     @Override
     public URI getURI() { return server.getURI(); }
+
+    /** {@inheritDoc} */
+    @Override
+    public Map<Object, Object> getMap() { return myMap; }
 
     /**
      * Get the current Value of createFake.
