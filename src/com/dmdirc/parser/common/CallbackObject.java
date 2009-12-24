@@ -150,11 +150,16 @@ public abstract class CallbackObject {
             try {
                 type.getMethods()[0].invoke(iface, newArgs);
             } catch (Exception e) {
-                final ParserError ei = new ParserError(ParserError.ERROR_ERROR,
-                        "Exception in callback (" + e.getMessage() + ")",
-                        myParser.getLastLine());
-                ei.setException(e);
-                callErrorInfo(ei);
+                if (getType().equals(ErrorInfoListener.class)) {
+                    System.out.printf("Exception in onError Callback. [%s]\n", e.getMessage());
+                    e.printStackTrace();
+                } else {
+                    final ParserError ei = new ParserError(ParserError.ERROR_ERROR,
+                            "Exception in callback (" + e.getMessage() + ")",
+                            myParser.getLastLine());
+                    ei.setException(e);
+                    callErrorInfo(ei);
+                }
             }
             bResult = true;
         }
