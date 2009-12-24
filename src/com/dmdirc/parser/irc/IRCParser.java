@@ -340,6 +340,24 @@ public class IRCParser implements SecureParser, Runnable {
 
     /** {@inheritDoc} */
     @Override
+    public boolean compareURI(final URI uri) {
+        // Parse the given URI to set any defaults.
+        final ServerInfo si = new ServerInfo(uri);
+        final URI newURI = si.getURI();
+        // Get the old URI.
+        final URI oldURI = server.getURI();
+
+        // Check that protocol, host and port are the same.
+        // Anything else won't change the server we connect to just what we
+        // would do after connecting, so is not relevent.
+        return newURI.getScheme().equalsIgnoreCase(oldURI.getScheme()) &&
+               newURI.getHost().equalsIgnoreCase(oldURI.getHost()) &&
+               newURI.getPort() == oldURI.getPort();
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
     public Map<Object, Object> getMap() { return myMap; }
 
     /**
