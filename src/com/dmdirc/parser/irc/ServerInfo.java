@@ -99,7 +99,7 @@ public class ServerInfo {
     public URI getURI() {
         final StringBuilder uriString = new StringBuilder();
 
-        uriString.append(isSSL ? "irc://" : "ircs://");
+        uriString.append(isSSL ? "ircs://" : "irc://");
         if (!password.isEmpty()) {
             uriString.append(password);
             uriString.append("@");
