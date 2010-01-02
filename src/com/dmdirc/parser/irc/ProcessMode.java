@@ -122,6 +122,8 @@ public class ProcessMode extends IRCProcessor {
             if (setterCCI.getClient().getHostname().isEmpty()) {setterCCI.getClient().setUserBits(token[0],false); }
         }
         
+        if (sModestr.length == 0) { return; }
+
         // Loop through the mode string, and add/remove modes/params where they are needed
         for (int i = 0; i < sModestr[0].length(); ++i) {
             Character cMode = sModestr[0].charAt(i);
@@ -226,6 +228,7 @@ public class ProcessMode extends IRCProcessor {
      *
      * @param sParam String representation of parameter to parse
      * @param token IRCTokenised Array of the incomming line
+     * @param sModestr The modes and params
      * @param clearOldModes Clear old modes before applying these modes (used by 221)
      */    
     private void processUserMode(String sParam, String token[], String sModestr[], boolean clearOldModes) {
@@ -242,6 +245,8 @@ public class ProcessMode extends IRCProcessor {
             nCurrent = iClient.getUserMode();
         }
         
+        if (sModestr.length == 0) { return; }
+
         for (int i = 0; i < sModestr[0].length(); ++i) {
             Character cMode = sModestr[0].charAt(i);
             if (cMode.equals("+".charAt(0))) { bPositive = true; }
