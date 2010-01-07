@@ -36,10 +36,8 @@ import com.dmdirc.harness.parser.TestIPrivateMessage;
 import com.dmdirc.harness.parser.TestIPrivateAction;
 import com.dmdirc.parser.interfaces.callbacks.AuthNoticeListener;
 import com.dmdirc.parser.common.CallbackNotFoundException;
-import com.dmdirc.parser.interfaces.callbacks.AwayStateListener;
 import com.dmdirc.parser.interfaces.callbacks.CallbackInterface;
 import com.dmdirc.parser.interfaces.callbacks.ChannelKickListener;
-
 import com.dmdirc.parser.interfaces.callbacks.ConnectErrorListener;
 import com.dmdirc.parser.interfaces.callbacks.ErrorInfoListener;
 import com.dmdirc.parser.interfaces.callbacks.NumericListener;
@@ -48,12 +46,14 @@ import com.dmdirc.parser.interfaces.callbacks.PrivateActionListener;
 import com.dmdirc.parser.interfaces.callbacks.PrivateCtcpListener;
 import com.dmdirc.parser.interfaces.callbacks.PrivateMessageListener;
 import com.dmdirc.parser.interfaces.callbacks.ServerErrorListener;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collection;
 
 import javax.net.ssl.TrustManager;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -128,14 +128,13 @@ public class IRCParserTest {
     }
 
     @Test
-    public void testSendConnectionStrings1() {
-        final ServerInfo serverInfo = new ServerInfo("irc.testing.dmdirc", 6667, "");
+    public void testSendConnectionStrings1() throws URISyntaxException {
         final MyInfo myInfo = new MyInfo();
         myInfo.setNickname("Nickname");
         myInfo.setRealname("Real name");
         myInfo.setUsername("Username");
 
-        final TestParser parser = new TestParser(myInfo, serverInfo);
+        final TestParser parser = new TestParser(myInfo, new URI("irc://irc.testing.dmdirc:6667/"));
         parser.sendConnectionStrings();
 
         assertEquals(2, parser.sentLines.size());
@@ -147,19 +146,18 @@ public class IRCParserTest {
         assertEquals("First token should be USER", "USER", userParts[0]);
         assertEquals("USER should contain username", myInfo.getUsername().toLowerCase(),
                 userParts[1].toLowerCase());
-        assertEquals("USER should contain server name", serverInfo.getHost(), userParts[3]);
+        assertEquals("USER should contain server name", "irc.testing.dmdirc", userParts[3]);
         assertEquals("USER should contain real name", "Real name", userParts[4]);
     }
 
     @Test
-    public void testSendConnectionStrings2() {
-        final ServerInfo serverInfo = new ServerInfo("irc.testing.dmdirc", 6667, "password");
+    public void testSendConnectionStrings2() throws URISyntaxException {
         final MyInfo myInfo = new MyInfo();
         myInfo.setNickname("Nickname");
         myInfo.setRealname("Real name");
         myInfo.setUsername("Username");
 
-        final TestParser parser = new TestParser(myInfo, serverInfo);
+        final TestParser parser = new TestParser(myInfo, new URI("irc://password@irc.testing.dmdirc:6667/"));
         parser.sendConnectionStrings();
 
         assertEquals(3, parser.sentLines.size());
@@ -493,8 +491,8 @@ public class IRCParserTest {
     }
     
     @Test
-    public void testIllegalPort1() {
-        final TestParser tp = new TestParser(new MyInfo(), new ServerInfo("127.0.0.1", 0, ""));
+    public void testIllegalPort1() throws URISyntaxException {
+        final TestParser tp = new TestParser(new MyInfo(), new URI("irc://127.0.0.1:0/"));
         final TestIConnectError tiei = new TestIConnectError();
         tp.getCallbackManager().addCallback(ConnectErrorListener.class, tiei);
         tp.runSuper();
@@ -502,8 +500,8 @@ public class IRCParserTest {
     }
     
     @Test
-    public void testIllegalPort2() {
-        final TestParser tp = new TestParser(new MyInfo(), new ServerInfo("127.0.0.1", 1, ""));
+    public void testIllegalPort2() throws URISyntaxException {
+        final TestParser tp = new TestParser(new MyInfo(), new URI("irc://127.0.0.1:1/"));
         final TestIConnectError tiei = new TestIConnectError();
         tp.getCallbackManager().addCallback(ConnectErrorListener.class, tiei);
         tp.runSuper();
@@ -511,8 +509,8 @@ public class IRCParserTest {
     }    
     
     @Test
-    public void testIllegalPort3() {
-        final TestParser tp = new TestParser(new MyInfo(), new ServerInfo("127.0.0.1", 65570, ""));
+    public void testIllegalPort3() throws URISyntaxException {
+        final TestParser tp = new TestParser(new MyInfo(), new URI("irc://127.0.0.1:65570/"));
         final TestIConnectError tiei = new TestIConnectError();
         tp.getCallbackManager().addCallback(ConnectErrorListener.class, tiei);
         tp.runSuper();
