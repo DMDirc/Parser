@@ -1456,7 +1456,6 @@ public class IRCParser implements SecureParser, Runnable {
      * @param sChannelName Name of channel to join
      * @param autoPrefix Automatically prepend the first channel prefix defined
      *                   in 005 if sChannelName is an invalid channel.
-     *                   **This only applies to the first channel if given a list**
      */
     public void joinChannel(final String sChannelName, final boolean autoPrefix) {
         joinChannel(sChannelName, "", autoPrefix);
@@ -1470,37 +1469,60 @@ public class IRCParser implements SecureParser, Runnable {
 
     /**
      * Join a Channel with a key.
+     * This also allows passing a list of channels such as:
+     * "#channel1 key1,#channel2 key2,#channel3,#channel4,#channel5 key2"
      *
-     * @param channel Name of channel to join
-     * @param key Key to use to try and join the channel
+     * @param channel Name of channel to join or a list of channels.
+     * @param key Key to use to try and join the channel (If a list is given
+     *            then this key will be used for any channels that do not
+     *            specify one themselves.
      * @param autoPrefix Automatically prepend the first channel prefix defined
-     *                   in 005 if sChannelName is an invalid channel.
-     *                   **This only applies to the first channel if given a list**
+     *                   in 005 to any of the channels passsed if they are
+     *                   otherwise invalid channels.
      */
     public void joinChannel(final String channel, final String key, final boolean autoPrefix) {
-        final String channelName;
-        if (isValidChannelName(channel)) {
-            channelName = channel;
-        } else {
-            if (autoPrefix) {
-                if (h005Info.containsKey("CHANTYPES")) {
-                    final String chantypes = h005Info.get("CHANTYPES");
-                    if (chantypes.isEmpty()) {
-                        channelName = "#" + channel;
+        final String[] bits = channel.split(",");
+
+        // We store a map from key->channels to allow intelligent joining of
+        // channels using as few JOIN commands as needed.
+        final Map<String, StringBuffer> joinMap = new HashMap<String, StringBuffer>();
+
+        for (String bit : bits) {
+            // Find any key for this channel
+            final String[] keybits = bit.split(" ", 2);
+            final String channelName = keybits[0];
+            final String thisKey = (keybits.length > 1) ? keybits[0] : key;
+
+            // Make sure we have a list to put stuff in.
+            StringBuffer list = joinMap.get(thisKey);
+            if (list == null) { list = new StringBuffer(); }
+
+            // Add the channel to the list. If the name is invalid and
+            // autoprefix is off we will just skip this channel.
+            if (isValidChannelName(channelName) || autoPrefix) {
+                if (list.length() > 0) { list.append(","); }
+                if (autoPrefix) {
+                    if (h005Info.containsKey("CHANTYPES")) {
+                        final String chantypes = h005Info.get("CHANTYPES");
+                        if (chantypes.isEmpty()) {
+                            list.append('#');
+                        } else {
+                            list.append(chantypes.charAt(0));
+                        }
                     } else {
-                        channelName = chantypes.charAt(0) + channel;
+                        list.append('#');
                     }
-                } else {
-                    return;
                 }
-            } else {
-                return;
+                list.append(channel);
             }
         }
-        if (key.isEmpty()) {
-            sendString("JOIN " + channelName);
-        } else {
-            sendString("JOIN " + channelName + " " + key);
+
+        for (String thisKey : joinMap.keySet()) {
+            if (thisKey.isEmpty()) {
+                sendString("JOIN " + joinMap.get(thisKey).toString());
+            } else {
+                sendString("JOIN " + joinMap.get(thisKey).toString() + " " + thisKey);
+            }
         }
     }
 
