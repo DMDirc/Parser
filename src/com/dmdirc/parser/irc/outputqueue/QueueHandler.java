@@ -50,6 +50,8 @@ public abstract class QueueHandler extends Thread implements Comparator<QueueIte
      * @param out Writer to send to.
      */
     public QueueHandler(final OutputQueue outputQueue, final BlockingQueue<QueueItem> queue, final PrintWriter out) {
+        super("IRC Parser queue handler");
+
         this.queue = queue;
         this.out = out;
         this.outputQueue = outputQueue;
@@ -97,6 +99,7 @@ public abstract class QueueHandler extends Thread implements Comparator<QueueIte
      * @param otherObject Object we are comparing to.
      * @return A QueueItem for teh given parameters
      */
+    @Override
     public int compare(final QueueItem mainObject, final QueueItem otherObject) {
         if (mainObject.getTime() < 10 * 1000 && mainObject.getPriority().compareTo(otherObject.getPriority()) != 0) {
             return mainObject.getPriority().compareTo(otherObject.getPriority());
