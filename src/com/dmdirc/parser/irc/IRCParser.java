@@ -1495,13 +1495,16 @@ public class IRCParser implements SecureParser, Runnable {
 
             // Make sure we have a list to put stuff in.
             StringBuffer list = joinMap.get(thisKey);
-            if (list == null) { list = new StringBuffer(); }
+            if (list == null) {
+                list = new StringBuffer();
+                joinMap.put(thisKey, list);
+            }
 
             // Add the channel to the list. If the name is invalid and
             // autoprefix is off we will just skip this channel.
-            if (isValidChannelName(channelName) || autoPrefix) {
+            if (channelName.length() > 0 && (isValidChannelName(channelName) || autoPrefix)) {
                 if (list.length() > 0) { list.append(","); }
-                if (autoPrefix) {
+                if (!isValidChannelName(channelName) && autoPrefix) {
                     if (h005Info.containsKey("CHANTYPES")) {
                         final String chantypes = h005Info.get("CHANTYPES");
                         if (chantypes.isEmpty()) {
@@ -1513,7 +1516,7 @@ public class IRCParser implements SecureParser, Runnable {
                         list.append('#');
                     }
                 }
-                list.append(channel);
+                list.append(channelName);
             }
         }
 
