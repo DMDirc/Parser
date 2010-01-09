@@ -1520,11 +1520,15 @@ public class IRCParser implements SecureParser, Runnable {
             }
         }
 
-        for (String thisKey : joinMap.keySet()) {
-            if (thisKey.isEmpty()) {
-                sendString("JOIN " + joinMap.get(thisKey).toString());
-            } else {
-                sendString("JOIN " + joinMap.get(thisKey).toString() + " " + thisKey);
+        for (Map.Entry<String, StringBuffer>  entrySet : joinMap.entrySet()) {
+            final String thisKey = entrySet.getKey();
+            final String channelString = entrySet.getValue().toString();
+            if (!channelString.isEmpty()) {
+                if (thisKey.isEmpty()) {
+                    sendString("JOIN " + channelString);
+                } else {
+                    sendString("JOIN " + channelString + " " + thisKey);
+                }
             }
         }
     }
