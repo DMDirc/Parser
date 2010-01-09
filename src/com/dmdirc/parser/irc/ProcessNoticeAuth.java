@@ -23,11 +23,21 @@
 package com.dmdirc.parser.irc;
 
 import com.dmdirc.parser.interfaces.callbacks.AuthNoticeListener;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Process a NoticeAuth message.
  */
 public class ProcessNoticeAuth extends IRCProcessor {
+    /**
+     * Pattern for automatic connecting to some servers such as undernet.
+     * This will only work if the user only needs to alphanumeric characters,
+     * this is so that messages from bouncers such as typing "/PASS <foo>" won't
+     * get matched.
+     */
+    final Pattern pattern = Pattern.compile("(?i)to connect you must type \\/(?:RAW |QUOTE )?([0-9A-Z ]+)");
+
     /**
      * Process a NoticeAuth message.
      *
@@ -36,7 +46,14 @@ public class ProcessNoticeAuth extends IRCProcessor {
      */
     @Override
     public void process(final String sParam, final String[] token) {
-        callNoticeAuth(token[token.length-1]);
+        final String message = token[token.length-1];
+        callNoticeAuth(message);
+        if (myParser.isAutoQuoteConnect()) {
+            final Matcher matcher = pattern.matcher(message);
+            if (matcher.find()) {
+                myParser.sendString(matcher.group(1).trim());
+            }
+        }
     }
     
     /**

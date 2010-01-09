@@ -128,6 +128,12 @@ public class IRCParser implements SecureParser, Runnable {
     private String lastPingValue = "";
 
     /**
+     * Should the parser automatically issue an on-connect command if requested
+     * in NOTICE AUTH?
+     */
+    private boolean autoQuoteConnect = true;
+
+    /**
      * Count down to next ping.
      * The timer fires every 10 seconds, this value is decreased every time the
      * timer fires.<br>
@@ -373,6 +379,22 @@ public class IRCParser implements SecureParser, Runnable {
      * @param newValue New value to set createFake
      */
     public void setCreateFake(final boolean newValue) { createFake = newValue; }
+
+    /**
+     * Will the parser automatically issue an on-connect command if requested
+     * in NOTICE AUTH?
+     *
+     * @return true if yes, else false.
+     */
+    public boolean isAutoQuoteConnect() { return autoQuoteConnect; }
+
+    /**
+     * Set if the parser automatically issue an on-connect command if requested
+     * in NOTICE AUTH?
+     * 
+     * @param newValue true if yes, else false.
+     */
+    public void setAutoQuoteConnect(final boolean newValue) { autoQuoteConnect = newValue; }
 
     /**
      * Get the current Value of autoListMode.
@@ -1521,10 +1543,13 @@ public class IRCParser implements SecureParser, Runnable {
         }
 
         for (String thisKey : joinMap.keySet()) {
-            if (thisKey.isEmpty()) {
-                sendString("JOIN " + joinMap.get(thisKey).toString());
-            } else {
-                sendString("JOIN " + joinMap.get(thisKey).toString() + " " + thisKey);
+            final String channelString = joinMap.get(thisKey).toString();
+            if (!channelString.isEmpty()) {
+                if (thisKey.isEmpty()) {
+                    sendString("JOIN " + channelString);
+                } else {
+                    sendString("JOIN " + channelString + " " + thisKey);
+                }
             }
         }
     }
