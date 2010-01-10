@@ -1766,60 +1766,26 @@ public class IRCParser implements SecureParser, Runnable {
     public Map<String, String> get005() { return h005Info; }
 
     /**
+     * Get the ServerType for this IRCD.
+     *
+     * @return The ServerType for this IRCD.
+     */
+    public ServerType getServerType() {
+        return ServerType.findServerType(h005Info.get("004IRCD"), networkName, h005Info.get("003IRCD"), h005Info.get("002IRCD"));
+    }
+
+    /**
      * Get the name of the ircd.
      *
      * @param getType if this is false the string from 004 is returned. Else a guess of the type (ircu, hybrid, ircnet)
      * @return IRCD Version or Type
      */
     public String getIRCD(final boolean getType) {
-        if (h005Info.containsKey("004IRCD")) {
-            final String version = h005Info.get("004IRCD");
-            if (getType) {
-                // This ilst is vaugly based on http://searchirc.com/ircd-versions,
-                // but keeping groups of ircd's together (ie hybrid-based, ircu-based)
-                if (version.matches("(?i).*unreal[^4-9].*")) { return "unreal"; }
-                else if (version.matches("(?i).*unreal[4-9].*")) { return "unreal4"; }
-                else if (version.matches("(?i).*bahamut.*")) { return "bahamut"; }
-                else if (version.matches("(?i).*nefarious.*")) { return "nefarious"; }
-                else if (version.matches("(?i).*asuka.*")) { return "asuka"; }
-                else if (version.matches("(?i).*snircd.*")) { return "snircd"; }
-                else if (version.matches("(?i).*beware.*")) { return "bircd"; }
-                else if (version.matches("(?i).*u2\\.[0-9]+\\.H\\..*")) { return "irchispano"; }
-                else if (version.matches("(?i).*u2\\.[0-9]+\\..*")) { return "ircu"; }
-                else if (version.matches("(?i).*ircu.*")) { return "ircu"; }
-                else if (version.matches("(?i).*plexus.*")) { return "plexus"; }
-                else if (version.matches("(?i).*hybrid.*oftc.*")) { return "oftc-hybrid"; }
-                else if (version.matches("(?i).*ircd.hybrid.*")) { return "hybrid7"; }
-                else if (version.matches("(?i).*hybrid.*")) { return "hybrid"; }
-                else if (version.matches("(?i).*charybdis.*")) { return "charybdis"; }
-                else if (version.matches("(?i).*inspircd.*")) { return "inspircd"; }
-                else if (version.matches("(?i).*ultimateircd.*")) { return "ultimateircd"; }
-                else if (version.matches("(?i).*critenircd.*")) { return "critenircd"; }
-                else if (version.matches("(?i).*fqircd.*")) { return "fqircd"; }
-                else if (version.matches("(?i).*conferenceroom.*")) { return "conferenceroom"; }
-                else if (version.matches("(?i).*hyperion.*")) { return "hyperion"; }
-                else if (version.matches("(?i).*dancer.*")) { return "dancer"; }
-                else if (version.matches("(?i).*austhex.*")) { return "austhex"; }
-                else if (version.matches("(?i).*austirc.*")) { return "austirc"; }
-                else if (version.matches("(?i).*ratbox.*")) { return "ratbox"; }
-                else if (version.matches("(?i).*euircd.*")) { return "euircd"; }
-                else if (version.matches("(?i).*weircd.*")) { return "weircd"; }
-                else if (version.matches("(?i).*swiftirc.*")) { return "swiftirc"; }
-                else {
-                    // Stupid networks/ircds go here...
-                    if (networkName.equalsIgnoreCase("ircnet")) { return "ircnet"; }
-                    else if (networkName.equalsIgnoreCase("starchat")) { return "starchat"; }
-                    else if (networkName.equalsIgnoreCase("bitlbee")) { return "bitlbee"; }
-                    else if (h005Info.containsKey("003IRCD") && h005Info.get("003IRCD").matches("(?i).*bitlbee.*")) { return "bitlbee"; } // Older bitlbee
-                    else if (h005Info.containsKey("002IRCD") && h005Info.get("002IRCD").matches("(?i).*pastiche.*")) { return "ircd-pastiche"; }
-                    else { return "generic"; }
-                }
-            } else {
-                return version;
-            }
+        if (getType) {
+            return getServerType().getType();
         } else {
-            if (getType) { return "generic"; }
-            else { return ""; }
+            final String version = h005Info.get("004IRCD");
+            return (version == null) ? "" : version;
         }
     }
 
