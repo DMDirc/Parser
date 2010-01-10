@@ -107,6 +107,8 @@ public enum ServerType {
     BITLBEE_OLD("bitlbee", "bitlbee", null, MatchType.RAW003),
     /** Pastiche. */
     PASTICHE("bitlbee", "ircd-pastiche", null, MatchType.RAW002),
+    /** Othernet. */
+    OTHERNET("othernet", ".*Othernet.*"),
     /** Generic IRCD. */
     GENERIC("generic", "", null, MatchType.NEVER);
 
