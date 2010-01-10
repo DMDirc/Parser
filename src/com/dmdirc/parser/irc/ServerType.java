@@ -1,5 +1,5 @@
 /*
- *  Copyright (c) 2006-2009 Chris Smith, Shane Mc Cormack, Gregory Holmes
+ *  Copyright (c) 2006-2010 Chris Smith, Shane Mc Cormack, Gregory Holmes
  * 
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -53,16 +53,20 @@ public enum ServerType {
     IRCU2("ircu", ".*u2\\.[0-9]+\\..*"),
     /** Some kind of IRCU Fork. */
     IRCU_GENERIC("ircu", ".*ircu.*"),
+    /** Rizon. */
+    IRCD_RIZON("ircd-rixon", ".*ircd-rizon.*", "eI"),
     /** Plexus. */
-    PLEXUS("plexus", ".*plexus.*"),
+    PLEXUS("plexus", ".*plexus.*", "eI"),
     /** OFTCs hybrid fork. */
     OFTC_HYBRID("oftc-hybrid", ".*hybrid.*oftc.*"),
     /** hybrid7. */
     HYBRID7("hybrid7", ".*ircd.hybrid.*", "eI"),
     /** Older versions of Hybrid. */
     HYBRID("hybrid", ".*hybrid.*", "eI"),
-    /** Freenodes new IRCD. */
+    /** Charybdis */
     CHARYBDIS("charybdis", ".*charybdis.*", "eI"),
+    /** Freenodes New IRCD. */
+    IRCD_SEVEN("ircd-seven", ".*ircd-seven.*", "eI"),
     /** Freenodes Current IRCD. */
     HYPERION("hyperion", ".*hyperion.*", "eI"),
     /** Freenodes Old IRCD. */
@@ -77,10 +81,14 @@ public enum ServerType {
     FQIRCD("fqircd", ".*fqircd.*"),
     /** Microsoft's Conference Room "IRCD". */
     CONFERENCEROOM("conferenceroom", ".*conferenceroom.*"),
+    /** AustHex8. */
+    AUSTHEX8("austhex8", "running version 8.1.6$", "eI", MatchType.RAW002),
     /** AustHex custom IRCD. */
     AUSTHEX("austhex", ".*austhex.*"),
     /** AustIRC custom IRCD. */
     AUSTIRC("austirc", ".*austirc.*"),
+    /** IRSEE custom IRCD. */
+    IRSEE("irsee", ".*irsee.*"),
     /** Ratbox. */
     RATBOX("ratbox", ".*ratbox.*"),
     /** euircd. */

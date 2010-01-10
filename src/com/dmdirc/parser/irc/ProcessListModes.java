@@ -44,7 +44,7 @@ public class ProcessListModes extends IRCProcessor {
     @Override
     public void process(String sParam, String[] token) {
         IRCChannelInfo channel = getChannel(token[3]);
-        String thisIRCD = myParser.getIRCD(true).toLowerCase();
+        final ServerType serverType = myParser.getServerType();
         String item = "";
         String owner = "";
         byte tokenStart = 4; // Where do the relevent tokens start?
@@ -56,7 +56,8 @@ public class ProcessListModes extends IRCProcessor {
         
         if (sParam.equals("367") || sParam.equals("368")) {
             // Ban List/Item.
-            // (Also used for +d and +q on hyperion... -_-)
+            // (Also used for +d and +q on dancer/hyperion... -_-)
+            // (Also used for +q on ircd-seven... -_-)
             mode = 'b';
             isItem = sParam.equals("367");
         } else if (sParam.equals("348") || sParam.equals("349")) {
@@ -73,19 +74,19 @@ public class ProcessListModes extends IRCProcessor {
             isItem = sParam.equals("941");
         } else if (sParam.equals("344") || sParam.equals("345")) {
             // Reop List, or bad words list, or quiet list. god damn.
-            if (thisIRCD.equals("euircd")) {
+            if (serverType == ServerType.EUIRCD) {
                 mode = 'w';
-            } else if (thisIRCD.equals("oftc-hybrid")) {
+            } else if (serverType == ServerType.OFTC_HYBRID) {
                 mode = 'q';
             } else {
                 mode = 'R';
             }
             isItem = sParam.equals("344");
-        } else if (thisIRCD.equals("swiftirc") && (sParam.equals("386") || sParam.equals("387"))) {
+        } else if ((serverType == ServerType.SWIFTIRC || serverType == ServerType.AUSTHEX8) && (sParam.equals("386") || sParam.equals("387"))) {
             // Channel Owner list
             mode = 'q';
             isItem = sParam.equals("387");
-        } else if (thisIRCD.equals("swiftirc") && (sParam.equals("388") || sParam.equals("389"))) {
+        } else if ((serverType == ServerType.SWIFTIRC || serverType == ServerType.AUSTHEX8) && (sParam.equals("388") || sParam.equals("389"))) {
             // Protected User list
             mode = 'a';
             isItem = sParam.equals("389");
@@ -117,7 +118,7 @@ public class ProcessListModes extends IRCProcessor {
                     //
                     // Only raise an LMQ error if the lmqmode isn't one of bdq if the
                     // guess is one of bdq
-                    if ((thisIRCD.equals("hyperion") || thisIRCD.equals("dancer")) && (mode == 'b' || mode == 'q' || mode == 'd')) {
+                    if ((serverType == ServerType.DANCER || serverType == ServerType.HYPERION) && (mode == 'b' || mode == 'q' || mode == 'd')) {
                         LinkedList<Character> lmq = (LinkedList<Character>)listModeQueue;
                         if (mode == 'b') {
                             error = !(oldMode == 'q' || oldMode == 'd');
@@ -130,8 +131,16 @@ public class ProcessListModes extends IRCProcessor {
                         } else if (mode == 'd') {
                             error = !(oldMode == 'b' || oldMode == 'q');
                         }
+                    } else if ((serverType == ServerType.IRCD_SEVEN || serverType == ServerType.CHARYBDIS) && (mode == 'b' || mode == 'q')) {
+                        // Finally freenode appear to have an ircd which isn't completely annoying.
+                        // Only error if the LMQ thinks the mode should be
+                        // something thats not the other one of these 2 modes.
+                        error = (mode == 'b') ? oldMode != 'q' : oldMode != 'b';
                     }
-                    
+
+                    // If the lmq and the actual mode are not the same or the
+                    // freenode-specific hacks above think the mode should be
+                    // something else, error.
                     if (oldMode != mode && error) {
                         myParser.callDebugInfo(IRCParser.DEBUG_LMQ, "LMQ disagrees with guess. LMQ: "+mode+" Guess: "+oldMode);
 //                        myParser.callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "LMQ disagrees with guess. LMQ: "+mode+" Guess: "+oldMode, myParser.getLastLine()));
@@ -145,7 +154,7 @@ public class ProcessListModes extends IRCProcessor {
         }
         
         if (isItem) {
-            if ((!isCleverMode) && listModeQueue == null && (thisIRCD.equals("hyperion") || thisIRCD.equals("dancer")) && token.length > 4 && mode == 'b') {
+            if ((!isCleverMode) && listModeQueue == null && (serverType == ServerType.DANCER || serverType == ServerType.HYPERION) && token.length > 4 && mode == 'b') {
                 // Assume mode is a 'd' mode
                 mode = 'd';
                 // Now work out if its not (or attempt to.)
@@ -153,7 +162,7 @@ public class ProcessListModes extends IRCProcessor {
                 int hoststart = token[tokenStart].indexOf('@');
                 // Check that ! and @ are both in the string - as required by +b and +q
                 if ((identstart >= 0) && (identstart < hoststart)) {
-                    if (thisIRCD.equals("hyperion") && token[tokenStart].charAt(0) == '%') { mode = 'q'; }
+                    if (serverType == ServerType.HYPERION && token[tokenStart].charAt(0) == '%') { mode = 'q'; }
                     else { mode = 'b'; }
                 }
             } // End Hyperian stupidness of using the same numeric for 3 different things..
@@ -165,7 +174,7 @@ public class ProcessListModes extends IRCProcessor {
                     myParser.callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got list mode: '"+mode+"' - but channel object doesn't agree.", myParser.getLastLine()));
                 } else {
                     list.clear();
-                    if ((thisIRCD.equals("hyperion") || thisIRCD.equals("dancer")) && (mode == 'b' || mode == 'q')) {
+                    if ((serverType == ServerType.DANCER || serverType == ServerType.HYPERION) && (mode == 'b' || mode == 'q')) {
                         // Also clear the other list if b or q.
                         final Character otherMode = (mode == 'b') ? 'q' : 'b';
                         
