@@ -148,7 +148,7 @@ public class IRCChannelInfo implements ChannelInfo {
         final boolean isOpped = me.getImportantModeValue() > voiceValue;
         
         int modecount = 1;
-        if (serverType != ServerType.UNREAL && myParser.h005Info.containsKey("MODES")) {
+        if (serverType != ServerType.UNREAL && serverType != ServerType.IRSEE && myParser.h005Info.containsKey("MODES")) {
             try {
                 modecount = Integer.parseInt(myParser.h005Info.get("MODES"));
             } catch (NumberFormatException e) { /* use default modecount */}
@@ -495,8 +495,8 @@ public class IRCChannelInfo implements ChannelInfo {
         
         // Hyperion sucks.
         if (cMode == 'b' || cMode == 'q') {
-            final String thisIRCD = myParser.getIRCD(true).toLowerCase();
-            if ((thisIRCD.equals("hyperion") || thisIRCD.equals("dancer"))) {
+            final ServerType serverType = myParser.getServerType();
+            if ((serverType == ServerType.DANCER || serverType == ServerType.HYPERION)) {
                 if (cMode == 'b' && givenItem.getItem().charAt(0) == '%') {
                     cMode = 'q';
                 } else if (cMode == 'q' && givenItem.getItem().charAt(0) != '%') {
