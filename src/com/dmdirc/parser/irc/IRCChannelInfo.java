@@ -140,20 +140,15 @@ public class IRCChannelInfo implements ChannelInfo {
         
         askedForListModes = true;
         
-        final String thisIRCD = myParser.getIRCD(true).toLowerCase();
-        final boolean isFreenode = (thisIRCD.equals("hyperion") || thisIRCD.equals("dancer"));
-        final boolean isUnreal = thisIRCD.equals("unreal");
-        final boolean isStarChat = thisIRCD.equals("starchat");
-        final boolean isHybrid = thisIRCD.equals("hybrid") || thisIRCD.equals("oftc-hybrid");
-        final boolean isCharybdis = thisIRCD.equals("charybdis");
-        
+        final ServerType serverType = myParser.getServerType();
+                
         // We are considered opped if we have a mode higher than voice (or if we have any modes if voice doesn't exist)
         long voiceValue = 0;
         if (myParser.prefixModes.get('v') != null) { voiceValue = myParser.prefixModes.get('v');}
         final boolean isOpped = me.getImportantModeValue() > voiceValue;
         
         int modecount = 1;
-        if (!isUnreal && myParser.h005Info.containsKey("MODES")) {
+        if (serverType != ServerType.UNREAL && myParser.h005Info.containsKey("MODES")) {
             try {
                 modecount = Integer.parseInt(myParser.h005Info.get("MODES"));
             } catch (NumberFormatException e) { /* use default modecount */}
@@ -170,10 +165,10 @@ public class IRCChannelInfo implements ChannelInfo {
         for (Character cTemp : myParser.chanModesOther.keySet()) {
             final int nTemp = myParser.chanModesOther.get(cTemp);
             if (nTemp == IRCParser.MODE_LIST) {
-                if ((isFreenode || isHybrid || isCharybdis) && (cTemp == 'e' || cTemp == 'I') && !isOpped) {
+                if (!isOpped && serverType.isOpOnly(cTemp)) {
                     // IRCD doesn't allow non-ops to ask for these modes.
                     continue;
-                } else if (isStarChat && cTemp == 'H') {
+                } else if (serverType == serverType.STARCHAT && cTemp == 'H') {
                     // IRCD Denies the mode exists
                     continue;
                 }
