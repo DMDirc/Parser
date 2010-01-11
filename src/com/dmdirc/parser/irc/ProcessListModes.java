@@ -82,11 +82,11 @@ public class ProcessListModes extends IRCProcessor {
                 mode = 'R';
             }
             isItem = sParam.equals("344");
-        } else if ((serverType == ServerType.SWIFTIRC || serverType == ServerType.AUSTHEX8) && (sParam.equals("386") || sParam.equals("387"))) {
+        } else if (ServerTypeGroup.OWNER_386.isMember(serverType) && (sParam.equals("386") || sParam.equals("387"))) {
             // Channel Owner list
             mode = 'q';
             isItem = sParam.equals("387");
-        } else if ((serverType == ServerType.SWIFTIRC || serverType == ServerType.AUSTHEX8) && (sParam.equals("388") || sParam.equals("389"))) {
+        } else if (ServerTypeGroup.PROTECTED_388.isMember(serverType) && (sParam.equals("388") || sParam.equals("389"))) {
             // Protected User list
             mode = 'a';
             isItem = sParam.equals("389");
@@ -118,7 +118,7 @@ public class ProcessListModes extends IRCProcessor {
                     //
                     // Only raise an LMQ error if the lmqmode isn't one of bdq if the
                     // guess is one of bdq
-                    if ((serverType == ServerType.DANCER || serverType == ServerType.HYPERION) && (mode == 'b' || mode == 'q' || mode == 'd')) {
+                    if (ServerTypeGroup.FREENODE.isMember(serverType) && (mode == 'b' || mode == 'q' || mode == 'd')) {
                         LinkedList<Character> lmq = (LinkedList<Character>)listModeQueue;
                         if (mode == 'b') {
                             error = !(oldMode == 'q' || oldMode == 'd');
@@ -131,7 +131,7 @@ public class ProcessListModes extends IRCProcessor {
                         } else if (mode == 'd') {
                             error = !(oldMode == 'b' || oldMode == 'q');
                         }
-                    } else if ((serverType == ServerType.IRCD_SEVEN || serverType == ServerType.CHARYBDIS) && (mode == 'b' || mode == 'q')) {
+                    } else if (ServerTypeGroup.CHARYBDIS.isMember(serverType) && (mode == 'b' || mode == 'q')) {
                         // Finally freenode appear to have an ircd which isn't completely annoying.
                         // Only error if the LMQ thinks the mode should be
                         // something thats not the other one of these 2 modes.
@@ -154,7 +154,7 @@ public class ProcessListModes extends IRCProcessor {
         }
         
         if (isItem) {
-            if ((!isCleverMode) && listModeQueue == null && (serverType == ServerType.DANCER || serverType == ServerType.HYPERION) && token.length > 4 && mode == 'b') {
+            if ((!isCleverMode) && listModeQueue == null && ServerTypeGroup.FREENODE.isMember(serverType) && token.length > 4 && mode == 'b') {
                 // Assume mode is a 'd' mode
                 mode = 'd';
                 // Now work out if its not (or attempt to.)
@@ -174,7 +174,7 @@ public class ProcessListModes extends IRCProcessor {
                     myParser.callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got list mode: '"+mode+"' - but channel object doesn't agree.", myParser.getLastLine()));
                 } else {
                     list.clear();
-                    if ((serverType == ServerType.DANCER || serverType == ServerType.HYPERION) && (mode == 'b' || mode == 'q')) {
+                    if (ServerTypeGroup.FREENODE.isMember(serverType) && (mode == 'b' || mode == 'q')) {
                         // Also clear the other list if b or q.
                         final Character otherMode = (mode == 'b') ? 'q' : 'b';
                         

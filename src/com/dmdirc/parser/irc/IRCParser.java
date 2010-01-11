@@ -1198,9 +1198,9 @@ public class IRCParser implements SecureParser, Runnable {
         String[] bits = null;
         String modeStr;
         if (h005Info.containsKey("USERCHANMODES")) {
-            if (getIRCD(true).equalsIgnoreCase("dancer")) {
+            if (getServerType() == ServerType.DANCER) {
                 sDefaultModes.insert(0, "dqeI");
-            } else if (getIRCD(true).equalsIgnoreCase("austirc")) {
+            } else if (getServerType() == ServerType.AUSTIRC) {
                 sDefaultModes.insert(0, "e");
             }
             modeStr = h005Info.get("USERCHANMODES");
@@ -1630,7 +1630,7 @@ public class IRCParser implements SecureParser, Runnable {
             try {
                 result = Integer.parseInt(h005Info.get("MAXBANS"));
             } catch (NumberFormatException nfe) { result = -1; }
-        } else if (result == -2 && getIRCD(true).equalsIgnoreCase("weircd")) {
+        } else if (result == -2 && getServerType() == ServerType.WEIRCD) {
             // -_-
             result = 50;
         } else if (result == -2) {
@@ -1779,26 +1779,29 @@ public class IRCParser implements SecureParser, Runnable {
      *
      * @param getType if this is false the string from 004 is returned. Else a guess of the type (ircu, hybrid, ircnet)
      * @return IRCD Version or Type
+     * @deprecated Use getServerSoftware() or getServerSoftwareType() instead.
      */
+    @Deprecated
     public String getIRCD(final boolean getType) {
         if (getType) {
-            return getServerType().getType();
+            return getServerSoftwareType();
         } else {
-            final String version = h005Info.get("004IRCD");
-            return (version == null) ? "" : version;
+            return getServerSoftware();
         }
     }
+
 
     /** {@inheritDoc} */
     @Override
     public String getServerSoftware() {
-        return getIRCD(false);
+        final String version = h005Info.get("004IRCD");
+        return (version == null) ? "" : version;
     }
 
     /** {@inheritDoc} */
     @Override
     public String getServerSoftwareType() {
-        return getIRCD(true);
+        return getServerType().getType();
     }
 
     /**
