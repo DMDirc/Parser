@@ -496,7 +496,7 @@ public class IRCChannelInfo implements ChannelInfo {
         // Hyperion sucks.
         if (cMode == 'b' || cMode == 'q') {
             final ServerType serverType = myParser.getServerType();
-            if ((serverType == ServerType.DANCER || serverType == ServerType.HYPERION)) {
+            if (ServerTypeGroup.FREENODE.isMember(serverType)) {
                 if (cMode == 'b' && givenItem.getItem().charAt(0) == '%') {
                     cMode = 'q';
                 } else if (cMode == 'q' && givenItem.getItem().charAt(0) != '%') {

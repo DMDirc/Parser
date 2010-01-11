@@ -143,8 +143,8 @@ public class Process004005 extends IRCProcessor {
      */
     protected boolean callGotNetwork() {
         final String networkName = myParser.networkName;
-        final String ircdVersion = myParser.getIRCD(false);
-        final String ircdType = myParser.getIRCD(true);
+        final String ircdVersion = myParser.getServerSoftware();
+        final String ircdType = myParser.getServerSoftwareType();
         
         return getCallbackManager().getCallbackType(NetworkDetectedListener.class).call(networkName, ircdVersion, ircdType);
     }
