@@ -581,8 +581,12 @@ public class IRCChannelInfo implements ChannelInfo {
         if (myParser.h005Info.containsKey("MODES")) {
             try {
                 modecount = Integer.parseInt(myParser.h005Info.get("MODES")); 
-            } catch (NumberFormatException e) { 
-                modecount = 1; 
+            } catch (NumberFormatException e) {
+                if (myParser.getServerType() == ServerType.OTHERNET) {
+                    modecount = 6;
+                } else {
+                    modecount = 1;
+                }
             }
         }
         if (!myParser.isUserSettable(mode)) { return; }

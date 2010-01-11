@@ -1633,10 +1633,12 @@ public class IRCParser implements SecureParser, Runnable {
         } else if (result == -2 && getServerType() == ServerType.WEIRCD) {
             // -_-
             result = 50;
+        } else if (result == -2 && getServerType() == ServerType.OTHERNET) {
+            result = 30;
         } else if (result == -2) {
             result = -1;
             callDebugInfo(DEBUG_INFO, "Failed");
-            callErrorInfo(new ParserError(ParserError.ERROR_ERROR, "Unable to discover max list modes.", getLastLine()));
+            callErrorInfo(new ParserError(ParserError.ERROR_ERROR + ParserError.ERROR_USER, "Unable to discover max list modes.", getLastLine()));
         }
         callDebugInfo(DEBUG_INFO, "Result: "+result);
         return result;
