@@ -25,10 +25,12 @@ package com.dmdirc.parser.irc;
 import com.dmdirc.harness.parser.TestParser;
 import com.dmdirc.harness.parser.TestIChannelPart;
 import com.dmdirc.parser.common.CallbackNotFoundException;
-
+import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.callbacks.ChannelPartListener;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class ProcessPartTest {
     
@@ -42,22 +44,20 @@ public class ProcessPartTest {
         parser.injectLine(":server 353 nick = #DMDirc_testing :@nick +luser");
         parser.injectLine(":server 366 nick #DMDirc_testing :End of /NAMES list.");
         
-        final TestIChannelPart test = new TestIChannelPart();
+        final ChannelPartListener test = mock(ChannelPartListener.class);
         parser.getCallbackManager().addCallback(ChannelPartListener.class, test);
         
         assertEquals(2, parser.getChannel("#DMDirc_testing").getChannelClients().size());
-        
+
+        final ChannelClientInfo cci = parser.getChannel("#DMDirc_testing")
+                .getChannelClient("luser");
+
         parser.injectLine(":luser!foo@barsville PART #DMDirc_testing :Bye bye, cruel world");
         
         assertEquals(1, parser.getChannel("#DMDirc_testing").getChannelClients().size());
-        
-        assertNotNull(test.channel);
-        assertNotNull(test.cclient);
-        assertNotNull(test.reason);
-        
-        assertEquals("#DMDirc_testing", test.channel.getName());
-        assertEquals("luser", test.cclient.getClient().getNickname());
-        assertEquals("Bye bye, cruel world", test.reason);
+
+        verify(test).onChannelPart(same(parser), same(parser.getChannel("#DMDirc_testing")),
+                same(cci), eq("Bye bye, cruel world"));
     }
     
     @Test
@@ -70,22 +70,20 @@ public class ProcessPartTest {
         parser.injectLine(":server 353 nick = #DMDirc_testing :@nick +luser");
         parser.injectLine(":server 366 nick #DMDirc_testing :End of /NAMES list.");
         
-        final TestIChannelPart test = new TestIChannelPart();
+        final ChannelPartListener test = mock(ChannelPartListener.class);
         parser.getCallbackManager().addCallback(ChannelPartListener.class, test);
         
         assertEquals(2, parser.getChannel("#DMDirc_testing").getChannelClients().size());
+
+        final ChannelClientInfo cci = parser.getChannel("#DMDirc_testing")
+                .getChannelClient("luser");
         
         parser.injectLine(":luser!foo@barsville PART #DMDirc_testing");
         
         assertEquals(1, parser.getChannel("#DMDirc_testing").getChannelClients().size());
-        
-        assertNotNull(test.channel);
-        assertNotNull(test.cclient);
-        assertNotNull(test.reason);
-        
-        assertEquals("#DMDirc_testing", test.channel.getName());
-        assertEquals("luser", test.cclient.getClient().getNickname());
-        assertEquals("", test.reason);
+
+        verify(test).onChannelPart(same(parser), same(parser.getChannel("#DMDirc_testing")),
+                same(cci), eq(""));
     }    
 
 }

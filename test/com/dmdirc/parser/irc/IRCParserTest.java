@@ -25,15 +25,8 @@ package com.dmdirc.parser.irc;
 import com.dmdirc.parser.common.MyInfo;
 import com.dmdirc.parser.common.ChannelListModeItem;
 import com.dmdirc.parser.common.ParserError;
-import com.dmdirc.harness.parser.TestIPrivateCTCP;
 import com.dmdirc.harness.parser.TestParser;
-import com.dmdirc.harness.parser.TestIConnectError;
-import com.dmdirc.harness.parser.TestINoticeAuth;
-import com.dmdirc.harness.parser.TestINumeric;
-import com.dmdirc.harness.parser.TestIServerError;
-import com.dmdirc.harness.parser.TestIPost005;
-import com.dmdirc.harness.parser.TestIPrivateMessage;
-import com.dmdirc.harness.parser.TestIPrivateAction;
+import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.callbacks.AuthNoticeListener;
 import com.dmdirc.parser.common.CallbackNotFoundException;
 import com.dmdirc.parser.interfaces.callbacks.CallbackInterface;
@@ -90,12 +83,12 @@ public class IRCParserTest {
         myParser.injectConnectionStrings();
         myParser.injectLine(":nick2!ident@host NICK :nick");
 
-        verify(error, never()).onErrorInfo((IRCParser) anyObject(), (ParserError) anyObject());
+        verify(error, never()).onErrorInfo(same(myParser), (ParserError) anyObject());
     }
     
     @Test
     public void testProxyPortWithBindIP() {
-        final TestIConnectError tice = new TestIConnectError();
+        final ConnectErrorListener tice = mock(ConnectErrorListener.class);
         final ServerInfo si = new ServerInfo();
         si.setProxyPort(155555);
         si.setUseSocks(true);
@@ -104,9 +97,8 @@ public class IRCParserTest {
         myParser.getCallbackManager().addCallback(ConnectErrorListener.class, tice);
         myParser.setBindIP("0.0.0.0");
         myParser.run();
-        
-        assertTrue("Using an invalid socks proxy port should raise a connect error event",
-                tice.error);
+
+        verify(tice).onConnectError(same(myParser), (ParserError) anyObject());
     }
 
     @Test
@@ -178,63 +170,63 @@ public class IRCParserTest {
 
     @Test
     public void testError() throws CallbackNotFoundException {
-        final TestIServerError test = new TestIServerError();
+        final ServerErrorListener test = mock(ServerErrorListener.class);
 
         final TestParser parser = new TestParser();
         parser.getCallbackManager().addCallback(ServerErrorListener.class, test);
         parser.injectLine("ERROR :You smell of cheese");
 
-        assertNotNull(test.message);
-        assertEquals("ERROR message should be passed to callback",
-                "You smell of cheese", test.message);
+        verify(test).onServerError(same(parser), eq("You smell of cheese"));
     }
 
     @Test
-    public void testAuthNotices() throws CallbackNotFoundException {
-        final TestINoticeAuth test = new TestINoticeAuth();
+    public void testAuthNotice() throws CallbackNotFoundException {
+        final AuthNoticeListener test = mock(AuthNoticeListener.class);
         final TestParser parser = new TestParser();
         parser.getCallbackManager().addCallback(AuthNoticeListener.class, test);
         parser.sendConnectionStrings();
+
         parser.injectLine("NOTICE AUTH :Random auth notice?");
+        verify(test).onNoticeAuth(same(parser), eq("Random auth notice?"));
+    }
 
-        assertNotNull(test.message);
-        assertEquals("Random auth notice?", test.message);
-
-        test.message = null;
+    @Test
+    public void testAuthNoticeTwenty() throws CallbackNotFoundException {
+        final AuthNoticeListener test = mock(AuthNoticeListener.class);
+        final TestParser parser = new TestParser();
+        parser.getCallbackManager().addCallback(AuthNoticeListener.class, test);
+        parser.sendConnectionStrings();
 
         parser.injectLine(":us.ircnet.org 020 * :Stupid notice");
-
-        assertNotNull(test.message);
-        assertEquals("Stupid notice", test.message);
+        verify(test).onNoticeAuth(same(parser), eq("Stupid notice"));
     }
 
     @Test
     public void testPre001NickChange() throws CallbackNotFoundException {
-        final TestINoticeAuth test = new TestINoticeAuth();
+        final AuthNoticeListener test = mock(AuthNoticeListener.class);
         final TestParser parser = new TestParser();
         parser.getCallbackManager().addCallback(AuthNoticeListener.class, test);
         parser.sendConnectionStrings();
         parser.injectLine(":chris!@ NICK :user2");
 
-        assertNull(test.message);
+        verify(test, never()).onNoticeAuth((Parser) anyObject(),anyString());
     }
 
     @Test
     public void testNumeric() throws CallbackNotFoundException {
-        final TestINumeric test = new TestINumeric();
+        final NumericListener test = mock(NumericListener.class);
         final TestParser parser = new TestParser();
         parser.getCallbackManager().addCallback(NumericListener.class, test);
 
         parser.injectLine(":server 001 nick :Hi there, nick");
 
-        assertEquals(1, test.numeric);
-        assertTrue(Arrays.equals(new String[]{":server", "001", "nick", "Hi there, nick"},
-                test.data));
+        verify(test).onNumeric(same(parser), eq(1),
+                eq(new String[]{":server", "001", "nick", "Hi there, nick"}));
     }
 
     @Test
     public void testPost005() throws CallbackNotFoundException {
-        final TestIPost005 test = new TestIPost005();
+        final Post005Listener test = mock(Post005Listener.class);
         final TestParser parser = new TestParser();
         parser.getCallbackManager().addCallback(Post005Listener.class, test);
 
@@ -253,11 +245,11 @@ public class IRCParserTest {
         };
 
         for (String string : strings) {
-            assertFalse("OnPost005 fired too early", test.done);
+            verify(test, never()).onPost005((Parser) anyObject());
             parser.injectLine(string);
         }
 
-        assertTrue("OnPost005 not fired", test.done);
+        verify(test).onPost005(same(parser));
     }
 
     @Test
@@ -359,11 +351,11 @@ public class IRCParserTest {
     }
 
     @Test
-    public void testPrivateMessages() throws CallbackNotFoundException {
+    public void testPrivateMessage() throws CallbackNotFoundException {
         final TestParser parser = new TestParser();
-        final TestIPrivateMessage ipmtest = new TestIPrivateMessage();
-        final TestIPrivateAction ipatest = new TestIPrivateAction();
-        final TestIPrivateCTCP ipctest = new TestIPrivateCTCP();
+        final PrivateMessageListener ipmtest = mock(PrivateMessageListener.class);
+        final PrivateActionListener ipatest = mock(PrivateActionListener.class);
+        final PrivateCtcpListener ipctest = mock(PrivateCtcpListener.class);
 
         parser.injectConnectionStrings();
 
@@ -372,30 +364,47 @@ public class IRCParserTest {
         parser.getCallbackManager().addCallback(PrivateCtcpListener.class, ipctest);
 
         parser.injectLine(":a!b@c PRIVMSG nick :Hello!");
-        assertNotNull(ipmtest.host);
-        assertNull(ipatest.host);
-        assertNull(ipctest.host);
-        assertEquals("a!b@c", ipmtest.host);
-        assertEquals("Hello!", ipmtest.message);
-        ipmtest.host = null;
-        ipmtest.message = null;
+        verify(ipmtest).onPrivateMessage(same(parser), eq("Hello!"), eq("a!b@c"));
+        verify(ipatest, never()).onPrivateAction((Parser) anyObject(), anyString(), anyString());
+        verify(ipctest, never()).onPrivateCTCP((Parser) anyObject(), anyString(), anyString(), anyString());
+    }
+
+    @Test
+    public void testPrivateAction() throws CallbackNotFoundException {
+        final TestParser parser = new TestParser();
+        final PrivateMessageListener ipmtest = mock(PrivateMessageListener.class);
+        final PrivateActionListener ipatest = mock(PrivateActionListener.class);
+        final PrivateCtcpListener ipctest = mock(PrivateCtcpListener.class);
+
+        parser.injectConnectionStrings();
+
+        parser.getCallbackManager().addCallback(PrivateMessageListener.class, ipmtest);
+        parser.getCallbackManager().addCallback(PrivateActionListener.class, ipatest);
+        parser.getCallbackManager().addCallback(PrivateCtcpListener.class, ipctest);
 
         parser.injectLine(":a!b@c PRIVMSG nick :" + ((char) 1) + "ACTION meep" + ((char) 1));
-        assertNull(ipmtest.host);
-        assertNotNull(ipatest.host);
-        assertNull(ipctest.host);
-        assertEquals("a!b@c", ipatest.host);
-        assertEquals("meep", ipatest.message);
-        ipatest.host = null;
-        ipatest.message = null;
+        verify(ipmtest, never()).onPrivateMessage((Parser) anyObject(), anyString(), anyString());
+        verify(ipatest).onPrivateAction(same(parser), eq("meep"), eq("a!b@c"));
+        verify(ipctest, never()).onPrivateCTCP((Parser) anyObject(), anyString(), anyString(), anyString());
+    }
+
+    @Test
+    public void testPrivateCTCP() throws CallbackNotFoundException {
+        final TestParser parser = new TestParser();
+        final PrivateMessageListener ipmtest = mock(PrivateMessageListener.class);
+        final PrivateActionListener ipatest = mock(PrivateActionListener.class);
+        final PrivateCtcpListener ipctest = mock(PrivateCtcpListener.class);
+
+        parser.injectConnectionStrings();
+
+        parser.getCallbackManager().addCallback(PrivateMessageListener.class, ipmtest);
+        parser.getCallbackManager().addCallback(PrivateActionListener.class, ipatest);
+        parser.getCallbackManager().addCallback(PrivateCtcpListener.class, ipctest);
 
         parser.injectLine(":a!b@c PRIVMSG nick :" + ((char) 1) + "FOO meep" + ((char) 1));
-        assertNull(ipmtest.host);
-        assertNull(ipatest.host);
-        assertNotNull(ipctest.host);
-        assertEquals("a!b@c", ipctest.host);
-        assertEquals("FOO", ipctest.type);
-        assertEquals("meep", ipctest.message);
+        verify(ipmtest, never()).onPrivateMessage((Parser) anyObject(), anyString(), anyString());
+        verify(ipatest, never()).onPrivateAction((Parser) anyObject(), anyString(), anyString());
+        verify(ipctest).onPrivateCTCP(same(parser), eq("FOO"), eq("meep"), eq("a!b@c"));
     }
 
     private void testListModes(String numeric1, String numeric2, char mode) {
@@ -493,28 +502,28 @@ public class IRCParserTest {
     @Test
     public void testIllegalPort1() throws URISyntaxException {
         final TestParser tp = new TestParser(new MyInfo(), new URI("irc://127.0.0.1:0/"));
-        final TestIConnectError tiei = new TestIConnectError();
+        final ConnectErrorListener tiei = mock(ConnectErrorListener.class);
         tp.getCallbackManager().addCallback(ConnectErrorListener.class, tiei);
         tp.runSuper();
-        assertTrue(tiei.error);
+        verify(tiei).onConnectError(same(tp), (ParserError) anyObject());
     }
     
     @Test
     public void testIllegalPort2() throws URISyntaxException {
         final TestParser tp = new TestParser(new MyInfo(), new URI("irc://127.0.0.1:1/"));
-        final TestIConnectError tiei = new TestIConnectError();
+        final ConnectErrorListener tiei = mock(ConnectErrorListener.class);
         tp.getCallbackManager().addCallback(ConnectErrorListener.class, tiei);
         tp.runSuper();
-        assertTrue(tiei.error);
+        verify(tiei).onConnectError(same(tp), (ParserError) anyObject());
     }    
     
     @Test
     public void testIllegalPort3() throws URISyntaxException {
         final TestParser tp = new TestParser(new MyInfo(), new URI("irc://127.0.0.1:65570/"));
-        final TestIConnectError tiei = new TestIConnectError();
+        final ConnectErrorListener tiei = mock(ConnectErrorListener.class);
         tp.getCallbackManager().addCallback(ConnectErrorListener.class, tiei);
         tp.runSuper();
-        assertTrue(tiei.error);
+        verify(tiei).onConnectError(same(tp), (ParserError) anyObject());
     }
 
     private void doIRCdTest(final String ircd, final String expected) {

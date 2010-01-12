@@ -23,20 +23,22 @@
 package com.dmdirc.parser.irc;
 
 import com.dmdirc.harness.parser.TestParser;
-import com.dmdirc.harness.parser.TestIErrorInfo;
-import com.dmdirc.harness.parser.TestINickChanged;
+import com.dmdirc.parser.common.ParserError;
+import com.dmdirc.parser.interfaces.ClientInfo;
+import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.callbacks.ErrorInfoListener;
 import com.dmdirc.parser.interfaces.callbacks.NickChangeListener;
 import com.dmdirc.parser.common.CallbackNotFoundException;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class ProcessNickTest {
     
     @Test
     public void testNickSameName() {
         final TestParser parser = new TestParser();
-        final TestINickChanged tinc = new TestINickChanged();
+        final NickChangeListener tinc = mock(NickChangeListener.class);
 
         parser.getCallbackManager().addCallback(NickChangeListener.class, tinc);
         
@@ -53,9 +55,8 @@ public class ProcessNickTest {
         IRCChannelClientInfo cci = parser.getClient("LUSER").getChannelClients().get(0);
         assertEquals(parser.getChannel("#DMDirc_testing"), cci.getChannel());
         assertEquals("+", cci.getChanModeStr(true));
-        
-        assertSame(cci.getClient(), tinc.client);
-        assertEquals("luser", tinc.oldNick);
+
+        verify(tinc).onNickChanged(same(parser), same(parser.getClient("LUSER")), eq("luser"));
     }
     
     @Test
@@ -80,7 +81,7 @@ public class ProcessNickTest {
     @Test
     public void testOverrideNick() throws CallbackNotFoundException {
         final TestParser parser = new TestParser();
-        final TestIErrorInfo info = new TestIErrorInfo();
+        final ErrorInfoListener info = mock(ErrorInfoListener.class);
         
         parser.getCallbackManager().addCallback(ErrorInfoListener.class, info);
         parser.injectConnectionStrings();
@@ -89,22 +90,21 @@ public class ProcessNickTest {
         parser.injectLine(":server 366 nick #DMDirc_testing :End of /NAMES list");
         parser.injectLine(":luser!lu@ser.com NICK nick3");
 
-        assertTrue("Parser should raise an error if a nick change overrides an "
-                + "existing client", info.error);
+        verify(info).onErrorInfo(same(parser),(ParserError) anyObject());
     }
     
     @Test
     public void testUnknownNick() {
         final TestParser parser = new TestParser();
-        final TestINickChanged tinc = new TestINickChanged();
+        final NickChangeListener tinc = mock(NickChangeListener.class);
         
         parser.getCallbackManager().addCallback(NickChangeListener.class, tinc);
         
         parser.injectConnectionStrings();
         parser.injectLine(":random!lu@ser NICK rand");
-        
-        assertNull(tinc.client);
-        assertNull(tinc.oldNick);
+
+        verify(tinc, never()).onNickChanged((Parser) anyObject(), (ClientInfo) anyObject(),
+                anyString());
     }
 
 }
