@@ -38,7 +38,8 @@ public interface ChannelListModeListener extends CallbackInterface {
 	 *
 	 * @param tParser Reference to the parser object that made the callback.
 	 * @param cChannel Channel which the ListModes reply is for
+         * @param mode the Mode the ListMOdes reply is for.
 	 * @see com.dmdirc.parser.irc.ProcessListModes#callChannelGotListModes
 	 */
-	void onChannelGotListModes(Parser tParser, ChannelInfo cChannel);
+	void onChannelGotListModes(Parser tParser, ChannelInfo cChannel, Character mode);
 }
