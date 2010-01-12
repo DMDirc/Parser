@@ -23,24 +23,26 @@
 package com.dmdirc.parser.irc;
 
 import com.dmdirc.harness.parser.TestParser;
-import com.dmdirc.harness.parser.TestIErrorInfo;
 import com.dmdirc.parser.common.CallbackNotFoundException;
+import com.dmdirc.parser.common.ParserError;
+import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.callbacks.ErrorInfoListener;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class ProcessNamesTest {
     
     @Test
     public void testExternalNames() throws CallbackNotFoundException {
         final TestParser parser = new TestParser();
-        final TestIErrorInfo test = new TestIErrorInfo();
+        final ErrorInfoListener test = mock(ErrorInfoListener.class);
         parser.injectConnectionStrings();
         parser.getCallbackManager().addCallback(ErrorInfoListener.class, test);
         
         parser.injectLine(":server 366 nick #nonexistant :End of /NAMES list.");
         
-        assertFalse("Should not error on unknown NAMES replies", test.error);
+        verify(test, never()).onErrorInfo((Parser) anyObject(), (ParserError) anyObject());
     }
     
     @Test

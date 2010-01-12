@@ -22,14 +22,12 @@
 
 package com.dmdirc.parser.irc;
 
-import com.dmdirc.harness.parser.TestIChannelSelfJoin;
 import com.dmdirc.harness.parser.TestParser;
 import com.dmdirc.parser.common.CallbackNotFoundException;
 import com.dmdirc.parser.interfaces.callbacks.ChannelJoinListener;
-
 import com.dmdirc.parser.interfaces.callbacks.ChannelSelfJoinListener;
+
 import org.junit.Test;
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class ProcessJoinTest {
@@ -37,19 +35,13 @@ public class ProcessJoinTest {
     @Test
     public void testSelfJoinChannel() throws CallbackNotFoundException {
         final TestParser parser = new TestParser();
-        final TestIChannelSelfJoin test = new TestIChannelSelfJoin();
+        final ChannelSelfJoinListener test = mock(ChannelSelfJoinListener.class);
 
         parser.injectConnectionStrings();
         parser.getCallbackManager().addCallback(ChannelSelfJoinListener.class, test);
         parser.injectLine(":nick JOIN #DMDirc_testing");
 
-        assertNotNull(test.channel);
-        assertEquals("#DMDirc_testing", test.channel.getName());
-        assertEquals("#DMDirc_testing", test.channel.toString());
-        assertSame(parser, test.channel.getParser());
-        assertEquals(1, parser.getChannels().size());
-        assertTrue(parser.getChannels().contains(test.channel));
-        assertEquals(test.channel, parser.getChannel("#DMDirc_testing"));
+        verify(test).onChannelSelfJoin(same(parser), same(parser.getChannel("#DMDirc_testing")));
     }
     
     @Test

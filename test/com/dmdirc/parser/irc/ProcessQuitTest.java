@@ -23,13 +23,15 @@
 package com.dmdirc.parser.irc;
 
 import com.dmdirc.harness.parser.TestParser;
-import com.dmdirc.harness.parser.TestIQuit;
 import com.dmdirc.parser.interfaces.callbacks.ChannelQuitListener;
 import com.dmdirc.parser.interfaces.callbacks.QuitListener;
+import com.dmdirc.parser.interfaces.ChannelClientInfo;
+import com.dmdirc.parser.interfaces.ClientInfo;
 import com.dmdirc.parser.common.CallbackNotFoundException;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class ProcessQuitTest {
     
@@ -46,24 +48,22 @@ public class ProcessQuitTest {
         parser.injectLine(":server 353 nick = #DMDirc_testing2 :@nick +luser2");
         parser.injectLine(":server 366 nick #DMDirc_testing2 :End of /NAMES list.");        
         
-        final TestIQuit test = new TestIQuit();
+        final ChannelQuitListener test = mock(ChannelQuitListener.class);
         parser.getCallbackManager().addCallback(ChannelQuitListener.class, test);
         
         assertEquals(2, parser.getChannel("#DMDirc_testing").getChannelClients().size());
+
+        final ChannelClientInfo cci = parser.getChannel("#DMDirc_testing")
+                .getChannelClient("luser");
         
         parser.injectLine(":luser!foo@barsville QUIT :Bye bye, cruel world");
         
         assertEquals(1, parser.getChannel("#DMDirc_testing").getChannelClients().size());
         assertEquals(2, parser.getChannel("#DMDirc_testing2").getChannelClients().size());
-        
-        assertNotNull(test.channel);
-        assertNotNull(test.cclient);
-        assertNotNull(test.reason);
-        
-        assertEquals(1, test.count);
-        assertEquals("#DMDirc_testing", test.channel.getName());
-        assertEquals("luser", test.cclient.getClient().getNickname());
-        assertEquals("Bye bye, cruel world", test.reason);
+
+        verify(test).onChannelQuit(same(parser),
+                same(parser.getChannel("#DMDirc_testing")), same(cci),
+                eq("Bye bye, cruel world"));
     }
     
     @Test
@@ -79,22 +79,19 @@ public class ProcessQuitTest {
         parser.injectLine(":server 353 nick = #DMDirc_testing2 :@nick +luser2");
         parser.injectLine(":server 366 nick #DMDirc_testing2 :End of /NAMES list.");
         
-        final TestIQuit test = new TestIQuit();
+        final QuitListener test = mock(QuitListener.class);
         parser.getCallbackManager().addCallback(QuitListener.class, test);
         
         assertEquals(2, parser.getChannel("#DMDirc_testing").getChannelClients().size());
+
+        final ClientInfo client = parser.getClient("luser");
         
         parser.injectLine(":luser!foo@barsville QUIT :Bye bye, cruel world");
         
         assertEquals(1, parser.getChannel("#DMDirc_testing").getChannelClients().size());
         assertEquals(2, parser.getChannel("#DMDirc_testing2").getChannelClients().size());
-        
-        assertNotNull(test.client);
-        assertNotNull(test.reason);
-        
-        assertEquals(1, test.count);
-        assertEquals("luser", test.client.getNickname());
-        assertEquals("Bye bye, cruel world", test.reason);
+
+        verify(test).onQuit(same(parser), same(client), eq("Bye bye, cruel world"));
     }
     
     @Test
@@ -107,21 +104,18 @@ public class ProcessQuitTest {
         parser.injectLine(":server 353 nick = #DMDirc_testing :@nick +luser");
         parser.injectLine(":server 366 nick #DMDirc_testing :End of /NAMES list.");
         
-        final TestIQuit test = new TestIQuit();
+        final QuitListener test = mock(QuitListener.class);
         parser.getCallbackManager().addCallback(QuitListener.class, test);
         
         assertEquals(2, parser.getChannel("#DMDirc_testing").getChannelClients().size());
+
+        final ClientInfo client = parser.getClient("luser");
         
         parser.injectLine(":luser!foo@barsville QUIT");
         
         assertEquals(1, parser.getChannel("#DMDirc_testing").getChannelClients().size());
         
-        assertNotNull(test.client);
-        assertNotNull(test.reason);
-        
-        assertEquals(1, test.count);
-        assertEquals("luser", test.client.getNickname());
-        assertEquals("", test.reason);
+        verify(test).onQuit(same(parser), same(client), eq(""));
     }    
 
 }

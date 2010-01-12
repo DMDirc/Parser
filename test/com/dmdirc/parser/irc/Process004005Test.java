@@ -22,11 +22,12 @@
 
 package com.dmdirc.parser.irc;
 
-import com.dmdirc.harness.parser.TestIErrorInfo;
+import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.harness.parser.TestParser;
 import com.dmdirc.parser.interfaces.callbacks.ErrorInfoListener;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class Process004005Test {
     
@@ -62,13 +63,13 @@ public class Process004005Test {
     @Test
     public void testCaseMappingUnknown() {
         final TestParser tp = doCaseMappingTest("rfc1459", 4);
-        final TestIErrorInfo tiei = new TestIErrorInfo();
+        final ErrorInfoListener info = mock(ErrorInfoListener.class);
         
-        tp.getCallbackManager().addCallback(ErrorInfoListener.class, tiei);
+        tp.getCallbackManager().addCallback(ErrorInfoListener.class, info);
         
         tp.injectLine(":server 005 nick CASEMAPPING=unknown :are supported by this server");
         
-        assertTrue(tiei.error);
+        verify(info).onErrorInfo(same(tp), (ParserError) anyObject());
     }
 
 }

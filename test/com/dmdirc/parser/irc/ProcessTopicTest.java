@@ -23,37 +23,38 @@
 package com.dmdirc.parser.irc;
 
 import com.dmdirc.harness.parser.TestParser;
-import com.dmdirc.harness.parser.TestIChannelTopic;
 import com.dmdirc.parser.common.CallbackNotFoundException;
 import com.dmdirc.parser.interfaces.callbacks.ChannelTopicListener;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class ProcessTopicTest {
     
     @Test
     public void testBasicTopic() throws CallbackNotFoundException {
         final TestParser parser = new TestParser();
-        final TestIChannelTopic test = new TestIChannelTopic();
+        final ChannelTopicListener test = mock(ChannelTopicListener.class);
         parser.injectConnectionStrings();
         parser.getCallbackManager().addCallback(ChannelTopicListener.class, test);
         
         parser.injectLine(":nick JOIN #DMDirc_testing");
         parser.injectLine(":server 332 nick #DMDirc_testing :This be a topic");
         parser.injectLine(":server 333 nick #DMDirc_testing Q 1207350306");
-        
-        assertTrue(test.triggered);
-        assertTrue(test.isJoin);
-        assertEquals("#DMDirc_testing", test.channel.getName());
-        assertEquals("This be a topic", test.channel.getTopic());
-        assertEquals("Q", test.channel.getTopicSetter());
-        assertEquals(1207350306l, test.channel.getTopicTime());
+
+        verify(test).onChannelTopic(same(parser), same(parser.getChannel("#DMDirc_testing")),
+                eq(true));
+
+        assertEquals("#DMDirc_testing", parser.getChannel("#DMDirc_testing").getName());
+        assertEquals("This be a topic", parser.getChannel("#DMDirc_testing").getTopic());
+        assertEquals("Q", parser.getChannel("#DMDirc_testing").getTopicSetter());
+        assertEquals(1207350306l, parser.getChannel("#DMDirc_testing").getTopicTime());
     }
     
     @Test
     public void testTopicChange() throws CallbackNotFoundException {
         final TestParser parser = new TestParser();
-        final TestIChannelTopic test = new TestIChannelTopic();
+        final ChannelTopicListener test = mock(ChannelTopicListener.class);
         parser.injectConnectionStrings();
         
         parser.injectLine(":nick JOIN #DMDirc_testing");
@@ -63,13 +64,14 @@ public class ProcessTopicTest {
         parser.getCallbackManager().addCallback(ChannelTopicListener.class, test);
         
         parser.injectLine(":foobar TOPIC #DMDirc_testing :New topic here");
+
+        verify(test).onChannelTopic(same(parser), same(parser.getChannel("#DMDirc_testing")),
+                eq(false));
         
-        assertTrue(test.triggered);
-        assertFalse(test.isJoin);
-        assertEquals("#DMDirc_testing", test.channel.getName());
-        assertEquals("New topic here", test.channel.getTopic());
-        assertEquals("foobar", test.channel.getTopicSetter());
-        assertTrue(1207350306l < test.channel.getTopicTime());
+        assertEquals("#DMDirc_testing", parser.getChannel("#DMDirc_testing").getName());
+        assertEquals("New topic here", parser.getChannel("#DMDirc_testing").getTopic());
+        assertEquals("foobar", parser.getChannel("#DMDirc_testing").getTopicSetter());
+        assertTrue(1207350306l < parser.getChannel("#DMDirc_testing").getTopicTime());
     }    
 
 }
