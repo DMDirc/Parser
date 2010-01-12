@@ -140,6 +140,13 @@ public interface ChannelInfo {
     void flushModes();
 
     /**
+     * Ask the server for all the list modes for this channel.
+     *
+     * @since 0.6.3
+     */
+    void requestListModes();
+
+    /**
      * Retrieves a channel client information object corresponding to the
      * specified client.
      *
