@@ -23,7 +23,6 @@
 package com.dmdirc.parser.irc;
 
 import com.dmdirc.harness.parser.TestParser;
-import com.dmdirc.harness.parser.TestIChannelPart;
 import com.dmdirc.parser.common.CallbackNotFoundException;
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.callbacks.ChannelPartListener;
