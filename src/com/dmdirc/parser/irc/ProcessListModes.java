@@ -208,7 +208,16 @@ public class ProcessListModes extends IRCProcessor {
             if (isCleverMode || listModeQueue == null || ((LinkedList<Character>)listModeQueue).size() == 0) {
                 callDebugInfo(IRCParser.DEBUG_INFO, "Calling GotListModes");
                 channel.setHasGotListModes(true);
-                callChannelGotListModes(channel);
+
+                if (isCleverMode) {
+                    for (Character thisMode : myParser.chanModesOther.keySet()) {
+                        if (myParser.chanModesOther.get(thisMode) == IRCParser.MODE_LIST) {
+                            callChannelGotListModes(channel, thisMode);
+                        }
+                    }
+                } else {
+                    callChannelGotListModes(channel, mode);
+                }
             }
         }
     }
@@ -237,10 +246,11 @@ public class ProcessListModes extends IRCProcessor {
      *
      * @see IChannelGotListModes
      * @param cChannel Channel which the ListModes reply is for
+     * @param mode the mode that we got list modes for.
      * @return true if a method was called, false otherwise
      */
-    protected boolean callChannelGotListModes(ChannelInfo cChannel) {
-        return getCallbackManager().getCallbackType(ChannelListModeListener.class).call(cChannel);
+    protected boolean callChannelGotListModes(ChannelInfo cChannel, final char mode) {
+        return getCallbackManager().getCallbackType(ChannelListModeListener.class).call(cChannel, mode);
     }
     
     /**
