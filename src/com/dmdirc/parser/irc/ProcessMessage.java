@@ -37,6 +37,7 @@ import com.dmdirc.parser.interfaces.callbacks.PrivateCtcpListener;
 import com.dmdirc.parser.interfaces.callbacks.PrivateCtcpReplyListener;
 import com.dmdirc.parser.interfaces.callbacks.PrivateMessageListener;
 import com.dmdirc.parser.interfaces.callbacks.PrivateNoticeListener;
+import com.dmdirc.parser.interfaces.callbacks.ServerNoticeListener;
 import com.dmdirc.parser.interfaces.callbacks.UnknownActionListener;
 import com.dmdirc.parser.interfaces.callbacks.UnknownCtcpListener;
 import com.dmdirc.parser.interfaces.callbacks.UnknownCtcpReplyListener;
@@ -207,7 +208,11 @@ public class ProcessMessage extends IRCProcessor {
                 if (isCTCP) {
                     callPrivateCTCPReply(sCTCP, sMessage, token[0]);
                 } else {
-                    callPrivateNotice(sMessage, token[0]);
+                    if (token[0].indexOf("@") == -1) {
+                        callServerNotice(sMessage, token[0]);
+                    } else {
+                        callPrivateNotice(sMessage, token[0]);
+                    }
                 }
             }
         } else {
@@ -394,6 +399,18 @@ public class ProcessMessage extends IRCProcessor {
      */
     protected boolean callPrivateNotice(final String sMessage, final String sHost) {
         return getCallbackManager().getCallbackType(PrivateNoticeListener.class).call(sMessage, sHost);
+    }
+
+    /**
+     * Callback to all objects implementing the ServerNotice Callback.
+     *
+     * @see com.dmdirc.parser.irc.callbacks.interfaces.ServerNotice
+     * @param sMessage Notice contents
+     * @param sHost Hostname of sender (or servername)
+     * @return true if a method was called, false otherwise
+     */
+    protected boolean callServerNotice(final String sMessage, final String sHost) {
+        return getCallbackManager().getCallbackType(ServerNoticeListener.class).call(sMessage, sHost);
     }
     
     /**
