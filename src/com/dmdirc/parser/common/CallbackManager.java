@@ -67,6 +67,7 @@ public abstract class CallbackManager<T extends Parser> {
         UnknownMessageListener.class, UnknownNoticeListener.class,
         UserModeChangeListener.class, UserModeDiscoveryListener.class,
         WallDesyncListener.class, WallopListener.class, WalluserListener.class,
+        ServerNoticeListener.class, UnknownServerNoticeListener.class,
     };
     
     /** Hashtable used to store the different types of callback known. */
