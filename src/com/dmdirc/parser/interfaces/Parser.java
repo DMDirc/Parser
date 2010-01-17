@@ -290,6 +290,14 @@ public interface Parser extends Runnable {
      * @return A string containing a list of channel user mode characters
      */
     String getChannelUserModes();
+
+    /**
+     * Retrieves a list of channel prefixes.
+     *
+     * @return A list of known channel prefixes
+     * @since 0.6.3
+     */
+    String getChannelPrefixes();
     
     /**
      * Retrieves the object which is responsible for managing callbacks for
