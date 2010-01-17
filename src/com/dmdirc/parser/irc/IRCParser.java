@@ -39,8 +39,8 @@ import com.dmdirc.parser.interfaces.callbacks.Post005Listener;
 import com.dmdirc.parser.interfaces.callbacks.ServerErrorListener;
 import com.dmdirc.parser.interfaces.callbacks.SocketCloseListener;
 import com.dmdirc.parser.common.CallbackManager;
-
 import com.dmdirc.parser.common.QueuePriority;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -205,11 +205,8 @@ public class IRCParser implements SecureParser, Runnable {
     /** Should the lastline (where given) be appended to the "data" part of any onErrorInfo call? */
     boolean addLastLine = false;
 
-    /**
-    * Channel Prefixes (ie # + etc).
-    * The "value" for these is always true.
-    */
-    final Map<Character, Boolean> chanPrefix = new Hashtable<Character, Boolean>();
+    /** Channel Prefixes (ie # + etc). */
+    private final List<Character> chanPrefix = new LinkedList<Character>();
     /** Hashtable storing all known clients based on nickname (in lowercase). */
     private final Map<String, IRCClientInfo> clientList = new Hashtable<String, IRCClientInfo>();
     /** Hashtable storing all known channels based on chanel name (inc prefix - in lowercase). */
@@ -1385,7 +1382,7 @@ public class IRCParser implements SecureParser, Runnable {
         for (int i = 0; i < modeStr.length(); ++i) {
             final Character cMode = modeStr.charAt(i);
             callDebugInfo(DEBUG_INFO, "Found Chan Prefix: %c", cMode);
-            if (!chanPrefix.containsKey(cMode)) { chanPrefix.put(cMode, true); }
+            if (!chanPrefix.contains(cMode)) { chanPrefix.add(cMode); }
         }
     }
 
@@ -1745,7 +1742,7 @@ public class IRCParser implements SecureParser, Runnable {
         // Otherwise return true if:
         // Channel equals "0"
         // first character of the channel name is a valid channel prefix.
-        return chanPrefix.containsKey(name.charAt(0)) || name.equals("0");
+        return chanPrefix.contains(name.charAt(0)) || name.equals("0");
     }
 
     /** {@inheritDoc} */
