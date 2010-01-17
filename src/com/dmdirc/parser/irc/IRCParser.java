@@ -1264,7 +1264,7 @@ public class IRCParser implements SecureParser, Runnable {
     }
 
     /** {@inheritDoc} */
-        @Override
+    @Override
     public String getChannelUserModes() {
         if (h005Info.containsKey("PREFIXSTRING")) {
             return h005Info.get("PREFIXSTRING");
@@ -1274,7 +1274,7 @@ public class IRCParser implements SecureParser, Runnable {
     }
 
     /** {@inheritDoc} */
-        @Override
+    @Override
     public String getBooleanChannelModes() {
         final char[] modes = new char[chanModesBool.size()];
         int i = 0;
@@ -1287,21 +1287,37 @@ public class IRCParser implements SecureParser, Runnable {
     }
 
     /** {@inheritDoc} */
-        @Override
+    @Override
     public String getListChannelModes() {
         return getOtherModeString(MODE_LIST);
     }
 
     /** {@inheritDoc} */
-        @Override
+    @Override
     public String getParameterChannelModes() {
         return getOtherModeString(MODE_SET);
     }
 
     /** {@inheritDoc} */
-        @Override
+    @Override
     public String getDoubleParameterChannelModes() {
         return getOtherModeString((byte) (MODE_SET + MODE_UNSET));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getChannelPrefixes() {
+        if (chanPrefix.isEmpty()) {
+            return "#&";
+        }
+        
+        final StringBuilder builder = new StringBuilder(chanPrefix.size());
+
+        for (Character prefix : chanPrefix) {
+            builder.append(prefix);
+        }
+
+        return builder.toString();
     }
 
     /**
