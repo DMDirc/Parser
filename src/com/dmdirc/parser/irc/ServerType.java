@@ -58,7 +58,7 @@ public enum ServerType {
     /** Plexus. */
     PLEXUS("plexus", ".*plexus.*", "eI"),
     /** OFTCs hybrid fork. */
-    OFTC_HYBRID("oftc-hybrid", ".*hybrid.*oftc.*"),
+    OFTC_HYBRID("oftc-hybrid", ".*hybrid.*oftc.*", "eI"),
     /** hybrid7. */
     HYBRID7("hybrid7", ".*ircd.hybrid.*", "eI"),
     /** Older versions of Hybrid. */
