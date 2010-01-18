@@ -1494,6 +1494,7 @@ public class IRCParser implements SecureParser, Runnable {
      *                   otherwise invalid channels.
      */
     public void joinChannel(final String channel, final String key, final boolean autoPrefix) {
+        System.out.println("Joining: "+channel+" (key: "+key+")");
         final String[] bits = channel.split(",");
 
         // We store a map from key->channels to allow intelligent joining of
@@ -1504,7 +1505,9 @@ public class IRCParser implements SecureParser, Runnable {
             // Find any key for this channel
             final String[] keybits = bit.split(" ", 2);
             final String channelName = keybits[0];
-            final String thisKey = (keybits.length > 1) ? keybits[0] : key;
+            final String thisKey = (keybits.length > 1) ? keybits[1] : key;
+
+            System.out.println("\tChan: "+channelName+" key: "+thisKey);
 
             // Make sure we have a list to put stuff in.
             StringBuffer list = joinMap.get(thisKey);
