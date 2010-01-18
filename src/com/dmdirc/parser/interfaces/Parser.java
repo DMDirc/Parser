@@ -171,7 +171,7 @@ public interface Parser extends Runnable {
      * Get a URI that shows where this parser is connected to.
      *
      * @return URI that shows where this parser is connected to.
-     * @since 0.6.4
+     * @since 0.6.3
      */
     URI getURI();
 
@@ -182,7 +182,7 @@ public interface Parser extends Runnable {
      *
      * @param uri URI to compare with the Parsers own URI.
      * @return True if the Given URI is the "same" as the one we are using.
-     * @since 0.6.4
+     * @since 0.6.3
      */
     boolean compareURI(final URI uri);
 
