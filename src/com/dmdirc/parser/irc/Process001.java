@@ -24,7 +24,6 @@ package com.dmdirc.parser.irc;
 
 import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.interfaces.callbacks.ServerReadyListener;
-import java.net.URI;
 
 /**
  * Process a 001 message.
@@ -42,7 +41,7 @@ public class Process001 extends IRCProcessor {
         // << :demon1.uk.quakenet.org 001 Java-Test :Welcome to the QuakeNet IRC Network, Java-Test
         myParser.serverName = token[0].substring(1,token[0].length());
         final String sNick = token[2];
-                
+
         // myself will be fake if we havn't recieved a 001 yet
         if (myParser.getLocalClient().isFake()) {
             // Update stored information
@@ -66,31 +65,26 @@ public class Process001 extends IRCProcessor {
                 }
             }
         }
-        
+
         callServerReady();
         myParser.startPingTimer();
 
-        final URI uri = myParser.server.getURI();
-        if (uri != null) {
-            String channelString = uri.getPath();
-            if (uri.getRawQuery() != null && !uri.getRawQuery().isEmpty()) { channelString += "?" + uri.getRawQuery(); }
-            if (uri.getRawFragment() != null && !uri.getRawFragment().isEmpty()) { channelString += "#" + uri.getRawFragment(); }
-            if (channelString.startsWith("/")) { channelString = channelString.substring(1); }
-            
-            myParser.joinChannel(channelString, true);
+        final String channels = myParser.server.getChannels();
+        if (channels != null) {
+            myParser.joinChannel(channels, true);
         }
     }
-    
+
     /**
      * Callback to all objects implementing the ServerReady Callback.
      *
      * @see IServerReady
      * @return true if a method was called, false otherwise
-     */    
+     */
     protected boolean callServerReady() {
         return getCallbackManager().getCallbackType(ServerReadyListener.class).call();
     }
-    
+
     /**
      * What does this IRCProcessor handle.
      *
@@ -99,8 +93,8 @@ public class Process001 extends IRCProcessor {
     @Override
     public String[] handles() {
         return new String[]{"001"};
-    } 
-    
+    }
+
     /**
      * Create a new instance of the IRCProcessor Object.
      *

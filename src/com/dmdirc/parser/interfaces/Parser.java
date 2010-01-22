@@ -186,6 +186,25 @@ public interface Parser extends Runnable {
      */
     boolean compareURI(final URI uri);
 
+    /**
+     * Updates this parser with a new URI. The new URI should be fundamentally
+     * the same as the one the parser connected to (to the extent that
+     * {@link #compareURI(java.net.URI)} returns true), but it may contain
+     * extra information (such as an additional list of channels to join).
+     * This operation should be non-destructive; that is, if the URI provided
+     * contains less information than a previous URI, the 'missing' information
+     * should not be treated as an instruction to remove it.
+     * <p>
+     * For example, if the parser was originally constructed with a URI
+     * <code>irc://irc.quakenet.org/chan1,chan2</code>, and this method was
+     * subsequently called with an argument of
+     * <code>irc://irc.quakenet.org/chan3</code>, the IRC parser should join
+     * the channel "chan3" and would also remain in chan1 and chan2.
+     *
+     * @param uri The URI to update this parser with
+     * @since 0.6.3
+     */
+    void updateURI(final URI uri);
 
     /**
      * Retrieves the name of the server that this parser is connected to.
@@ -286,7 +305,7 @@ public interface Parser extends Runnable {
 
     /**
      * Retrieves a list of channel user modes, in descending priority order.
-     * 
+     *
      * @return A string containing a list of channel user mode characters
      */
     String getChannelUserModes();
@@ -298,11 +317,11 @@ public interface Parser extends Runnable {
      * @since 0.6.3
      */
     String getChannelPrefixes();
-    
+
     /**
      * Retrieves the object which is responsible for managing callbacks for
      * this parser.
-     * 
+     *
      * @return This parser's callback manager
      */
     CallbackManager<? extends Parser> getCallbackManager();

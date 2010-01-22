@@ -269,7 +269,7 @@ public class IRCParser implements SecureParser, Runnable {
 
     /** This is the IP we want to bind to. */
     private String bindIP = "";
-    
+
     /** This is list containing 001 - 005 inclusive. */
     private final List<String> serverInformationLines = new LinkedList<String>();
 
@@ -352,6 +352,14 @@ public class IRCParser implements SecureParser, Runnable {
                newURI.getPort() == oldURI.getPort();
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public void updateURI(final URI uri) {
+        final String channels = new ServerInfo(uri).getChannels();
+        if (channels != null) {
+            joinChannel(channels, true);
+        }
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -598,7 +606,7 @@ public class IRCParser implements SecureParser, Runnable {
     protected synchronized boolean callPost005() {
         if (post005) { return false; }
         post005 = true;
-        
+
         if (!h005Info.containsKey("CHANTYPES")) { parseChanPrefix(); }
         if (!h005Info.containsKey("PREFIX")) { parsePrefixModes(); }
         if (!h005Info.containsKey("USERMODES")) { parseUserModes(); }
@@ -800,7 +808,7 @@ public class IRCParser implements SecureParser, Runnable {
         final ParserError ei = new ParserError(ParserError.ERROR_ERROR + (isUserError ? ParserError.ERROR_USER : 0), "Exception with server socket", getLastLine());
         ei.setException(e);
         callConnectError(ei);
-        
+
         if (currentSocketState != SocketState.CLOSED) {
             currentSocketState = SocketState.CLOSED;
             callSocketClosed();
@@ -851,7 +859,7 @@ public class IRCParser implements SecureParser, Runnable {
                 }
             } catch (IOException e) {
                 callDebugInfo(DEBUG_SOCKET, "Exception in main loop (" + e.getMessage() + "), Aborted");
-                
+
                 if (currentSocketState != SocketState.CLOSED) {
                     currentSocketState = SocketState.CLOSED;
                     callSocketClosed();
@@ -1009,7 +1017,7 @@ public class IRCParser implements SecureParser, Runnable {
                 }
             }
         }
-        
+
         return true;
     }
 
@@ -1030,7 +1038,7 @@ public class IRCParser implements SecureParser, Runnable {
     public String getLastLine() {
         return lastLine;
     }
-    
+
     /**
      * Get the list of lines the server gave from 001 - 005.
      *
@@ -1112,7 +1120,7 @@ public class IRCParser implements SecureParser, Runnable {
                             // Some networks may send a NICK message if you nick change before 001
                             // Eat it up so that it isn't treated as a notice auth.
                             if (token[1].equalsIgnoreCase("NICK")) { break; }
-                            
+
                             // Otherwise, send to Notice Auth
                             try { myProcessingManager.process("Notice Auth", token); } catch (ProcessorNotFoundException e) { }
                             break;
@@ -1310,7 +1318,7 @@ public class IRCParser implements SecureParser, Runnable {
         if (chanPrefix.isEmpty()) {
             return "#&";
         }
-        
+
         final StringBuilder builder = new StringBuilder(chanPrefix.size());
 
         for (Character prefix : chanPrefix) {
@@ -1575,7 +1583,7 @@ public class IRCParser implements SecureParser, Runnable {
         } else {
             me.setNickname(nickname);
         }
-        
+
         thinkNickname = nickname;
     }
 
@@ -1712,7 +1720,7 @@ public class IRCParser implements SecureParser, Runnable {
             sendString("QUIT :" + reason);
         }
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public void disconnect(final String message) {
@@ -1877,7 +1885,7 @@ public class IRCParser implements SecureParser, Runnable {
 
         pingTimerSem.release();
     }
-    
+
     /**
      * Stop the pingTimer.
      */
@@ -1906,18 +1914,18 @@ public class IRCParser implements SecureParser, Runnable {
                 pingTimer.cancel();
             }
             pingTimerSem.release();
-            
+
             return;
         }
         if (getPingNeeded()) {
             if (!callPingFailed()) {
                 pingTimerSem.acquireUninterruptibly();
-                
+
                 if (pingTimer != null && pingTimer.equals(timer)) {
                     pingTimer.cancel();
                 }
                 pingTimerSem.release();
-                
+
                 disconnect("Server not responding.");
             }
         } else {
