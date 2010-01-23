@@ -163,6 +163,9 @@ public class IRCParser implements SecureParser, Runnable {
     /** Has the thread started execution yet, (Prevents run() being called multiple times). */
     boolean hasBegan;
 
+    /** Connect timeout. */
+    private int connectTimeout = 5000;
+
     /** Hashtable storing known prefix modes (ohv). */
     final Map<Character, Long> prefixModes = new Hashtable<Character, Long>();
     /**
@@ -410,11 +413,24 @@ public class IRCParser implements SecureParser, Runnable {
 
     /**
      * Get the current Value of addLastLine.
-     * This returns "this" and thus can be used in the construction line.
      *
      * @param newValue New value to set addLastLine
      */
     public void setAddLastLine(final boolean newValue) { addLastLine = newValue; }
+
+    /**
+     * Get the current Value of connectTimeout.
+     *
+     * @return The value of getConnectTimeout.
+     */
+    public int getConnectTimeout() { return connectTimeout; }
+
+    /**
+     * Set the Value of connectTimeout.
+     *
+     * @param newValue new value for value of getConnectTimeout.
+     */
+    public void setConnectTimeout(final int newValue) { connectTimeout = newValue; }
 
     /**
      * Get the current socket State.
@@ -710,28 +726,26 @@ public class IRCParser implements SecureParser, Runnable {
             try {
                 try { ia.getSemaphore().acquire(); } catch (InterruptedException ex) { }
                 ia.addAuthentication(server);
-                socket.connect(new InetSocketAddress(server.getHost(), server.getPort()));
+                socket.connect(new InetSocketAddress(server.getHost(), server.getPort()), connectTimeout);
             } finally {
                 ia.removeAuthentication(server);
                 ia.getSemaphore().release();
             }
         } else {
             callDebugInfo(DEBUG_SOCKET, "Not using Proxy");
-            if (!server.getSSL()) {
-                socket = new Socket();
+            socket = new Socket();
 
-                if (bindIP != null && !bindIP.isEmpty()) {
-                    callDebugInfo(DEBUG_SOCKET, "Binding to IP: "+bindIP);
-                    try {
-                        socket.bind(new InetSocketAddress(InetAddress.getByName(bindIP), 0));
-                    } catch (IOException e) {
-                        callDebugInfo(DEBUG_SOCKET, "Binding failed: "+e.getMessage());
-                    }
+            if (bindIP != null && !bindIP.isEmpty()) {
+                callDebugInfo(DEBUG_SOCKET, "Binding to IP: "+bindIP);
+                try {
+                    socket.bind(new InetSocketAddress(InetAddress.getByName(bindIP), 0));
+                } catch (IOException e) {
+                    callDebugInfo(DEBUG_SOCKET, "Binding failed: "+e.getMessage());
                 }
-
-                currentSocketState = SocketState.OPENING;
-                socket.connect(new InetSocketAddress(server.getHost(), server.getPort()));
             }
+
+            currentSocketState = SocketState.OPENING;
+            socket.connect(new InetSocketAddress(server.getHost(), server.getPort()), connectTimeout);
         }
 
         if (server.getSSL()) {
@@ -743,22 +757,8 @@ public class IRCParser implements SecureParser, Runnable {
             sc.init(myKeyManagers, myTrustManager, new java.security.SecureRandom());
 
             final SSLSocketFactory socketFactory = sc.getSocketFactory();
-            if (server.getUseSocks()) {
-                socket = socketFactory.createSocket(socket, server.getHost(), server.getPort(), false);
-            } else {
-                if (bindIP == null || bindIP.isEmpty()) {
-                    socket = socketFactory.createSocket(server.getHost(), server.getPort());
-                } else {
-                    callDebugInfo(DEBUG_SOCKET, "Binding to IP: "+bindIP);
-                    try {
-                        socket = socketFactory.createSocket(server.getHost(), server.getPort(), InetAddress.getByName(bindIP), 0);
-                    } catch (UnknownHostException e) {
-                        callDebugInfo(DEBUG_SOCKET, "Bind failed: "+e.getMessage());
-                        socket = socketFactory.createSocket(server.getHost(), server.getPort());
-                    }
-                }
-            }
-
+            socket = socketFactory.createSocket(socket, server.getHost(), server.getPort(), false);
+            
             currentSocketState = SocketState.OPENING;
         }
 
