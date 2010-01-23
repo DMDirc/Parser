@@ -163,6 +163,9 @@ public class IRCParser implements SecureParser, Runnable {
     /** Has the thread started execution yet, (Prevents run() being called multiple times). */
     boolean hasBegan;
 
+    /** Connect timeout. */
+    private int connectTimeout = 5000;
+
     /** Hashtable storing known prefix modes (ohv). */
     final Map<Character, Long> prefixModes = new Hashtable<Character, Long>();
     /**
@@ -415,6 +418,20 @@ public class IRCParser implements SecureParser, Runnable {
      * @param newValue New value to set addLastLine
      */
     public void setAddLastLine(final boolean newValue) { addLastLine = newValue; }
+
+    /**
+     * Get the current Value of connectTimeout.
+     *
+     * @return The value of getConnectTimeout.
+     */
+    public int getConnectTimeout() { return connectTimeout; }
+
+    /**
+     * Set the Value of connectTimeout.
+     *
+     * @param newValue new value for value of getConnectTimeout.
+     */
+    public void setConnectTimeout(final int newValue) { connectTimeout = newValue; }
 
     /**
      * Get the current socket State.
@@ -710,7 +727,7 @@ public class IRCParser implements SecureParser, Runnable {
             try {
                 try { ia.getSemaphore().acquire(); } catch (InterruptedException ex) { }
                 ia.addAuthentication(server);
-                socket.connect(new InetSocketAddress(server.getHost(), server.getPort()));
+                socket.connect(new InetSocketAddress(server.getHost(), server.getPort()), connectTimeout);
             } finally {
                 ia.removeAuthentication(server);
                 ia.getSemaphore().release();
@@ -730,7 +747,7 @@ public class IRCParser implements SecureParser, Runnable {
                 }
 
                 currentSocketState = SocketState.OPENING;
-                socket.connect(new InetSocketAddress(server.getHost(), server.getPort()));
+                socket.connect(new InetSocketAddress(server.getHost(), server.getPort()), connectTimeout);
             }
         }
 
