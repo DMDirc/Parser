@@ -22,6 +22,7 @@
 
 package com.dmdirc.parser.irc;
 
+import com.dmdirc.parser.common.AwayState;
 import com.dmdirc.parser.interfaces.ClientInfo;
 import com.dmdirc.parser.interfaces.LocalClientInfo;
 import com.dmdirc.parser.interfaces.Parser;
@@ -53,7 +54,7 @@ public class IRCClientInfo implements LocalClientInfo {
     /** Known RealName of client. */
     private String sRealName = "";
     /** Known away state for client. */
-    private boolean bIsAway;
+    private AwayState away;
     /** Is this a fake client created just for a callback? */
     private boolean bIsFake;
     /** Reference to the parser object that owns this channel, Used for modes. */
@@ -205,21 +206,21 @@ public class IRCClientInfo implements LocalClientInfo {
     
     /**
      * Set the away state of a user.
-     * Automatically sets away reason to "" if set to false
+     * Automatically sets away reason to "" if not set to AwayState.AWAY
      *
-     * @param bNewState Boolean representing state. true = away, false = here
+     * @param bNewState AwayState representing new away state.
      */    
-    protected void setAwayState(final boolean bNewState) {
-        bIsAway = bNewState;
-        if (!bIsAway) { myAwayReason = ""; }
+    protected void setAwayState(final AwayState bNewState) {
+        away = bNewState;
+        if (away != AwayState.AWAY) { myAwayReason = ""; }
     }
     
     /**
      * Get the away state of a user.
      *
-     * @return Boolean representing state. true = away, false = here
+     * @return AwayState of the user.
      */    
-    public boolean getAwayState() { return bIsAway; }
+    public AwayState getAwayState() { return away; }
     
     /**
      * Get the Away Reason for this user.

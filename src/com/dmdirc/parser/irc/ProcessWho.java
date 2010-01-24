@@ -22,6 +22,7 @@
 
 package com.dmdirc.parser.irc;
 
+import com.dmdirc.parser.common.AwayState;
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.ClientInfo;
@@ -61,20 +62,20 @@ public class ProcessWho extends IRCProcessor {
             }
             // Update away state
             final String mode = token[8];
-            final boolean isAway = mode.indexOf('G') != -1;
+            final AwayState isAway = (mode.indexOf('G') != -1) ? AwayState.AWAY : AwayState.HERE;
             if (client.getAwayState() != isAway) {
+                final AwayState oldState = client.getAwayState();
                 client.setAwayState(isAway);
-                if (!isAway) { client.setAwayReason(""); }
                 if (client == myParser.getLocalClient()) {
-                    callAwayState(client.getAwayState(), client.getAwayReason());
+                    callAwayState(oldState, client.getAwayState(), client.getAwayReason());
                 } else {
-                    callAwayStateOther(client, isAway);
+                    callAwayStateOther(client, oldState, isAway);
                     
                     ChannelClientInfo iChannelClient;
                     for (ChannelInfo iChannel : myParser.getChannels()) {
                         iChannelClient = iChannel.getChannelClient(client);
                         if (iChannelClient != null) {
-                            callChannelAwayStateOther(iChannel,iChannelClient,isAway);
+                            callChannelAwayStateOther(iChannel,iChannelClient,oldState,isAway);
                         }
                     }
                 }
@@ -86,12 +87,13 @@ public class ProcessWho extends IRCProcessor {
      * Callback to all objects implementing the onAwayState Callback.
      *
      * @see IAwayState
-     * @param currentState Set to true if we are now away, else false.
+     * @param oldState Old Away State
+     * @param currentState Current Away State
      * @param reason Best guess at away reason
      * @return true if a method was called, false otherwise
      */
-    protected boolean callAwayState(boolean currentState, String reason) {
-        return getCallbackManager().getCallbackType(AwayStateListener.class).call(currentState, reason);
+    protected boolean callAwayState(final AwayState oldState, final AwayState currentState, final String reason) {
+        return getCallbackManager().getCallbackType(AwayStateListener.class).call(oldState, currentState, reason);
     }
     
     /**
@@ -99,11 +101,12 @@ public class ProcessWho extends IRCProcessor {
      *
      * @see IAwayStateOther
      * @param client Client this is for
-     * @param state Away State (true if away, false if here)
+     * @param oldState Old Away State
+     * @param state Current Away State
      * @return true if a method was called, false otherwise
      */
-    protected boolean callAwayStateOther(final ClientInfo client, final boolean state) {
-        return getCallbackManager().getCallbackType(OtherAwayStateListener.class).call(client, state);
+    protected boolean callAwayStateOther(final ClientInfo client, final AwayState oldState, final AwayState state) {
+        return getCallbackManager().getCallbackType(OtherAwayStateListener.class).call(client, oldState, state);
     }
     
     /**
@@ -112,11 +115,12 @@ public class ProcessWho extends IRCProcessor {
      * @see IAwayStateOther
      * @param channel Channel this is for
      * @param channelClient ChannelClient this is for
-     * @param state Away State (true if away, false if here)
+     * @param oldState Old Away State
+     * @param state Current Away State
      * @return true if a method was called, false otherwise
      */
-    protected boolean callChannelAwayStateOther(final ChannelInfo channel, final ChannelClientInfo channelClient, final boolean state) {
-        return getCallbackManager().getCallbackType(ChannelOtherAwayStateListener.class).call(channel, channelClient, state);
+    protected boolean callChannelAwayStateOther(final ChannelInfo channel, final ChannelClientInfo channelClient, final AwayState oldState, final AwayState state) {
+        return getCallbackManager().getCallbackType(ChannelOtherAwayStateListener.class).call(channel, channelClient, oldState, state);
     }
     
     /**

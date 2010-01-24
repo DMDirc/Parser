@@ -22,6 +22,7 @@
 
 package com.dmdirc.parser.interfaces.callbacks;
 
+import com.dmdirc.parser.common.AwayState;
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.Parser;
@@ -38,8 +39,9 @@ public interface ChannelOtherAwayStateListener extends CallbackInterface {
 	 * @param tParser Reference to the parser object that made the callback.
 	 * @param channel Channel this is for
 	 * @param channelClient Client this is for
-	 * @param state Away State (true if away, false if here)
+         * @param oldState Old Away State
+	 * @param state Current Away State
 	 * @see com.dmdirc.parser.irc.ProcessAway#callChannelAwayStateOther
 	 */
-	void onChannelAwayStateOther(Parser tParser, ChannelInfo channel, ChannelClientInfo channelClient, boolean state);
+	void onChannelAwayStateOther(Parser tParser, ChannelInfo channel, ChannelClientInfo channelClient, AwayState oldState, AwayState state);
 }
