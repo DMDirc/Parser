@@ -22,6 +22,7 @@
 
 package com.dmdirc.parser.irc;
 
+import com.dmdirc.parser.common.AwayState;
 import com.dmdirc.parser.interfaces.callbacks.AwayStateListener;
 
 /**
@@ -40,8 +41,9 @@ public class ProcessAway extends IRCProcessor {
             IRCClientInfo iClient = getClientInfo(token[3]);
             if (iClient != null) { iClient.setAwayReason(token[token.length-1]); }
         } else {
-            myParser.getLocalClient().setAwayState(sParam.equals("306"));
-            callAwayState(myParser.getLocalClient().getAwayState(), myParser.getLocalClient().getAwayReason());
+            final AwayState oldState = myParser.getLocalClient().getAwayState();
+            myParser.getLocalClient().setAwayState(sParam.equals("306") ? AwayState.AWAY : AwayState.HERE) ;
+            callAwayState(oldState, myParser.getLocalClient().getAwayState(), myParser.getLocalClient().getAwayReason());
         }
     }
     
@@ -49,12 +51,13 @@ public class ProcessAway extends IRCProcessor {
      * Callback to all objects implementing the onAwayState Callback.
      *
      * @see IAwayState
-     * @param currentState Set to true if we are now away, else false.
+     * @param oldState Old Away State
+     * @param currentState Current Away State
      * @param reason Best guess at away reason
      * @return true if a method was called, false otherwise
      */
-    protected boolean callAwayState(boolean currentState, String reason) {
-        return myParser.getCallbackManager().getCallbackType(AwayStateListener.class).call(currentState, reason);
+    protected boolean callAwayState(final AwayState oldState, final AwayState currentState, final String reason) {
+        return getCallbackManager().getCallbackType(AwayStateListener.class).call(oldState, currentState, reason);
     }
     
     /**

@@ -22,6 +22,7 @@
 
 package com.dmdirc.parser.interfaces.callbacks;
 
+import com.dmdirc.parser.common.AwayState;
 import com.dmdirc.parser.interfaces.Parser;
 
 /**
@@ -33,9 +34,10 @@ public interface AwayStateListener extends CallbackInterface {
 	 * Called when we go away, or come back.
 	 *
 	 * @param tParser Reference to the parser object that made the callback.
-	 * @param currentState Set to true if we are now away, else false.
+         * @param oldState Old Away State
+	 * @param currentState Current Away State
 	 * @param reason Best guess at away reason
 	 * @see com.dmdirc.parser.irc.ProcessAway#callAwayState
 	 */
-	void onAwayState(Parser tParser, boolean currentState, String reason);
+	void onAwayState(Parser tParser, AwayState oldState, AwayState currentState, String reason);
 }
