@@ -54,7 +54,7 @@ public class IRCClientInfo implements LocalClientInfo {
     /** Known RealName of client. */
     private String sRealName = "";
     /** Known away state for client. */
-    private AwayState away;
+    private AwayState away = AwayState.UNKNOWN;
     /** Is this a fake client created just for a callback? */
     private boolean bIsFake;
     /** Reference to the parser object that owns this channel, Used for modes. */
