@@ -22,6 +22,7 @@
 
 package com.dmdirc.parser.irc;
 
+import com.dmdirc.parser.common.AwayState;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -100,19 +101,19 @@ public class ClientInfoTest {
     @Test
     public void testAwayState() {
         final IRCClientInfo ci = new IRCClientInfo(new IRCParser(), "nick!ident@host");
-        assertFalse(ci.getAwayState());
-        ci.setAwayState(true);
-        assertTrue(ci.getAwayState());
+        assertFalse(ci.getAwayState() == AwayState.AWAY);
+        ci.setAwayState(AwayState.HERE);
+        assertTrue(ci.getAwayState() == AwayState.HERE);
     }
     
     @Test
     public void testAwayReason() {
         final IRCClientInfo ci = new IRCClientInfo(new IRCParser(), "nick!ident@host");
-        ci.setAwayState(true);
+        ci.setAwayState(AwayState.AWAY);
         ci.setAwayReason("away reason");
         
         assertEquals("away reason", ci.getAwayReason());
-        ci.setAwayState(false);
+        ci.setAwayState(AwayState.HERE);
         assertEquals("", ci.getAwayReason());
     }
     
