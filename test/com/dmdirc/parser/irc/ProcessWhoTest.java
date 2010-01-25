@@ -22,6 +22,7 @@
 
 package com.dmdirc.parser.irc;
 
+import com.dmdirc.parser.common.AwayState;
 import com.dmdirc.harness.parser.TestParser;
 import com.dmdirc.parser.common.CallbackNotFoundException;
 import com.dmdirc.parser.interfaces.callbacks.AwayStateListener;
@@ -41,11 +42,11 @@ public class ProcessWhoTest {
 
         parser.injectLine(":server 352 nick #DMDirc_testing nick2 host2 server nick2 G@ :0 rn");
 
-        verify(test, never()).onAwayState((IRCParser) anyObject(),anyBoolean(), anyString());
+        verify(test, never()).onAwayState((IRCParser) anyObject(), (AwayState) anyObject(), (AwayState) anyObject() , anyString());
 
         parser.injectLine(":server 352 nick #DMDirc_testing nick host server nick G@ :0 rn");
 
-        verify(test).onAwayState(parser, true, "");
+        verify(test).onAwayState(parser, AwayState.UNKNOWN, AwayState.AWAY, "");
     }
 
 }
