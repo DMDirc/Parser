@@ -23,7 +23,6 @@
 package com.dmdirc.parser.irc;
 
 import com.dmdirc.parser.common.MyInfo;
-import com.dmdirc.parser.common.ChannelListModeItem;
 import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.harness.parser.TestParser;
 import com.dmdirc.parser.interfaces.Parser;
@@ -35,15 +34,11 @@ import com.dmdirc.parser.interfaces.callbacks.ConnectErrorListener;
 import com.dmdirc.parser.interfaces.callbacks.ErrorInfoListener;
 import com.dmdirc.parser.interfaces.callbacks.NumericListener;
 import com.dmdirc.parser.interfaces.callbacks.Post005Listener;
-import com.dmdirc.parser.interfaces.callbacks.PrivateActionListener;
-import com.dmdirc.parser.interfaces.callbacks.PrivateCtcpListener;
-import com.dmdirc.parser.interfaces.callbacks.PrivateMessageListener;
 import com.dmdirc.parser.interfaces.callbacks.ServerErrorListener;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.Collection;
 
 import javax.net.ssl.TrustManager;
 
@@ -55,20 +50,11 @@ public class IRCParserTest {
 
     private static interface TestCallback extends CallbackInterface { }
 
-    @Test
+    @Test(expected=CallbackNotFoundException.class)
     public void testIssue42() {
         // Invalid callback names are silently ignored instead of raising exceptions
-        
-        boolean res = false;
-
-        try {
-            final IRCParser myParser = new IRCParser();
-            myParser.getCallbackManager().addCallback(TestCallback.class, mock(TestCallback.class));
-        } catch (CallbackNotFoundException ex) {
-            res = true;
-        }
-
-        assertTrue("addCallback() should throw exception for non-existant callbacks", res);
+        final IRCParser myParser = new IRCParser();
+        myParser.getCallbackManager().addCallback(TestCallback.class, mock(TestCallback.class));
     }
 
     @Test
@@ -84,21 +70,6 @@ public class IRCParserTest {
         myParser.injectLine(":nick2!ident@host NICK :nick");
 
         verify(error, never()).onErrorInfo(same(myParser), (ParserError) anyObject());
-    }
-    
-    @Test
-    public void testProxyPortWithBindIP() {
-        final ConnectErrorListener tice = mock(ConnectErrorListener.class);
-        final ServerInfo si = new ServerInfo();
-        si.setProxyPort(155555);
-        si.setUseSocks(true);
-        
-        final IRCParser myParser = new IRCParser(si);
-        myParser.getCallbackManager().addCallback(ConnectErrorListener.class, tice);
-        myParser.setBindIP("0.0.0.0");
-        myParser.run();
-
-        verify(tice).onConnectError(same(myParser), (ParserError) anyObject());
     }
 
     @Test
@@ -348,123 +319,6 @@ public class IRCParserTest {
         parser.setTrustManagers(new TrustManager[0]);
 
         assertTrue(Arrays.equals(new TrustManager[0], parser.getTrustManager()));
-    }
-
-    @Test
-    public void testPrivateMessage() throws CallbackNotFoundException {
-        final TestParser parser = new TestParser();
-        final PrivateMessageListener ipmtest = mock(PrivateMessageListener.class);
-        final PrivateActionListener ipatest = mock(PrivateActionListener.class);
-        final PrivateCtcpListener ipctest = mock(PrivateCtcpListener.class);
-
-        parser.injectConnectionStrings();
-
-        parser.getCallbackManager().addCallback(PrivateMessageListener.class, ipmtest);
-        parser.getCallbackManager().addCallback(PrivateActionListener.class, ipatest);
-        parser.getCallbackManager().addCallback(PrivateCtcpListener.class, ipctest);
-
-        parser.injectLine(":a!b@c PRIVMSG nick :Hello!");
-        verify(ipmtest).onPrivateMessage(same(parser), eq("Hello!"), eq("a!b@c"));
-        verify(ipatest, never()).onPrivateAction((Parser) anyObject(), anyString(), anyString());
-        verify(ipctest, never()).onPrivateCTCP((Parser) anyObject(), anyString(), anyString(), anyString());
-    }
-
-    @Test
-    public void testPrivateAction() throws CallbackNotFoundException {
-        final TestParser parser = new TestParser();
-        final PrivateMessageListener ipmtest = mock(PrivateMessageListener.class);
-        final PrivateActionListener ipatest = mock(PrivateActionListener.class);
-        final PrivateCtcpListener ipctest = mock(PrivateCtcpListener.class);
-
-        parser.injectConnectionStrings();
-
-        parser.getCallbackManager().addCallback(PrivateMessageListener.class, ipmtest);
-        parser.getCallbackManager().addCallback(PrivateActionListener.class, ipatest);
-        parser.getCallbackManager().addCallback(PrivateCtcpListener.class, ipctest);
-
-        parser.injectLine(":a!b@c PRIVMSG nick :" + ((char) 1) + "ACTION meep" + ((char) 1));
-        verify(ipmtest, never()).onPrivateMessage((Parser) anyObject(), anyString(), anyString());
-        verify(ipatest).onPrivateAction(same(parser), eq("meep"), eq("a!b@c"));
-        verify(ipctest, never()).onPrivateCTCP((Parser) anyObject(), anyString(), anyString(), anyString());
-    }
-
-    @Test
-    public void testPrivateCTCP() throws CallbackNotFoundException {
-        final TestParser parser = new TestParser();
-        final PrivateMessageListener ipmtest = mock(PrivateMessageListener.class);
-        final PrivateActionListener ipatest = mock(PrivateActionListener.class);
-        final PrivateCtcpListener ipctest = mock(PrivateCtcpListener.class);
-
-        parser.injectConnectionStrings();
-
-        parser.getCallbackManager().addCallback(PrivateMessageListener.class, ipmtest);
-        parser.getCallbackManager().addCallback(PrivateActionListener.class, ipatest);
-        parser.getCallbackManager().addCallback(PrivateCtcpListener.class, ipctest);
-
-        parser.injectLine(":a!b@c PRIVMSG nick :" + ((char) 1) + "FOO meep" + ((char) 1));
-        verify(ipmtest, never()).onPrivateMessage((Parser) anyObject(), anyString(), anyString());
-        verify(ipatest, never()).onPrivateAction((Parser) anyObject(), anyString(), anyString());
-        verify(ipctest).onPrivateCTCP(same(parser), eq("FOO"), eq("meep"), eq("a!b@c"));
-    }
-
-    private void testListModes(String numeric1, String numeric2, char mode) {
-        final TestParser parser = new TestParser();
-        parser.injectConnectionStrings();
-
-        parser.injectLine(":nick JOIN #D");
-        parser.injectLine(":server " + numeric1 + " nick #D ban1!ident@.host bansetter1 1001");
-        parser.injectLine(":server " + numeric1 + " nick #D ban2!*@.host bansetter2 1002");
-        parser.injectLine(":server " + numeric1 + " nick #D ban3!ident@* bansetter3 1003");
-        parser.injectLine(":server " + numeric2 + " nick #D :End of Channel Something List");
-
-        final Collection<ChannelListModeItem> items
-                = parser.getChannel("#D").getListMode(mode);
-
-        assertEquals(3, items.size());
-        boolean gotOne = false, gotTwo = false, gotThree = false;
-
-        for (ChannelListModeItem item : items) {
-            if (item.getItem().equals("ban1!ident@.host")) {
-                assertEquals("bansetter1", item.getOwner());
-                assertEquals(1001l, item.getTime());
-                assertFalse(gotOne);
-                gotOne = true;
-            } else if (item.getItem().equals("ban2!*@.host")) {
-                assertEquals("bansetter2", item.getOwner());
-                assertEquals(1002l, item.getTime());
-                assertFalse(gotTwo);
-                gotTwo = true;
-            } else if (item.toString().equals("ban3!ident@*")) {
-                assertEquals("bansetter3", item.getOwner());
-                assertEquals(1003l, item.getTime());
-                assertFalse(gotThree);
-                gotThree = true;
-            }
-        }
-
-        assertTrue(gotOne);
-        assertTrue(gotTwo);
-        assertTrue(gotThree);
-    }
-
-    @Test
-    public void testNormalBans() {
-        testListModes("367", "368", 'b');
-    }
-
-    @Test
-    public void testInvexList() {
-        testListModes("346", "347", 'I');
-    }
-
-    @Test
-    public void testExemptList() {
-        testListModes("348", "349", 'e');
-    }
-
-    @Test
-    public void testReopList() {
-        testListModes("344", "345", 'R');
     }
 
     @Test
