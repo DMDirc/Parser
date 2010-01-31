@@ -825,7 +825,7 @@ public class IRCParser implements SecureParser, Runnable {
         callDebugInfo(DEBUG_INFO, "Begin Thread Execution");
         if (hasBegan) { return; } else { hasBegan = true; }
         try {
-         connect();
+            connect();
         } catch (UnknownHostException e) {
             handleConnectException(e, true);
             return;
