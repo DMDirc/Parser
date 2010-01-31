@@ -52,6 +52,7 @@ public class IRCParserTest {
 
     @Test(expected=CallbackNotFoundException.class)
     public void testIssue42() {
+        System.out.println("testIssue42 - " + System.currentTimeMillis());
         // Invalid callback names are silently ignored instead of raising exceptions
         final IRCParser myParser = new IRCParser();
         myParser.getCallbackManager().addCallback(TestCallback.class, mock(TestCallback.class));
@@ -59,6 +60,7 @@ public class IRCParserTest {
 
     @Test
     public void testIssue1674() {
+        System.out.println("testIssue1674 - " + System.currentTimeMillis());
         // parser nick change error with dual 001
         final ErrorInfoListener error = mock(ErrorInfoListener.class);
 
@@ -74,6 +76,7 @@ public class IRCParserTest {
 
     @Test
     public void testTokeniser() {
+        System.out.println("testTokeniser - " + System.currentTimeMillis());
         final String line1 = "a b c d e";
         final String line2 = "a b c :d e";
         final String line3 = ":a b:c :d e";
@@ -92,6 +95,7 @@ public class IRCParserTest {
 
     @Test
     public void testSendConnectionStrings1() throws URISyntaxException {
+        System.out.println("testSendConnectionStrings1 - " + System.currentTimeMillis());
         final MyInfo myInfo = new MyInfo();
         myInfo.setNickname("Nickname");
         myInfo.setRealname("Real name");
@@ -115,6 +119,7 @@ public class IRCParserTest {
 
     @Test
     public void testSendConnectionStrings2() throws URISyntaxException {
+        System.out.println("testSendConnectionStrings2 - " + System.currentTimeMillis());
         final MyInfo myInfo = new MyInfo();
         myInfo.setNickname("Nickname");
         myInfo.setRealname("Real name");
@@ -131,6 +136,8 @@ public class IRCParserTest {
 
     @Test
     public void testPingPong() {
+        System.out.println("testPingPong - " + System.currentTimeMillis());
+
         final TestParser parser = new TestParser();
 
         parser.injectLine("PING :flubadee7291");
@@ -141,6 +148,8 @@ public class IRCParserTest {
 
     @Test
     public void testError() throws CallbackNotFoundException {
+        System.out.println("testError - " + System.currentTimeMillis());
+
         final ServerErrorListener test = mock(ServerErrorListener.class);
 
         final TestParser parser = new TestParser();
@@ -152,6 +161,8 @@ public class IRCParserTest {
 
     @Test
     public void testAuthNotice() throws CallbackNotFoundException {
+        System.out.println("testAuthNotice - " + System.currentTimeMillis());
+
         final AuthNoticeListener test = mock(AuthNoticeListener.class);
         final TestParser parser = new TestParser();
         parser.getCallbackManager().addCallback(AuthNoticeListener.class, test);
@@ -163,6 +174,8 @@ public class IRCParserTest {
 
     @Test
     public void testAuthNoticeTwenty() throws CallbackNotFoundException {
+        System.out.println("testAuthNoticeTwenty - " + System.currentTimeMillis());
+
         final AuthNoticeListener test = mock(AuthNoticeListener.class);
         final TestParser parser = new TestParser();
         parser.getCallbackManager().addCallback(AuthNoticeListener.class, test);
@@ -174,6 +187,8 @@ public class IRCParserTest {
 
     @Test
     public void testPre001NickChange() throws CallbackNotFoundException {
+        System.out.println("testPre001NickChange - " + System.currentTimeMillis());
+
         final AuthNoticeListener test = mock(AuthNoticeListener.class);
         final TestParser parser = new TestParser();
         parser.getCallbackManager().addCallback(AuthNoticeListener.class, test);
@@ -185,6 +200,8 @@ public class IRCParserTest {
 
     @Test
     public void testNumeric() throws CallbackNotFoundException {
+        System.out.println("testNumeric - " + System.currentTimeMillis());
+
         final NumericListener test = mock(NumericListener.class);
         final TestParser parser = new TestParser();
         parser.getCallbackManager().addCallback(NumericListener.class, test);
@@ -197,6 +214,7 @@ public class IRCParserTest {
 
     @Test
     public void testPost005() throws CallbackNotFoundException {
+        System.out.println("testPost005 - " + System.currentTimeMillis());
         final Post005Listener test = mock(Post005Listener.class);
         final TestParser parser = new TestParser();
         parser.getCallbackManager().addCallback(Post005Listener.class, test);
@@ -225,6 +243,7 @@ public class IRCParserTest {
 
     @Test
     public void test005Parsing() {
+        System.out.println("test005Parsing - " + System.currentTimeMillis());
         final TestParser parser = new TestParser();
 
         final String[] strings = {
@@ -254,6 +273,7 @@ public class IRCParserTest {
 
     @Test
     public void testBindIP() {
+        System.out.println("testBindIP - " + System.currentTimeMillis());
         final TestParser parser = new TestParser();
 
         parser.setBindIP("abc.def.ghi.123");
@@ -262,6 +282,7 @@ public class IRCParserTest {
 
     @Test
     public void testCreateFake() {
+        System.out.println("testCreateFake - " + System.currentTimeMillis());
         final TestParser parser = new TestParser();
 
         parser.setCreateFake(false);
@@ -272,6 +293,7 @@ public class IRCParserTest {
 
     @Test
     public void testAutoListMode() {
+        System.out.println("testAutoListMode - " + System.currentTimeMillis());
         final TestParser parser = new TestParser();
 
         parser.setAutoListMode(false);
@@ -282,6 +304,7 @@ public class IRCParserTest {
 
     @Test
     public void testRemoveAfterCallback() {
+        System.out.println("testRemoveAfterCallback - " + System.currentTimeMillis());
         final TestParser parser = new TestParser();
 
         parser.setRemoveAfterCallback(false);
@@ -292,6 +315,7 @@ public class IRCParserTest {
 
     @Test
     public void testAddLastLine() {
+        System.out.println("testAddLastLine - " + System.currentTimeMillis());
         final TestParser parser = new TestParser();
 
         parser.setAddLastLine(false);
@@ -302,6 +326,7 @@ public class IRCParserTest {
 
     @Test
     public void testDisconnectOnFatal() {
+        System.out.println("testDisconnectOnFatal - " + System.currentTimeMillis());
         final TestParser parser = new TestParser();
 
         parser.setDisconnectOnFatal(false);
@@ -312,6 +337,7 @@ public class IRCParserTest {
 
     @Test
     public void testTrustManager() {
+        System.out.println("testTrustManager - " + System.currentTimeMillis());
         final TestParser parser = new TestParser();
 
         assertTrue(Arrays.equals(parser.getDefaultTrustManager(), parser.getTrustManager()));
@@ -323,6 +349,7 @@ public class IRCParserTest {
 
     @Test
     public void testGetParam() {
+        System.out.println("testGetParam - " + System.currentTimeMillis());
         assertEquals("abc def", TestParser.getParam("foo :abc def"));
         assertEquals("bar :abc def", TestParser.getParam("foo :bar :abc def"));
         assertEquals("abc def", TestParser.getParam("abc def"));
@@ -330,6 +357,7 @@ public class IRCParserTest {
     
     @Test
     public void testKick() throws CallbackNotFoundException {
+        System.out.println("testKick - " + System.currentTimeMillis());
         final TestParser parser = new TestParser();
         final ChannelKickListener ick = mock(ChannelKickListener.class);
         parser.injectConnectionStrings();
@@ -345,6 +373,7 @@ public class IRCParserTest {
     
     @Test
     public void testIllegalPort1() throws URISyntaxException {
+        System.out.println("testIllegalPort1 - " + System.currentTimeMillis());
         final TestParser tp = new TestParser(new MyInfo(), new URI("irc://127.0.0.1:0/"));
         final ConnectErrorListener tiei = mock(ConnectErrorListener.class);
         tp.getCallbackManager().addCallback(ConnectErrorListener.class, tiei);
@@ -354,6 +383,7 @@ public class IRCParserTest {
     
     @Test
     public void testIllegalPort2() throws URISyntaxException {
+        System.out.println("testIllegalPort2 - " + System.currentTimeMillis());
         final TestParser tp = new TestParser(new MyInfo(), new URI("irc://127.0.0.1:65570/"));
         final ConnectErrorListener tiei = mock(ConnectErrorListener.class);
         tp.getCallbackManager().addCallback(ConnectErrorListener.class, tiei);
