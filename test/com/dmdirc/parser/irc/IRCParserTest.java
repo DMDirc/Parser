@@ -342,16 +342,6 @@ public class IRCParserTest {
                 (IRCChannelClientInfo) anyObject(), (IRCChannelClientInfo) anyObject(),
                 anyString(), anyString());
     }
-
-    @Test
-    public void testIRCds() {
-        doIRCdTest("u2.10.12.10+snircd(1.3.4)", "snircd");
-        doIRCdTest("u2.10.12.12", "ircu");
-        doIRCdTest("hyperion-1.0.2b", "hyperion");
-        doIRCdTest("hybrid-7.2.3", "hybrid");
-        doIRCdTest("Unreal3.2.6", "unreal");
-        doIRCdTest("bahamut-1.8(04)", "bahamut");
-    }
     
     @Test
     public void testIllegalPort1() throws URISyntaxException {
@@ -369,24 +359,6 @@ public class IRCParserTest {
         tp.getCallbackManager().addCallback(ConnectErrorListener.class, tiei);
         tp.runSuper();
         verify(tiei).onConnectError(same(tp), (ParserError) anyObject());
-    }
-
-    private void doIRCdTest(final String ircd, final String expected) {
-        final TestParser parser = new TestParser();
-
-        String[] strings = {
-            ":server 001 nick :Welcome to the Testing IRC Network, nick",
-            ":server 002 nick :Your host is server.net, running version %s",
-            ":server 003 nick :This server was created Sun Jan 6 2008 at 17:34:54 CET",
-            ":server 004 nick server.net %s dioswkgxRXInP biklmnopstvrDcCNuMT bklov"
-        };
-
-        for (String line : strings) {
-            parser.injectLine(String.format(line, ircd));
-        }
-
-        assertEquals(ircd, parser.getServerSoftware());
-        assertEquals(expected.toLowerCase(), parser.getServerSoftwareType().toLowerCase());
     }
 
 }
