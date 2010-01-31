@@ -344,15 +344,6 @@ public class IRCParserTest {
     }
     
     @Test
-    public void testIllegalPort1() throws URISyntaxException {
-        final TestParser tp = new TestParser(new MyInfo(), new URI("irc://127.0.0.1:0/"));
-        final ConnectErrorListener tiei = mock(ConnectErrorListener.class);
-        tp.getCallbackManager().addCallback(ConnectErrorListener.class, tiei);
-        tp.runSuper();
-        verify(tiei).onConnectError(same(tp), (ParserError) anyObject());
-    }
-    
-    @Test
     public void testIllegalPort2() throws URISyntaxException {
         final TestParser tp = new TestParser(new MyInfo(), new URI("irc://127.0.0.1:65570/"));
         final ConnectErrorListener tiei = mock(ConnectErrorListener.class);
