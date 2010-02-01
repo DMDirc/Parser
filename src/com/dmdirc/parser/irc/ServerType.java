@@ -72,7 +72,7 @@ public enum ServerType {
     /** Freenodes Old IRCD. */
     DANCER("dancer", ".*dancer.*", "eI"),
     /** Inspircd. */
-    INSPIRCD("inspircd", ".*inspircd.*", "eI"),
+    INSPIRCD("inspircd", ".*inspircd.*", "eIgb"),
     /** Ultimate IRCD. */
     ULTIMATEIRCD("ultimateircd", ".*ultimateircd.*"),
     /** Criten IRCD. */
