@@ -1321,7 +1321,7 @@ public class IRCParser implements SecureParser, Runnable {
 
         final StringBuilder builder = new StringBuilder(chanPrefix.size());
 
-        for (Character prefix : chanPrefix) {
+        for (Character prefix : new LinkedList<Character>(chanPrefix)) {
             builder.append(prefix);
         }
 
