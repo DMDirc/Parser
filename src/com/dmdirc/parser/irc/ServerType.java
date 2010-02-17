@@ -57,6 +57,8 @@ public enum ServerType {
     IRCD_RIZON("ircd-rixon", ".*ircd-rizon.*", "eI"),
     /** Plexus. */
     PLEXUS("plexus", ".*plexus.*", "eI"),
+    /** Scoutlink's hybrid patches. */
+    SCOUTLINK_HYBRID("scoutlink", "hybrid6/slink6"),
     /** OFTCs hybrid fork. */
     OFTC_HYBRID("oftc-hybrid", ".*hybrid.*oftc.*", "eI"),
     /** hybrid7. */
