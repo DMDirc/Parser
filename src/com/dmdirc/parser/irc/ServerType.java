@@ -101,6 +101,12 @@ public enum ServerType {
     SWIFTIRC("swiftirc", ".*swiftirc.*"),
     /** Linknet ircd. */
     LINKNET("linknet", "linknet-ircd.*"),
+    /** NGircd detection. */
+    NGIRCD("ngircd", "ngircd.*"),
+    /** Vantage IRCD detection. */
+    VANTAGE("vantage", "vantage. *"),
+    /** ithildin ircd detection. */
+    ITHILDIN("ithildin", "ithildin.*"),
     /** IRCNet. */
     IRCNET("ircnet", "ircnet", null, MatchType.NETWORK),
     /** Star Chat. */
