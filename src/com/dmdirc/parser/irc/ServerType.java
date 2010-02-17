@@ -99,6 +99,8 @@ public enum ServerType {
     WEIRCD("weircd", ".*weircd.*"),
     /** swiftirc's ircd. */
     SWIFTIRC("swiftirc", ".*swiftirc.*"),
+    /** Linknet ircd. */
+    LINKNET("linknet", "linknet-ircd.*"),
     /** IRCNet. */
     IRCNET("ircnet", "ircnet", null, MatchType.NETWORK),
     /** Star Chat. */
