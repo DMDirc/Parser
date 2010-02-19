@@ -109,6 +109,10 @@ public enum ServerType {
     ITHILDIN("ithildin", "ithildin.*"),
     /** TR-IRCD. */
     TRIRCD("tr-ircd", "tr-ircd.*"),
+    /** Ignition server. */
+    IGNITION("ignition", "ignitionServer.*"),
+    /** IRCXPRO. */
+    IRCXPRO("ircxpro", "IRCXPRO.*"),
     /** IRCNet. */
     IRCNET("ircnet", "ircnet", null, MatchType.NETWORK),
     /** Star Chat. */
