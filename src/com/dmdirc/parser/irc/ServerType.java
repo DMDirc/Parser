@@ -107,6 +107,10 @@ public enum ServerType {
     VANTAGE("vantage", "vantage. *"),
     /** ithildin ircd detection. */
     ITHILDIN("ithildin", "ithildin.*"),
+    /** Ignition server. */
+    IGNITION("ignition", "ignitionServer.*"),
+    /** IRCXPRO. */
+    IRCXPRO("ircxpro", "IRCXPRO.*"),
     /** IRCNet. */
     IRCNET("ircnet", "ircnet", null, MatchType.NETWORK),
     /** Star Chat. */
