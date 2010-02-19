@@ -107,6 +107,8 @@ public enum ServerType {
     VANTAGE("vantage", "vantage. *"),
     /** ithildin ircd detection. */
     ITHILDIN("ithildin", "ithildin.*"),
+    /** TR-IRCD. */
+    TRIRCD("tr-ircd", "tr-ircd.*"),
     /** IRCNet. */
     IRCNET("ircnet", "ircnet", null, MatchType.NETWORK),
     /** Star Chat. */
