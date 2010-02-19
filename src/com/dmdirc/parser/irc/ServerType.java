@@ -101,6 +101,10 @@ public enum ServerType {
     SWIFTIRC("swiftirc", ".*swiftirc.*"),
     /** Linknet ircd. */
     LINKNET("linknet", "linknet-ircd.*"),
+    /** Ignition server. */
+    IGNITION("ignition", "ignitionServer.*"),
+    /** IRCXPRO. */
+    IRCXPRO("ircxpro", "IRCXPRO.*"),
     /** IRCNet. */
     IRCNET("ircnet", "ircnet", null, MatchType.NETWORK),
     /** Star Chat. */
