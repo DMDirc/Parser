@@ -110,9 +110,11 @@ public enum ServerType {
     /** TR-IRCD. */
     TRIRCD("tr-ircd", "tr-ircd.*"),
     /** Ignition server. */
-    IGNITION("ignition", "ignitionServer.*"),
+    IGNITION("ignition", "ignitionserver.*"),
     /** IRCXPRO. */
-    IRCXPRO("ircxpro", "IRCXPRO.*"),
+    IRCXPRO("ircxpro", "ircxpro.*"),
+    /** ShadowIRCD. */
+    SHADOW("shadowircd", "shadowircd*"),
     /** IRCNet. */
     IRCNET("ircnet", "ircnet", null, MatchType.NETWORK),
     /** Star Chat. */
@@ -124,7 +126,7 @@ public enum ServerType {
     /** Pastiche. */
     PASTICHE("bitlbee", "ircd-pastiche", null, MatchType.RAW002),
     /** Othernet. */
-    OTHERNET("othernet", ".*Othernet.*"),
+    OTHERNET("othernet", ".*othernet.*"),
     /** Generic IRCD. */
     GENERIC("generic", "", null, MatchType.NEVER);
 
