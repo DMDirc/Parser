@@ -33,135 +33,136 @@ import java.util.regex.PatternSyntaxException;
  */
 public class IgnoreList {
 
-	/** Arraylist storing ignore patterns. */
-	protected final List<String> ignoreInfo = new ArrayList<String>();
+    /** Arraylist storing ignore patterns. */
+    protected final List<String> ignoreInfo = new ArrayList<String>();
 
-	/**
-	 * Creates a new instance of RegexStringList.
-	 */
-	public IgnoreList() {
-		// Do nothing
-	}
+    /**
+     * Creates a new instance of RegexStringList.
+     */
+    public IgnoreList() {
+        // Do nothing
+    }
 
-	/**
-	 * Creates a new instance of RegexStringList, with the specified items.
-	 *
-	 * @param items Items to add to this RegexStringList
-	 */
-	public IgnoreList(final List<String> items) {
-		addAll(items);
-	}
+    /**
+     * Creates a new instance of RegexStringList, with the specified items.
+     *
+     * @param items Items to add to this RegexStringList
+     */
+    public IgnoreList(final List<String> items) {
+        addAll(items);
+    }
 
-	/**
-	 * Add a new ignore pattern to the ignore list.
-	 *
-	 * @param pattern Regex syntax for the ignore (Pattern is matched case-insensitively as ^pattern$)
-	 */
-	public void add(final String pattern) {
-		for (String target : ignoreInfo) {
-			if (pattern.equalsIgnoreCase(target)) {
-				return;
-			}
-		}
+    /**
+     * Add a new ignore pattern to the ignore list.
+     *
+     * @param pattern Regex syntax for the ignore (Pattern is matched case-insensitively as ^pattern$)
+     */
+    public void add(final String pattern) {
+        for (String target : ignoreInfo) {
+            if (pattern.equalsIgnoreCase(target)) {
+                return;
+            }
+        }
 
-		ignoreInfo.add(pattern);
-	}
+        ignoreInfo.add(pattern);
+    }
 
-	/**
-	 * Adds a set of patterns to the list.
-	 *
-	 * @param patterns A list of patterns to be added
-	 */
-	public void addAll(final List<String> patterns) {
-		for (String pattern : patterns) {
-			add(pattern);
-		}
-	}
+    /**
+     * Adds a set of patterns to the list.
+     *
+     * @param patterns A list of patterns to be added
+     */
+    public void addAll(final List<String> patterns) {
+        for (String pattern : patterns) {
+            add(pattern);
+        }
+    }
 
-	/**
-	 * Delete an ignore from the list.
-	 *
-	 * @param position Position in the list to remove
-	 */
-	public void remove(final int position) {
-		if (position < this.count()) {
-			ignoreInfo.remove(position);
-		}
-	}
+    /**
+     * Delete an ignore from the list.
+     *
+     * @param position Position in the list to remove
+     */
+    public void remove(final int position) {
+        if (position < this.count()) {
+            ignoreInfo.remove(position);
+        }
+    }
 
-	/**
-	 * Clear the ignore list.
-	 */
-	public void clear() {
-		ignoreInfo.clear();
-	}
+    /**
+     * Clear the ignore list.
+     */
+    public void clear() {
+        ignoreInfo.clear();
+    }
 
-	/**
-	 * Check if a string matches any of the ignores in the list.
-	 *
-	 * @param check String to check (Patterns are matched case-insensitively as ^pattern$)
-	 * @return integer showing the position of the first match in the ignore list (-1 if none)
-	 * @throws PatternSyntaxException if one of the items in the list is an invalid regex
-	 */
-	public int matches(final String check) throws PatternSyntaxException {
-		for (int i = 0; i < this.count(); ++i) {
-			if (check.matches("(?i)"+this.get(i))) {
-				return i;
-			}
-		}
-		return -1;
-	}
+    /**
+     * Check if a string matches any of the ignores in the list.
+     *
+     * @param check String to check (Patterns are matched case-insensitively as ^pattern$)
+     * @return integer showing the position of the first match in the ignore list (-1 if none)
+     * @throws PatternSyntaxException if one of the items in the list is an invalid regex
+     */
+    public int matches(final String check) throws PatternSyntaxException {
+        for (int i = 0; i < this.count(); ++i) {
+            if (check.matches("(?i)" + this.get(i))) {
+                return i;
+            }
+        }
+        return -1;
+    }
 
-	/**
-	 * Check if a string matches a specific ignore in the list.
-	 *
-	 * @param position Position to check
-	 * @param check String to check (Patterns are matched case-insensitively as ^pattern$)
-	 * @return boolean true/false
-	 * @throws PatternSyntaxException if the item is an invalid regex
-	 */
-	public boolean matches(final int position, final String check) throws PatternSyntaxException {
-		if (position < this.count()) {
-			return check.matches("(?i)"+this.get(position));
-		} else {
-			return false;
-		}
-	}
+    /**
+     * Check if a string matches a specific ignore in the list.
+     *
+     * @param position Position to check
+     * @param check String to check (Patterns are matched case-insensitively as ^pattern$)
+     * @return boolean true/false
+     * @throws PatternSyntaxException if the item is an invalid regex
+     */
+    public boolean matches(final int position, final String check) throws
+            PatternSyntaxException {
+        if (position < this.count()) {
+            return check.matches("(?i)" + this.get(position));
+        } else {
+            return false;
+        }
+    }
 
-	/**
-	 * Get the ignore pattern in a given position in the list.
-	 *
-	 * @param position Position to check
-	 * @return String showing the pattern. ("" if position isn't valid)
-	 */
-	public String get(final int position) {
-		if (position < this.count()) {
-			return ignoreInfo.get(position);
-		} else {
-			return "";
-		}
-	}
+    /**
+     * Get the ignore pattern in a given position in the list.
+     *
+     * @param position Position to check
+     * @return String showing the pattern. ("" if position isn't valid)
+     */
+    public String get(final int position) {
+        if (position < this.count()) {
+            return ignoreInfo.get(position);
+        } else {
+            return "";
+        }
+    }
 
-	/**
-	 * Change the ignore pattern in a given position in the list.
-	 *
-	 * @param position Position to change
-	 * @param pattern New pattern
-	 */
-	public void set(final int position, final String pattern) {
-		if (position < this.count()) {
-			ignoreInfo.set(position, pattern);
-		}
-	}
+    /**
+     * Change the ignore pattern in a given position in the list.
+     *
+     * @param position Position to change
+     * @param pattern New pattern
+     */
+    public void set(final int position, final String pattern) {
+        if (position < this.count()) {
+            ignoreInfo.set(position, pattern);
+        }
+    }
 
-	/**
-	 * Get the amount of ignores in the list.
-	 *
-	 * @return int showing the number of ignores
-	 */
-	public int count() {
-		return ignoreInfo.size();
-	}
+    /**
+     * Get the amount of ignores in the list.
+     *
+     * @return int showing the number of ignores
+     */
+    public int count() {
+        return ignoreInfo.size();
+    }
 
     /**
      * Adds the specified simple pattern to this ignore list.
@@ -244,11 +245,12 @@ public class IgnoreList {
 
                 res.append(part);
                 escaped = false;
-            }  else if (part == '\\') {
+            } else if (part == '\\') {
                 escaped = true;
             } else if (part == '.') {
                 inchar = true;
-            } else if (part == '.' || part == '^' || part == '$' || part == '['
+            } else if (part == '.' || part == '^' || part == '$' || part
+                    == '['
                     || part == ']' || part == '\\' || part == '(' || part == ')'
                     || part == '{' || part == '}' || part == '|' || part == '+'
                     || part == '*' || part == '?') {
@@ -281,23 +283,32 @@ public class IgnoreList {
 
         for (char part : regex.toCharArray()) {
             switch (part) {
-            case '.': case '^': case '$': case '[': case ']': case '\\':
-            case '(': case ')': case '{': case '}': case '|': case '+':
-                res.append('\\');
-                res.append(part);
-                break;
-            case '?':
-                res.append('.');
-                break;
-            case '*':
-                res.append('.');
-            default:
-                res.append(part);
-                break;
+                case '.':
+                case '^':
+                case '$':
+                case '[':
+                case ']':
+                case '\\':
+                case '(':
+                case ')':
+                case '{':
+                case '}':
+                case '|':
+                case '+':
+                    res.append('\\');
+                    res.append(part);
+                    break;
+                case '?':
+                    res.append('.');
+                    break;
+                case '*':
+                    res.append('.');
+                default:
+                    res.append(part);
+                    break;
             }
         }
 
         return res.toString();
     }
-
 }
