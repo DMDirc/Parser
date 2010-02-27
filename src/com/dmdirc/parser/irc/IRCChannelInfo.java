@@ -31,6 +31,7 @@ import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.common.QueuePriority;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -73,7 +74,7 @@ public class IRCChannelInfo implements ChannelInfo {
     private final String sName;
     
     /** Hashtable containing references to ChannelClients. */
-    private final Map<String, IRCChannelClientInfo> hChannelUserList = new Hashtable<String, IRCChannelClientInfo>();
+    private final Map<String, IRCChannelClientInfo> hChannelUserList = Collections.synchronizedMap(new Hashtable<String, IRCChannelClientInfo>());
     /** Hashtable storing values for modes set in the channel that use parameters. */
     private final Map<Character, String> hParamModes = new Hashtable<Character, String>();
     /** Hashtable storing list modes. */
