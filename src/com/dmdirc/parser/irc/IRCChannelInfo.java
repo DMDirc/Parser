@@ -31,6 +31,7 @@ import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.common.QueuePriority;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -73,7 +74,7 @@ public class IRCChannelInfo implements ChannelInfo {
     private final String sName;
     
     /** Hashtable containing references to ChannelClients. */
-    private final Map<String, IRCChannelClientInfo> hChannelUserList = new Hashtable<String, IRCChannelClientInfo>();
+    private final Map<String, IRCChannelClientInfo> hChannelUserList = Collections.synchronizedMap(new Hashtable<String, IRCChannelClientInfo>());
     /** Hashtable storing values for modes set in the channel that use parameters. */
     private final Map<Character, String> hParamModes = new Hashtable<Character, String>();
     /** Hashtable storing list modes. */
@@ -275,7 +276,9 @@ public class IRCChannelInfo implements ChannelInfo {
     /** {@inheritDoc} */
         @Override
     public Collection<ChannelClientInfo> getChannelClients() {
-        return new ArrayList<ChannelClientInfo>(hChannelUserList.values());
+        synchronized(hChannelUserList) {
+            return new ArrayList<ChannelClientInfo>(hChannelUserList.values());
+        }
     }
     
     /**
@@ -283,11 +286,13 @@ public class IRCChannelInfo implements ChannelInfo {
      */
     protected void emptyChannel() {
         IRCClientInfo cTemp = null;
-        for (IRCChannelClientInfo client : hChannelUserList.values()) {
-            cTemp = client.getClient();
-            cTemp.delChannelClientInfo(client);
-            if (cTemp != myParser.getLocalClient() && !cTemp.checkVisibility()) {
-                myParser.removeClient(cTemp);
+        synchronized (hChannelUserList) {
+            for (IRCChannelClientInfo client : hChannelUserList.values()) {
+                cTemp = client.getClient();
+                cTemp.delChannelClientInfo(client);
+                if (cTemp != myParser.getLocalClient() && !cTemp.checkVisibility()) {
+                    myParser.removeClient(cTemp);
+                }
             }
         }
         hChannelUserList.clear();
@@ -316,9 +321,11 @@ public class IRCChannelInfo implements ChannelInfo {
     /** {@inheritDoc} */
     @Override
     public IRCChannelClientInfo getChannelClient(final ClientInfo client) {
-        for (IRCChannelClientInfo target : hChannelUserList.values()) {
-            if (target.getClient() == client) {
-                return target;
+        synchronized (hChannelUserList) {
+            for (IRCChannelClientInfo target : hChannelUserList.values()) {
+                if (target.getClient() == client) {
+                    return target;
+                }
             }
         }
         return null;
