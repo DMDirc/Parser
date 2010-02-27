@@ -76,9 +76,7 @@ public class ProcessMessage extends IRCProcessor {
         try {
             if (myParser.getIgnoreList().matches(sMessage) > -1) { return; }
         } catch (PatternSyntaxException pse) {
-            final ParserError pe = new ParserError(ParserError.ERROR_WARNING, "Error with ignore list regex: "+pse, myParser.getLastLine());
-            pe.setException(pse);
-            callErrorInfo(pe);
+            //Ignore exception, show line. Validation needs to be carried out when adding ignore list items
         }
         
         // Lines such as:
