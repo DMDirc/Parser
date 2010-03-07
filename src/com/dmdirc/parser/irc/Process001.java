@@ -71,7 +71,7 @@ public class Process001 extends IRCProcessor {
 
         final String channels = myParser.server.getChannels();
         if (channels != null) {
-            myParser.joinChannel(channels, true);
+            myParser.joinChannel(channels);
         }
     }
 

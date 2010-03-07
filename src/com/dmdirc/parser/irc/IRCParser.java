@@ -39,6 +39,7 @@ import com.dmdirc.parser.interfaces.callbacks.Post005Listener;
 import com.dmdirc.parser.interfaces.callbacks.ServerErrorListener;
 import com.dmdirc.parser.interfaces.callbacks.SocketCloseListener;
 import com.dmdirc.parser.common.CallbackManager;
+import com.dmdirc.parser.common.ChannelJoinRequest;
 import com.dmdirc.parser.common.QueuePriority;
 
 import java.io.BufferedReader;
@@ -53,6 +54,7 @@ import java.net.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -357,11 +359,33 @@ public class IRCParser implements SecureParser, Runnable {
 
     /** {@inheritDoc} */
     @Override
-    public void updateURI(final URI uri) {
-        final String channels = new ServerInfo(uri).getChannels();
-        if (channels != null) {
-            joinChannel(channels, true);
+    public Collection<? extends ChannelJoinRequest> extractChannels(final URI uri) {
+        return extractChannels(new ServerInfo(uri).getChannels());
+    }
+
+    /**
+     * Extracts a set of channels and optional keys from the specified String.
+     * Channels are separated by commas, and keys are separated from their
+     * channels by a space.
+     *
+     * @since 0.6.4
+     * @param channels The string of channels to parse
+     * @return A corresponding collection of join request objects
+     */
+    protected Collection<? extends ChannelJoinRequest> extractChannels(final String channels) {
+        final List<ChannelJoinRequest> res = new ArrayList<ChannelJoinRequest>();
+
+        for (String channel : channels.split(",")) {
+            final String[] parts = channel.split(" ", 2);
+
+            if (parts.length == 2) {
+                res.add(new ChannelJoinRequest(parts[0], parts[1]));
+            } else {
+                res.add(new ChannelJoinRequest(parts[0]));
+            }
         }
+
+        return res;
     }
 
     /** {@inheritDoc} */
@@ -1468,24 +1492,13 @@ public class IRCParser implements SecureParser, Runnable {
     /** {@inheritDoc} */
     @Override
     public void joinChannel(final String channel) {
-        joinChannel(channel, "", true);
-    }
-
-    /**
-     * Join a Channel.
-     *
-     * @param sChannelName Name of channel to join
-     * @param autoPrefix Automatically prepend the first channel prefix defined
-     *                   in 005 if sChannelName is an invalid channel.
-     */
-    public void joinChannel(final String sChannelName, final boolean autoPrefix) {
-        joinChannel(sChannelName, "", autoPrefix);
+        joinChannels(extractChannels(channel).toArray(new ChannelJoinRequest[0]));
     }
 
     /** {@inheritDoc} */
     @Override
     public void joinChannel(final String channel, final String key) {
-        joinChannel(channel, key, true);
+        joinChannels(new ChannelJoinRequest(channel, key));
     }
 
     /**
@@ -1497,35 +1510,26 @@ public class IRCParser implements SecureParser, Runnable {
      * @param key Key to use to try and join the channel (If a list is given
      *            then this key will be used for any channels that do not
      *            specify one themselves.
-     * @param autoPrefix Automatically prepend the first channel prefix defined
-     *                   in 005 to any of the channels passsed if they are
-     *                   otherwise invalid channels.
      */
-    public void joinChannel(final String channel, final String key, final boolean autoPrefix) {
-        final String[] bits = channel.split(",");
-
+    @Override
+    public void joinChannels(final ChannelJoinRequest ... channels) {
         // We store a map from key->channels to allow intelligent joining of
         // channels using as few JOIN commands as needed.
         final Map<String, StringBuffer> joinMap = new HashMap<String, StringBuffer>();
 
-        for (String bit : bits) {
-            // Find any key for this channel
-            final String[] keybits = bit.split(" ", 2);
-            final String channelName = keybits[0];
-            final String thisKey = (keybits.length > 1) ? keybits[1] : key;
-
+        for (ChannelJoinRequest channel : channels) {
             // Make sure we have a list to put stuff in.
-            StringBuffer list = joinMap.get(thisKey);
+            StringBuffer list = joinMap.get(channel.getPassword());
             if (list == null) {
                 list = new StringBuffer();
-                joinMap.put(thisKey, list);
+                joinMap.put(channel.getPassword(), list);
             }
 
             // Add the channel to the list. If the name is invalid and
             // autoprefix is off we will just skip this channel.
-            if (channelName.length() > 0 && (isValidChannelName(channelName) || autoPrefix)) {
+            if (!channel.getName().isEmpty()) {
                 if (list.length() > 0) { list.append(","); }
-                if (!isValidChannelName(channelName) && autoPrefix) {
+                if (!isValidChannelName(channel.getName())) {
                     if (h005Info.containsKey("CHANTYPES")) {
                         final String chantypes = h005Info.get("CHANTYPES");
                         if (chantypes.isEmpty()) {
@@ -1537,7 +1541,7 @@ public class IRCParser implements SecureParser, Runnable {
                         list.append('#');
                     }
                 }
-                list.append(channelName);
+                list.append(channel.getName());
             }
         }
 
@@ -1545,7 +1549,7 @@ public class IRCParser implements SecureParser, Runnable {
             final String thisKey = entrySet.getKey();
             final String channelString = entrySet.getValue().toString();
             if (!channelString.isEmpty()) {
-                if (thisKey.isEmpty()) {
+                if (thisKey == null || thisKey.isEmpty()) {
                     sendString("JOIN " + channelString);
                 } else {
                     sendString("JOIN " + channelString + " " + thisKey);
