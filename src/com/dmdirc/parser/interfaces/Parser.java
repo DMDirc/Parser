@@ -24,6 +24,7 @@ package com.dmdirc.parser.interfaces;
 
 import com.dmdirc.parser.common.IgnoreList;
 import com.dmdirc.parser.common.CallbackManager;
+import com.dmdirc.parser.common.ChannelJoinRequest;
 
 import com.dmdirc.parser.common.QueuePriority;
 import java.net.URI;
@@ -61,6 +62,14 @@ public interface Parser extends Runnable {
      * @param key The key required to join the channel
      */
     void joinChannel(String channel, String key);
+
+    /**
+     * Joins the specified channels.
+     *
+     * @since 0.6.4
+     * @param channels The channels to be joined
+     */
+    void joinChannels(ChannelJoinRequest ... channels);
 
     /**
      * Retrieves a channel information object for the specified channel.
@@ -187,24 +196,12 @@ public interface Parser extends Runnable {
     boolean compareURI(final URI uri);
 
     /**
-     * Updates this parser with a new URI. The new URI should be fundamentally
-     * the same as the one the parser connected to (to the extent that
-     * {@link #compareURI(java.net.URI)} returns true), but it may contain
-     * extra information (such as an additional list of channels to join).
-     * This operation should be non-destructive; that is, if the URI provided
-     * contains less information than a previous URI, the 'missing' information
-     * should not be treated as an instruction to remove it.
-     * <p>
-     * For example, if the parser was originally constructed with a URI
-     * <code>irc://irc.quakenet.org/chan1,chan2</code>, and this method was
-     * subsequently called with an argument of
-     * <code>irc://irc.quakenet.org/chan3</code>, the IRC parser should join
-     * the channel "chan3" and would also remain in chan1 and chan2.
+     * Extracts any channels present in the specified URI.
      *
-     * @param uri The URI to update this parser with
-     * @since 0.6.3
+     * @param uri The URI to extract channels from
+     * @since 0.6.4
      */
-    void updateURI(final URI uri);
+    Collection<? extends ChannelJoinRequest> extractChannels(final URI uri);
 
     /**
      * Retrieves the name of the server that this parser is connected to.
