@@ -75,4 +75,21 @@ public class ChannelJoinRequest {
         return password;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public boolean equals(final Object obj) {
+        return obj instanceof ChannelJoinRequest
+                && ((ChannelJoinRequest) obj).getName().equals(name)
+                && ((((ChannelJoinRequest) obj).getPassword() == null
+                ? password == null : ((ChannelJoinRequest) obj).getPassword().equals(password)));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public int hashCode() {
+        int hash = name != null ? name.hashCode() : 0;
+        hash = 13 * hash + (password != null ? password.hashCode() : 0);
+        return hash;
+    }
+
 }
