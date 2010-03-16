@@ -73,6 +73,13 @@ public class IRCStringConverterTest {
         
         assertEquals(4, ircsc.getLimit());
     }
+
+    @Test
+    public void testDefaultLimit() {
+        final IRCStringConverter ircsc = new IRCStringConverter();
+
+        assertEquals(4, ircsc.getLimit());
+    }
     
     @Test
     public void testEqualsNull() {
