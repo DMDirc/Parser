@@ -25,8 +25,8 @@ package com.dmdirc.parser.interfaces;
 import com.dmdirc.parser.common.IgnoreList;
 import com.dmdirc.parser.common.CallbackManager;
 import com.dmdirc.parser.common.ChannelJoinRequest;
-
 import com.dmdirc.parser.common.QueuePriority;
+
 import java.net.URI;
 import java.util.Collection;
 import java.util.Map;
@@ -199,6 +199,7 @@ public interface Parser extends Runnable {
      * Extracts any channels present in the specified URI.
      *
      * @param uri The URI to extract channels from
+     * @return A list of channel join requests extracted from the specified URI
      * @since 0.6.4
      */
     Collection<? extends ChannelJoinRequest> extractChannels(final URI uri);
