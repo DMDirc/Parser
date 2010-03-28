@@ -25,20 +25,25 @@ package com.dmdirc.parser.interfaces.callbacks;
 import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.SpecificCallback;
 
+import java.util.Date;
+
 /**
  * Called when a server sends a notice to you.
  * sHost is the hostname of the server sending the notice.<br>
  */
 @SpecificCallback
 public interface ServerNoticeListener extends CallbackInterface {
-	/**
-	 * Called when a server sends a notice to you.
-	 * sHost is the hostname of the server sending the notice.<br>
-	 * 
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @param sMessage Notice contents
-	 * @param sHost Hostname of sender
-	 * @see com.dmdirc.parser.irc.ProcessMessage#callPrivateNotice
-	 */
-	void onServerNotice(Parser tParser, String sMessage, String sHost);
+
+    /**
+     * Called when a server sends a notice to you.
+     * sHost is the hostname of the server sending the notice.<br>
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @param message Notice contents
+     * @param host Hostname of sender
+     * @see com.dmdirc.parser.irc.ProcessMessage#callPrivateNotice
+     */
+    void onServerNotice(Parser parser, Date date, String message, String host);
+
 }

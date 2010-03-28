@@ -24,16 +24,21 @@ package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.interfaces.Parser;
 
+import java.util.Date;
+
 /**
  * Interface Used to give ServerError.
  */
 public interface ServerErrorListener extends CallbackInterface {
-	/**
-	 * This callback is used to give messages the server sends as an ERROR.
-	 *
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @param sMessage Error Information
-	 * @see com.dmdirc.parser.irc.IRCParser#callServerError
-	 */
-	void onServerError(Parser tParser, String sMessage);
+
+    /**
+     * This callback is used to give messages the server sends as an ERROR.
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @param message Error Information
+     * @see com.dmdirc.parser.irc.IRCParser#callServerError
+     */
+    void onServerError(Parser parser, Date date, String message);
+
 }

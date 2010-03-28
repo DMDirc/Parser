@@ -24,17 +24,22 @@ package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.interfaces.Parser;
 
+import java.util.Date;
+
 /**
  * Interface Used to give Debug Information.
  */
 public interface DebugInfoListener extends CallbackInterface {
-	/**
-	 * This callback is used to provide occasional debug information from the parser.
-	 *
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @param nLevel Debugging Level (ndInfo, ndSocket etc)
-	 * @param sData Debugging Information
-	 * @see com.dmdirc.parser.irc.IRCParser#callDebugInfo
-	 */
-	void onDebugInfo(Parser tParser, int nLevel, String sData);
+
+    /**
+     * This callback is used to provide occasional debug information from the parser.
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @param level Debugging Level (ndInfo, ndSocket etc)
+     * @param data Debugging Information
+     * @see com.dmdirc.parser.irc.IRCParser#callDebugInfo
+     */
+    void onDebugInfo(Parser parser, Date date, int level, String data);
+
 }

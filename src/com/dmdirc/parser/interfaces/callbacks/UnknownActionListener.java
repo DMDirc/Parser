@@ -24,22 +24,28 @@ package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.interfaces.Parser;
 
+import java.util.Date;
+
 /**
  * Called when a person sends an action not aimed specifically at you or a channel (ie $*).
  * sHost is the hostname of the person sending the message. (Can be a server or a person)<br>
  * cClient is null if user is a server, or not on any common channel.
  */
 public interface UnknownActionListener extends CallbackInterface {
-	/**
-	 * Called when a person sends an action not aimed specifically at you or a channel (ie $*).
-	 * sHost is the hostname of the person sending the message. (Can be a server or a person)<br>
-	 * cClient is null if user is a server, or not on any common channel.
-	 * 
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @param sMessage Action contents
-	 * @param sTarget Actual target of action
-	 * @param sHost Hostname of sender (or servername)
-	 * @see com.dmdirc.parser.irc.ProcessMessage#callUnknownAction
-	 */
-	void onUnknownAction(Parser tParser, String sMessage, String sTarget, String sHost);
+
+    /**
+     * Called when a person sends an action not aimed specifically at you or a channel (ie $*).
+     * sHost is the hostname of the person sending the message. (Can be a server or a person)<br>
+     * cClient is null if user is a server, or not on any common channel.
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @param message Action contents
+     * @param target Actual target of action
+     * @param host Hostname of sender (or servername)
+     * @see com.dmdirc.parser.irc.ProcessMessage#callUnknownAction
+     */
+    void onUnknownAction(Parser parser, Date date, String message,
+            String target, String host);
+
 }

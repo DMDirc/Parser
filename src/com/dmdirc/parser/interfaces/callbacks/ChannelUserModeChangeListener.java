@@ -28,29 +28,33 @@ import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.FakableArgument;
 import com.dmdirc.parser.interfaces.FakableSource;
 import com.dmdirc.parser.interfaces.SpecificCallback;
+import java.util.Date;
 
 /** 
  * Called when a users channel mode is changed.
  */
 @SpecificCallback
 public interface ChannelUserModeChangeListener extends CallbackInterface {
-	/**
-	 * Called when a users channel mode is changed.
-	 * cChannelClient is null if the modes were found from raw 324 (/MODE #Chan reply) or if a server set the mode.<br>
-	 * If a Server set the mode, sHost is the servers name, else it is the full host of the user who set it
-	 * 
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @param cChannel Channel where modes were changed
-	 * @param cChangedClient Client being changed
-	 * @param cSetByClient Client chaning the modes (null if server)
-	 * @param sHost Host doing the mode changing (User host or server name)
-	 * @param sMode String representing mode change (ie +o)
-	 * @see com.dmdirc.parser.irc.ProcessMode#callChannelUserModeChanged
-	 */
-	void onChannelUserModeChanged(@FakableSource Parser tParser,
-            @FakableSource ChannelInfo cChannel,
-            ChannelClientInfo cChangedClient,
-            @FakableArgument ChannelClientInfo cSetByClient,
-            @FakableSource String sHost,
-            String sMode);
+
+    /**
+     * Called when a users channel mode is changed.
+     * cChannelClient is null if the modes were found from raw 324 (/MODE #Chan reply) or if a server set the mode.<br>
+     * If a Server set the mode, sHost is the servers name, else it is the full host of the user who set it
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @param channel Channel where modes were changed
+     * @param targetClient Client being changed
+     * @param client Client chaning the modes (null if server)
+     * @param host Host doing the mode changing (User host or server name)
+     * @param mode String representing mode change (ie +o)
+     * @see com.dmdirc.parser.irc.ProcessMode#callChannelUserModeChanged
+     */
+    void onChannelUserModeChanged(@FakableSource Parser parser,
+            Date date,
+            @FakableSource ChannelInfo channel,
+            ChannelClientInfo targetClient,
+            @FakableArgument ChannelClientInfo client,
+            @FakableSource String host,
+            String mode);
 }

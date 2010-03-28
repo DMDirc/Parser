@@ -27,21 +27,26 @@ import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.SpecificCallback;
+import java.util.Date;
 
 /**
  * Called when we go away, or come back.
  */
 @SpecificCallback
 public interface ChannelOtherAwayStateListener extends CallbackInterface {
-	/**
-	 * Called when we go away, or come back.
-	 *
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @param channel Channel this is for
-	 * @param channelClient Client this is for
-         * @param oldState Old Away State
-	 * @param state Current Away State
-	 * @see com.dmdirc.parser.irc.ProcessAway#callChannelAwayStateOther
-	 */
-	void onChannelAwayStateOther(Parser tParser, ChannelInfo channel, ChannelClientInfo channelClient, AwayState oldState, AwayState state);
+
+    /**
+     * Called when we go away, or come back.
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @param channel Channel this is for
+     * @param client Client this is for
+     * @param oldState Old Away State
+     * @param state Current Away State
+     * @see com.dmdirc.parser.irc.ProcessAway#callChannelAwayStateOther
+     */
+    void onChannelAwayStateOther(Parser parser, Date date, ChannelInfo channel,
+            ChannelClientInfo client, AwayState oldState, AwayState state);
+
 }

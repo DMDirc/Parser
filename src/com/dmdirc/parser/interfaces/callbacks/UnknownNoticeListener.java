@@ -24,22 +24,27 @@ package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.interfaces.Parser;
 
+import java.util.Date;
+
 /**
  * Called when a person sends a notice not aimed specifically at you or a channel (ie $*).
  * sHost is the hostname of the person sending the message. (Can be a server or a person)<br>
  * cClient is null if user is a server, or not on any common channel.
  */
 public interface UnknownNoticeListener extends CallbackInterface {
-	/**
-	 * Called when a person sends a notice not aimed specifically at you or a channel (ie $*).
-	 * sHost is the hostname of the person sending the message. (Can be a server or a person)<br>
-	 * cClient is null if user is a server, or not on any common channel.
-	 * 
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @param sMessage Notice contents
-	 * @param sTarget Actual target of notice
-	 * @param sHost Hostname of sender (or servername)
-	 * @see com.dmdirc.parser.irc.ProcessMessage#callUnknownNotice
-	 */
-	void onUnknownNotice(Parser tParser, String sMessage, String sTarget, String sHost);
+
+    /**
+     * Called when a person sends a notice not aimed specifically at you or a channel (ie $*).
+     * sHost is the hostname of the person sending the message. (Can be a server or a person)<br>
+     * cClient is null if user is a server, or not on any common channel.
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @param message Notice contents
+     * @param target Actual target of notice
+     * @param host Hostname of sender (or servername)
+     * @see com.dmdirc.parser.irc.ProcessMessage#callUnknownNotice
+     */
+    void onUnknownNotice(Parser parser, Date date, String message, String target, String host);
+
 }

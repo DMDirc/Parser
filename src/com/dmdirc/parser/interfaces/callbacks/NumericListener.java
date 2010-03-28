@@ -24,17 +24,22 @@ package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.interfaces.Parser;
 
+import java.util.Date;
+
 /**
  * Interface Used to give numeric Information.
  */
 public interface NumericListener extends CallbackInterface {
-	/**
-	 * Called on every incomming line with a numerical type.
-	 * 
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @param numeric What numeric is this for
-	 * @param token IRC Tokenised line
-	 * @see com.dmdirc.parser.irc.ProcessingManager#callNumeric
-	 */
-	void onNumeric(Parser tParser, int numeric, String[] token);
+
+    /**
+     * Called on every incomming line with a numerical type.
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @param numeric What numeric is this for
+     * @param token IRC Tokenised line
+     * @see com.dmdirc.parser.irc.ProcessingManager#callNumeric
+     */
+    void onNumeric(Parser parser, Date date, int numeric, String[] token);
+
 }

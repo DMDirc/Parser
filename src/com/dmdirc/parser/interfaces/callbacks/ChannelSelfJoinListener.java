@@ -25,18 +25,23 @@ package com.dmdirc.parser.interfaces.callbacks;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.Parser;
 
+import java.util.Date;
+
 /** 
  * Called When we join a channel.
  * We are NOT added as a channelclient until after the names reply
  */
 public interface ChannelSelfJoinListener extends CallbackInterface {
-	/**
-	 * Called When we join a channel.
-	 * We are NOT added as a channelclient until after the names reply
-	 * 
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @param cChannel Channel Object
-	 * @see com.dmdirc.parser.irc.ProcessJoin#callChannelSelfJoin
-	 */
-	void onChannelSelfJoin(Parser tParser, ChannelInfo cChannel);
+
+    /**
+     * Called When we join a channel.
+     * We are NOT added as a channelclient until after the names reply
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @param channel Channel Object
+     * @see com.dmdirc.parser.irc.ProcessJoin#callChannelSelfJoin
+     */
+    void onChannelSelfJoin(Parser parser, Date date, ChannelInfo channel);
+
 }

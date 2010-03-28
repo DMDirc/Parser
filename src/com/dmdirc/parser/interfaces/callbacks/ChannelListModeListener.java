@@ -26,6 +26,8 @@ import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.SpecificCallback;
 
+import java.util.Date;
+
 /**
  * Called when all requested ListModes have been sent.
  * This is decided by ProcessListModes, and is called when an "end of list"
@@ -33,13 +35,16 @@ import com.dmdirc.parser.interfaces.SpecificCallback;
  */
 @SpecificCallback
 public interface ChannelListModeListener extends CallbackInterface {
-	/**
-	 * Called when a ListModes reply is parsed.
-	 *
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @param cChannel Channel which the ListModes reply is for
-         * @param mode the Mode the ListMOdes reply is for.
-	 * @see com.dmdirc.parser.irc.ProcessListModes#callChannelGotListModes
-	 */
-	void onChannelGotListModes(Parser tParser, ChannelInfo cChannel, char mode);
+
+    /**
+     * Called when a ListModes reply is parsed.
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @param channel Channel which the ListModes reply is for
+     * @param mode the Mode the ListMOdes reply is for.
+     * @see com.dmdirc.parser.irc.ProcessListModes#callChannelGotListModes
+     */
+    void onChannelGotListModes(Parser parser, Date date, ChannelInfo channel, char mode);
+
 }

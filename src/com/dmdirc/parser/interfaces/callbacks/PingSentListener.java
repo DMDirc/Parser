@@ -23,16 +23,20 @@
 package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.interfaces.Parser;
+import java.util.Date;
 
 /**
  * Called when a Ping was Sent.
  */
 public interface PingSentListener extends CallbackInterface {
-	/**
-	 * Called when a ping was Sent.
-	 * 
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @see IRCParser#callPingSent
-	 */
-	void onPingSent(Parser tParser);
+
+    /**
+     * Called when a ping was Sent.
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @see IRCParser#callPingSent
+     */
+    void onPingSent(Parser parser, Date date);
+
 }
