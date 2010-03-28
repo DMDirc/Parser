@@ -33,6 +33,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -138,11 +139,24 @@ public abstract class CallbackObject {
      * @return True if a method was called, false otherwise
      */
     public boolean call(final Object... args) {
+        return call(new Date(), args);
+    }
+
+    /**
+     * Actually calls this callback. The specified arguments must match those
+     * specified in the callback's interface, or an error will be raised.
+     *
+     * @param date The date/time at which the event occured
+     * @param args The arguments to pass to the callback implementation
+     * @return True if a method was called, false otherwise
+     */
+    public boolean call(final Date date, final Object... args) {
         boolean bResult = false;
 
-        final Object[] newArgs = new Object[args.length + 1];
-        System.arraycopy(args, 0, newArgs, 1, args.length);
+        final Object[] newArgs = new Object[args.length + 2];
+        System.arraycopy(args, 0, newArgs, 2, args.length);
         newArgs[0] = myParser;
+        newArgs[1] = date;
 
         createFakeArgs(newArgs);
 

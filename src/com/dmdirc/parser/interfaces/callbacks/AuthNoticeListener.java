@@ -24,17 +24,21 @@ package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.interfaces.Parser;
 
+import java.util.Date;
+
 /**
  * Interface Used on every incomming line before 001.
  */
 public interface AuthNoticeListener extends CallbackInterface {
 
     /**
-	 * Called on every incomming line before 001.
-	 * 
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @param sData Incomming Line.
-	 * @see com.dmdirc.parser.irc.ProcessNoticeAuth#callNoticeAuth
-	 */
-	void onNoticeAuth(Parser tParser, String sData);
+     * Called on every incomming line before 001.
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @param data Incomming Line.
+     * @see com.dmdirc.parser.irc.ProcessNoticeAuth#callNoticeAuth
+     */
+    void onNoticeAuth(Parser parser, Date date, String data);
+
 }

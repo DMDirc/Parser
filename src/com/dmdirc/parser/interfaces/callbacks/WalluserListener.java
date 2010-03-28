@@ -25,20 +25,24 @@ package com.dmdirc.parser.interfaces.callbacks;
 import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.SpecificCallback;
 
+import java.util.Date;
+
 /**
  * Called when an all-users message is recieved over wallops.
  * sHost is the hostname of the person sending the message. (Can be a server or a person)<br>
  */
 @SpecificCallback
 public interface WalluserListener extends CallbackInterface {
-	/**
-	 * Called when an all-users message is recieved over wallops.
-	 * sHost is the hostname of the person sending the message. (Can be a server or a person)<br>
-	 * 
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @param sMessage Message contents
-	 * @param sHost Hostname of sender (or servername)
-	 * @see com.dmdirc.parser.irc.ProcessWallops#callWalluser
-	 */
-	void onWalluser(Parser tParser, String sMessage, String sHost);
+
+    /**
+     * Called when an all-users message is recieved over wallops.
+     * sHost is the hostname of the person sending the message. (Can be a server or a person)<br>
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @param message Message contents
+     * @param host Hostname of sender (or servername)
+     * @see com.dmdirc.parser.irc.ProcessWallops#callWalluser
+     */
+    void onWalluser(Parser parser, Date date, String message, String host);
 }

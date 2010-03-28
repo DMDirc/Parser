@@ -25,19 +25,24 @@ package com.dmdirc.parser.interfaces.callbacks;
 import com.dmdirc.parser.interfaces.ClientInfo;
 import com.dmdirc.parser.interfaces.Parser;
 
+import java.util.Date;
+
 /**
  * Called when we or another user change nickname.
  * This is called after the nickname change has been done internally
  */
 public interface NickChangeListener extends CallbackInterface {
-	/**
-	 * Called when we or another user change nickname.
-	 * This is called after the nickname change has been done internally
-	 * 
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @param cClient Client changing nickname
-	 * @param sOldNick Nickname before change
-	 * @see com.dmdirc.parser.irc.ProcessNick#callNickChanged
-	 */
-	void onNickChanged(Parser tParser, ClientInfo cClient, String sOldNick);
+
+    /**
+     * Called when we or another user change nickname.
+     * This is called after the nickname change has been done internally
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @param client Client changing nickname
+     * @param oldNick Nickname before change
+     * @see com.dmdirc.parser.irc.ProcessNick#callNickChanged
+     */
+    void onNickChanged(Parser parser, Date date, ClientInfo client, String oldNick);
+
 }

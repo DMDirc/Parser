@@ -29,6 +29,8 @@ import com.dmdirc.parser.interfaces.FakableArgument;
 import com.dmdirc.parser.interfaces.FakableSource;
 import com.dmdirc.parser.interfaces.SpecificCallback;
 
+import java.util.Date;
+
 /**
  * Called when a person sends a CTCPRReply to a channel.
  * sHost is the hostname of the person sending the CTCPReply. (Can be a server or a person)<br>
@@ -36,22 +38,25 @@ import com.dmdirc.parser.interfaces.SpecificCallback;
  */
 @SpecificCallback
 public interface ChannelCtcpReplyListener extends CallbackInterface {
-	/**
-	 * Called when a person sends a CTCPRReply to a channel.
-	 * sHost is the hostname of the person sending the CTCPReply. (Can be a server or a person)<br>
-	 * cChannelClient is null if user is a server.
-	 * 
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @param cChannel Channel where CTCPReply was sent
-	 * @param cChannelClient ChannelClient who sent the message (may be null if server)
-	 * @param sType Type of CTCPRReply (VERSION, TIME etc)
-	 * @param sMessage Reply Contents
-	 * @param sHost Hostname of sender (or servername)
-	 * @see com.dmdirc.parser.irc.ProcessMessage#callChannelCTCPReply
-	 */
-	void onChannelCTCPReply(@FakableSource Parser tParser,
-            @FakableSource ChannelInfo cChannel,
-            @FakableArgument ChannelClientInfo cChannelClient,
-            String sType, String sMessage,
-            @FakableSource String sHost);
+
+    /**
+     * Called when a person sends a CTCPRReply to a channel.
+     * sHost is the hostname of the person sending the CTCPReply. (Can be a server or a person)<br>
+     * cChannelClient is null if user is a server.
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @param channel Channel where CTCPReply was sent
+     * @param client ChannelClient who sent the message (may be null if server)
+     * @param type Type of CTCPRReply (VERSION, TIME etc)
+     * @param message Reply Contents
+     * @param host Hostname of sender (or servername)
+     * @see com.dmdirc.parser.irc.ProcessMessage#callChannelCTCPReply
+     */
+    void onChannelCTCPReply(@FakableSource Parser parser,
+            Date date,
+            @FakableSource ChannelInfo channel,
+            @FakableArgument ChannelClientInfo client,
+            String type, String message,
+            @FakableSource String host);
 }

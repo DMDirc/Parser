@@ -25,6 +25,7 @@ package com.dmdirc.parser.interfaces.callbacks;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.SpecificCallback;
+import java.util.Date;
 
 /** 
  * Called when the topic is changed or discovered for the first time.
@@ -32,14 +33,17 @@ import com.dmdirc.parser.interfaces.SpecificCallback;
  */
 @SpecificCallback
 public interface ChannelTopicListener extends CallbackInterface {
-	/**
-	 * Called when the topic is changed or discovered for the first time.
-	 * bIsNewTopic is true if someone sets the topic, false if the topic is discovered on join
-	 * 
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @param cChannel Channel that topic was set on
-	 * @param bIsJoinTopic True when getting topic on join, false if set by user/server
-	 * @see com.dmdirc.parser.irc.ProcessTopic#callChannelTopic
-	 */
-	void onChannelTopic(Parser tParser, ChannelInfo cChannel, boolean bIsJoinTopic);
+
+    /**
+     * Called when the topic is changed or discovered for the first time.
+     * bIsNewTopic is true if someone sets the topic, false if the topic is discovered on join
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @param channel Channel that topic was set on
+     * @param isJoinTopic True when getting topic on join, false if set by user/server
+     * @see com.dmdirc.parser.irc.ProcessTopic#callChannelTopic
+     */
+    void onChannelTopic(Parser parser, Date date, ChannelInfo channel, boolean isJoinTopic);
+
 }

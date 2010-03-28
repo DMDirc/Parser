@@ -27,20 +27,25 @@ import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.SpecificCallback;
 
+import java.util.Date;
+
 /** 
  * Called When we, or another client joins a channel.
  * This is called AFTER client has been added to channel as a ChannelClientInfo
  */
 @SpecificCallback
 public interface ChannelJoinListener extends CallbackInterface {
-	/**
-	 * Called When another client joins a channel.
-	 * This is called AFTER client has been added to channel as a ChannelClientInfo
-	 * 
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @param cChannel Channel Object
-	 * @param cChannelClient ChannelClient object for new person
-	 * @see com.dmdirc.parser.irc.ProcessJoin#callChannelJoin
-	 */
-	void onChannelJoin(Parser tParser, ChannelInfo cChannel, ChannelClientInfo cChannelClient);
+
+    /**
+     * Called When another client joins a channel.
+     * This is called AFTER client has been added to channel as a ChannelClientInfo
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @param channel Channel Object
+     * @param client ChannelClient object for new person
+     * @see com.dmdirc.parser.irc.ProcessJoin#callChannelJoin
+     */
+    void onChannelJoin(Parser parser, Date date, ChannelInfo channel, ChannelClientInfo client);
+
 }

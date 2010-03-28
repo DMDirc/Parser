@@ -25,22 +25,27 @@ package com.dmdirc.parser.interfaces.callbacks;
 import com.dmdirc.parser.interfaces.ClientInfo;
 import com.dmdirc.parser.interfaces.Parser;
 
+import java.util.Date;
+
 /** 
  * Called when user modes are changed.
  * cClient represents the user who's modes were changed (should ALWAYS be us)<br>
  * sSetby is the host of the person who set the mode (usually us, may be an oper or server in some cases)
  */
 public interface UserModeChangeListener extends CallbackInterface {
-	/**
-	 * Called when user modes are changed.
-	 * cClient represents the user who's modes were changed (should ALWAYS be us)<br>
-	 * sSetby is the host of the person who set the mode (usually us, may be an oper or server in some cases)
-	 * 
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @param cClient Client that had the mode changed (almost always us)
-	 * @param sSetBy Host that set the mode (us or servername)
-	 * @param sModes The modes set.
-	 * @see com.dmdirc.parser.irc.ProcessMode#callUserModeChanged
-	 */
-	void onUserModeChanged(Parser tParser, ClientInfo cClient, String sSetBy, String sModes);
+
+    /**
+     * Called when user modes are changed.
+     * cClient represents the user who's modes were changed (should ALWAYS be us)<br>
+     * sSetby is the host of the person who set the mode (usually us, may be an oper or server in some cases)
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @param client Client that had the mode changed (almost always us)
+     * @param host Host that set the mode (us or servername)
+     * @param modes The modes set.
+     * @see com.dmdirc.parser.irc.ProcessMode#callUserModeChanged
+     */
+    void onUserModeChanged(Parser parser, Date date, ClientInfo client,
+            String host, String modes);
 }

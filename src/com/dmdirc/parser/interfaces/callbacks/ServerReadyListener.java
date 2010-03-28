@@ -24,15 +24,20 @@ package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.interfaces.Parser;
 
+import java.util.Date;
+
 /**
  * Called after 001.
  */
 public interface ServerReadyListener extends CallbackInterface {
-	/**
-	 * Called after 001.
-	 * 
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @see com.dmdirc.parser.irc.Process001#callServerReady
-	 */
-	void onServerReady(Parser tParser);
+
+    /**
+     * Called after 001.
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @see com.dmdirc.parser.irc.Process001#callServerReady
+     */
+    void onServerReady(Parser parser, Date date);
+
 }

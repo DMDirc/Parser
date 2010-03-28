@@ -25,16 +25,21 @@ package com.dmdirc.parser.interfaces.callbacks;
 import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.common.ParserError;
 
+import java.util.Date;
+
 /**
  * Called to give Error Information.
  */
 public interface ErrorInfoListener extends CallbackInterface {
-	/**
-	 * Called to give Error Information.
-	 * 
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @param errorInfo ParserError object representing the error.
-	 * @see com.dmdirc.parser.irc.IRCParser#callErrorInfo
-	 */
-	void onErrorInfo(Parser tParser, ParserError errorInfo);
+
+    /**
+     * Called to give Error Information.
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @param errorInfo ParserError object representing the error.
+     * @see com.dmdirc.parser.irc.IRCParser#callErrorInfo
+     */
+    void onErrorInfo(Parser parser, Date date, ParserError errorInfo);
+    
 }

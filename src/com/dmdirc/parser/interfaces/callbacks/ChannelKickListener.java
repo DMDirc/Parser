@@ -29,28 +29,33 @@ import com.dmdirc.parser.interfaces.FakableArgument;
 import com.dmdirc.parser.interfaces.FakableSource;
 import com.dmdirc.parser.interfaces.SpecificCallback;
 
+import java.util.Date;
+
 /**
  * Called when a person is kicked.
  * cKickedByClient can be null if kicked by a server. sKickedByHost is the hostname of the person/server doing the kicking.
  */
 @SpecificCallback
 public interface ChannelKickListener extends CallbackInterface {
-	/**
-	 * Called when a person is kicked.
-	 * cKickedByClient can be null if kicked by a server. sKickedByHost is the hostname of the person/server doing the kicking.
-	 *
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @param cChannel Channel where the kick took place
-	 * @param cKickedClient ChannelClient that got kicked
-	 * @param cKickedByClient ChannelClient that did the kicking (may be null if server)
-	 * @param sReason Reason for kick (may be "")
-	 * @param sKickedByHost Hostname of Kicker (or servername)
-	 * @see com.dmdirc.parser.irc.ProcessKick#callChannelKick
-	 */
-	void onChannelKick(@FakableSource Parser tParser,
-            @FakableSource ChannelInfo cChannel,
-            ChannelClientInfo cKickedClient,
-            @FakableArgument ChannelClientInfo cKickedByClient,
-            String sReason,
-            @FakableSource String sKickedByHost);
+
+    /**
+     * Called when a person is kicked.
+     * cKickedByClient can be null if kicked by a server. sKickedByHost is the hostname of the person/server doing the kicking.
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @param channel Channel where the kick took place
+     * @param kickedClient ChannelClient that got kicked
+     * @param client ChannelClient that did the kicking (may be null if server)
+     * @param reason Reason for kick (may be "")
+     * @param host Hostname of Kicker (or servername)
+     * @see com.dmdirc.parser.irc.ProcessKick#callChannelKick
+     */
+    void onChannelKick(@FakableSource Parser parser,
+            Date date,
+            @FakableSource ChannelInfo channel,
+            ChannelClientInfo kickedClient,
+            @FakableArgument ChannelClientInfo client,
+            String reason,
+            @FakableSource String host);
 }

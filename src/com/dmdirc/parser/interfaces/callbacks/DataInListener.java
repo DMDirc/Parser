@@ -24,16 +24,21 @@ package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.interfaces.Parser;
 
+import java.util.Date;
+
 /**
  * Interface Used on every incomming line BEFORE parsing.
  */
 public interface DataInListener extends CallbackInterface {
-	/**
-	 * Called on every incomming line BEFORE parsing.
-	 * 
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @param sData Incomming Line.
-	 * @see com.dmdirc.parser.irc.IRCParser#callDataIn
-	 */
-	void onDataIn(Parser tParser, String sData);
+
+    /**
+     * Called on every incomming line BEFORE parsing.
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @param data Incomming Line.
+     * @see com.dmdirc.parser.irc.IRCParser#callDataIn
+     */
+    void onDataIn(Parser parser, Date date, String data);
+
 }

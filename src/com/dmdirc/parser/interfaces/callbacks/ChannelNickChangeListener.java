@@ -27,21 +27,27 @@ import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.SpecificCallback;
 
+import java.util.Date;
+
 /** 
  * Called when we or another user change nickname (Called once per channel the user is on).
  * This is called after the nickname change has been done internally
  */
 @SpecificCallback
 public interface ChannelNickChangeListener extends CallbackInterface {
-	/**
-	 * Called when we or another user change nickname (Called once per channel the user is on).
-	 * This is called after the nickname change has been done internally
-	 * 
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @param cChannel One of the channels that the user is on
-	 * @param cChannelClient Client changing nickname
-	 * @param sOldNick Nickname before change
-	 * @see com.dmdirc.parser.irc.ProcessNick#callChannelNickChanged
-	 */
-	 void onChannelNickChanged(Parser tParser, ChannelInfo cChannel, ChannelClientInfo cChannelClient, String sOldNick);
+
+    /**
+     * Called when we or another user change nickname (Called once per channel the user is on).
+     * This is called after the nickname change has been done internally
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @param channel One of the channels that the user is on
+     * @param client Client changing nickname
+     * @param oldNick Nickname before change
+     * @see com.dmdirc.parser.irc.ProcessNick#callChannelNickChanged
+     */
+     void onChannelNickChanged(Parser parser, Date date, ChannelInfo channel,
+             ChannelClientInfo client, String oldNick);
+
 }

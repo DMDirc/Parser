@@ -24,23 +24,29 @@ package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.interfaces.Parser;
 
+import java.util.Date;
+
 /**
  * Called when a person sends a CTCP not aimed at you or a channel (ie $*).
  * sHost is the hostname of the person sending the CTCP. (Can be a server or a person)<br>
  * cClient is null if user is a server, or not on any common channels.
  */
 public interface UnknownCtcpListener extends CallbackInterface {
-	/**
-	 * Called when a person sends a CTCP not aimed at you or a channel (ie $*).
-	 * sHost is the hostname of the person sending the CTCP. (Can be a server or a person)<br>
-	 * cClient is null if user is a server, or not on any common channels.
-	 * 
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @param sType Type of CTCP (VERSION, TIME etc)
-	 * @param sMessage Additional contents
-	 * @param sTarget Actual Target of CTCP
-	 * @param sHost Hostname of sender (or servername)
-	 * @see com.dmdirc.parser.irc.ProcessMessage#callUnknownCTCP
-	 */
-	void onUnknownCTCP(Parser tParser, String sType, String sMessage, String sTarget, String sHost);
+
+    /**
+     * Called when a person sends a CTCP not aimed at you or a channel (ie $*).
+     * sHost is the hostname of the person sending the CTCP. (Can be a server or a person)<br>
+     * cClient is null if user is a server, or not on any common channels.
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @param type Type of CTCP (VERSION, TIME etc)
+     * @param message Additional contents
+     * @param target Actual Target of CTCP
+     * @param host Hostname of sender (or servername)
+     * @see com.dmdirc.parser.irc.ProcessMessage#callUnknownCTCP
+     */
+    void onUnknownCTCP(Parser parser, Date date, String type, String message,
+            String target, String host);
+
 }

@@ -24,19 +24,25 @@ package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.interfaces.Parser;
 
+import java.util.Date;
+
 /**
  * Interface Used when the Network=blah 005 token is recieved.
  */
 public interface NetworkDetectedListener extends CallbackInterface {
-	/**
-	 * Called when the Network=blah 005 token is recieved.
-	 * if NETWORK= is not sent in 005, this will not be called.
-	 * 
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @param networkName The name of the network.
-	 * @param ircdVersion The version of the ircd.
-	 * @param ircdType The Guessed type of the ircd based on the name.
-	 * @see com.dmdirc.parser.irc.Process004005#callGotNetwork
-	 */
-	void onGotNetwork(Parser tParser, String networkName, String ircdVersion, String ircdType);
+
+    /**
+     * Called when the Network=blah 005 token is recieved.
+     * if NETWORK= is not sent in 005, this will not be called.
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @param networkName The name of the network.
+     * @param ircdVersion The version of the ircd.
+     * @param ircdType The Guessed type of the ircd based on the name.
+     * @see com.dmdirc.parser.irc.Process004005#callGotNetwork
+     */
+    void onGotNetwork(Parser parser, Date date, String networkName,
+            String ircdVersion, String ircdType);
+
 }

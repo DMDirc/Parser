@@ -24,6 +24,7 @@ package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.SpecificCallback;
+import java.util.Date;
 
 /**
  * Called when a person does an action to you (PM).
@@ -32,15 +33,18 @@ import com.dmdirc.parser.interfaces.SpecificCallback;
  */
 @SpecificCallback
 public interface PrivateActionListener extends CallbackInterface {
-	/**
-	 * Called when a person does an action to you (PM).
-	 * sHost is the hostname of the person sending the action. (Can be a server or a person)<br>
-	 * cClient is null if user is a server, or not on any common channel.
-	 * 
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @param sMessage action contents
-	 * @param sHost Hostname of sender (or servername)
-	 * @see com.dmdirc.parser.irc.ProcessMessage#callPrivateAction
-	 */
-	void onPrivateAction(Parser tParser, String sMessage, String sHost);
+
+    /**
+     * Called when a person does an action to you (PM).
+     * sHost is the hostname of the person sending the action. (Can be a server or a person)<br>
+     * cClient is null if user is a server, or not on any common channel.
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @param message action contents
+     * @param host Hostname of sender (or servername)
+     * @see com.dmdirc.parser.irc.ProcessMessage#callPrivateAction
+     */
+    void onPrivateAction(Parser parser, Date date, String message, String host);
+
 }

@@ -24,17 +24,22 @@ package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.interfaces.Parser;
 
+import java.util.Date;
+
 /**
  * Called on every incomming line BEFORE being sent.
  */
 public interface DataOutListener extends CallbackInterface {
-	/**
-	 * Called on every incomming line BEFORE being sent.
-	 * 
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @param sData Outgoing Data
-	 * @param bFromParser True if parser sent the data, false if sent using .sendLine
-	 * @see com.dmdirc.parser.irc.IRCParser#callDataOut
-	 */
-	void onDataOut(Parser tParser, String sData, boolean bFromParser);
+
+    /**
+     * Called on every incomming line BEFORE being sent.
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @param data Outgoing Data
+     * @param fromParser True if parser sent the data, false if sent using .sendLine
+     * @see com.dmdirc.parser.irc.IRCParser#callDataOut
+     */
+    void onDataOut(Parser parser, Date date, String data, boolean fromParser);
+
 }

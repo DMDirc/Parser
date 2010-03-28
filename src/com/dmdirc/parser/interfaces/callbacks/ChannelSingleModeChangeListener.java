@@ -28,6 +28,7 @@ import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.FakableArgument;
 import com.dmdirc.parser.interfaces.FakableSource;
 import com.dmdirc.parser.interfaces.SpecificCallback;
+import java.util.Date;
 
 /** 
  * Called when the channel modes are changed or discovered.
@@ -36,21 +37,24 @@ import com.dmdirc.parser.interfaces.SpecificCallback;
  */
 @SpecificCallback
 public interface ChannelSingleModeChangeListener extends CallbackInterface {
-	/**
-	 * Called when the channel modes are changed or discovered.
-	 * cChannelClient is null if the modes were found from raw 324 (/MODE #Chan reply) or if a server set the mode.<br>
-	 * If a Server set the mode, sHost is the servers name, else it is the full host of the user who set it
-	 * 
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @param cChannel Channel where modes were changed
-	 * @param cChannelClient Client chaning the modes (null if server)
-	 * @param sHost Host doing the mode changing (User host or server name)
-	 * @param sModes String parsed (ie "+m" or "+k moo"
-	 */
-	void onChannelSingleModeChanged(@FakableSource Parser tParser,
-            @FakableSource ChannelInfo cChannel,
-            @FakableArgument ChannelClientInfo cChannelClient,
-            @FakableSource String sHost,
-            String sModes);
+
+    /**
+     * Called when the channel modes are changed or discovered.
+     * cChannelClient is null if the modes were found from raw 324 (/MODE #Chan reply) or if a server set the mode.<br>
+     * If a Server set the mode, sHost is the servers name, else it is the full host of the user who set it
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @param channel Channel where modes were changed
+     * @param client Client chaning the modes (null if server)
+     * @param host Host doing the mode changing (User host or server name)
+     * @param modes String parsed (ie "+m" or "+k moo"
+     */
+    void onChannelSingleModeChanged(@FakableSource Parser parser,
+            Date date,
+            @FakableSource ChannelInfo channel,
+            @FakableArgument ChannelClientInfo client,
+            @FakableSource String host,
+            String modes);
 }
 

@@ -24,17 +24,22 @@ package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.interfaces.Parser;
 
+import java.util.Date;
+
 /**
  * Called when we are invited to a channel.
  */
 public interface InviteListener extends CallbackInterface {
-	/**
-	 * Called when we are invited to a channel.
-	 * 
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @param userHost Hostname of user who invited us
-	 * @param channel Channel we were invited to
-	 * @see com.dmdirc.parser.irc.ProcessInvite#callInvite
-	 */
-	void onInvite(Parser tParser, String userHost, String channel);
+
+    /**
+     * Called when we are invited to a channel.
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @param userHost Hostname of user who invited us
+     * @param channel Channel we were invited to
+     * @see com.dmdirc.parser.irc.ProcessInvite#callInvite
+     */
+    void onInvite(Parser parser, Date date, String userHost, String channel);
+
 }

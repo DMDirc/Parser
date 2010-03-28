@@ -26,6 +26,7 @@ import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.SpecificCallback;
+import java.util.Date;
 
 /** 
  * Called When we, or another client parts a channel.
@@ -33,15 +34,19 @@ import com.dmdirc.parser.interfaces.SpecificCallback;
  */
 @SpecificCallback
 public interface ChannelPartListener extends CallbackInterface {
-	/**
-	 * Called When we, or another client parts a channel.
-	 * This is called BEFORE client has been removed from the channel.
-	 * 
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @param cChannel Channel that the user parted
-	 * @param cChannelClient Client that parted
-	 * @param sReason Reason given for parting (May be "")
-	 * @see com.dmdirc.parser.irc.ProcessPart#callChannelPart
-	 */
-	void onChannelPart(Parser tParser, ChannelInfo cChannel, ChannelClientInfo cChannelClient, String sReason);
+
+    /**
+     * Called When we, or another client parts a channel.
+     * This is called BEFORE client has been removed from the channel.
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @param channel Channel that the user parted
+     * @param client Client that parted
+     * @param reason Reason given for parting (May be "")
+     * @see com.dmdirc.parser.irc.ProcessPart#callChannelPart
+     */
+    void onChannelPart(Parser parser, Date date, ChannelInfo channel,
+            ChannelClientInfo client, String reason);
+
 }

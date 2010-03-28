@@ -24,17 +24,22 @@ package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.interfaces.Parser;
 
+import java.util.Date;
+
 /**
  * Called when "End of MOTD" or "No MOTD" is received.
  */
 public interface MotdEndListener extends CallbackInterface {
-	/**
-	 * Called when "End of MOTD" or "No MOTD".
-	 *
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @param noMOTD Set to true if this was a "No MOTD Found" message rather than an "End of MOTD"
-	 * @param sData The contents of the line (incase of language changes or so)
-	 * @see com.dmdirc.parser.irc.ProcessMOTD#callMOTDEnd
-	 */
-	void onMOTDEnd(Parser tParser, boolean noMOTD, String sData);
+
+    /**
+     * Called when "End of MOTD" or "No MOTD".
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @param noMOTD Set to true if this was a "No MOTD Found" message rather than an "End of MOTD"
+     * @param data The contents of the line (incase of language changes or so)
+     * @see com.dmdirc.parser.irc.ProcessMOTD#callMOTDEnd
+     */
+    void onMOTDEnd(Parser parser, Date date, boolean noMOTD, String data);
+
 }

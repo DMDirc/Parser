@@ -29,6 +29,8 @@ import com.dmdirc.parser.interfaces.FakableArgument;
 import com.dmdirc.parser.interfaces.FakableSource;
 import com.dmdirc.parser.interfaces.SpecificCallback;
 
+import java.util.Date;
+
 /**
  * Called when a person sends a notice to a channel with a mode prefix.
  * (Examples @#Channel +#Channel)
@@ -37,23 +39,25 @@ import com.dmdirc.parser.interfaces.SpecificCallback;
  */
 @SpecificCallback
 public interface ChannelModeNoticeListener extends CallbackInterface {
-	/**
-	 * Called when a person sends a notice to a channel.
-	 * sHost is the hostname of the person sending the notice. (Can be a server or a person)<br>
-	 * cChannelClient is null if user is a server, or not on the channel.
-	 * 
-	 * @param tParser Reference to the parser object that made the callback.
-         * @param prefix The mode prefix of the message
-	 * @param cChannel Channel where the notice was sent to
-	 * @param cChannelClient ChannelClient who sent the notice (may be null if server)
-	 * @param sMessage notice contents
-	 * @param sHost Hostname of sender (or servername)
-	 * @see com.dmdirc.parser.irc.ProcessMessage#callChannelModeNotice
-	 */
-	void onChannelModeNotice(@FakableSource Parser tParser,
-            @FakableSource ChannelInfo cChannel,
+
+    /**
+     * Called when a person sends a notice to a channel.
+     * sHost is the hostname of the person sending the notice. (Can be a server or a person)<br>
+     * cChannelClient is null if user is a server, or not on the channel.
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @param prefix The mode prefix of the message
+     * @param channel Channel where the notice was sent to
+     * @param client ChannelClient who sent the notice (may be null if server)
+     * @param message notice contents
+     * @param host Hostname of sender (or servername)
+     * @see com.dmdirc.parser.irc.ProcessMessage#callChannelModeNotice
+     */
+    void onChannelModeNotice(@FakableSource Parser parser,
+            Date date, @FakableSource ChannelInfo channel,
             char prefix,
-            @FakableArgument ChannelClientInfo cChannelClient,
-            String sMessage,
-            @FakableSource String sHost);
+            @FakableArgument ChannelClientInfo client,
+            String message,
+            @FakableSource String host);
 }

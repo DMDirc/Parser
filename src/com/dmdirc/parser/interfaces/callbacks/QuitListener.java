@@ -25,19 +25,24 @@ package com.dmdirc.parser.interfaces.callbacks;
 import com.dmdirc.parser.interfaces.ClientInfo;
 import com.dmdirc.parser.interfaces.Parser;
 
+import java.util.Date;
+
 /** 
  * Called When we, or another client quits IRC (Called once in total).
  * This is called BEFORE client has been removed from the channel.
  */
 public interface QuitListener extends CallbackInterface {
-	/**
-	 * Called When we, or another client quits IRC (Called once in total).
-	 * This is called BEFORE client has been removed from the channel.
-	 *
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @param cClient Client Quitting
-	 * @param sReason Reason for quitting (may be "")
-	 * @see com.dmdirc.parser.irc.ProcessQuit#callQuit
-	 */
-	void onQuit(Parser tParser, ClientInfo cClient, String sReason);
+
+    /**
+     * Called When we, or another client quits IRC (Called once in total).
+     * This is called BEFORE client has been removed from the channel.
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @param client Client Quitting
+     * @param reason Reason for quitting (may be "")
+     * @see com.dmdirc.parser.irc.ProcessQuit#callQuit
+     */
+    void onQuit(Parser parser, Date date, ClientInfo client, String reason);
+
 }

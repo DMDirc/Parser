@@ -24,16 +24,21 @@ package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.interfaces.Parser;
 
+import java.util.Date;
+
 /**
  * Interface Used to give MOTD Information.
  */
 public interface MotdLineListener extends CallbackInterface {
-	/**
-	 * Called on every incomming line from the MOTD.
-	 * 
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @param sData Incomming Line.
-	 * @see com.dmdirc.parser.irc.ProcessMOTD#callMOTDLine
-	 */
-	void onMOTDLine(Parser tParser, String sData);
+
+    /**
+     * Called on every incomming line from the MOTD.
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @param data Incomming Line.
+     * @see com.dmdirc.parser.irc.ProcessMOTD#callMOTDLine
+     */
+    void onMOTDLine(Parser parser, Date date, String data);
+
 }

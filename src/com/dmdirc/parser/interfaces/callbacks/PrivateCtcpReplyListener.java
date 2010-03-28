@@ -25,6 +25,8 @@ package com.dmdirc.parser.interfaces.callbacks;
 import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.SpecificCallback;
 
+import java.util.Date;
+
 /**
  * Called when a person sends a CTCPRReply to you directly.
  * sHost is the hostname of the person sending the CTCPRReply. (Can be a server or a person)<br>
@@ -32,16 +34,18 @@ import com.dmdirc.parser.interfaces.SpecificCallback;
  */
 @SpecificCallback
 public interface PrivateCtcpReplyListener extends CallbackInterface {
-	/**
-	 * Called when a person sends a CTCPRReply to you directly.
-	 * sHost is the hostname of the person sending the CTCPRReply. (Can be a server or a person)<br>
-	 * cClient is null if user is a server, or not on any common channels.
-	 * 
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @param sType Type of CTCPRReply (VERSION, TIME etc)
-	 * @param sMessage Reply Contents
-	 * @param sHost Hostname of sender (or servername)
-	 * @see com.dmdirc.parser.irc.ProcessMessage#callPrivateCTCPReply
-	 */
-	void onPrivateCTCPReply(Parser tParser, String sType, String sMessage, String sHost);
+
+    /**
+     * Called when a person sends a CTCPRReply to you directly.
+     * sHost is the hostname of the person sending the CTCPRReply. (Can be a server or a person)<br>
+     * cClient is null if user is a server, or not on any common channels.
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @param type Type of CTCPRReply (VERSION, TIME etc)
+     * @param message Reply Contents
+     * @param host Hostname of sender (or servername)
+     * @see com.dmdirc.parser.irc.ProcessMessage#callPrivateCTCPReply
+     */
+    void onPrivateCTCPReply(Parser parser, Date date, String type, String message, String host);
 }

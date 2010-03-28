@@ -24,15 +24,20 @@ package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.interfaces.Parser;
 
+import java.util.Date;
+
 /**
  * Called when a Ping Failed.
  */
 public interface PingFailureListener extends CallbackInterface {
-	/**
-	 * Called when a ping failed.
-	 * 
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @see IRCParser#callPingFailed
-	 */
-	void onPingFailed(Parser tParser);
+
+    /**
+     * Called when a ping failed.
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @see IRCParser#callPingFailed
+     */
+    void onPingFailed(Parser parser, Date date);
+
 }

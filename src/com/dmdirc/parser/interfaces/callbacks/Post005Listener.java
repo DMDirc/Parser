@@ -23,16 +23,20 @@
 package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.interfaces.Parser;
+import java.util.Date;
 
 /**
  * Called after 001.
  */
 public interface Post005Listener extends CallbackInterface {
-	/**
-	 * Called after 005.
-	 * 
-	 * @param tParser Reference to the parser object that made the callback.
-	 * @see com.dmdirc.parser.irc.Process001#callPost005
-	 */
-	void onPost005(Parser tParser);
+
+    /**
+     * Called after 005.
+     *
+     * @param parser Reference to the parser object that made the callback.
+     * @param date The date/time at which the event occured
+     * @see com.dmdirc.parser.irc.Process001#callPost005
+     */
+    void onPost005(Parser parser, Date date);
+
 }
