@@ -57,6 +57,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -211,7 +212,7 @@ public class IRCParser implements SecureParser, Runnable {
     boolean addLastLine = false;
 
     /** Channel Prefixes (ie # + etc). */
-    private final List<Character> chanPrefix = new LinkedList<Character>();
+    private final List<Character> chanPrefix = Collections.synchronizedList(new LinkedList<Character>());
     /** Hashtable storing all known clients based on nickname (in lowercase). */
     private final Map<String, IRCClientInfo> clientList = new Hashtable<String, IRCClientInfo>();
     /** Hashtable storing all known channels based on chanel name (inc prefix - in lowercase). */
@@ -1345,8 +1346,10 @@ public class IRCParser implements SecureParser, Runnable {
 
         final StringBuilder builder = new StringBuilder(chanPrefix.size());
 
-        for (Character prefix : new LinkedList<Character>(chanPrefix)) {
-            builder.append(prefix);
+        synchronized (chanPrefix) {
+            for (Character prefix : chanPrefix) {
+                builder.append(prefix);
+            }
         }
 
         return builder.toString();
