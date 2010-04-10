@@ -26,6 +26,7 @@ import com.dmdirc.harness.parser.TestParser;
 import com.dmdirc.parser.common.CallbackNotFoundException;
 import com.dmdirc.parser.interfaces.callbacks.ChannelJoinListener;
 import com.dmdirc.parser.interfaces.callbacks.ChannelSelfJoinListener;
+import java.util.Date;
 
 import org.junit.Test;
 import static org.mockito.Mockito.*;
@@ -41,7 +42,8 @@ public class ProcessJoinTest {
         parser.getCallbackManager().addCallback(ChannelSelfJoinListener.class, test);
         parser.injectLine(":nick JOIN #DMDirc_testing");
 
-        verify(test).onChannelSelfJoin(same(parser), same(parser.getChannel("#DMDirc_testing")));
+        verify(test).onChannelSelfJoin(same(parser), (Date) anyObject(),
+                same(parser.getChannel("#DMDirc_testing")));
     }
     
     @Test
@@ -55,8 +57,9 @@ public class ProcessJoinTest {
         parser.injectLine(":nick JOIN #DMDirc_testing");
         parser.injectLine(":foo!bar@baz JOIN #DMDirc_testing");
 
-        verify(test).onChannelJoin(parser, parser.getChannel("#DMDirc_testing"),
-                parser.getClient("foo!bar@baz").getChannelClients().get(0));
+        verify(test).onChannelJoin(same(parser), (Date) anyObject(),
+                same(parser.getChannel("#DMDirc_testing")),
+                same(parser.getClient("foo!bar@baz").getChannelClients().get(0)));
     }    
 
 }

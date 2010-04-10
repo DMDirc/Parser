@@ -28,6 +28,7 @@ import com.dmdirc.parser.interfaces.callbacks.QuitListener;
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ClientInfo;
 import com.dmdirc.parser.common.CallbackNotFoundException;
+import java.util.Date;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -61,7 +62,7 @@ public class ProcessQuitTest {
         assertEquals(1, parser.getChannel("#DMDirc_testing").getChannelClients().size());
         assertEquals(2, parser.getChannel("#DMDirc_testing2").getChannelClients().size());
 
-        verify(test).onChannelQuit(same(parser),
+        verify(test).onChannelQuit(same(parser), (Date) anyObject(),
                 same(parser.getChannel("#DMDirc_testing")), same(cci),
                 eq("Bye bye, cruel world"));
     }
@@ -91,7 +92,8 @@ public class ProcessQuitTest {
         assertEquals(1, parser.getChannel("#DMDirc_testing").getChannelClients().size());
         assertEquals(2, parser.getChannel("#DMDirc_testing2").getChannelClients().size());
 
-        verify(test).onQuit(same(parser), same(client), eq("Bye bye, cruel world"));
+        verify(test).onQuit(same(parser), (Date) anyObject(),
+                same(client), eq("Bye bye, cruel world"));
     }
     
     @Test
@@ -115,7 +117,7 @@ public class ProcessQuitTest {
         
         assertEquals(1, parser.getChannel("#DMDirc_testing").getChannelClients().size());
         
-        verify(test).onQuit(same(parser), same(client), eq(""));
+        verify(test).onQuit(same(parser), (Date) anyObject(), same(client), eq(""));
     }    
 
 }

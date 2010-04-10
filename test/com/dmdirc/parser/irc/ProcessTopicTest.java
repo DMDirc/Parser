@@ -25,6 +25,7 @@ package com.dmdirc.parser.irc;
 import com.dmdirc.harness.parser.TestParser;
 import com.dmdirc.parser.common.CallbackNotFoundException;
 import com.dmdirc.parser.interfaces.callbacks.ChannelTopicListener;
+import java.util.Date;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -42,8 +43,8 @@ public class ProcessTopicTest {
         parser.injectLine(":server 332 nick #DMDirc_testing :This be a topic");
         parser.injectLine(":server 333 nick #DMDirc_testing Q 1207350306");
 
-        verify(test).onChannelTopic(same(parser), same(parser.getChannel("#DMDirc_testing")),
-                eq(true));
+        verify(test).onChannelTopic(same(parser), (Date) anyObject(),
+                same(parser.getChannel("#DMDirc_testing")), eq(true));
 
         assertEquals("#DMDirc_testing", parser.getChannel("#DMDirc_testing").getName());
         assertEquals("This be a topic", parser.getChannel("#DMDirc_testing").getTopic());
@@ -65,8 +66,8 @@ public class ProcessTopicTest {
         
         parser.injectLine(":foobar TOPIC #DMDirc_testing :New topic here");
 
-        verify(test).onChannelTopic(same(parser), same(parser.getChannel("#DMDirc_testing")),
-                eq(false));
+        verify(test).onChannelTopic(same(parser), (Date) anyObject(),
+                same(parser.getChannel("#DMDirc_testing")), eq(false));
         
         assertEquals("#DMDirc_testing", parser.getChannel("#DMDirc_testing").getName());
         assertEquals("New topic here", parser.getChannel("#DMDirc_testing").getTopic());

@@ -29,6 +29,7 @@ import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.callbacks.ErrorInfoListener;
 import com.dmdirc.parser.interfaces.callbacks.NickChangeListener;
 import com.dmdirc.parser.common.CallbackNotFoundException;
+import java.util.Date;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -56,7 +57,8 @@ public class ProcessNickTest {
         assertEquals(parser.getChannel("#DMDirc_testing"), cci.getChannel());
         assertEquals("+", cci.getChanModeStr(true));
 
-        verify(tinc).onNickChanged(same(parser), same(parser.getClient("LUSER")), eq("luser"));
+        verify(tinc).onNickChanged(same(parser), (Date) anyObject(),
+                same(parser.getClient("LUSER")), eq("luser"));
     }
     
     @Test
@@ -90,7 +92,7 @@ public class ProcessNickTest {
         parser.injectLine(":server 366 nick #DMDirc_testing :End of /NAMES list");
         parser.injectLine(":luser!lu@ser.com NICK nick3");
 
-        verify(info).onErrorInfo(same(parser),(ParserError) anyObject());
+        verify(info).onErrorInfo(same(parser), (Date) anyObject(), (ParserError) anyObject());
     }
     
     @Test
@@ -103,8 +105,8 @@ public class ProcessNickTest {
         parser.injectConnectionStrings();
         parser.injectLine(":random!lu@ser NICK rand");
 
-        verify(tinc, never()).onNickChanged((Parser) anyObject(), (ClientInfo) anyObject(),
-                anyString());
+        verify(tinc, never()).onNickChanged((Parser) anyObject(),
+                (Date) anyObject(), (ClientInfo) anyObject(), anyString());
     }
 
 }

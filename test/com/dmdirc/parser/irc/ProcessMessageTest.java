@@ -28,6 +28,7 @@ import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.callbacks.PrivateActionListener;
 import com.dmdirc.parser.interfaces.callbacks.PrivateCtcpListener;
 import com.dmdirc.parser.interfaces.callbacks.PrivateMessageListener;
+import java.util.Date;
 import org.junit.Test;
 import static org.mockito.Mockito.*;
 
@@ -47,9 +48,12 @@ public class ProcessMessageTest {
         parser.getCallbackManager().addCallback(PrivateCtcpListener.class, ipctest);
 
         parser.injectLine(":a!b@c PRIVMSG nick :Hello!");
-        verify(ipmtest).onPrivateMessage(same(parser), eq("Hello!"), eq("a!b@c"));
-        verify(ipatest, never()).onPrivateAction((Parser) anyObject(), anyString(), anyString());
-        verify(ipctest, never()).onPrivateCTCP((Parser) anyObject(), anyString(), anyString(), anyString());
+        verify(ipmtest).onPrivateMessage(same(parser), (Date) anyObject(),
+                eq("Hello!"), eq("a!b@c"));
+        verify(ipatest, never()).onPrivateAction((Parser) anyObject(),
+                (Date) anyObject(), anyString(), anyString());
+        verify(ipctest, never()).onPrivateCTCP((Parser) anyObject(),
+                (Date) anyObject(), anyString(), anyString(), anyString());
     }
 
     @Test
@@ -66,9 +70,12 @@ public class ProcessMessageTest {
         parser.getCallbackManager().addCallback(PrivateCtcpListener.class, ipctest);
 
         parser.injectLine(":a!b@c PRIVMSG nick :" + ((char) 1) + "ACTION meep" + ((char) 1));
-        verify(ipmtest, never()).onPrivateMessage((Parser) anyObject(), anyString(), anyString());
-        verify(ipatest).onPrivateAction(same(parser), eq("meep"), eq("a!b@c"));
-        verify(ipctest, never()).onPrivateCTCP((Parser) anyObject(), anyString(), anyString(), anyString());
+        verify(ipmtest, never()).onPrivateMessage((Parser) anyObject(),
+                (Date) anyObject(), anyString(), anyString());
+        verify(ipatest).onPrivateAction(same(parser), (Date) anyObject(),
+                eq("meep"), eq("a!b@c"));
+        verify(ipctest, never()).onPrivateCTCP((Parser) anyObject(),
+                (Date) anyObject(), anyString(), anyString(), anyString());
     }
 
     @Test
@@ -85,9 +92,12 @@ public class ProcessMessageTest {
         parser.getCallbackManager().addCallback(PrivateCtcpListener.class, ipctest);
 
         parser.injectLine(":a!b@c PRIVMSG nick :" + ((char) 1) + "FOO meep" + ((char) 1));
-        verify(ipmtest, never()).onPrivateMessage((Parser) anyObject(), anyString(), anyString());
-        verify(ipatest, never()).onPrivateAction((Parser) anyObject(), anyString(), anyString());
-        verify(ipctest).onPrivateCTCP(same(parser), eq("FOO"), eq("meep"), eq("a!b@c"));
+        verify(ipmtest, never()).onPrivateMessage((Parser) anyObject(),
+                (Date) anyObject(), anyString(), anyString());
+        verify(ipatest, never()).onPrivateAction((Parser) anyObject(),
+                (Date) anyObject(), anyString(), anyString());
+        verify(ipctest).onPrivateCTCP(same(parser),
+                (Date) anyObject(), eq("FOO"), eq("meep"), eq("a!b@c"));
     }
 
 }

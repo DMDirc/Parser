@@ -27,6 +27,7 @@ import com.dmdirc.parser.common.CallbackNotFoundException;
 import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.callbacks.ErrorInfoListener;
+import java.util.Date;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -42,7 +43,8 @@ public class ProcessNamesTest {
         
         parser.injectLine(":server 366 nick #nonexistant :End of /NAMES list.");
         
-        verify(test, never()).onErrorInfo((Parser) anyObject(), (ParserError) anyObject());
+        verify(test, never()).onErrorInfo((Parser) anyObject(),
+                (Date) anyObject(), (ParserError) anyObject());
     }
     
     @Test
