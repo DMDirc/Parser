@@ -26,6 +26,7 @@ import com.dmdirc.harness.parser.TestParser;
 import com.dmdirc.parser.common.CallbackNotFoundException;
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.callbacks.ChannelPartListener;
+import java.util.Date;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -55,7 +56,8 @@ public class ProcessPartTest {
         
         assertEquals(1, parser.getChannel("#DMDirc_testing").getChannelClients().size());
 
-        verify(test).onChannelPart(same(parser), same(parser.getChannel("#DMDirc_testing")),
+        verify(test).onChannelPart(same(parser), (Date) anyObject(),
+                same(parser.getChannel("#DMDirc_testing")),
                 same(cci), eq("Bye bye, cruel world"));
     }
     
@@ -81,8 +83,8 @@ public class ProcessPartTest {
         
         assertEquals(1, parser.getChannel("#DMDirc_testing").getChannelClients().size());
 
-        verify(test).onChannelPart(same(parser), same(parser.getChannel("#DMDirc_testing")),
-                same(cci), eq(""));
+        verify(test).onChannelPart(same(parser), (Date) anyObject(),
+                same(parser.getChannel("#DMDirc_testing")), same(cci), eq(""));
     }    
 
 }

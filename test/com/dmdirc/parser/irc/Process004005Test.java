@@ -25,6 +25,7 @@ package com.dmdirc.parser.irc;
 import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.harness.parser.TestParser;
 import com.dmdirc.parser.interfaces.callbacks.ErrorInfoListener;
+import java.util.Date;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -69,7 +70,7 @@ public class Process004005Test {
         
         tp.injectLine(":server 005 nick CASEMAPPING=unknown :are supported by this server");
         
-        verify(info).onErrorInfo(same(tp), (ParserError) anyObject());
+        verify(info).onErrorInfo(same(tp), (Date) anyObject(), (ParserError) anyObject());
     }
 
 }
