@@ -79,8 +79,10 @@ public abstract class CallbackObject {
      * @param eMethod OBject to callback to.
      */
     protected final void addCallback(final CallbackInterface eMethod) {
-        if (!callbackInfo.contains(eMethod)) {
-            callbackInfo.add(eMethod);
+        synchronized (callbackInfo) {
+            if (!callbackInfo.contains(eMethod)) {
+                callbackInfo.add(eMethod);
+            }
         }
     }
 
@@ -90,7 +92,9 @@ public abstract class CallbackObject {
      * @param eMethod Object that was being called back to.
      */
     protected final void delCallback(final CallbackInterface eMethod) {
-        callbackInfo.remove(eMethod);
+        synchronized (callbackInfo) {
+            callbackInfo.remove(eMethod);
+        }
     }
 
     /**
@@ -160,23 +164,29 @@ public abstract class CallbackObject {
 
         createFakeArgs(newArgs);
 
-        for (CallbackInterface iface : new ArrayList<CallbackInterface>(callbackInfo)) {
-            try {
-                type.getMethods()[0].invoke(iface, newArgs);
-            } catch (Exception e) {
-                if (getType().equals(ErrorInfoListener.class)) {
-                    System.out.printf("Exception in onError Callback. [%s]\n", e.getMessage());
-                    e.printStackTrace();
-                } else {
-                    final ParserError ei = new ParserError(ParserError.ERROR_ERROR,
-                            "Exception in callback (" + e.getMessage() + ")",
-                            myParser.getLastLine());
-                    ei.setException(e);
-                    callErrorInfo(ei);
+        synchronized (callbackInfo) {
+            // The invoked callbacks could in theory register or delete new
+            // callbacks with this object, so we'll copy the array as well as
+            // synchronising to avoid CMEs.
+            for (CallbackInterface iface : new ArrayList<CallbackInterface>(callbackInfo)) {
+                try {
+                    type.getMethods()[0].invoke(iface, newArgs);
+                } catch (Exception e) {
+                    if (getType().equals(ErrorInfoListener.class)) {
+                        System.out.printf("Exception in onError Callback. [%s]\n", e.getMessage());
+                        e.printStackTrace();
+                    } else {
+                        final ParserError ei = new ParserError(ParserError.ERROR_ERROR,
+                                "Exception in callback (" + e.getMessage() + ")",
+                                myParser.getLastLine());
+                        ei.setException(e);
+                        callErrorInfo(ei);
+                    }
                 }
+                bResult = true;
             }
-            bResult = true;
         }
+        
         return bResult;
     }
 
