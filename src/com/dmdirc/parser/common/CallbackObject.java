@@ -37,6 +37,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * CallbackObject.
@@ -50,7 +51,8 @@ public abstract class CallbackObject {
     protected final Class<? extends CallbackInterface> type;
 
     /** Arraylist for storing callback information related to the callback. */
-    protected final List<CallbackInterface> callbackInfo = new ArrayList<CallbackInterface>();
+    protected final List<CallbackInterface> callbackInfo =
+            new CopyOnWriteArrayList<CallbackInterface>();
 
     /** Reference to the Parser that owns this callback. */
     protected Parser myParser;
