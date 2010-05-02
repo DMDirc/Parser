@@ -29,6 +29,7 @@ import com.dmdirc.parser.common.QueuePriority;
 
 import java.net.URI;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -231,6 +232,13 @@ public interface Parser extends Runnable {
      * @return This parser's server's software type
      */
     String getServerSoftwareType();
+
+    /**
+     * Get the list of lines the server gave from 001 - 005.
+     *
+     * @return List of lines sent by the server between 001 and 005 inclusive.
+     */
+    List<String> getServerInformationLines();
 
     /**
      * Retrieves the maximum length for a topic that can be set by this parser.
