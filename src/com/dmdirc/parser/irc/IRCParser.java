@@ -1064,11 +1064,8 @@ public class IRCParser implements SecureParser, Runnable {
         return lastLine;
     }
 
-    /**
-     * Get the list of lines the server gave from 001 - 005.
-     *
-     * @return List of lines sent by the server between 001 and 005 inclusive.
-     */
+    /** {@inheritDoc} */
+    @Override
     public List<String> getServerInformationLines() {
         synchronized (serverInformationLines) {
             return new LinkedList<String>(serverInformationLines);
