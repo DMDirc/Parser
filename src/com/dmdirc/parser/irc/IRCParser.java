@@ -958,25 +958,31 @@ public class IRCParser implements SecureParser, Runnable {
     }
 
     /** {@inheritDoc} */
-        @Override
+    @Override
     public IRCClientInfo getClient(final String details) {
         final String sWho = getStringConverter().toLowerCase(IRCClientInfo.parseHost(details));
         if (clientList.containsKey(sWho)) { return clientList.get(sWho); }
         else { return new IRCClientInfo(this, details).setFake(true); }
     }
 
-        public boolean isKnownClient(final String host) {
-            final String sWho = getStringConverter().toLowerCase(IRCClientInfo.parseHost(host));
-            return clientList.containsKey(sWho);
-        }
+    public boolean isKnownClient(final String host) {
+        final String sWho = getStringConverter().toLowerCase(IRCClientInfo.parseHost(host));
+        return clientList.containsKey(sWho);
+    }
 
     /** {@inheritDoc} */
-        @Override
+    @Override
     public IRCChannelInfo getChannel(String channel) {
         synchronized (channelList) {
             channel = getStringConverter().toLowerCase(channel);
             if (channelList.containsKey(channel)) { return channelList.get(channel); } else { return null; }
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void sendInvite(final String channel, final String user) {
+        sendRawMessage("INVITE " + user + " " + channel);
     }
 
     /** {@inheritDoc} */
