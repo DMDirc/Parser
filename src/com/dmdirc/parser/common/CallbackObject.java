@@ -32,7 +32,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -81,10 +80,8 @@ public abstract class CallbackObject {
      * @param eMethod OBject to callback to.
      */
     protected final void addCallback(final CallbackInterface eMethod) {
-        synchronized (callbackInfo) {
-            if (!callbackInfo.contains(eMethod)) {
-                callbackInfo.add(eMethod);
-            }
+        if (!callbackInfo.contains(eMethod)) {
+            callbackInfo.add(eMethod);
         }
     }
 
@@ -94,9 +91,7 @@ public abstract class CallbackObject {
      * @param eMethod Object that was being called back to.
      */
     protected final void delCallback(final CallbackInterface eMethod) {
-        synchronized (callbackInfo) {
-            callbackInfo.remove(eMethod);
-        }
+        callbackInfo.remove(eMethod);
     }
 
     /**
@@ -166,27 +161,25 @@ public abstract class CallbackObject {
 
         createFakeArgs(newArgs);
 
-        synchronized (callbackInfo) {
-            // The invoked callbacks could in theory register or delete new
-            // callbacks with this object, so we'll copy the array as well as
-            // synchronising to avoid CMEs.
-            for (CallbackInterface iface : new ArrayList<CallbackInterface>(callbackInfo)) {
-                try {
-                    type.getMethods()[0].invoke(iface, newArgs);
-                } catch (Exception e) {
-                    if (getType().equals(ErrorInfoListener.class)) {
-                        System.out.printf("Exception in onError Callback. [%s]\n", e.getMessage());
-                        e.printStackTrace();
-                    } else {
-                        final ParserError ei = new ParserError(ParserError.ERROR_ERROR,
-                                "Exception in callback (" + e.getMessage() + ")",
-                                myParser.getLastLine());
-                        ei.setException(e);
-                        callErrorInfo(ei);
-                    }
+        // The invoked callbacks could in theory register or delete new
+        // callbacks with this object, so we'll copy the array as well as
+        // synchronising to avoid CMEs.
+        for (CallbackInterface iface : callbackInfo) {
+            try {
+                type.getMethods()[0].invoke(iface, newArgs);
+            } catch (Exception e) {
+                if (getType().equals(ErrorInfoListener.class)) {
+                    System.out.printf("Exception in onError Callback. [%s]\n", e.getMessage());
+                    e.printStackTrace();
+                } else {
+                    final ParserError ei = new ParserError(ParserError.ERROR_ERROR,
+                            "Exception in callback (" + e.getMessage() + ")",
+                            myParser.getLastLine());
+                    ei.setException(e);
+                    callErrorInfo(ei);
                 }
-                bResult = true;
             }
+            bResult = true;
         }
         
         return bResult;
