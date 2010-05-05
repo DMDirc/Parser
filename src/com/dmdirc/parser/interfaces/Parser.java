@@ -384,6 +384,15 @@ public interface Parser extends Runnable {
     void sendAction(String target, String message);
 
     /**
+     * Sends an invite to the specified user to join the specified channel.
+     *
+     * @param channel The channel the user should be invited to
+     * @param user The user to be invited to the channel
+     * @since 0.6.4
+     */
+    void sendInvite(String channel, String user);
+
+    /**
      * Retrieves the last line/communication received from the server, for use
      * in debugging purposes.
      *
