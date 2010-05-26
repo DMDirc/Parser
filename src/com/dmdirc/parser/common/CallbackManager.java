@@ -46,7 +46,7 @@ public abstract class CallbackManager<T extends Parser> {
         ChannelJoinListener.class, ChannelKickListener.class,
         ChannelMessageListener.class, ChannelModeChangeListener.class,
         ChannelNickChangeListener.class, ChannelNonUserModeChangeListener.class,
-	ChannelModeMessageListener.class, ChannelModeNoticeListener.class,
+        ChannelModeMessageListener.class, ChannelModeNoticeListener.class,
         ChannelNoticeListener.class, ChannelPartListener.class, ChannelQuitListener.class,
         ChannelSelfJoinListener.class, ChannelSingleModeChangeListener.class,
         ChannelTopicListener.class, ChannelUserModeChangeListener.class,
@@ -79,7 +79,7 @@ public abstract class CallbackManager<T extends Parser> {
      *
      * @param parser Parser that owns this callback manager.
      */
-    public CallbackManager(final T parser) {
+    protected CallbackManager(final T parser) {
         initialise(parser);
     }
 
@@ -190,14 +190,14 @@ public abstract class CallbackManager<T extends Parser> {
      * Add a callback.
      * This method will throw a CallbackNotFoundException if the callback does not exist.
      *
-     * @param <T> The type of callback
+     * @param <S> The type of callback
      * @param callback Type of callback object
      * @param o instance of ICallbackInterface to add.
      * @throws CallbackNotFoundException If callback is not found.
      * @throws NullPointerException If 'o' is null
      */
-    public <T extends CallbackInterface> void addCallback(
-            final Class<T> callback, final T o) throws CallbackNotFoundException {
+    public <S extends CallbackInterface> void addCallback(
+            final Class<S> callback, final S o) throws CallbackNotFoundException {
         if (o == null) {
             throw new NullPointerException("CallbackInterface is null");
         }
@@ -220,9 +220,9 @@ public abstract class CallbackManager<T extends Parser> {
      * @throws CallbackNotFoundException If callback is not found.
      * @throws NullPointerException If 'o' is null
      */
-    public <T extends CallbackInterface> void addCallback(
-            final Class<T> callback,
-            final T o, final String target) throws CallbackNotFoundException {
+    public <S extends CallbackInterface> void addCallback(
+            final Class<S> callback,
+            final S o, final String target) throws CallbackNotFoundException {
         if (o == null) {
             throw new NullPointerException("CallbackInterface is null");
         }
@@ -239,8 +239,8 @@ public abstract class CallbackManager<T extends Parser> {
      * @param o instance of ICallbackInterface to add.
      * @return true/false if the callback was added or not.
      */
-    public <T extends CallbackInterface> boolean addNonCriticalCallback(
-            final Class<T> callback, final T o) {
+    public <S extends CallbackInterface> boolean addNonCriticalCallback(
+            final Class<S> callback, final S o) {
         try {
             addCallback(callback, o);
             return true;
@@ -259,8 +259,8 @@ public abstract class CallbackManager<T extends Parser> {
      * @param target Parameter to specify that a callback should only fire for specific things
      * @return true/false if the callback was added or not.
      */
-    public <T extends CallbackInterface> boolean addNonCriticalCallback(
-            final Class<T> callback, final T o, final String target) {
+    public <S extends CallbackInterface> boolean addNonCriticalCallback(
+            final Class<S> callback, final S o, final String target) {
         try {
             addCallback(callback, o, target);
             return true;
