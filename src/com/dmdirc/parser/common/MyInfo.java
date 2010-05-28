@@ -1,16 +1,16 @@
 /*
  * Copyright (c) 2006-2010 Chris Smith, Shane Mc Cormack, Gregory Holmes
- *
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
+ * 
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,6 +21,8 @@
  */
 
 package com.dmdirc.parser.common;
+
+import com.dmdirc.parser.irc.IRCParser;
 
 /**
  * Contains User information.
@@ -52,23 +54,23 @@ public class MyInfo {
      * Create a new MyInfo object.
      */
     public MyInfo() {
-	String result;
-	try {
-	    result = System.getProperty("user.name");
-	} catch (SecurityException e) {
-	    result = null;
-	}
-	if (result == null || result.isEmpty()) {
-	    nickname = "IRCParser";
-	    username = "IRCParser";
-	    realname = "DMDIrc IRCParser";
-	    altNickname = "IRC-Parser";
-	} else {
-	    nickname = result;
-	    username = nickname;
-	    realname = nickname + " - DMDIrc";
-	    altNickname = nickname + "-";
-	}
+        String result;
+        try {
+            result = System.getProperty("user.name");
+        } catch (final SecurityException e) {
+            result = null;
+        }
+        if (result == null || result.isEmpty()) {
+            nickname = "IRCParser";
+            username = "IRCParser";
+            realname = "DMDIrc IRCParser";
+            altNickname = "IRC-Parser";
+        } else {
+            nickname = result;
+            username = nickname;
+            realname = nickname + " - DMDIrc";
+            altNickname = nickname + "-";
+        }
     }
 
     /**
@@ -78,9 +80,9 @@ public class MyInfo {
      *            Value to set to.
      */
     public void setNickname(final String newValue) {
-	if (newValue != null && !newValue.isEmpty()) {
-	    nickname = newValue;
-	}
+        if (newValue != null && !newValue.isEmpty()) {
+            nickname = newValue;
+        }
     }
 
     /**
@@ -89,7 +91,7 @@ public class MyInfo {
      * @return Current Nickname
      */
     public String getNickname() {
-	return nickname;
+        return nickname;
     }
 
     /**
@@ -99,9 +101,9 @@ public class MyInfo {
      *            Value to set to.
      */
     public void setAltNickname(final String newValue) {
-	if (newValue != null && !newValue.isEmpty()) {
-	    altNickname = newValue;
-	}
+        if (newValue != null && !newValue.isEmpty()) {
+            altNickname = newValue;
+        }
     }
 
     /**
@@ -110,7 +112,7 @@ public class MyInfo {
      * @return Current Nickname
      */
     public String getAltNickname() {
-	return altNickname;
+        return altNickname;
     }
 
     /**
@@ -120,9 +122,9 @@ public class MyInfo {
      *            Value to set to.
      */
     public void setRealname(final String newValue) {
-	if (newValue != null && !newValue.isEmpty()) {
-	    realname = newValue;
-	}
+        if (newValue != null && !newValue.isEmpty()) {
+            realname = newValue;
+        }
     }
 
     /**
@@ -131,7 +133,7 @@ public class MyInfo {
      * @return Current Realname
      */
     public String getRealname() {
-	return realname;
+        return realname;
     }
 
     /**
@@ -141,8 +143,8 @@ public class MyInfo {
      *            Value to set to.
      */
     public void setUsername(final String newValue) {
-	if (newValue != null && !newValue.isEmpty()) {
-	    username = newValue;
+        if (newValue != null && !newValue.isEmpty()) {
+            username = newValue;
         }
     }
 
@@ -152,7 +154,7 @@ public class MyInfo {
      * @return Current Username
      */
     public String getUsername() {
-	return username;
+        return username;
     }
 
     /**
@@ -162,7 +164,7 @@ public class MyInfo {
      *            Value to set to.
      */
     public void setPrependChar(final char newValue) {
-	prependChar = newValue;
+        prependChar = newValue;
     }
 
     /**
@@ -171,7 +173,7 @@ public class MyInfo {
      * @return Current Prepend Character
      */
     public char getPrependChar() {
-	return prependChar;
+        return prependChar;
     }
 
 }
