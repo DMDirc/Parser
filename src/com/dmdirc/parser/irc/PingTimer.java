@@ -22,8 +22,8 @@
 
 package com.dmdirc.parser.irc;
 
-import java.util.TimerTask;
 import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Used by the parser to ping the server at a set interval to check that the

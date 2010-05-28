@@ -24,12 +24,10 @@ package com.dmdirc.parser.irc;
 
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
-
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 import java.util.concurrent.Semaphore;
 
 /**

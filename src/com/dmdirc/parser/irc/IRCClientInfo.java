@@ -26,11 +26,12 @@ import com.dmdirc.parser.common.AwayState;
 import com.dmdirc.parser.interfaces.ClientInfo;
 import com.dmdirc.parser.interfaces.LocalClientInfo;
 import com.dmdirc.parser.interfaces.Parser;
+
 import java.util.ArrayList;
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Hashtable;
 import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 /**
