@@ -22,8 +22,8 @@
 
 package com.dmdirc.parser.irc;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * Logging using log4j if available.

@@ -22,8 +22,8 @@
 
 package com.dmdirc.parser.irc;
 
-import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.common.CallbackManager;
+import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.common.QueuePriority;
 
 /**

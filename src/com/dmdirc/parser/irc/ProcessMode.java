@@ -22,6 +22,7 @@
 
 package com.dmdirc.parser.irc;
 
+import com.dmdirc.parser.common.CallbackObject;
 import com.dmdirc.parser.common.ChannelListModeItem;
 import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
@@ -33,7 +34,7 @@ import com.dmdirc.parser.interfaces.callbacks.ChannelSingleModeChangeListener;
 import com.dmdirc.parser.interfaces.callbacks.ChannelUserModeChangeListener;
 import com.dmdirc.parser.interfaces.callbacks.UserModeChangeListener;
 import com.dmdirc.parser.interfaces.callbacks.UserModeDiscoveryListener;
-import com.dmdirc.parser.common.CallbackObject;
+
 import java.util.Calendar;
 
 /**

@@ -22,9 +22,9 @@
 
 package com.dmdirc.parser.irc;
 
-import com.dmdirc.parser.common.CallbackObjectSpecific;
-import com.dmdirc.parser.common.CallbackObject;
 import com.dmdirc.parser.common.CallbackManager;
+import com.dmdirc.parser.common.CallbackObject;
+import com.dmdirc.parser.common.CallbackObjectSpecific;
 import com.dmdirc.parser.interfaces.callbacks.CallbackInterface;
 
 /**

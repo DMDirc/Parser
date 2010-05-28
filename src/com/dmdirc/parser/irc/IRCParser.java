@@ -22,25 +22,15 @@
 
 package com.dmdirc.parser.irc;
 
-import com.dmdirc.parser.irc.outputqueue.OutputQueue;
-import com.dmdirc.parser.common.MyInfo;
-import com.dmdirc.parser.common.IgnoreList;
-import com.dmdirc.parser.common.ParserError;
-import com.dmdirc.parser.interfaces.SecureParser;
-import com.dmdirc.parser.interfaces.callbacks.ConnectErrorListener;
-import com.dmdirc.parser.interfaces.callbacks.DataInListener;
-import com.dmdirc.parser.interfaces.callbacks.DataOutListener;
-import com.dmdirc.parser.interfaces.callbacks.DebugInfoListener;
-import com.dmdirc.parser.interfaces.callbacks.ErrorInfoListener;
-import com.dmdirc.parser.interfaces.callbacks.PingFailureListener;
-import com.dmdirc.parser.interfaces.callbacks.PingSentListener;
-import com.dmdirc.parser.interfaces.callbacks.PingSuccessListener;
-import com.dmdirc.parser.interfaces.callbacks.Post005Listener;
-import com.dmdirc.parser.interfaces.callbacks.ServerErrorListener;
-import com.dmdirc.parser.interfaces.callbacks.SocketCloseListener;
 import com.dmdirc.parser.common.CallbackManager;
 import com.dmdirc.parser.common.ChannelJoinRequest;
+import com.dmdirc.parser.common.IgnoreList;
+import com.dmdirc.parser.common.MyInfo;
+import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.common.QueuePriority;
+import com.dmdirc.parser.interfaces.SecureParser;
+import com.dmdirc.parser.interfaces.callbacks.*;
+import com.dmdirc.parser.irc.outputqueue.OutputQueue;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -54,17 +44,7 @@ import java.net.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicBoolean;
 

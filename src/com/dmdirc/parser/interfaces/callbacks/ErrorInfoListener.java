@@ -22,8 +22,8 @@
 
 package com.dmdirc.parser.interfaces.callbacks;
 
-import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.common.ParserError;
+import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
