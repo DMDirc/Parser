@@ -147,6 +147,6 @@ public class ProcessNames extends IRCProcessor {
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected ProcessNames (IRCParser parser, ProcessingManager manager) { super(parser, manager); }
+    protected ProcessNames(IRCParser parser, ProcessingManager manager) { super(parser, manager); }
 
 }

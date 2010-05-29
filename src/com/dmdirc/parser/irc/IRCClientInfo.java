@@ -23,7 +23,6 @@
 package com.dmdirc.parser.irc;
 
 import com.dmdirc.parser.common.AwayState;
-import com.dmdirc.parser.interfaces.ClientInfo;
 import com.dmdirc.parser.interfaces.LocalClientInfo;
 import com.dmdirc.parser.interfaces.Parser;
 

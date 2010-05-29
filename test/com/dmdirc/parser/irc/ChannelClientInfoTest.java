@@ -60,7 +60,7 @@ public class ChannelClientInfoTest {
         assertEquals("", cci.getImportantModePrefix());
         assertEquals("luser", cci.toString());
         assertEquals("luser", cci.toFullString());
-        assertEquals(0l, cci.getImportantModeValue());
+        assertEquals(0L, cci.getImportantModeValue());
     }
     
     @Test

@@ -103,8 +103,8 @@ public class ProcessMessage extends IRCProcessor {
         } else {
             sMessage = token[token.length-1];
         }
-        String bits[] = sMessage.split(" ", 2);
-        final Character Char1 = Character.valueOf((char)1);
+        String[] bits = sMessage.split(" ", 2);
+        final Character char1 = Character.valueOf((char)1);
         String sCTCP = "";
         boolean isAction = false;
         boolean isCTCP = false;
@@ -113,7 +113,7 @@ public class ProcessMessage extends IRCProcessor {
             if (sParam.equalsIgnoreCase("PRIVMSG")) {
                 // Actions are special CTCPs
                 // Bits is the message been split into 2 parts, the first word and the rest
-                if (bits[0].equalsIgnoreCase(Char1+"ACTION") && Character.valueOf(sMessage.charAt(sMessage.length()-1)).equals(Char1)) {
+                if (bits[0].equalsIgnoreCase(char1+"ACTION") && Character.valueOf(sMessage.charAt(sMessage.length()-1)).equals(char1)) {
                     isAction = true;
                     if (bits.length > 1) {
                         sMessage = bits[1];
@@ -124,17 +124,17 @@ public class ProcessMessage extends IRCProcessor {
             // If the message is not an action, check if it is another type of CTCP
             if (!isAction) {
                 // CTCPs have Character(1) at the start/end of the line
-                if (Character.valueOf(sMessage.charAt(0)).equals(Char1) && Character.valueOf(sMessage.charAt(sMessage.length()-1)).equals(Char1)) {
+                if (Character.valueOf(sMessage.charAt(0)).equals(char1) && Character.valueOf(sMessage.charAt(sMessage.length()-1)).equals(char1)) {
                     isCTCP = true;
                     // Bits is the message been split into 2 parts, the first word and the rest
                     // Some CTCPs have messages and some do not
                     if (bits.length > 1) { sMessage = bits[1]; } else { sMessage = ""; }
                     // Remove the leading char1
-                    bits = bits[0].split(Char1.toString(),2);
+                    bits = bits[0].split(char1.toString(),2);
                     sCTCP = bits[1];
                     // remove the trailing char1
-                    if (!sMessage.isEmpty()) { sMessage = sMessage.split(Char1.toString(),2)[0]; }
-                    else { sCTCP = sCTCP.split(Char1.toString(),2)[0]; }
+                    if (!sMessage.isEmpty()) { sMessage = sMessage.split(char1.toString(),2)[0]; }
+                    else { sCTCP = sCTCP.split(char1.toString(),2)[0]; }
                     callDebugInfo(IRCParser.DEBUG_INFO, "CTCP: \"%s\" \"%s\"",sCTCP,sMessage);
                 }
             }
@@ -515,6 +515,6 @@ public class ProcessMessage extends IRCProcessor {
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected ProcessMessage (IRCParser parser, ProcessingManager manager) { super(parser, manager); }
+    protected ProcessMessage(IRCParser parser, ProcessingManager manager) { super(parser, manager); }
 
 }

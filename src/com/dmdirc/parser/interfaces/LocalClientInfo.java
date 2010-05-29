@@ -66,12 +66,12 @@ public interface LocalClientInfo extends ClientInfo {
      * @param add Whether to add or remove the mode
      * @param mode Character representation of the mode to be altered
      */
-    public void alterMode(boolean add, Character mode);
+    void alterMode(boolean add, Character mode);
 
     /**
      * Flushes any modes that have been queued by the
      * {@link #alterMode(boolean, Character)} method.
      */
-    public void flushModes();
+    void flushModes();
 
 }

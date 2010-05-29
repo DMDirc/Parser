@@ -143,6 +143,6 @@ public class ProcessJoin extends IRCProcessor {
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected ProcessJoin (IRCParser parser, ProcessingManager manager) { super(parser, manager); }
+    protected ProcessJoin(IRCParser parser, ProcessingManager manager) { super(parser, manager); }
 
 }

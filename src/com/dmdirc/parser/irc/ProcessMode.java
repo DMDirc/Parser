@@ -84,7 +84,7 @@ public class ProcessMode extends IRCProcessor {
      * @param sModestr The modes and params
      * @param sChannelName Channel these modes are for
      */    
-    public void processChanMode(String sParam, String token[], String sModestr[], String sChannelName) {
+    public void processChanMode(String sParam, String[] token, String[] sModestr, String sChannelName) {
         StringBuilder sFullModeStr = new StringBuilder();
         String sNonUserModeStr = "";
         String sNonUserModeStrParams = "";
@@ -184,9 +184,9 @@ public class ProcessMode extends IRCProcessor {
                         sModeParam = sModestr[nParam++];
                         sNonUserModeStrParams = sNonUserModeStrParams+" "+sModeParam;
                         nTemp = (Calendar.getInstance().getTimeInMillis() / 1000);
-                        iChannel.setListModeParam(cMode, new ChannelListModeItem(sModeParam, token[0], nTemp ), bPositive);
+                        iChannel.setListModeParam(cMode, new ChannelListModeItem(sModeParam, token[0], nTemp), bPositive);
                         callDebugInfo(IRCParser.DEBUG_INFO, "List Mode: %c [%s] {Positive: %b}",cMode, sModeParam, bPositive);
-                        if (cbSingle != null) { cbSingle.call(iChannel, setterCCI, token[0], cPositive+cMode+" "+sModeParam ); }
+                        if (cbSingle != null) { cbSingle.call(iChannel, setterCCI, token[0], cPositive+cMode+" "+sModeParam); }
                     } else {
                         // Mode with a parameter
                         if (bPositive) { 
@@ -195,7 +195,7 @@ public class ProcessMode extends IRCProcessor {
                             sNonUserModeStrParams = sNonUserModeStrParams+" "+sModeParam;
                             callDebugInfo(IRCParser.DEBUG_INFO, "Set Mode: %c [%s] {Positive: %b}",cMode, sModeParam, bPositive);
                             iChannel.setModeParam(cMode,sModeParam);
-                            if (cbSingle != null) { cbSingle.call(iChannel, setterCCI, token[0], cPositive+cMode+" "+sModeParam ); }
+                            if (cbSingle != null) { cbSingle.call(iChannel, setterCCI, token[0], cPositive+cMode+" "+sModeParam); }
                         } else {
                             // -Mode - parameter isn't always needed, we need to check
                             if ((nValue & IRCParser.MODE_UNSET) == IRCParser.MODE_UNSET) {
@@ -206,7 +206,7 @@ public class ProcessMode extends IRCProcessor {
                             }
                             callDebugInfo(IRCParser.DEBUG_INFO, "Unset Mode: %c [%s] {Positive: %b}",cMode, sModeParam, bPositive);
                             iChannel.setModeParam(cMode,"");
-                            if (cbSingle != null) { cbSingle.call(iChannel, setterCCI, token[0], trim(cPositive+cMode+" "+sModeParam) ); }
+                            if (cbSingle != null) { cbSingle.call(iChannel, setterCCI, token[0], trim(cPositive+cMode+" "+sModeParam)); }
                         }
                     }
                 }
@@ -229,7 +229,7 @@ public class ProcessMode extends IRCProcessor {
      * @param token IRCTokenised Array of the incomming line
      * @param clearOldModes Clear old modes before applying these modes (used by 221)
      */    
-    private void processUserMode(String sParam, String token[], String sModestr[], boolean clearOldModes) {
+    private void processUserMode(String sParam, String[] token, String[] sModestr, boolean clearOldModes) {
         long nCurrent = 0, nValue = 0;
         boolean bPositive = true;
         
@@ -342,6 +342,6 @@ public class ProcessMode extends IRCProcessor {
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected ProcessMode (IRCParser parser, ProcessingManager manager) { super(parser, manager); }
+    protected ProcessMode(IRCParser parser, ProcessingManager manager) { super(parser, manager); }
 
 }

@@ -259,6 +259,6 @@ public class ProcessListModes extends IRCProcessor {
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected ProcessListModes (IRCParser parser, ProcessingManager manager) { super(parser, manager); }
+    protected ProcessListModes(IRCParser parser, ProcessingManager manager) { super(parser, manager); }
 
 }

@@ -60,16 +60,16 @@ public class ChannelInfoTest {
 
     @Test
     public void testCreateTime() {
-        ci.setCreateTime(12345l);
+        ci.setCreateTime(12345L);
 
-        assertEquals(12345l, ci.getCreateTime());
+        assertEquals(12345L, ci.getCreateTime());
     }
 
     @Test
     public void testTopicTime() {
-        ci.setTopicTime(12345l);
+        ci.setTopicTime(12345L);
 
-        assertEquals(12345l, ci.getTopicTime());
+        assertEquals(12345L, ci.getTopicTime());
     }
 
     @Test

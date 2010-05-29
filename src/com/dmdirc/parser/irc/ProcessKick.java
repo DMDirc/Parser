@@ -112,6 +112,6 @@ public class ProcessKick extends IRCProcessor {
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected ProcessKick (IRCParser parser, ProcessingManager manager) { super(parser, manager); }
+    protected ProcessKick(IRCParser parser, ProcessingManager manager) { super(parser, manager); }
 
 }
