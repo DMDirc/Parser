@@ -110,6 +110,6 @@ public class ProcessWallops extends IRCProcessor {
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected ProcessWallops (IRCParser parser, ProcessingManager manager) { super(parser, manager); }
+    protected ProcessWallops(IRCParser parser, ProcessingManager manager) { super(parser, manager); }
 
 }

@@ -22,8 +22,6 @@
 
 package com.dmdirc.parser.common;
 
-import com.dmdirc.parser.irc.IRCParser;
-
 /**
  * Contains User information.
  * 

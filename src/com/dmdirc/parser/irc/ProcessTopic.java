@@ -98,6 +98,6 @@ public class ProcessTopic extends IRCProcessor {
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected ProcessTopic (IRCParser parser, ProcessingManager manager) { super(parser, manager); }
+    protected ProcessTopic(IRCParser parser, ProcessingManager manager) { super(parser, manager); }
 
 }

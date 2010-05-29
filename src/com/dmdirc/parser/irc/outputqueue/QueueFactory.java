@@ -23,6 +23,7 @@ public interface QueueFactory {
      * @param out Where to send crap.
      * @return the new queue handler object.
      */
-    public QueueHandler getQueueHandler(final OutputQueue outputQueue, final BlockingQueue<QueueItem> queue, final PrintWriter out);
+    QueueHandler getQueueHandler(final OutputQueue outputQueue,
+            final BlockingQueue<QueueItem> queue, final PrintWriter out);
 
 }

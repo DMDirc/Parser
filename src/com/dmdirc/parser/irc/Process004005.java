@@ -156,6 +156,6 @@ public class Process004005 extends IRCProcessor {
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected Process004005 (final IRCParser parser, final ProcessingManager manager) { super(parser, manager); }
+    protected Process004005(final IRCParser parser, final ProcessingManager manager) { super(parser, manager); }
 
 }

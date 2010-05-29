@@ -49,17 +49,17 @@ public class ProcessListModeTest {
         for (ChannelListModeItem item : items) {
             if (item.getItem().equals("ban1!ident@.host")) {
                 assertEquals("bansetter1", item.getOwner());
-                assertEquals(1001l, item.getTime());
+                assertEquals(1001L, item.getTime());
                 assertFalse(gotOne);
                 gotOne = true;
             } else if (item.getItem().equals("ban2!*@.host")) {
                 assertEquals("bansetter2", item.getOwner());
-                assertEquals(1002l, item.getTime());
+                assertEquals(1002L, item.getTime());
                 assertFalse(gotTwo);
                 gotTwo = true;
             } else if (item.toString().equals("ban3!ident@*")) {
                 assertEquals("bansetter3", item.getOwner());
-                assertEquals(1003l, item.getTime());
+                assertEquals(1003L, item.getTime());
                 assertFalse(gotThree);
                 gotThree = true;
             }

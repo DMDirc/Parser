@@ -66,6 +66,6 @@ public class ProcessNoticeAuth extends IRCProcessor {
      * @param parser IRCParser That owns this object
      * @param manager ProcessingManager that is in charge of this object
      */
-    protected ProcessNoticeAuth (final IRCParser parser, final ProcessingManager manager) { super(parser, manager); }
+    protected ProcessNoticeAuth(final IRCParser parser, final ProcessingManager manager) { super(parser, manager); }
 
 }

@@ -94,6 +94,6 @@ public class ProcessNickInUse extends IRCProcessor {
      * @param parser IRCParser That owns this object
      * @param manager ProcessingManager that is in charge of this object
      */
-    protected ProcessNickInUse (final IRCParser parser, final ProcessingManager manager) { super(parser, manager); }
+    protected ProcessNickInUse(final IRCParser parser, final ProcessingManager manager) { super(parser, manager); }
 
 }

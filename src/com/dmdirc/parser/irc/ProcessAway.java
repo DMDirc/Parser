@@ -76,6 +76,6 @@ public class ProcessAway extends IRCProcessor {
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected ProcessAway (IRCParser parser, ProcessingManager manager) { super(parser, manager); }
+    protected ProcessAway(IRCParser parser, ProcessingManager manager) { super(parser, manager); }
 
 }

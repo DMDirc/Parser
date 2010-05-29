@@ -98,6 +98,6 @@ public class ProcessMOTD extends IRCProcessor {
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected ProcessMOTD (IRCParser parser, ProcessingManager manager) { super(parser, manager); }
+    protected ProcessMOTD(IRCParser parser, ProcessingManager manager) { super(parser, manager); }
 
 }

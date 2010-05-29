@@ -108,6 +108,6 @@ public class ProcessPart extends IRCProcessor {
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected ProcessPart (IRCParser parser, ProcessingManager manager) { super(parser, manager); }
+    protected ProcessPart(IRCParser parser, ProcessingManager manager) { super(parser, manager); }
 
 }

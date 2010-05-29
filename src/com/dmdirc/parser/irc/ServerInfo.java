@@ -62,7 +62,7 @@ public class ServerInfo {
     private URI uri = null;
 
     /** Constructor using Default values. */
-    public ServerInfo () { }
+    public ServerInfo() { }
 
     /**
      * Constructor using specifed host, port and password, SSL/Proxy must be specifed separately.
@@ -71,7 +71,7 @@ public class ServerInfo {
      * @param serverPort Port to use
      * @param serverPass Password to use
      */
-    public ServerInfo (final String serverHost, final int serverPort, final String serverPass) {
+    public ServerInfo(final String serverHost, final int serverPort, final String serverPass) {
         host = serverHost;
         port = serverPort;
         password = serverPass;

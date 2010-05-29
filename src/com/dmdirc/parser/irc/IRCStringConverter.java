@@ -54,7 +54,7 @@ public class IRCStringConverter implements StringConverter {
      */
     public IRCStringConverter(final byte limit) {
         // If limit is out side the boundries, use rfc1459
-        if (limit > 4 || limit < 0 ) { this.limit = (byte)4; }
+        if (limit > 4 || limit < 0) { this.limit = (byte)4; }
         else { this.limit = limit; }
         
         lowercase = new char[127];
