@@ -48,7 +48,7 @@ public class IRCAuthenticator extends Authenticator {
     private static IRCAuthenticator me = null;
     
     /** List of authentication replies. */
-    private final Map<String,PasswordAuthentication> replies = new HashMap<String,PasswordAuthentication>();
+    private final Map<String, PasswordAuthentication> replies = new HashMap<String, PasswordAuthentication>();
 
     /** List of servers for each host. */
     private final Map<String, List<ServerInfo>> owners = new HashMap<String, List<ServerInfo>>();

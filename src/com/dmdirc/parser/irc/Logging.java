@@ -37,13 +37,13 @@ public class Logging {
         WARN("warn", "isWarnEnabled"),
         ERROR("error", "isErrorEnabled"),
         FATAL("fatal", "isFatalEnabled");
-        
+
         /** Method name */
         private final String methodName;
-        
+
         /** Check Method name */
         private final String checkMethodName;
-        
+
         /**
          * Create a new LogLevel
          *
@@ -54,14 +54,14 @@ public class Logging {
             this.methodName = methodName;
             this.checkMethodName = checkMethodName;
         }
-        
+
         /**
          * Get the Name of method in log4j to log to
          *
          * @return Name of method in log4j to log to
          */
         public String getMethodName() { return methodName; }
-        
+
         /**
          * Get the Name of the check method in log4j
          *
@@ -69,16 +69,16 @@ public class Logging {
          */
         public String getCheckMethodName() { return checkMethodName; }
     };
-    
+
     /** Singleton Instance of Logging. */
     private static Logging me;
-    
+
     /** Is log4j available. */
     private final boolean isAvailable;
-    
+
     /** "Log" object if available. */
     private Object log = null;
-    
+
     /**
      * Get an instance of Logging.
      *
@@ -88,7 +88,7 @@ public class Logging {
         if (me == null) { me = new Logging(); }
         return me;
     }
-    
+
     /** Create a new Logging. */
     @SuppressWarnings("unchecked")
     private Logging() {
@@ -98,7 +98,7 @@ public class Logging {
             // Check for classes
             Class.forName("org.apache.commons.logging.Log");
             factory = Class.forName("org.apache.commons.logging.LogFactory");
-        
+
             classExists = (factory != null);
             if (classExists) {
                 final Method getLog = factory.getMethod("getLog", new Class[]{Class.class});
@@ -109,10 +109,10 @@ public class Logging {
         } catch (IllegalAccessException iae) {
         } catch (InvocationTargetException ite) {
         }
-        
+
         isAvailable = (classExists && log != null);
     }
-    
+
     /**
      * Check is a log level is available.
      *
@@ -122,16 +122,16 @@ public class Logging {
         if (isAvailable) {
             try {
                 final Method check = log.getClass().getMethod(level.getCheckMethodName(), new Class[0]);
-                return (Boolean)check.invoke(log, new Object[0]);
+                return (Boolean) check.invoke(log, new Object[0]);
             } catch (NoSuchMethodException nsme) {
             } catch (IllegalAccessException iae) {
             } catch (InvocationTargetException ite) {
             }
         }
-        
+
         return false;
     }
-    
+
     /**
      * Log a message if log4j is available.
      *
@@ -141,7 +141,7 @@ public class Logging {
     public void log(final LogLevel level, final String message) {
         log(level, message, null);
     }
-    
+
     /**
      * Log a message if log4j is available.
      *

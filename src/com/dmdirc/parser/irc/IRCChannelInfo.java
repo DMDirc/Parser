@@ -42,7 +42,7 @@ import java.util.Queue;
 
 /**
  * Contains Channel information.
- * 
+ *
  * @author Shane Mc Cormack
  * @author Chris Smith
  * @see IRCParser
@@ -53,10 +53,10 @@ public class IRCChannelInfo implements ChannelInfo {
      * When this is false, any new names reply will cause current known channelclients to be removed.
      */
     private boolean bAddingNames = true;
-    
+
     /** Unixtimestamp representing time when the channel was created. */
     private long nCreateTime = 0;
-    
+
     /** Current known topic in the channel. */
     private String sTopic = "";
     /** Last known user to set the topic (Full host where possible). */
@@ -65,15 +65,15 @@ public class IRCChannelInfo implements ChannelInfo {
     private long nTopicTime = 0;
     /** Has this channel ever had a topic? */
     private boolean hadTopic = false;
-    
+
     /** Known boolean-modes for channel. */
     private long nModes;
     /** Reference to the parser object that owns this channel, Used for modes. */
     private final IRCParser myParser; // Reference to parser object that owns this channel. Used for Modes
-    
+
     /** Channel Name. */
     private final String sName;
-    
+
     /** Hashtable containing references to ChannelClients. */
     private final Map<String, IRCChannelClientInfo> hChannelUserList = Collections.synchronizedMap(new Hashtable<String, IRCChannelClientInfo>());
     /** Hashtable storing values for modes set in the channel that use parameters. */
@@ -89,7 +89,7 @@ public class IRCChannelInfo implements ChannelInfo {
     private final List<String> lModeQueue = new LinkedList<String>();
     /** A Map to allow applications to attach misc data to this object */
     private Map<Object, Object> myMap;
-    
+
     /** Queue of requested list modes */
     private final Queue<Character> listModeQueue = new LinkedList<Character>();
     /** Listmode Queue Time */
@@ -102,7 +102,7 @@ public class IRCChannelInfo implements ChannelInfo {
     /**
      * Create a new channel object.
      *
-     * @param tParser Refernce to parser that owns this channelclient (used for modes)     
+     * @param tParser Refernce to parser that owns this channelclient (used for modes)
      * @param name Channel name.
      */
     public IRCChannelInfo(final IRCParser tParser, final String name) {
@@ -110,7 +110,7 @@ public class IRCChannelInfo implements ChannelInfo {
         myParser = tParser;
         sName = name;
     }
-    
+
     /**
      * Get the listModeQueue.
      *
@@ -128,41 +128,41 @@ public class IRCChannelInfo implements ChannelInfo {
         listModeQueueTime = now;
         return result;
     }
-    
+
     /**
      * Ask the server for all the list modes for this channel.
      */
     @Override
     public void requestListModes() {
         final IRCChannelClientInfo me = getChannelClient(myParser.getLocalClient());
-                
+
         if (me == null) {
             // In a normal situation of non bouncer-brokenness this won't happen
             return;
         }
-        
+
         askedForListModes = true;
-        
+
         final ServerType serverType = myParser.getServerType();
-                
+
         // We are considered opped if we have a mode higher than voice (or if we have any modes if voice doesn't exist)
         long voiceValue = 0;
-        if (myParser.prefixModes.get('v') != null) { voiceValue = myParser.prefixModes.get('v');}
+        if (myParser.prefixModes.get('v') != null) { voiceValue = myParser.prefixModes.get('v'); }
         final boolean isOpped = me.getImportantModeValue() > voiceValue;
-        
+
         int modecount = 1;
         if (serverType != ServerType.UNREAL && serverType != ServerType.IRSEE && myParser.h005Info.containsKey("MODES")) {
             try {
                 modecount = Integer.parseInt(myParser.h005Info.get("MODES"));
             } catch (NumberFormatException e) { /* use default modecount */}
         }
-        
+
         // Support for potential future decent mode listing in the protocol
         //
         // See my proposal: http://shane.dmdirc.com/listmodes.php
         // Add listmode handler
         final boolean supportLISTMODE = myParser.h005Info.containsKey("LISTMODE");
-        
+
         String listmodes = "";
         int i = 0;
         for (Character cTemp : myParser.chanModesOther.keySet()) {
@@ -193,10 +193,10 @@ public class IRCChannelInfo implements ChannelInfo {
         }
     }
 
-    
+
     /**
      * Has this channel ever had a topic? (even an empty one!)
-     * 
+     *
      * @return True if a topic has ever been known for this channel.
      */
     public synchronized boolean hadTopic() {
@@ -218,7 +218,7 @@ public class IRCChannelInfo implements ChannelInfo {
     public boolean hasAskedForListModes() {
         return askedForListModes;
     }
-    
+
     /**
      * Returns true if OnChannelGotListModes ever been called for this channel.
      *
@@ -227,7 +227,7 @@ public class IRCChannelInfo implements ChannelInfo {
     public boolean hasGotListModes() {
         return hasGotListModes;
     }
-    
+
     /**
      * Set if OnChannelGotListModes ever been called for this channel.
      *
@@ -236,7 +236,7 @@ public class IRCChannelInfo implements ChannelInfo {
     protected void setHasGotListModes(final boolean newValue) {
         hasGotListModes = newValue;
     }
-    
+
     /**
      * Set the Map object attatched to this object.
      *
@@ -245,27 +245,27 @@ public class IRCChannelInfo implements ChannelInfo {
     public void setMap(final Map<Object, Object> newMap) {
         myMap = newMap;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public Map<Object, Object> getMap() {
         return myMap;
     }
-    
+
     /**
      * Set if we are getting a names request or not.
      *
      * @param newValue if false, any new names reply will cause current known channelclients to be removed.
      */
     public void setAddingNames(final boolean newValue) { bAddingNames = newValue; }
-    
+
     /**
      * Get if we are getting a names request or not.
      *
      * @return if false, any new names reply will cause current known channelclients to be removed.
      */
     public boolean isAddingNames() { return bAddingNames; }
-    
+
     /** {@inheritDoc} */
         @Override
     public String getName() { return sName; }
@@ -273,7 +273,7 @@ public class IRCChannelInfo implements ChannelInfo {
         /** {@inheritDoc} */
         @Override
     public int getChannelClientCount() { return hChannelUserList.size(); }
-    
+
     /** {@inheritDoc} */
         @Override
     public Collection<ChannelClientInfo> getChannelClients() {
@@ -281,7 +281,7 @@ public class IRCChannelInfo implements ChannelInfo {
             return new ArrayList<ChannelClientInfo>(hChannelUserList.values());
         }
     }
-    
+
     /**
      * Empty the channel (Remove all known channelclients).
      */
@@ -304,7 +304,7 @@ public class IRCChannelInfo implements ChannelInfo {
     public IRCChannelClientInfo getChannelClient(final String client) {
         return getChannelClient(client, false);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public IRCChannelClientInfo getChannelClient(final String client, final boolean create) {
@@ -318,7 +318,7 @@ public class IRCChannelInfo implements ChannelInfo {
             return null;
         }
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public IRCChannelClientInfo getChannelClient(final ClientInfo client) {
@@ -331,7 +331,7 @@ public class IRCChannelInfo implements ChannelInfo {
         }
         return null;
     }
-    
+
     /**
      * Get the ChannelClientInfo object associated with a ClientInfo object.
      *
@@ -340,18 +340,18 @@ public class IRCChannelInfo implements ChannelInfo {
      */
     protected IRCChannelClientInfo addClient(final IRCClientInfo cClient) {
         IRCChannelClientInfo cTemp = getChannelClient(cClient);
-        if (cTemp == null) { 
+        if (cTemp == null) {
             cTemp = new IRCChannelClientInfo(myParser, cClient, this);
             hChannelUserList.put(myParser.getStringConverter().toLowerCase(cTemp.getClient().getNickname()), cTemp);
         }
         return cTemp;
     }
-    
+
     /**
      * Remove ChannelClientInfo object associated with a ClientInfo object.
      *
      * @param cClient Client object to be removed from channel
-     */    
+     */
     protected void delClient(final IRCClientInfo cClient) {
         IRCChannelClientInfo cTemp = getChannelClient(cClient);
         if (cTemp != null) {
@@ -362,14 +362,14 @@ public class IRCChannelInfo implements ChannelInfo {
             }
             hChannelUserList.remove(myParser.getStringConverter().toLowerCase(cTemp.getClient().getNickname()));
         }
-    }    
-    
+    }
+
     /**
      * Rename a channelClient.
      *
      * @param oldNickname Nickname client used to be known as
      * @param cChannelClient ChannelClient object with updated client object
-     */    
+     */
     protected void renameClient(final String oldNickname, final IRCChannelClientInfo cChannelClient) {
         if (hChannelUserList.containsKey(oldNickname)) {
             final IRCChannelClientInfo cTemp = hChannelUserList.get(oldNickname);
@@ -382,7 +382,7 @@ public class IRCChannelInfo implements ChannelInfo {
             }
         }
     }
-    
+
     /**
      * Set the create time.
      *
@@ -394,8 +394,8 @@ public class IRCChannelInfo implements ChannelInfo {
      *
      * @return Unixtimestamp time for the channel creation (Seconds since epoch, not milliseconds)
      */
-    public long getCreateTime() { return nCreateTime; }    
-    
+    public long getCreateTime() { return nCreateTime; }
+
     /**
      * Set the topic time.
      *
@@ -405,43 +405,43 @@ public class IRCChannelInfo implements ChannelInfo {
 
         /** {@inheritDoc} */
         @Override
-    public long getTopicTime() { return nTopicTime; }    
-    
+    public long getTopicTime() { return nTopicTime; }
+
     /**
      * Set the topic.
      *
      * @param sNewTopic New contents of topic
-     */    
+     */
     protected void setInternalTopic(final String sNewTopic) { sTopic = sNewTopic; }
-    
+
         /** {@inheritDoc} */
         @Override
-    public String getTopic() { return sTopic; }    
+    public String getTopic() { return sTopic; }
 
     /**
      * Set the topic creator.
      *
      * @param sNewUser New user who set the topic (nickname if gotten on connect, full host if seen by parser)
-     */    
+     */
     protected void setTopicUser(final String sNewUser) { sTopicUser = sNewUser; }
-    
+
         /** {@inheritDoc} */
         @Override
     public String getTopicSetter() { return sTopicUser; }
-    
+
     /**
      * Set the channel modes (as an integer).
      *
      * @param nNewMode new long representing channel modes. (Boolean only)
-     */    
+     */
     protected void setMode(final long nNewMode) { nModes = nNewMode; }
     /**
      * Get the channel modes (as an integer).
      *
      * @return long representing channel modes. (Boolean only)
-     */    
-    public long getMode() { return nModes; }    
-    
+     */
+    public long getMode() { return nModes; }
+
     /** {@inheritDoc} */
         @Override
     public String getModes() {
@@ -461,17 +461,17 @@ public class IRCChannelInfo implements ChannelInfo {
                 sModeParams.append(" ").append(this.getMode(cTemp));
              }
         }
-        
+
         return sModes.append(sModeParams).toString();
-    }    
-    
+    }
+
     /**
      * Set a channel mode that requires a parameter.
      *
      * @param cMode Character representing mode
      * @param sValue String repreenting value (if "" mode is unset)
-     */    
-    protected void setModeParam(final Character cMode, final String sValue) { 
+     */
+    protected void setModeParam(final Character cMode, final String sValue) {
         if (sValue.isEmpty()) {
             if (hParamModes.containsKey(cMode)) {
                 hParamModes.remove(cMode);
@@ -480,7 +480,7 @@ public class IRCChannelInfo implements ChannelInfo {
             hParamModes.put(cMode, sValue);
         }
     }
-        
+
     /** {@inheritDoc} */
         @Override
     public String getMode(final char mode) {
@@ -489,7 +489,7 @@ public class IRCChannelInfo implements ChannelInfo {
         }
         return "";
     }
-    
+
     /**
      * Add/Remove a value to a channel list.
      *
@@ -497,11 +497,11 @@ public class IRCChannelInfo implements ChannelInfo {
      * @param givenItem ChannelListModeItem representing the item
      * @param bAdd Add or remove the value. (true for add, false for remove)
      */
-    protected void setListModeParam(final Character givenMode, final ChannelListModeItem givenItem, final boolean bAdd) { 
+    protected void setListModeParam(final Character givenMode, final ChannelListModeItem givenItem, final boolean bAdd) {
         Character cMode = givenMode;
         ChannelListModeItem newItem = givenItem;
         if (!myParser.chanModesOther.containsKey(cMode) || myParser.chanModesOther.get(cMode) != IRCParser.MODE_LIST) { return; }
-        
+
         // Hyperion sucks.
         if (cMode == 'b' || cMode == 'q') {
             final ServerType serverType = myParser.getServerType();
@@ -516,15 +516,15 @@ public class IRCChannelInfo implements ChannelInfo {
                 }
             }
         }
-        
-        if (!hListModes.containsKey(cMode)) { 
-            hListModes.put(cMode, new ArrayList<ChannelListModeItem>());    
+
+        if (!hListModes.containsKey(cMode)) {
+            hListModes.put(cMode, new ArrayList<ChannelListModeItem>());
         }
         final ArrayList<ChannelListModeItem> lModes = hListModes.get(cMode);
         for (int i = 0; i < lModes.size(); i++) {
             if (myParser.getStringConverter().equalsIgnoreCase(lModes.get(i).getItem(), newItem.getItem())) {
                 if (bAdd) { return; }
-                else { 
+                else {
                     lModes.remove(i);
                     break;
                 }
@@ -532,37 +532,37 @@ public class IRCChannelInfo implements ChannelInfo {
         }
         if (bAdd) { lModes.add(newItem); }
     }
-    
+
     /** {@inheritDoc} */
         @Override
     public Collection<ChannelListModeItem> getListMode(final char mode) {
         if (!myParser.chanModesOther.containsKey(mode) || myParser.chanModesOther.get(mode) != IRCParser.MODE_LIST) { return null; }
-        
+
         if (!hListModes.containsKey(mode)) {
             hListModes.put(mode, new ArrayList<ChannelListModeItem>());
         }
         return hListModes.get(mode);
     }
-    
+
     /**
      * Get the "adding state" of a list mode.
-     * 
-     * @param cMode Character representing mode 
+     *
+     * @param cMode Character representing mode
      * @return false if we are not expecting a 367 etc, else true.
      */
-    public boolean getAddState(final Character cMode) { 
+    public boolean getAddState(final Character cMode) {
         synchronized (lAddingModes) {
             return lAddingModes.contains(cMode);
         }
     }
-    
+
     /**
      * Get the "adding state" of a list mode.
-     * 
+     *
      * @param cMode Character representing mode
      * @param newState change the value returned by getAddState
      */
-    protected void setAddState(final Character cMode, final boolean newState) { 
+    protected void setAddState(final Character cMode, final boolean newState) {
         synchronized (lAddingModes) {
             if (newState) {
                 lAddingModes.add(cMode);
@@ -571,7 +571,7 @@ public class IRCChannelInfo implements ChannelInfo {
             }
         }
     }
-    
+
     /**
      * Reset the "adding state" of *all* list modes.
      */
@@ -580,7 +580,7 @@ public class IRCChannelInfo implements ChannelInfo {
             lAddingModes.clear();
         }
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public void alterMode(final boolean add, final Character mode, final String parameter) {
@@ -589,7 +589,7 @@ public class IRCChannelInfo implements ChannelInfo {
         String modestr = "";
         if (myParser.h005Info.containsKey("MODES")) {
             try {
-                modecount = Integer.parseInt(myParser.h005Info.get("MODES")); 
+                modecount = Integer.parseInt(myParser.h005Info.get("MODES"));
             } catch (NumberFormatException e) {
                 if (myParser.getServerType() == ServerType.OTHERNET) {
                     modecount = 6;
@@ -626,7 +626,7 @@ public class IRCChannelInfo implements ChannelInfo {
                         final String existingParam = getMode(mode);
                         if (!existingParam.isEmpty()) {
                             final String reverseModeStr = "-" + mode + " " + existingParam;
-                            
+
                             myParser.callDebugInfo(IRCParser.DEBUG_INFO, "Queueing mode: %s", reverseModeStr);
                             lModeQueue.add(reverseModeStr);
                             if (lModeQueue.size() == modecount) { flushModes(); }
@@ -642,7 +642,7 @@ public class IRCChannelInfo implements ChannelInfo {
         lModeQueue.add(modestr);
         if (lModeQueue.size() == modecount) { flushModes(); }
     }
-    
+
     /** {@inheritDoc} */
         @Override
     public void flushModes() {
@@ -675,31 +675,31 @@ public class IRCChannelInfo implements ChannelInfo {
         myParser.sendRawMessage("MODE " + sName + " " + sendModeStr.toString());
         clearModeQueue();
     }
-    
+
     /**
      * This function will clear the mode queue (WITHOUT Sending).
      */
-    public void clearModeQueue() { 
+    public void clearModeQueue() {
         lModeQueue.clear();
     }
-    
+
     /** {@inheritDoc} */
         @Override
     public void sendMessage(final String message) {
         if (message.isEmpty()) { return; }
-        
+
         myParser.sendString("PRIVMSG " + sName + " :" + message);
     }
-    
+
     /**
      * Send a notice message to a target.
      *
      * @param sMessage Message to send
      */
-    public void sendNotice(final String sMessage) { 
+    public void sendNotice(final String sMessage) {
         if (sMessage.isEmpty()) { return; }
-        
-        myParser.sendString("NOTICE " + sName + " :" + sMessage);    
+
+        myParser.sendString("NOTICE " + sName + " :" + sMessage);
     }
 
     /** {@inheritDoc} */
@@ -708,33 +708,33 @@ public class IRCChannelInfo implements ChannelInfo {
         if (action.isEmpty()) { return; }
         sendCTCP("ACTION", action);
     }
-    
+
     /**
      * Send a CTCP to a target.
      *
      * @param sType Type of CTCP
      * @param sMessage Optional Additional Parameters
      */
-    public void sendCTCP(final String sType, String sMessage) { 
+    public void sendCTCP(final String sType, String sMessage) {
         if (sType.isEmpty()) { return; }
         final char char1 = (char) 1;
         if (!sMessage.isEmpty()) { sMessage = " " + sMessage; }
         sendMessage(char1 + sType.toUpperCase() + sMessage + char1);
     }
-    
+
     /**
      * Send a CTCPReply to a target.
      *
      * @param sType Type of CTCP
      * @param sMessage Optional Additional Parameters
      */
-    public void sendCTCPReply(final String sType, String sMessage) { 
+    public void sendCTCPReply(final String sType, String sMessage) {
         if (sType.isEmpty()) { return; }
         final char char1 = (char) 1;
         if (!sMessage.isEmpty()) { sMessage = " " + sMessage; }
-        sendNotice(char1 + sType.toUpperCase() + sMessage + char1);    
+        sendNotice(char1 + sType.toUpperCase() + sMessage + char1);
     }
-    
+
     /**
      * Get a string representation of the Channel.
      *
@@ -742,7 +742,7 @@ public class IRCChannelInfo implements ChannelInfo {
      */
     @Override
     public String toString() { return sName; }
-    
+
     /** {@inheritDoc} */
         @Override
     public Parser getParser() { return myParser; }

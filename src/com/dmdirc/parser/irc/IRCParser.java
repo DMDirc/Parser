@@ -674,7 +674,7 @@ public class IRCParser implements SecureParser, Runnable {
 
         currentSocketState = SocketState.CLOSED;
         // Char Mapping
-        updateCharArrays((byte)4);
+        updateCharArrays((byte) 4);
     }
 
     /**
@@ -1013,7 +1013,7 @@ public class IRCParser implements SecureParser, Runnable {
             final IRCChannelInfo channel = getChannel(newLine[1]);
             if (channel != null) {
                 final Queue<Character> listModeQueue = channel.getListModeQueue();
-                for (int i = 0; i < newLine[2].length() ; ++i) {
+                for (int i = 0; i < newLine[2].length(); ++i) {
                     final Character mode = newLine[2].charAt(i);
                     callDebugInfo(DEBUG_LMQ, "Intercepted mode request for "+channel+" for mode "+mode);
                     if (chanModesOther.containsKey(mode) && chanModesOther.get(mode) == MODE_LIST) {
@@ -1121,7 +1121,7 @@ public class IRCParser implements SecureParser, Runnable {
                             break;
                         default: // Unknown - Send to Notice Auth
                             // Some networks send a CTCP during the auth process, handle it
-                            if (token.length > 3 && !token[3].isEmpty() && token[3].charAt(0) == (char)1 && token[3].charAt(token[3].length()-1) == (char)1) {
+                            if (token.length > 3 && !token[3].isEmpty() && token[3].charAt(0) == (char) 1 && token[3].charAt(token[3].length()-1) == (char) 1) {
                                 try { myProcessingManager.process(sParam, token); } catch (ProcessorNotFoundException e) { }
                                 break;
                             }
@@ -1149,7 +1149,7 @@ public class IRCParser implements SecureParser, Runnable {
         @Override
     public IRCStringConverter getStringConverter() {
         if (stringConverter == null) {
-            stringConverter = new IRCStringConverter((byte)4);
+            stringConverter = new IRCStringConverter((byte) 4);
         }
         return stringConverter;
     }
@@ -1189,7 +1189,7 @@ public class IRCParser implements SecureParser, Runnable {
             // nTemp should never be less than 0
             if (nTemp > 0) {
                 pos = Math.log(nTemp) / Math.log(2);
-                modes[(int)pos] = cTemp;
+                modes[(int) pos] = cTemp;
             }
 /*            // Is there an easier way to find out the power of 2 value for a number?
             // ie 1024 = 10, 512 = 9 ?
@@ -2009,7 +2009,7 @@ public class IRCParser implements SecureParser, Runnable {
      * @param client Client to add
      */
     public void addClient(final IRCClientInfo client) {
-        clientList.put(getStringConverter().toLowerCase(client.getRealNickname()),client);
+        clientList.put(getStringConverter().toLowerCase(client.getRealNickname()), client);
     }
 
     /**

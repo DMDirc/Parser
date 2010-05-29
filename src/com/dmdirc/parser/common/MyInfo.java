@@ -1,16 +1,16 @@
 /*
  * Copyright (c) 2006-2010 Chris Smith, Shane Mc Cormack, Gregory Holmes
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -24,7 +24,7 @@ package com.dmdirc.parser.common;
 
 /**
  * Contains User information.
- * 
+ *
  * @author Shane Mc Cormack
  * @author Chris Smith
  * @see IRCParser
@@ -73,7 +73,7 @@ public class MyInfo {
 
     /**
      * Set the Nickname.
-     * 
+     *
      * @param newValue
      *            Value to set to.
      */
@@ -85,7 +85,7 @@ public class MyInfo {
 
     /**
      * Get the Nickname.
-     * 
+     *
      * @return Current Nickname
      */
     public String getNickname() {
@@ -94,7 +94,7 @@ public class MyInfo {
 
     /**
      * Set the Alternative Nickname.
-     * 
+     *
      * @param newValue
      *            Value to set to.
      */
@@ -106,7 +106,7 @@ public class MyInfo {
 
     /**
      * Get the Alternative Nickname.
-     * 
+     *
      * @return Current Nickname
      */
     public String getAltNickname() {
@@ -115,7 +115,7 @@ public class MyInfo {
 
     /**
      * Set the Realname.
-     * 
+     *
      * @param newValue
      *            Value to set to.
      */
@@ -127,7 +127,7 @@ public class MyInfo {
 
     /**
      * Get the Realname.
-     * 
+     *
      * @return Current Realname
      */
     public String getRealname() {
@@ -136,7 +136,7 @@ public class MyInfo {
 
     /**
      * Set the Username.
-     * 
+     *
      * @param newValue
      *            Value to set to.
      */
@@ -148,7 +148,7 @@ public class MyInfo {
 
     /**
      * Get the Username.
-     * 
+     *
      * @return Current Username
      */
     public String getUsername() {
@@ -157,7 +157,7 @@ public class MyInfo {
 
     /**
      * Set the Prepend Character.
-     * 
+     *
      * @param newValue
      *            Value to set to.
      */
@@ -167,7 +167,7 @@ public class MyInfo {
 
     /**
      * Get the Prepend Character.
-     * 
+     *
      * @return Current Prepend Character
      */
     public char getPrependChar() {

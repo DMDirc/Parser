@@ -119,14 +119,14 @@ public class ProcessListModes extends IRCProcessor {
                     // Only raise an LMQ error if the lmqmode isn't one of bdq if the
                     // guess is one of bdq
                     if (ServerTypeGroup.FREENODE.isMember(serverType) && (mode == 'b' || mode == 'q' || mode == 'd')) {
-                        LinkedList<Character> lmq = (LinkedList<Character>)listModeQueue;
+                        LinkedList<Character> lmq = (LinkedList<Character>) listModeQueue;
                         if (mode == 'b') {
                             error = !(oldMode == 'q' || oldMode == 'd');
-                            lmq.remove((Character)'q');
+                            lmq.remove((Character) 'q');
                             myParser.callDebugInfo(IRCParser.DEBUG_LMQ, "Dropping q from list");
                         } else if (mode == 'q') {
                             error = !(oldMode == 'b' || oldMode == 'd');
-                            lmq.remove((Character)'b');
+                            lmq.remove((Character) 'b');
                             myParser.callDebugInfo(IRCParser.DEBUG_LMQ, "Dropping b from list");
                         } else if (mode == 'd') {
                             error = !(oldMode == 'b' || oldMode == 'q');
@@ -199,13 +199,13 @@ public class ProcessListModes extends IRCProcessor {
             if (token.length > tokenStart) { item = token[tokenStart]; }
             if (!item.isEmpty()) {
                 ChannelListModeItem clmi = new ChannelListModeItem(item, owner, time);
-                callDebugInfo(IRCParser.DEBUG_INFO, "List Mode: %c [%s/%s/%d]",mode, item, owner, time);
+                callDebugInfo(IRCParser.DEBUG_INFO, "List Mode: %c [%s/%s/%d]", mode, item, owner, time);
                 channel.setListModeParam(mode, clmi, true);
             }
         } else {
             callDebugInfo(IRCParser.DEBUG_INFO, "List Mode Batch over");
             channel.resetAddState();
-            if (isCleverMode || listModeQueue == null || ((LinkedList<Character>)listModeQueue).size() == 0) {
+            if (isCleverMode || listModeQueue == null || ((LinkedList<Character>) listModeQueue).size() == 0) {
                 callDebugInfo(IRCParser.DEBUG_INFO, "Calling GotListModes");
                 channel.setHasGotListModes(true);
 
