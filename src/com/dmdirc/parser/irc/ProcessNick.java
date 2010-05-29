@@ -55,7 +55,7 @@ public class ProcessNick extends IRCProcessor {
                 myParser.forceRemoveClient(getClientInfo(oldNickname));
             }
             // Change the nickame
-            iClient.setUserBits(token[token.length-1],true);
+            iClient.setUserBits(token[token.length-1], true);
             // Readd the client
             if (!isSameNick && getClientInfo(iClient.getNickname()) != null) {
 //                myParser.onPostErrorInfo(new ParserError(ParserError.ERROR_FATAL, "Nick change would overwrite existing client", myParser.getLastLine()), false);
@@ -75,7 +75,7 @@ public class ProcessNick extends IRCProcessor {
                         if (!isSameNick) {
                             iChannel.renameClient(oldNickname, iChannelClient);
                         }
-                        callChannelNickChanged(iChannel,iChannelClient,IRCClientInfo.parseHost(token[0]));
+                        callChannelNickChanged(iChannel, iChannelClient, IRCClientInfo.parseHost(token[0]));
                     }
                 }
                 

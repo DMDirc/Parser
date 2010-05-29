@@ -52,12 +52,12 @@ public class ProcessTopic extends IRCProcessor {
                         iChannel.setTopicTime(Long.parseLong(token[5]));
                     }
                 }
-                callChannelTopic(iChannel,true);
+                callChannelTopic(iChannel, true);
             }
         } else {
             if (IRCParser.ALWAYS_UPDATECLIENT) {
                 final IRCClientInfo iClient = getClientInfo(token[0]);
-                if (iClient != null && iClient.getHostname().isEmpty()) {iClient.setUserBits(token[0],false); }
+                if (iClient != null && iClient.getHostname().isEmpty()) {iClient.setUserBits(token[0], false); }
             }
             iChannel = getChannel(token[2]);
             if (iChannel == null) { return; }
@@ -65,7 +65,7 @@ public class ProcessTopic extends IRCProcessor {
             if (token[0].charAt(0) == ':') { token[0] = token[0].substring(1); }
             iChannel.setTopicUser(token[0]);
             iChannel.setInternalTopic(token[token.length-1]);
-            callChannelTopic(iChannel,false);
+            callChannelTopic(iChannel, false);
         }
     }
     
@@ -78,7 +78,7 @@ public class ProcessTopic extends IRCProcessor {
      * @return true if a method was called, false otherwise
      */
     protected boolean callChannelTopic(final ChannelInfo cChannel, final boolean bIsJoinTopic) {
-        ((IRCChannelInfo)cChannel).setHadTopic();
+        ((IRCChannelInfo) cChannel).setHadTopic();
         return getCallbackManager().getCallbackType(ChannelTopicListener.class).call(cChannel, bIsJoinTopic);
     }
     

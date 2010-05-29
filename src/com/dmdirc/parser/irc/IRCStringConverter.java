@@ -42,7 +42,7 @@ public class IRCStringConverter implements StringConverter {
      * Create a new IRCStringConverter with rfc1459 encoding.
      */
     public IRCStringConverter() {
-        this((byte)4);
+        this((byte) 4);
     }
     
     /**
@@ -54,7 +54,7 @@ public class IRCStringConverter implements StringConverter {
      */
     public IRCStringConverter(final byte limit) {
         // If limit is out side the boundries, use rfc1459
-        if (limit > 4 || limit < 0) { this.limit = (byte)4; }
+        if (limit > 4 || limit < 0) { this.limit = (byte) 4; }
         else { this.limit = limit; }
         
         lowercase = new char[127];
@@ -67,7 +67,7 @@ public class IRCStringConverter implements StringConverter {
 
         // Replace the uppercase chars with lowercase
         for (char i = 65; i <= (90 + this.limit); ++i) {
-            lowercase[i] = (char)(i + 32);
+            lowercase[i] = (char) (i + 32);
             uppercase[i + 32] = i;
         }
     }

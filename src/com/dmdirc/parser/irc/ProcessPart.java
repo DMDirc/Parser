@@ -53,7 +53,7 @@ public class ProcessPart extends IRCProcessor {
         if (iClient == null) { return; }
         if (IRCParser.ALWAYS_UPDATECLIENT && iClient.getHostname().isEmpty()) {
             // This may seem pointless - updating before they leave - but the formatter needs it!
-            iClient.setUserBits(token[0],false);
+            iClient.setUserBits(token[0], false);
         }
         if (iChannel == null) { 
             if (iClient != myParser.getLocalClient()) {
@@ -68,10 +68,10 @@ public class ProcessPart extends IRCProcessor {
                 // callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got part for channel ("+token[2]+") for a non-existant user. [User: "+token[0]+"]", myParser.getLastLine()));
                 return;
             }
-            if (myParser.removeAfterCallback) { callChannelPart(iChannel,iChannelClient,sReason); }
-            callDebugInfo(IRCParser.DEBUG_INFO, "Removing %s from %s",iClient.getNickname(),iChannel.getName());
+            if (myParser.removeAfterCallback) { callChannelPart(iChannel, iChannelClient, sReason); }
+            callDebugInfo(IRCParser.DEBUG_INFO, "Removing %s from %s", iClient.getNickname(), iChannel.getName());
             iChannel.delClient(iClient);
-            if (!myParser.removeAfterCallback) { callChannelPart(iChannel,iChannelClient,sReason); }
+            if (!myParser.removeAfterCallback) { callChannelPart(iChannel, iChannelClient, sReason); }
             if (iClient == myParser.getLocalClient()) {
                 iChannel.emptyChannel();
                 myParser.removeChannel(iChannel);

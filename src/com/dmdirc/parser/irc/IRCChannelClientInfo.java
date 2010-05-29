@@ -29,13 +29,13 @@ import java.util.Map;
 
 /**
  * Contains information about a client on a channel.
- * 
+ *
  * @author Shane Mc Cormack
  * @author Chris Smith
  * @see IRCParser
  */
 public class IRCChannelClientInfo implements ChannelClientInfo {
-    
+
     /** Reference to ClientInfo object this represents. */
     private final IRCClientInfo cClient;
     /** Integer representation of the channel modes assocated with this user. */
@@ -46,14 +46,14 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
     private final ChannelInfo myChannel;
     /** A Map to allow applications to attach misc data to this object */
     private Map<Object, Object> myMap;
-    
+
     /**
      * Create a ChannelClient instance of a CLient.
      *
      * @param tParser Refernce to parser that owns this channelclient (used for modes)
      * @param client Client that this channelclient represents
      * @param channel Channel that owns this channelclient
-     */    
+     */
     public IRCChannelClientInfo(final IRCParser tParser, final IRCClientInfo client, final ChannelInfo channel) {
         myMap = new HashMap<Object, Object>();
         myParser = tParser;
@@ -61,7 +61,7 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
         myChannel = channel;
         cClient.addChannelClientInfo(this);
     }
-    
+
     /**
      * Set the Map object attatched to this object.
      *
@@ -71,11 +71,11 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
     public void setMap(final Map<Object, Object> newMap) {
         myMap = newMap;
     }
-    
+
     /** {@inheritDoc} */
         @Override
     public Map<Object, Object> getMap() { return myMap; }
-    
+
     /** {@inheritDoc} */
         @Override
     public IRCClientInfo getClient() { return cClient; }
@@ -87,9 +87,9 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
      * Get the nickname of the client object represented by this channelclient.
      *
      * @return Nickname of the Client object represented by this channelclient
-     */    
-    public String getNickname() { return cClient.getNickname(); }    
-    
+     */
+    public String getNickname() { return cClient.getNickname(); }
+
     /**
      * Set the modes this client has (Prefix modes).
      *
@@ -102,7 +102,7 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
      * @return integer representing the modes this client has.
      */
     public long getChanMode() { return nModes; }
-    
+
     /**
      * Get the modes this client has (Prefix modes) as a string.
      * Returns all known modes that the client has.
@@ -129,7 +129,7 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
                 }
             }
         }
-        
+
         return sModes.toString();
     }
 
@@ -151,7 +151,7 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
         }
         return 0;
     }
-    
+
     /** {@inheritDoc} */
         @Override
     public String getImportantMode() {
@@ -159,7 +159,7 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
         if (!sModes.isEmpty()) { sModes = "" + sModes.charAt(0); }
         return sModes;
     }
-    
+
     /** {@inheritDoc} */
         @Override
     public String getImportantModePrefix() {
@@ -167,7 +167,7 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
         if (!sModes.isEmpty()) { sModes = "" + sModes.charAt(0); }
         return sModes;
     }
-    
+
 
     /**
      * Get the String Value of ChannelClientInfo (ie @Nickname).
@@ -175,16 +175,16 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
      * @return String Value of user (inc prefix) (ie @Nickname)
      */
     @Override
-    public String toString() { 
+    public String toString() {
         return this.getImportantModePrefix() + this.getNickname();
-    }    
-    
+    }
+
     /** {@inheritDoc} */
         @Override
     public void kick(final String sReason) {
         myParser.sendString("KICK " + myChannel + " " + this.getNickname() + (sReason.isEmpty() ? sReason : " :" + sReason));
     }
-    
+
     /**
      * Get the "Complete" String Value of ChannelClientInfo (ie @+Nickname).
      *

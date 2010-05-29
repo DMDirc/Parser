@@ -37,7 +37,7 @@ public class ProcessingManager {
     IRCParser myParser;
 
     /** Hashtable used to store the different types of IRCProcessor known. */
-    private final Hashtable<String,IRCProcessor> processHash = new Hashtable<String,IRCProcessor>();
+    private final Hashtable<String, IRCProcessor> processHash = new Hashtable<String, IRCProcessor>();
 
     /**
      * Debugging Data to the console.

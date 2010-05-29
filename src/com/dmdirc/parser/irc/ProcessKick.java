@@ -55,7 +55,7 @@ public class ProcessKick extends IRCProcessor {
         
         if (IRCParser.ALWAYS_UPDATECLIENT && iKicker != null) {
             // To facilitate dmdirc formatter, get user information
-            if (iKicker.getHostname().isEmpty()) { iKicker.setUserBits(token[0],false); }
+            if (iKicker.getHostname().isEmpty()) { iKicker.setUserBits(token[0], false); }
         }
 
         if (iChannel == null) { 
@@ -71,9 +71,9 @@ public class ProcessKick extends IRCProcessor {
                 return;
             }
             iChannelKicker = iChannel.getChannelClient(token[0]);
-            if (myParser.removeAfterCallback) { callChannelKick(iChannel,iChannelClient,iChannelKicker,sReason,token[0]); }
+            if (myParser.removeAfterCallback) { callChannelKick(iChannel, iChannelClient, iChannelKicker, sReason, token[0]); }
             iChannel.delClient(iClient);
-            if (!myParser.removeAfterCallback) { callChannelKick(iChannel,iChannelClient,iChannelKicker,sReason,token[0]); }
+            if (!myParser.removeAfterCallback) { callChannelKick(iChannel, iChannelClient, iChannelKicker, sReason, token[0]); }
             if (iClient == myParser.getLocalClient()) {
                 iChannel.emptyChannel();
                 myParser.removeChannel(iChannel);

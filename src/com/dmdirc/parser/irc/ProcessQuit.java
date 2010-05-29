@@ -53,7 +53,7 @@ public class ProcessQuit extends IRCProcessor {
         if (iClient == null) { return; }
         if (IRCParser.ALWAYS_UPDATECLIENT && iClient.getHostname().isEmpty()) {
             // This may seem pointless - updating before they leave - but the formatter needs it!
-            iClient.setUserBits(token[0],false);
+            iClient.setUserBits(token[0], false);
         }
         String sReason = "";
         if (token.length > 2) { sReason = token[token.length-1]; }
@@ -62,24 +62,24 @@ public class ProcessQuit extends IRCProcessor {
         for (IRCChannelInfo iChannel : channelList) {
             iChannelClient = iChannel.getChannelClient(iClient);
             if (iChannelClient != null) {
-                if (myParser.removeAfterCallback) { callChannelQuit(iChannel,iChannelClient,sReason); }
+                if (myParser.removeAfterCallback) { callChannelQuit(iChannel, iChannelClient, sReason); }
                 if (iClient == myParser.getLocalClient()) {
                     iChannel.emptyChannel();
                     myParser.removeChannel(iChannel);
                 } else {
                     iChannel.delClient(iClient);
                 }
-                if (!myParser.removeAfterCallback) { callChannelQuit(iChannel,iChannelClient,sReason); }
+                if (!myParser.removeAfterCallback) { callChannelQuit(iChannel, iChannelClient, sReason); }
             }
         }
 
-        if (myParser.removeAfterCallback) { callQuit(iClient,sReason); }
+        if (myParser.removeAfterCallback) { callQuit(iClient, sReason); }
         if (iClient == myParser.getLocalClient()) {
             myParser.clearClients();
         } else {
             myParser.removeClient(iClient);
         }
-        if (!myParser.removeAfterCallback) { callQuit(iClient,sReason); }
+        if (!myParser.removeAfterCallback) { callQuit(iClient, sReason); }
     }    
     
     /**

@@ -248,17 +248,21 @@ public abstract class CallbackObject {
             for (Class<?> needed : ctor.getParameterTypes()) {
                 boolean found = false;
 
-                for (Class<?> source : sources.keySet()) {
-                    if (source.isAssignableFrom(needed)) {
-                        params[i] = sources.get(source);
+                for (Map.Entry<Class<?>, Object> entry : sources.entrySet()) {
+                    if (entry.getKey().isAssignableFrom(needed)) {
+                        params[i] = entry.getValue();
                         found = true;
                     }
                 }
 
-                if (!found && (param = getFakeArg(args, needed)) != null) {
-                    params[i] = param;
-                } else if (!found) {
-                    failed = true;
+                if (!found) {
+                    param = getFakeArg(args, needed);
+
+                    if (param != null) {
+                        params[i] = param;
+                    } else {
+                        failed = true;
+                    }
                 }
 
                 i++;

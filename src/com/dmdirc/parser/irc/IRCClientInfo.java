@@ -35,7 +35,7 @@ import java.util.Map;
 
 /**
  * Contains information about known users.
- * 
+ *
  * @author Shane Mc Cormack
  * @author Chris Smith
  * @see IRCParser
@@ -44,7 +44,7 @@ public class IRCClientInfo implements LocalClientInfo {
     /** Known nickname of client. */
     private String sNickname = "";
     /** Known ident of client. */
-    private String sIdent = "";    
+    private String sIdent = "";
     /** Known host of client. */
     private String sHost = "";
     /** Known user modes of client. */
@@ -87,7 +87,7 @@ public class IRCClientInfo implements LocalClientInfo {
     public void setMap(final Map<Object, Object> newMap) {
         myMap = newMap;
     }
-    
+
     /** {@inheritDoc} */
         @Override
     public Map<Object, Object> getMap() {
@@ -126,7 +126,7 @@ public class IRCClientInfo implements LocalClientInfo {
         // Get the nickname from the string.
         return parseHostFull(sWho)[0];
     }
-    
+
     /**
      * Get a nick ident and host of a user from a hostmask.
      * Hostmask must match (?:)nick(?!ident)(?@host)
@@ -143,7 +143,7 @@ public class IRCClientInfo implements LocalClientInfo {
         sTemp = sTemp[0].split("!", 2);
         if (sTemp.length == 1) { result[1] = ""; } else { result[1] = sTemp[1]; }
         result[0] = sTemp[0];
-        
+
         return result;
     }
 
@@ -152,11 +152,11 @@ public class IRCClientInfo implements LocalClientInfo {
      *
      * @param sHostmask takes a host (?:)nick(?!ident)(?@host) and sets nick/host/ident variables
      * @param bUpdateNick if this is false, only host/ident will be updated.
-     */    
+     */
     public void setUserBits(final String sHostmask, final boolean bUpdateNick) {
         setUserBits(sHostmask, bUpdateNick, false);
     }
-    
+
     /**
      * Set the nick/ident/host of this client.
      *
@@ -164,14 +164,14 @@ public class IRCClientInfo implements LocalClientInfo {
      * @param bUpdateNick if this is false, only host/ident will be updated.
      * @param allowBlank if this is true, ident/host will be set even if
      *                   parseHostFull returns empty values for them
-     */    
+     */
     public void setUserBits(final String sHostmask, final boolean bUpdateNick, final boolean allowBlank) {
         final String[] sTemp = parseHostFull(sHostmask);
         if (!sTemp[2].isEmpty() || allowBlank) { sHost = sTemp[2]; }
         if (!sTemp[1].isEmpty() || allowBlank) { sIdent = sTemp[1]; }
         if (bUpdateNick) { sNickname = sTemp[0]; }
     }
-    
+
     /**
      * Get a string representation of the user.
      *
@@ -179,7 +179,7 @@ public class IRCClientInfo implements LocalClientInfo {
      */
     @Override
     public String toString() { return sNickname + "!" + sIdent + "@" + sHost; }
-    
+
     /** {@inheritDoc} */
     @Override
     public String getNickname() {
@@ -192,43 +192,43 @@ public class IRCClientInfo implements LocalClientInfo {
             return sNickname;
         }
     }
-    
+
     /** {@inheritDoc} */
     public String getRealNickname() { return sNickname; }
-    
+
     /** {@inheritDoc} */
     @Override
     public String getUsername() { return sIdent; }
-    
+
     /** {@inheritDoc} */
   @Override
     public String getHostname() { return sHost; }
-    
+
     /**
      * Set the away state of a user.
      * Automatically sets away reason to "" if not set to AwayState.AWAY
      *
      * @param bNewState AwayState representing new away state.
-     */    
+     */
     protected void setAwayState(final AwayState bNewState) {
         away = bNewState;
         if (away != AwayState.AWAY) { myAwayReason = ""; }
     }
-    
+
     /**
      * Get the away state of a user.
      *
      * @return AwayState of the user.
-     */    
+     */
     public AwayState getAwayState() { return away; }
-    
+
     /**
      * Get the Away Reason for this user.
      *
      * @return Known away reason for user.
      */
     public String getAwayReason() { return myAwayReason; }
-    
+
     /**
      * Set the Away Reason for this user.
      * Automatically set to "" if awaystate is set to false
@@ -236,47 +236,47 @@ public class IRCClientInfo implements LocalClientInfo {
      * @param newValue new away reason for user.
      */
     protected void setAwayReason(final String newValue) { myAwayReason = newValue; }
-    
+
     /** {@inheritDoc} */
         @Override
     public String getRealname() { return sRealName; }
-    
+
     /**
      * Set the RealName for this user.
      *
      * @param newValue new RealName for user.
      */
     protected void setRealName(final String newValue) { sRealName = newValue; }
-    
+
     /**
      * Set the user modes (as an integer).
      *
      * @param nNewMode new long representing channel modes. (Boolean only)
-     */    
+     */
     protected void setUserMode(final long nNewMode) { nModes = nNewMode; }
-    
+
     /**
      * Get the user modes (as an integer).
      *
      * @return long representing channel modes. (Boolean only)
-     */    
-    public long getUserMode() { return nModes; }    
-    
+     */
+    public long getUserMode() { return nModes; }
+
     /** {@inheritDoc} */
         @Override
     public String getModes() {
         final StringBuilder sModes = new StringBuilder("+");
         long nTemp = 0;
         final long nChanModes = this.getUserMode();
-        
+
         for (char cTemp : myParser.userModes.keySet()) {
             nTemp = myParser.userModes.get(cTemp);
             if ((nChanModes & nTemp) == nTemp) { sModes.append(cTemp); }
         }
-        
+
         return sModes.toString();
     }
-    
+
     /**
      * Is this client an oper?
      * This is a guess currently based on user-modes and thus only works on the
@@ -288,31 +288,31 @@ public class IRCClientInfo implements LocalClientInfo {
         final String modestr = getModes();
         return (modestr.indexOf('o') > -1) || (modestr.indexOf('O') > -1);
     }
-    
+
     /**
      * Add a ChannelClientInfo as a known reference to this client.
      *
      * @param cci ChannelClientInfo to add as a known reference
-     */    
+     */
     public void addChannelClientInfo(final IRCChannelClientInfo cci) {
         final String key = myParser.getStringConverter().toLowerCase(cci.getChannel().getName());
         if (!myChannelClientInfos.containsKey(key)) {
             myChannelClientInfos.put(key, cci);
         }
     }
-    
+
     /**
      * Remove a ChannelClientInfo as a known reference to this client.
      *
      * @param cci ChannelClientInfo to remove as a known reference
-     */    
+     */
     public void delChannelClientInfo(final IRCChannelClientInfo cci) {
         final String key = myParser.getStringConverter().toLowerCase(cci.getChannel().getName());
         if (myChannelClientInfos.containsKey(key)) {
             myChannelClientInfos.remove(key);
         }
     }
-    
+
     /**
      * Check to see if a client is still known on any of the channels we are on.
      *
@@ -321,18 +321,18 @@ public class IRCClientInfo implements LocalClientInfo {
     public boolean checkVisibility() {
         return !myChannelClientInfos.isEmpty();
     }
-    
+
     /** {@inheritDoc} */
         @Override
     public int getChannelCount() {
         return myChannelClientInfos.size();
     }
-    
+
     /**
      * Get a list of channelClients that point to this object.
      *
      * @return int with the count of known channels
-     */    
+     */
     public List<IRCChannelClientInfo> getChannelClients() {
         final List<IRCChannelClientInfo> result = new ArrayList<IRCChannelClientInfo>();
         for (IRCChannelClientInfo cci : myChannelClientInfos.values()) {
@@ -340,7 +340,7 @@ public class IRCClientInfo implements LocalClientInfo {
         }
         return result;
     }
-    
+
     /** {@inheritDoc} */
         @Override
     public void alterMode(final boolean add, final Character mode) {
@@ -348,9 +348,9 @@ public class IRCClientInfo implements LocalClientInfo {
         int modecount = 1;
         String modestr = "";
         if (myParser.h005Info.containsKey("MODES")) {
-            try { 
-                modecount = Integer.parseInt(myParser.h005Info.get("MODES")); 
-            } catch (NumberFormatException e) { 
+            try {
+                modecount = Integer.parseInt(myParser.h005Info.get("MODES"));
+            } catch (NumberFormatException e) {
                 modecount = 1;
             }
         }
@@ -367,7 +367,7 @@ public class IRCClientInfo implements LocalClientInfo {
         lModeQueue.add(modestr);
         if (lModeQueue.size() == modecount) { flushModes(); }
     }
-    
+
     /** {@inheritDoc} */
         @Override
     public void flushModes() {
@@ -392,14 +392,14 @@ public class IRCClientInfo implements LocalClientInfo {
         myParser.sendRawMessage("MODE " + sNickname + " " + sendModeStr.toString());
         clearModeQueue();
     }
-    
+
     /**
      * This function will clear the mode queue (WITHOUT Sending).
      */
-    public void clearModeQueue() { 
+    public void clearModeQueue() {
         lModeQueue.clear();
     }
-    
+
     /** {@inheritDoc} */
         @Override
     public Parser getParser() { return myParser; }

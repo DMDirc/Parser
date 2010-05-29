@@ -80,12 +80,12 @@ public class ProcessMessage extends IRCProcessor {
              pe.setException(pse);
              callErrorInfo(pe);
         }
-        
+
         // Lines such as:
         // "nick!user@host PRIVMSG"
         // are invalid, stop processing.
         if (token.length < 3) { return; }
-        
+
         // Is this actually a notice auth?
         if (token[0].indexOf('!') == -1 && token[1].equalsIgnoreCase("NOTICE") && token[2].equalsIgnoreCase("AUTH")) {
             try {
@@ -93,7 +93,7 @@ public class ProcessMessage extends IRCProcessor {
             } catch (ProcessorNotFoundException e) { }
             return;
         }
-        
+
         IRCChannelClientInfo iChannelClient = null;
         IRCChannelInfo iChannel = null;
         IRCClientInfo iClient = null;
@@ -104,11 +104,11 @@ public class ProcessMessage extends IRCProcessor {
             sMessage = token[token.length-1];
         }
         String[] bits = sMessage.split(" ", 2);
-        final Character char1 = Character.valueOf((char)1);
+        final Character char1 = Character.valueOf((char) 1);
         String sCTCP = "";
         boolean isAction = false;
         boolean isCTCP = false;
-        
+
         if (sMessage.length() > 1) {
             if (sParam.equalsIgnoreCase("PRIVMSG")) {
                 // Actions are special CTCPs
@@ -130,12 +130,12 @@ public class ProcessMessage extends IRCProcessor {
                     // Some CTCPs have messages and some do not
                     if (bits.length > 1) { sMessage = bits[1]; } else { sMessage = ""; }
                     // Remove the leading char1
-                    bits = bits[0].split(char1.toString(),2);
+                    bits = bits[0].split(char1.toString(), 2);
                     sCTCP = bits[1];
                     // remove the trailing char1
-                    if (!sMessage.isEmpty()) { sMessage = sMessage.split(char1.toString(),2)[0]; }
-                    else { sCTCP = sCTCP.split(char1.toString(),2)[0]; }
-                    callDebugInfo(IRCParser.DEBUG_INFO, "CTCP: \"%s\" \"%s\"",sCTCP,sMessage);
+                    if (!sMessage.isEmpty()) { sMessage = sMessage.split(char1.toString(), 2)[0]; }
+                    else { sCTCP = sCTCP.split(char1.toString(), 2)[0]; }
+                    callDebugInfo(IRCParser.DEBUG_INFO, "CTCP: \"%s\" \"%s\"", sCTCP, sMessage);
                 }
             }
         }
@@ -146,16 +146,16 @@ public class ProcessMessage extends IRCProcessor {
         iClient = getClientInfo(token[0]);
         if (IRCParser.ALWAYS_UPDATECLIENT && iClient != null) {
             // Facilitate DMDIRC Formatter
-            if (iClient.getHostname().isEmpty()) {iClient.setUserBits(token[0],false); }
+            if (iClient.getHostname().isEmpty()) {iClient.setUserBits(token[0], false); }
         }
-        
+
         // Fire the appropriate callbacks.
         // OnChannel* Callbacks are fired if the target was a channel
         // OnPrivate* Callbacks are fired if the target was us
         // OnUnknown* Callbacks are fired if the target was neither of the above
         // Actions and CTCPs are send as PRIVMSGS
         // CTCPReplies are sent as Notices
-        
+
         // Check if we have a Mode Prefix for channel targets.
         // Non-Channel messages still use the whole token, even if the first char
         // is a prefix.
@@ -165,7 +165,7 @@ public class ProcessMessage extends IRCProcessor {
         final char modePrefix = token[2].charAt(0);
         final boolean hasModePrefix =  (myParser.prefixMap.containsKey(modePrefix) && !myParser.prefixModes.containsKey(modePrefix));
         final String targetName = (hasModePrefix) ? token[2].substring(1) : token[2];
-        
+
         if (isValidChannelName(targetName)) {
             iChannel = getChannel(targetName);
             if (iChannel == null) {
@@ -241,7 +241,7 @@ public class ProcessMessage extends IRCProcessor {
             }
         }
     }
-    
+
     /**
      * Callback to all objects implementing the ChannelAction Callback.
      *
@@ -255,7 +255,7 @@ public class ProcessMessage extends IRCProcessor {
     protected boolean callChannelAction(final ChannelInfo cChannel, final ChannelClientInfo cChannelClient, final String sMessage, final String sHost) {
         return getCallbackManager().getCallbackType(ChannelActionListener.class).call(cChannel, cChannelClient, sMessage, sHost);
     }
-    
+
     /**
      * Callback to all objects implementing the ChannelCTCP Callback.
      *
@@ -285,7 +285,7 @@ public class ProcessMessage extends IRCProcessor {
     protected boolean callChannelCTCPReply(final ChannelInfo cChannel, final ChannelClientInfo cChannelClient, final String sType, final String sMessage, final String sHost) {
         return getCallbackManager().getCallbackType(ChannelCtcpReplyListener.class).call(cChannel, cChannelClient, sType, sMessage, sHost);
     }
-    
+
     /**
      * Callback to all objects implementing the ChannelMessage Callback.
      *
@@ -299,7 +299,7 @@ public class ProcessMessage extends IRCProcessor {
     protected boolean callChannelMessage(final ChannelInfo cChannel, final ChannelClientInfo cChannelClient, final String sMessage, final String sHost) {
         return getCallbackManager().getCallbackType(ChannelMessageListener.class).call(cChannel, cChannelClient, sMessage, sHost);
     }
-    
+
     /**
      * Callback to all objects implementing the ChannelNotice Callback.
      *
@@ -313,7 +313,7 @@ public class ProcessMessage extends IRCProcessor {
     protected boolean callChannelNotice(final ChannelInfo cChannel, final ChannelClientInfo cChannelClient, final String sMessage, final String sHost) {
         return getCallbackManager().getCallbackType(ChannelNoticeListener.class).call(cChannel, cChannelClient, sMessage, sHost);
     }
-    
+
     /**
      * Callback to all objects implementing the ChannelModeNotice Callback.
      *
@@ -328,7 +328,7 @@ public class ProcessMessage extends IRCProcessor {
     protected boolean callChannelModeNotice(final char prefix, final ChannelInfo cChannel, final ChannelClientInfo cChannelClient, final String sMessage, final String sHost) {
         return getCallbackManager().getCallbackType(ChannelModeNoticeListener.class).call(cChannel, prefix, cChannelClient, sMessage, sHost);
     }
-    
+
     /**
      * Callback to all objects implementing the ChannelModeMessage Callback.
      *
@@ -343,7 +343,7 @@ public class ProcessMessage extends IRCProcessor {
     protected boolean callChannelModeMessage(final char prefix, final ChannelInfo cChannel, final ChannelClientInfo cChannelClient, final String sMessage, final String sHost) {
         return getCallbackManager().getCallbackType(ChannelModeMessageListener.class).call(cChannel, prefix, cChannelClient, sMessage, sHost);
     }
-    
+
     /**
      * Callback to all objects implementing the PrivateAction Callback.
      *
@@ -417,7 +417,7 @@ public class ProcessMessage extends IRCProcessor {
     protected boolean callServerNotice(final String sMessage, final String sHost) {
         return getCallbackManager().getCallbackType(ServerNoticeListener.class).call(sMessage, sHost);
     }
-    
+
     /**
      * Callback to all objects implementing the UnknownAction Callback.
      *
@@ -498,7 +498,7 @@ public class ProcessMessage extends IRCProcessor {
         return getCallbackManager().getCallbackType(UnknownServerNoticeListener.class).call(sMessage, sTarget, sHost);
     }
 
-    
+
     /**
      * What does this IRCProcessor handle.
      *
@@ -508,7 +508,7 @@ public class ProcessMessage extends IRCProcessor {
     public String[] handles() {
         return new String[]{"PRIVMSG", "NOTICE"};
     }
-    
+
     /**
      * Create a new instance of the IRCProcessor Object.
      *

@@ -92,7 +92,7 @@ public class ProcessNames extends IRCProcessor {
                         break;
                     }
                 }
-                callDebugInfo(IRCParser.DEBUG_INFO, "Name: %s Modes: \"%s\" [%d]",sName,sModes.toString(),nPrefix);
+                callDebugInfo(IRCParser.DEBUG_INFO, "Name: %s Modes: \"%s\" [%d]", sName, sModes.toString(), nPrefix);
                 
                 iClient = getClientInfo(sName);
                 if (iClient == null) { iClient = new IRCClientInfo(myParser, sName); myParser.addClient(iClient); }
@@ -116,7 +116,7 @@ public class ProcessNames extends IRCProcessor {
      * @return true if a method was called, false otherwise
      */
     protected boolean callChannelTopic(final ChannelInfo cChannel, final boolean bIsJoinTopic) {
-        ((IRCChannelInfo)cChannel).setHadTopic();
+        ((IRCChannelInfo) cChannel).setHadTopic();
         return getCallbackManager().getCallbackType(ChannelTopicListener.class).call(cChannel, bIsJoinTopic);
     }
 

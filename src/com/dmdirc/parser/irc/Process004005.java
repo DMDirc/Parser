@@ -47,45 +47,45 @@ public class Process004005 extends IRCProcessor {
                 myParser.h005Info.put("002IRCD", matcher.group(1));
             }
         } else if (sParam.equals("003")) {
-            myParser.h005Info.put("003IRCD",token[token.length-1]);
+            myParser.h005Info.put("003IRCD", token[token.length-1]);
         } else if (sParam.equals("004")) {
             // 004
             if (token.length > 4) {
-                myParser.h005Info.put("004IRCD",token[4]);
-                myParser.h005Info.put("USERMODES",token[5]);
-                myParser.h005Info.put("USERCHANMODES",token[6]);
-                if (token.length > 7) { myParser.h005Info.put("USERCHANPARAMMODES",token[7]); } // INSPIRCD includes an extra param
+                myParser.h005Info.put("004IRCD", token[4]);
+                myParser.h005Info.put("USERMODES", token[5]);
+                myParser.h005Info.put("USERCHANMODES", token[6]);
+                if (token.length > 7) { myParser.h005Info.put("USERCHANPARAMMODES", token[7]); } // INSPIRCD includes an extra param
             } else {
                 final String[] bits = token[3].split(" ");
-                myParser.h005Info.put("004IRCD",bits[1]);
-                myParser.h005Info.put("USERMODES",bits[2]);
-                myParser.h005Info.put("USERCHANMODES",bits[3]);
-                if (token.length > 4) { myParser.h005Info.put("USERCHANPARAMMODES",bits[4]); } // INSPIRCD includes an extra param
+                myParser.h005Info.put("004IRCD", bits[1]);
+                myParser.h005Info.put("USERMODES", bits[2]);
+                myParser.h005Info.put("USERCHANMODES", bits[3]);
+                if (token.length > 4) { myParser.h005Info.put("USERCHANPARAMMODES", bits[4]); } // INSPIRCD includes an extra param
             }
             myParser.parseUserModes();
         } else if (sParam.equals("005")) {
             // 005
-            for (int i = 3; i < token.length ; i++) {
-                String[] bits = token[i].split("=",2);
+            for (int i = 3; i < token.length; i++) {
+                String[] bits = token[i].split("=", 2);
                 if (bits[0].isEmpty()) { continue; }
                 final boolean isNegation = (bits[0].charAt(0) == '-');
                 final String sKey = (isNegation) ? bits[0].substring(1).toUpperCase() : bits[0].toUpperCase();
                 final String sValue = (bits.length == 2) ? bits[1] : "";
-                callDebugInfo(IRCParser.DEBUG_INFO, "%s => %s",sKey,sValue);
+                callDebugInfo(IRCParser.DEBUG_INFO, "%s => %s", sKey, sValue);
                 if (isNegation) {
                     myParser.h005Info.remove(sKey);
                 } else {
-                    myParser.h005Info.put(sKey,sValue);
+                    myParser.h005Info.put(sKey, sValue);
                 }
                 if (sKey.equals("NETWORK") && !isNegation) {
                     myParser.networkName = sValue;
                     callGotNetwork();
                 } else if (sKey.equals("CASEMAPPING") && !isNegation) {
-                    byte limit = (byte)4;
+                    byte limit = (byte) 4;
                     if (sValue.equalsIgnoreCase("strict-rfc1459")) {
-                        limit = (byte)3;
+                        limit = (byte) 3;
                     } else if (sValue.equalsIgnoreCase("ascii")) {
-                        limit = (byte)0;
+                        limit = (byte) 0;
                     } else if (!sValue.equalsIgnoreCase("rfc1459")) {
                         myParser.callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Unknown casemapping: '"+sValue+"' - assuming rfc1459", myParser.getLastLine()));
                     }
