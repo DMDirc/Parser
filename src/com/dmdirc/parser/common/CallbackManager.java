@@ -213,7 +213,7 @@ public abstract class CallbackManager<T extends Parser> {
      * Add a callback with a specific target.
      * This method will throw a CallbackNotFoundException if the callback does not exist.
      *
-     * @param <T> The type of callback
+     * @param <S> The type of callback
      * @param callback Type of callback object.
      * @param o instance of ICallbackInterface to add.
      * @param target Parameter to specify that a callback should only fire for specific things
@@ -234,7 +234,7 @@ public abstract class CallbackManager<T extends Parser> {
      * Add a callback without an exception.
      * This should be used if a callback is not essential for execution (ie the DebugOut callback)
      *
-     * @param <T> The type of callback object
+     * @param <S> The type of callback object
      * @param callback Type of callback object.
      * @param o instance of ICallbackInterface to add.
      * @return true/false if the callback was added or not.
@@ -253,7 +253,7 @@ public abstract class CallbackManager<T extends Parser> {
      * Add a callback with a specific target.
      * This should be used if a callback is not essential for execution
      *
-     * @param <T> The type of callback
+     * @param <S> The type of callback
      * @param callback Type of callback object.
      * @param o instance of ICallbackInterface to add.
      * @param target Parameter to specify that a callback should only fire for specific things
