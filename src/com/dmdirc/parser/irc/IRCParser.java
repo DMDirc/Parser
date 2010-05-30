@@ -44,7 +44,17 @@ import java.net.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;		
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.Queue;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -72,7 +82,7 @@ public class IRCParser implements SecureParser, Runnable {
     public static final int DEBUG_PROCESSOR = 4;
     /** List Mode Queue Debug Information. */
     public static final int DEBUG_LMQ = 8;
-//    public static final int DEBUG_SOMETHING = 16; //Next thingy
+    //public static final int DEBUG_SOMETHING = 16; //Next thingy
 
     /** Attempt to update user host all the time, not just on Who/Add/NickChange. */
     static final boolean ALWAYS_UPDATECLIENT = true;
