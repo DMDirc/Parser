@@ -50,18 +50,18 @@ public class Process004005 extends IRCProcessor {
             myParser.h005Info.put("003IRCD", token[token.length-1]);
         } else if (sParam.equals("004")) {
             // 004
-            if (token.length > 4) {
-                myParser.h005Info.put("004IRCD", token[4]);
-                myParser.h005Info.put("USERMODES", token[5]);
-                myParser.h005Info.put("USERCHANMODES", token[6]);
-                if (token.length > 7) { myParser.h005Info.put("USERCHANPARAMMODES", token[7]); } // INSPIRCD includes an extra param
-            } else {
-                final String[] bits = token[3].split(" ");
-                myParser.h005Info.put("004IRCD", bits[1]);
-                myParser.h005Info.put("USERMODES", bits[2]);
-                myParser.h005Info.put("USERCHANMODES", bits[3]);
-                if (token.length > 4) { myParser.h005Info.put("USERCHANPARAMMODES", bits[4]); } // INSPIRCD includes an extra param
-            }
+            final boolean multiParam = token.length > 4;
+            int i = multiParam ? 4 : 1;
+            final String[] bits = multiParam ? token : token[3].split(" ");
+                
+            myParser.h005Info.put("004IRCD", bits[i++]);
+            // some IRCDs put a timestamp where the usermodes should be
+            // (issues 4140. 4181 and 4183) so check to see if this is numeric
+            // only, and if so, skip it.
+            if (token[i].matches("^\\d+$")) { i++; }
+            myParser.h005Info.put("USERMODES", bits[i++]);
+            myParser.h005Info.put("USERCHANMODES", bits[i++]);
+            if (bits.length > i) { myParser.h005Info.put("USERCHANPARAMMODES", bits[i++]); } // INSPIRCD includes an extra param
             myParser.parseUserModes();
         } else if (sParam.equals("005")) {
             // 005
