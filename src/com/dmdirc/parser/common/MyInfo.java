@@ -33,8 +33,10 @@ public class MyInfo {
 
     /** Character to prepend to nickname if in use (Default "_"). */
     private char prependChar = '_';
+
     /** Nickname to attempt to use on IRC. */
     private String nickname;
+
     /**
      * Alternative nickname to attempt to use on IRC. If the first nickname is
      * in use, and a NickInUse message is recieved before 001, we will attempt
@@ -43,8 +45,10 @@ public class MyInfo {
      * (_) to the main nickname
      */
     private String altNickname;
+
     /** Realname string to use */
     private String realname;
+
     /** Username to use, this doesn't matter when an ident server is running */
     private String username;
 
@@ -74,8 +78,7 @@ public class MyInfo {
     /**
      * Set the Nickname.
      *
-     * @param newValue
-     *            Value to set to.
+     * @param newValue Value to set to.
      */
     public void setNickname(final String newValue) {
         if (newValue != null && !newValue.isEmpty()) {
@@ -95,8 +98,7 @@ public class MyInfo {
     /**
      * Set the Alternative Nickname.
      *
-     * @param newValue
-     *            Value to set to.
+     * @param newValue Value to set to.
      */
     public void setAltNickname(final String newValue) {
         if (newValue != null && !newValue.isEmpty()) {
@@ -116,8 +118,7 @@ public class MyInfo {
     /**
      * Set the Realname.
      *
-     * @param newValue
-     *            Value to set to.
+     * @param newValue Value to set to.
      */
     public void setRealname(final String newValue) {
         if (newValue != null && !newValue.isEmpty()) {
@@ -137,8 +138,7 @@ public class MyInfo {
     /**
      * Set the Username.
      *
-     * @param newValue
-     *            Value to set to.
+     * @param newValue Value to set to.
      */
     public void setUsername(final String newValue) {
         if (newValue != null && !newValue.isEmpty()) {
@@ -158,8 +158,7 @@ public class MyInfo {
     /**
      * Set the Prepend Character.
      *
-     * @param newValue
-     *            Value to set to.
+     * @param newValue Value to set to.
      */
     public void setPrependChar(final char newValue) {
         prependChar = newValue;

@@ -43,15 +43,11 @@ public final class ChannelListModeItem {
     /**
      * Create a new Item.
      * 
-     * @param item
-     *            The item (ie: test!joe@user.com)
-     * @param owner
-     *            The owner (ie: Dataforce)
-     * @param time
-     *            The Time (ie: 1173389295)
+     * @param item The item (ie: test!joe@user.com)
+     * @param owner The owner (ie: Dataforce)
+     * @param time The Time (ie: 1173389295)
      */
-    public ChannelListModeItem(final String item, final String owner,
-            final long time) {
+    public ChannelListModeItem(final String item, final String owner, final long time) {
         myItem = item;
         myTime = time;
 

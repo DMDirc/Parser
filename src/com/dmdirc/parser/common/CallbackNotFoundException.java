@@ -38,8 +38,7 @@ public class CallbackNotFoundException extends RuntimeException {
     /**
      * Create a new CallbackNotFound Exception.
      * 
-     * @param message
-     *            Reason for exception
+     * @param message Reason for exception
      */
     public CallbackNotFoundException(final String message) {
         super(message);

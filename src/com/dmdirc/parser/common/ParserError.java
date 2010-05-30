@@ -32,10 +32,7 @@ public final class ParserError {
     public static final int ERROR_FATAL = 1;
     /** Error is not fatal, but is more severe than a warning. */
     public static final int ERROR_ERROR = 2;
-    /**
-     * Error was an unexpected occurance, but shouldn't be anything to worry
-     * about.
-     */
+    /** Error was unexpected, but shouldn't be anything to worry about. */
     public static final int ERROR_WARNING = 4;
     /** Error is a user-error rather than a server error. */
     public static final int ERROR_USER = 8;
@@ -55,13 +52,10 @@ public final class ParserError {
     /**
      * Create a new Error.
      * 
-     * @param level
-     *            Set the error level.
-     * @param data
-     *            String containing information about the error.
-     * @param line
-     *            The last line of data recieved from the server before this
-     *            exception.
+     * @param level Set the error level.
+     * @param data String containing information about the error.
+     * @param line The last line of data recieved from the server before this
+     *             exception.
      */
     public ParserError(final int level, final String data, final String line) {
         errorData = data;
@@ -98,8 +92,7 @@ public final class ParserError {
     }
 
     /**
-     * Check if this error is considered a user-error rather than a server
-     * error.
+     * Check if this error is considered a user-error rather than a server error.
      * For DMDirc this will cause the error not to be reported to the developers
      * 
      * @return Returns true for a user error, else false.
@@ -129,8 +122,7 @@ public final class ParserError {
     /**
      * Set the Exception object.
      * 
-     * @param newException
-     *            The exception object to store
+     * @param newException The exception object to store
      */
     public void setException(final Exception newException) {
         exceptionInfo = newException;
@@ -169,8 +161,7 @@ public final class ParserError {
     /**
      * Add to the error information.
      * 
-     * @param data
-     *            Information to add to the end of the existing Data
+     * @param data Information to add to the end of the existing Data
      */
     public void appendData(final String data) {
         errorData += '[' + data + ']';
