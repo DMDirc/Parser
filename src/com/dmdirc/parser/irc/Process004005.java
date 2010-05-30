@@ -51,10 +51,18 @@ public class Process004005 extends IRCProcessor {
         } else if (sParam.equals("004")) {
             // 004
             if (token.length > 4) {
-                myParser.h005Info.put("004IRCD", token[4]);
-                myParser.h005Info.put("USERMODES", token[5]);
-                myParser.h005Info.put("USERCHANMODES", token[6]);
-                if (token.length > 7) { myParser.h005Info.put("USERCHANPARAMMODES", token[7]); } // INSPIRCD includes an extra param
+                int i = 4;
+                myParser.h005Info.put("004IRCD", token[i++]);
+                // some IRCDs put a timestamp where the usermodes should be
+                // (issues 4181 + 4183) so check to see if this can be parsed
+                // as a long, and skip it if it can.
+                try {
+                    Long.parseLong(token[i]);
+                    i++;
+                } catch (final NumberFormatException nfe) { }
+                myParser.h005Info.put("USERMODES", token[i++]);
+                myParser.h005Info.put("USERCHANMODES", token[i++]);
+                if (token.length > i) { myParser.h005Info.put("USERCHANPARAMMODES", token[i++]); } // INSPIRCD includes an extra param
             } else {
                 final String[] bits = token[3].split(" ");
                 myParser.h005Info.put("004IRCD", bits[1]);
