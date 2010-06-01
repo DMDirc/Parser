@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -75,11 +74,11 @@ public class IRCChannelInfo implements ChannelInfo {
     private final String sName;
 
     /** Hashtable containing references to ChannelClients. */
-    private final Map<String, IRCChannelClientInfo> hChannelUserList = Collections.synchronizedMap(new Hashtable<String, IRCChannelClientInfo>());
+    private final Map<String, IRCChannelClientInfo> hChannelUserList = Collections.synchronizedMap(new HashMap<String, IRCChannelClientInfo>());
     /** Hashtable storing values for modes set in the channel that use parameters. */
-    private final Map<Character, String> hParamModes = new Hashtable<Character, String>();
+    private final Map<Character, String> hParamModes = new HashMap<Character, String>();
     /** Hashtable storing list modes. */
-    private final Map<Character, ArrayList<ChannelListModeItem>> hListModes = new Hashtable<Character, ArrayList<ChannelListModeItem>>();
+    private final Map<Character, ArrayList<ChannelListModeItem>> hListModes = new HashMap<Character, ArrayList<ChannelListModeItem>>();
     /**
      * LinkedList storing status of mode adding.
      * if an item is in this list for a mode, we are expecting new items for the list

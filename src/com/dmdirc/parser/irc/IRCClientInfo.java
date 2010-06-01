@@ -28,7 +28,6 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +61,7 @@ public class IRCClientInfo implements LocalClientInfo {
     /** A Map to allow applications to attach misc data to this object */
     private Map<Object, Object> myMap;
     /** List of ChannelClientInfos that point to this */
-    private final Map<String, IRCChannelClientInfo> myChannelClientInfos = new Hashtable<String, IRCChannelClientInfo>();
+    private final Map<String, IRCChannelClientInfo> myChannelClientInfos = new HashMap<String, IRCChannelClientInfo>();
     /** Modes waiting to be sent to the server. */
     private final List<String> lModeQueue = new LinkedList<String>();
 

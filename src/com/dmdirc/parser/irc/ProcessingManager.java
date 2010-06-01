@@ -24,7 +24,8 @@ package com.dmdirc.parser.irc;
 
 import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.interfaces.callbacks.NumericListener;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * IRC Parser Processing Manager.
@@ -37,7 +38,7 @@ public class ProcessingManager {
     IRCParser myParser;
 
     /** Hashtable used to store the different types of IRCProcessor known. */
-    private final Hashtable<String, IRCProcessor> processHash = new Hashtable<String, IRCProcessor>();
+    private final Map<String, IRCProcessor> processHash = new HashMap<String, IRCProcessor>();
 
     /**
      * Debugging Data to the console.

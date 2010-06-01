@@ -29,7 +29,8 @@ import com.dmdirc.parser.interfaces.callbacks.CallbackInterface;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * CallbackObjectSpecific.
@@ -40,8 +41,8 @@ import java.util.Hashtable;
 public abstract class CallbackObjectSpecific extends CallbackObject {
 
     /** Hashtable for storing specific information for callback. */
-    protected volatile Hashtable<CallbackInterface, String> specificData
-            = new Hashtable<CallbackInterface, String>();
+    protected final Map<CallbackInterface, String> specificData
+            = new HashMap<CallbackInterface, String>();
 
     /**
      * Create a new instance of the Callback Object.

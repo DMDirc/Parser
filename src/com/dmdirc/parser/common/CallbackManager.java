@@ -26,7 +26,7 @@ import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.SpecificCallback;
 import com.dmdirc.parser.interfaces.callbacks.*;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -72,7 +72,7 @@ public abstract class CallbackManager<T extends Parser> {
     
     /** Hashtable used to store the different types of callback known. */
     private final Map<Class<? extends CallbackInterface>, CallbackObject> callbackHash
-            = new Hashtable<Class<? extends CallbackInterface>, CallbackObject>();
+            = new HashMap<Class<? extends CallbackInterface>, CallbackObject>();
 
     /**
      * Constructor to create a CallbackManager.
