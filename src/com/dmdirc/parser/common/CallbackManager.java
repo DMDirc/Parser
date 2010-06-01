@@ -154,7 +154,10 @@ public abstract class CallbackManager<T extends Parser> {
      */
     public CallbackObject getCallbackType(final Class<? extends CallbackInterface> callback) {
         if (!callbackHash.containsKey(callback)) {
-            throw new CallbackNotFoundException("Callback not found: " + callback.getName());
+            throw new CallbackNotFoundException("Callback not found: " + callback.getName()
+                    + "\n\nMy class: " + getClass().getName()
+                    + "\nContents: " + callbackHash.keySet()
+                    + "\nThread: " + Thread.currentThread().getName());
         }
 
         return callbackHash.get(callback);
