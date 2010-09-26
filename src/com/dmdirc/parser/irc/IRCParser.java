@@ -28,13 +28,14 @@ import com.dmdirc.parser.common.IgnoreList;
 import com.dmdirc.parser.common.MyInfo;
 import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.common.QueuePriority;
+import com.dmdirc.parser.common.SystemEncoder;
+import com.dmdirc.parser.interfaces.Encoder;
 import com.dmdirc.parser.interfaces.SecureParser;
 import com.dmdirc.parser.interfaces.callbacks.*;
+import com.dmdirc.parser.irc.IRCReader.ReadLine;
 import com.dmdirc.parser.irc.outputqueue.OutputQueue;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -196,7 +197,7 @@ public class IRCParser implements SecureParser, Runnable {
     final Map<Character, Byte> chanModesOther = new HashMap<Character, Byte>();
 
     /** The last line of input recieved from the server */
-    String lastLine = "";
+    ReadLine lastLine = null;
     /** Should the lastline (where given) be appended to the "data" part of any onErrorInfo call? */
     boolean addLastLine = false;
 
@@ -232,8 +233,10 @@ public class IRCParser implements SecureParser, Runnable {
     private Socket socket;
     /** Used for writing to the server. */
     private OutputQueue out;
+    /** The encoder to use to encode incoming lines. */
+    private Encoder encoder = new SystemEncoder();
     /** Used for reading from the server. */
-    private BufferedReader in;
+    private IRCReader in;
 
     /** This is the default TrustManager for SSL Sockets, it trusts all ssl certs. */
     private final TrustManager[] trustAllCerts = {
@@ -673,7 +676,7 @@ public class IRCParser implements SecureParser, Runnable {
         nNextKeyUser = 1;
         serverName = "";
         networkName = "";
-        lastLine = "";
+        lastLine = null;
         myself = new IRCClientInfo(this, "myself").setFake(true);
 
         synchronized (serverInformationLines) {
@@ -789,7 +792,7 @@ public class IRCParser implements SecureParser, Runnable {
         out.setQueueEnabled(true);
         currentSocketState = SocketState.OPEN;
         callDebugInfo(DEBUG_SOCKET, "\t-> Opening socket input stream BufferedReader");
-        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        in = new IRCReader(socket.getInputStream(), encoder);
         callDebugInfo(DEBUG_SOCKET, "\t-> Socket Opened");
     }
 
@@ -832,7 +835,7 @@ public class IRCParser implements SecureParser, Runnable {
 
     /**
      * Begin execution.
-     * Connect to server, and start parsing incomming lines
+     * Connect to server, and start parsing incoming lines
      */
     @Override
     public void run() {
@@ -1042,21 +1045,21 @@ public class IRCParser implements SecureParser, Runnable {
     }
 
     /** {@inheritDoc} */
-        @Override
+    @Override
     public String getNetworkName() {
         return networkName;
     }
 
     /** {@inheritDoc} */
-        @Override
+    @Override
     public String getServerName() {
         return serverName;
     }
 
     /** {@inheritDoc} */
-        @Override
+    @Override
     public String getLastLine() {
-        return lastLine;
+        return lastLine == null ? "" : lastLine.getLine();
     }
 
     /** {@inheritDoc} */
@@ -1068,21 +1071,21 @@ public class IRCParser implements SecureParser, Runnable {
     }
 
     /**
-     * Process a line and call relevent methods for handling.
+     * Process a line and call relevant methods for handling.
      *
-     * @param line IRC Line to process
+     * @param line Line read from the IRC server
      */
-    protected void processLine(final String line) {
-        callDataIn(line);
+    protected void processLine(final ReadLine line) {
+        callDataIn(line.getLine());
 
-        final String[] token = tokeniseLine(line);
+        final String[] token = line.getTokens();
         int nParam;
         setPingNeeded(false);
-//        pingCountDown = pingCountDownLength;
 
         if (token.length < 2) {
             return;
         }
+
         try {
             final String sParam = token[1];
             if (token[0].equalsIgnoreCase("PING") || token[1].equalsIgnoreCase("PING")) {
@@ -1112,7 +1115,7 @@ public class IRCParser implements SecureParser, Runnable {
                         } else {
                             // Store 001 - 005 for informational purposes.
                             synchronized (serverInformationLines) {
-                                serverInformationLines.add(line);
+                                serverInformationLines.add(line.getLine());
                             }
                         }
                     }
@@ -1155,7 +1158,7 @@ public class IRCParser implements SecureParser, Runnable {
     private IRCStringConverter stringConverter = null;
 
     /** {@inheritDoc} */
-        @Override
+    @Override
     public IRCStringConverter getStringConverter() {
         if (stringConverter == null) {
             stringConverter = new IRCStringConverter((byte) 4);
