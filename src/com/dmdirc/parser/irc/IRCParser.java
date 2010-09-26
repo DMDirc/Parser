@@ -30,6 +30,7 @@ import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.common.QueuePriority;
 import com.dmdirc.parser.common.SystemEncoder;
 import com.dmdirc.parser.interfaces.Encoder;
+import com.dmdirc.parser.interfaces.EncodingParser;
 import com.dmdirc.parser.interfaces.SecureParser;
 import com.dmdirc.parser.interfaces.callbacks.*;
 import com.dmdirc.parser.irc.IRCReader.ReadLine;
@@ -69,7 +70,7 @@ import javax.net.ssl.X509TrustManager;
  *
  * @author Shane Mc Cormack
  */
-public class IRCParser implements SecureParser, Runnable {
+public class IRCParser implements SecureParser, EncodingParser, Runnable {
 
     /** Max length an outgoing line should be (NOT including \r\n). */
     public static final int MAX_LINELENGTH = 510;
@@ -1853,22 +1854,28 @@ public class IRCParser implements SecureParser, Runnable {
     }
 
     /** {@inheritDoc} */
-        @Override
+    @Override
+    public void setEncoder(final Encoder encoder) {
+        this.encoder = encoder;
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public long getPingTimerInterval() { return pingTimerLength; }
 
     /** {@inheritDoc} */
-        @Override
+    @Override
     public void setPingTimerInterval(final long newValue) {
         pingTimerLength = newValue;
         startPingTimer();
     }
 
     /** {@inheritDoc} */
-        @Override
+    @Override
     public int getPingTimerFraction() { return pingCountDownLength; }
 
     /** {@inheritDoc} */
-        @Override
+    @Override
     public void setPingTimerFraction(final int newValue) {
         pingCountDownLength = newValue;
     }
