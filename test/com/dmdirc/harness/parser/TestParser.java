@@ -60,7 +60,7 @@ public class TestParser extends IRCParser implements Parser {
     }
     
     public void injectLine(String line) {
-        processLine(line);
+        processLine(new IRCReader.ReadLine(line, IRCParser.tokeniseLine(line)));
     }
     
     public void injectConnectionStrings() {
