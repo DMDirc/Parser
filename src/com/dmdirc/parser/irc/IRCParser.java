@@ -109,11 +109,11 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
     /** Timer for server ping. */
     private Timer pingTimer = null;
     /** Semaphore for access to pingTimer. */
-    private Semaphore pingTimerSem = new Semaphore(1);
+    private final Semaphore pingTimerSem = new Semaphore(1);
     /** Length of time to wait between ping stuff. */
     private long pingTimerLength = 10000;
     /** Is a ping needed? */
-    private volatile AtomicBoolean pingNeeded = new AtomicBoolean(false);
+    private final AtomicBoolean pingNeeded = new AtomicBoolean(false);
     /** Time last ping was sent at. */
     private long pingTime;
     /** Current Server Lag. */
@@ -198,9 +198,9 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
     final Map<Character, Byte> chanModesOther = new HashMap<Character, Byte>();
 
     /** The last line of input recieved from the server */
-    ReadLine lastLine = null;
+    private ReadLine lastLine = null;
     /** Should the lastline (where given) be appended to the "data" part of any onErrorInfo call? */
-    boolean addLastLine = false;
+    private boolean addLastLine = false;
 
     /** Channel Prefixes (ie # + etc). */
     private final List<Character> chanPrefix = Collections.synchronizedList(new LinkedList<Character>());
@@ -214,12 +214,12 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
     final Map<String, String> h005Info = new HashMap<String, String>();
 
     /** Ignore List. */
-    IgnoreList myIgnoreList = new IgnoreList();
+    private IgnoreList myIgnoreList = new IgnoreList();
 
     /** Reference to the callback Manager. */
-    CallbackManager<IRCParser> myCallbackManager = new IRCCallbackManager(this);
+    private final CallbackManager<IRCParser> myCallbackManager = new IRCCallbackManager(this);
     /** Reference to the Processing Manager. */
-    ProcessingManager myProcessingManager = new ProcessingManager(this);
+    private final ProcessingManager myProcessingManager = new ProcessingManager(this);
 
     /** Should we automatically disconnect on fatal errors?. */
     private boolean disconnectOnFatal = true;
@@ -228,7 +228,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
     protected SocketState currentSocketState = SocketState.NULL;
 
     /** Map to store arbitrary data. */
-    private Map<Object, Object> myMap = new HashMap<Object, Object>();
+    private final Map<Object, Object> myMap = new HashMap<Object, Object>();
 
     /** This is the socket used for reading from/writing to the IRC server. */
     private Socket socket;
@@ -252,10 +252,10 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
     };
 
     /** Should fake (channel)clients be created for callbacks where they do not exist? */
-    boolean createFake = true;
+    private boolean createFake = true;
 
     /** Should channels automatically request list modes? */
-    boolean autoListMode = true;
+    private boolean autoListMode = true;
 
     /** Should part/quit/kick callbacks be fired before removing the user internally? */
     boolean removeAfterCallback = true;
@@ -1194,25 +1194,15 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
         // don't care about it but ordered guarentees that on a specific ircd this
         // method will ALWAYs return the same value.
         final char[] modes = new char[chanModesBool.size()];
-        long nTemp;
-        double pos;
 
-        for (char cTemp : chanModesBool.keySet()) {
-            nTemp = chanModesBool.get(cTemp);
+        for (Map.Entry<Character, Long> entry : chanModesBool.entrySet()) {
             // nTemp should never be less than 0
-            if (nTemp > 0) {
-                pos = Math.log(nTemp) / Math.log(2);
-                modes[(int) pos] = cTemp;
+            if (entry.getValue() > 0) {
+                final double pos = Math.log(entry.getValue()) / Math.log(2);
+                modes[(int) pos] = entry.getKey();
             }
-/*            // Is there an easier way to find out the power of 2 value for a number?
-            // ie 1024 = 10, 512 = 9 ?
-            for (int i = 0; i < modes.length; i++) {
-                if (Math.pow(2, i) == (double) nTemp) {
-                    modes[i] = cTemp;
-                    break;
-                }
-            }*/
         }
+
         return new String(modes);
     }
 
@@ -1287,7 +1277,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
             callDebugInfo(DEBUG_INFO, "Found Boolean Mode: %c [%d]", cMode, nextKeyCMBool);
             if (!chanModesBool.containsKey(cMode)) {
                 chanModesBool.put(cMode, nextKeyCMBool);
-                nextKeyCMBool = nextKeyCMBool * 2;
+                nextKeyCMBool *= 2;
             }
         }
     }
@@ -1404,7 +1394,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
             callDebugInfo(DEBUG_INFO, "Found User Mode: %c [%d]", cMode, nNextKeyUser);
             if (!userModes.containsKey(cMode)) {
                 userModes.put(cMode, nNextKeyUser);
-                nNextKeyUser = nNextKeyUser * 2;
+                nNextKeyUser *= 2;
             }
         }
     }
@@ -1474,7 +1464,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
                 prefixModes.put(cMode, nextKeyPrefix);
                 prefixMap.put(cMode, cPrefix);
                 prefixMap.put(cPrefix, cMode);
-                nextKeyPrefix = nextKeyPrefix * 2;
+                nextKeyPrefix *= 2;
             }
         }
 
@@ -1500,16 +1490,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
         joinChannels(new ChannelJoinRequest(channel, key));
     }
 
-    /**
-     * Join a Channel with a key.
-     * This also allows passing a list of channels such as:
-     * "#channel1 key1,#channel2 key2,#channel3,#channel4,#channel5 key2"
-     *
-     * @param channel Name of channel to join or a list of channels.
-     * @param key Key to use to try and join the channel (If a list is given
-     *            then this key will be used for any channels that do not
-     *            specify one themselves.
-     */
+    /** {@inheritDoc} */
     @Override
     public void joinChannels(final ChannelJoinRequest ... channels) {
         // We store a map from key->channels to allow intelligent joining of
@@ -1527,7 +1508,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
             // Add the channel to the list. If the name is invalid and
             // autoprefix is off we will just skip this channel.
             if (!channel.getName().isEmpty()) {
-                if (list.length() > 0) { list.append(","); }
+                if (list.length() > 0) { list.append(','); }
                 if (!isValidChannelName(channel.getName())) {
                     if (h005Info.containsKey("CHANTYPES")) {
                         final String chantypes = h005Info.get("CHANTYPES");
@@ -1598,8 +1579,8 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
         // and subtract it from the MAX_LINELENGTH. This should be sufficient in most cases.
         // Lint = the 2 ":" at the start and end and the 3 separating " "s
         int length = 0;
-        if (type != null) { length = length + type.length(); }
-        if (target != null) { length = length + target.length(); }
+        if (type != null) { length += type.length(); }
+        if (target != null) { length += target.length(); }
         return getMaxLength(length);
     }
 
@@ -1669,31 +1650,31 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
     }
 
     /** {@inheritDoc} */
-        @Override
+    @Override
     public void sendMessage(final String target, final String message) {
         if (target == null || message == null) { return; }
-        if (target.isEmpty()/* || sMessage.isEmpty()*/) { return; }
+        if (target.isEmpty()) { return; }
 
         sendString("PRIVMSG " + target + " :" + message);
     }
 
     /** {@inheritDoc} */
-        @Override
+    @Override
     public void sendNotice(final String target, final String message) {
         if (target == null || message == null) { return; }
-        if (target.isEmpty()/* || sMessage.isEmpty()*/) { return; }
+        if (target.isEmpty()) { return; }
 
         sendString("NOTICE " + target + " :" + message);
     }
 
     /** {@inheritDoc} */
-        @Override
-        public void sendAction(final String target, final String message) {
+    @Override
+    public void sendAction(final String target, final String message) {
         sendCTCP(target, "ACTION", message);
     }
 
     /** {@inheritDoc} */
-        @Override
+    @Override
     public void sendCTCP(final String target, final String type, final String message) {
         if (target == null || message == null) { return; }
         if (target.isEmpty() || type.isEmpty()) { return; }
@@ -1746,13 +1727,13 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
     }
 
     /** {@inheritDoc}
-         *
+     *
      * - Before channel prefixes are known (005/noMOTD/MOTDEnd), this checks
      *   that the first character is either #, &amp;, ! or +
      * - Assumes that any channel that is already known is valid, even if
      *   005 disagrees.
      */
-        @Override
+    @Override
     public boolean isValidChannelName(final String name) {
         // Check sChannelName is not empty or null
         if (name == null || name.isEmpty()) { return false; }
@@ -1769,11 +1750,11 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
         // Otherwise return true if:
         // Channel equals "0"
         // first character of the channel name is a valid channel prefix.
-        return chanPrefix.contains(name.charAt(0)) || name.equals("0");
+        return chanPrefix.contains(name.charAt(0)) || "0".equals(name);
     }
 
     /** {@inheritDoc} */
-        @Override
+    @Override
     public boolean isUserSettable(final char mode) {
         String validmodes;
         if (h005Info.containsKey("USERCHANMODES")) {
@@ -1952,7 +1933,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
     }
 
     /** {@inheritDoc} */
-        @Override
+    @Override
     public long getServerLatency() {
         return serverLag;
     }
@@ -1969,11 +1950,11 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
         else { return System.currentTimeMillis() - pingTime; }
     }
 
-        /** {@inheritDoc} */
-        @Override
-        public long getPingTime() {
-            return getPingTime(false);
-        }
+    /** {@inheritDoc} */
+    @Override
+    public long getPingTime() {
+        return getPingTime(false);
+    }
 
     /**
      * Set if a ping is needed or not.
@@ -1994,7 +1975,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
     }
 
     /** {@inheritDoc} */
-        @Override
+    @Override
     public IRCClientInfo getLocalClient() { return myself; }
 
     /**
@@ -2113,10 +2094,10 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
     }
 
     /** {@inheritDoc} */
-        @Override
+    @Override
     public Collection<IRCChannelInfo> getChannels() {
         synchronized (channelList) {
-                    return channelList.values();
+            return channelList.values();
         }
     }
 
