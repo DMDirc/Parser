@@ -65,13 +65,9 @@ public abstract class CallbackObjectSpecific extends CallbackObject {
      * @return true if channel given matches the specifics for the method given
      */
     protected boolean isValidChan(final CallbackInterface eMethod, final ChannelInfo cChannel) {
-        if (specificData.containsKey(eMethod)) {
-            if (!myParser.getStringConverter().equalsIgnoreCase(cChannel.getName(),
-                    specificData.get(eMethod))) {
-                return false;
-            }
-        }
-        return true;
+        return !(specificData.containsKey(eMethod) && !myParser
+                .getStringConverter().equalsIgnoreCase(cChannel.getName(),
+                specificData.get(eMethod)));
     }
 
     /**
@@ -83,13 +79,9 @@ public abstract class CallbackObjectSpecific extends CallbackObject {
      */
     protected boolean isValidUser(final CallbackInterface eMethod, final String sHost) {
         final String nickname = translateHostname(sHost);
-        if (specificData.containsKey(eMethod)) {
-            if (!myParser.getStringConverter().equalsIgnoreCase(nickname,
-                    specificData.get(eMethod))) {
-                return false;
-            }
-        }
-        return true;
+        return !(specificData.containsKey(eMethod) && !myParser
+                .getStringConverter().equalsIgnoreCase(nickname,
+                specificData.get(eMethod)));
     }
 
     /**

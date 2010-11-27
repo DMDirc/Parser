@@ -199,12 +199,9 @@ public class SimpleRateLimitedQueueHandler extends QueueHandler {
             if (overTime) {
                 // If we are not currently limiting, and this is the items-th item
                 // added in the last limitTime, start limiting.
-                if (!isLimiting) {
-                    if (++count > (items - 1)) {
-                        System.out.println("++ Begin Limiting");
-                        isLimiting = true;
-                        count = 0;
-                    }
+                if (!isLimiting && ++count > (items - 1)) {
+                    isLimiting = true;
+                    count = 0;
                 }
             } else if (!isLimiting) {
                 // If it has been more than limitTime seconds since the last line
@@ -238,10 +235,8 @@ public class SimpleRateLimitedQueueHandler extends QueueHandler {
                 final boolean doSleep;
                 synchronized (this) {
                     doSleep = isLimiting;
-                    if (isLimiting) {
-                        if (queue.size() == 0) {
-                            isLimiting = false;
-                        }
+                    if (isLimiting && queue.size() == 0) {
+                        isLimiting = false;
                     }
                 }
 
