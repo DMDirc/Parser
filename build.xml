@@ -17,6 +17,39 @@
        <mkdir dir="${parsers.dist}"/>
     </target>
 
+    <target name="-retrieve-versions">
+       <exec executable="git" outputproperty="parsers.lastcommit.main">
+          <arg value="rev-list"/>
+          <arg value="--max-count=1"/>
+          <arg value="HEAD"/>
+          <arg value="--"/>
+          <arg value="${parsers.src}/com/dmdirc/parser/common/"/>
+          <arg value="${parsers.src}/com/dmdirc/parser/interfaces/"/> 
+       </exec>
+
+       <exec executable="git" outputproperty="parsers.version.main">
+          <arg value="describe"/>
+          <arg value="--tags"/>
+          <arg value="--always"/>
+          <arg value="${parsers.lastcommit.main}"/>
+       </exec> 
+
+       <exec executable="git" outputproperty="parsers.lastcommit.irc">
+          <arg value="rev-list"/>
+          <arg value="--max-count=1"/>
+          <arg value="HEAD"/>
+          <arg value="--"/>
+          <arg value="${parsers.src}/com/dmdirc/parser/irc/"/>
+       </exec>
+
+       <exec executable="git" outputproperty="parsers.version.irc">
+          <arg value="describe"/>
+          <arg value="--tags"/>
+          <arg value="--always"/>
+          <arg value="${parsers.lastcommit.irc}"/>
+       </exec>
+    </target>
+
     <target name="compile" depends="-init-compile">
        <javac srcdir="${parsers.src}" destdir="${parsers.build.main}"
               includeantruntime="false" excludes="com/dmdirc/parser/irc/**"/> 
@@ -25,9 +58,23 @@
               classpath="${parsers.build.main}"/> 
     </target>
 
-    <target name="jar" depends="compile,-init-jar">
-       <jar destfile="${parsers.dist}/parser.common.jar" basedir="${parsers.build.main}"/>
-       <jar destfile="${parsers.dist}/parser.irc.jar" basedir="${parsers.build.irc}"/>
+    <target name="jar" depends="compile,-init-jar,-retrieve-versions">
+       <jar destfile="${parsers.dist}/parser.common.jar" basedir="${parsers.build.main}">
+          <manifest>
+             <section name="com.dmdirc.parser">
+                <attribute name="Implementation-Title" value="Common parser files"/>
+                <attribute name="Implementation-Version" value="${parsers.version.main}"/>
+             </section>
+          </manifest>
+       </jar>
+       <jar destfile="${parsers.dist}/parser.irc.jar" basedir="${parsers.build.irc}">
+          <manifest>
+             <section name="com.dmdirc.parser.irc">
+                <attribute name="Implementation-Title" value="IRC Parser"/>
+                <attribute name="Implementation-Version" value="${parsers.version.irc}"/>
+             </section>
+          </manifest>
+       </jar>
     </target>
 
     <target name="clean">
