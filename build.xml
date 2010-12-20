@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="DMDirc Parsers" default="default" basedir=".">
+    <description>Builds, packages and tests DMDirc parsers.</description>
+
+    <property name="parsers.src" location="src"/>
+    <property name="parsers.build" location="build"/>
+    <property name="parsers.build.main" location="${parsers.build}/main"/>
+    <property name="parsers.build.irc" location="${parsers.build}/irc"/>
+    <property name="parsers.dist" location="dist"/>
+
+    <target name="-init-compile">
+       <mkdir dir="${parsers.build.main}"/>
+       <mkdir dir="${parsers.build.irc}"/>
+    </target>
+
+    <target name="-init-jar">
+       <mkdir dir="${parsers.dist}"/>
+    </target>
+
+    <target name="compile" depends="-init-compile">
+       <javac srcdir="${parsers.src}" destdir="${parsers.build.main}"
+              includeantruntime="false" excludes="com/dmdirc/parser/irc/**"/> 
+       <javac srcdir="${parsers.src}" destdir="${parsers.build.irc}"
+              includeantruntime="false" includes="com/dmdirc/parser/irc/**"
+              classpath="${parsers.build.main}"/> 
+    </target>
+
+    <target name="jar" depends="compile,-init-jar">
+       <jar destfile="${parsers.dist}/parser.common.jar" basedir="${parsers.build.main}"/>
+       <jar destfile="${parsers.dist}/parser.irc.jar" basedir="${parsers.build.irc}"/>
+    </target>
+
+    <target name="clean">
+       <delete dir="${parsers.build}"/>
+       <delete dir="${parsers.dist}"/>
+    </target>
+</project>
