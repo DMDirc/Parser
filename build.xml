@@ -3,18 +3,36 @@
     <description>Builds, packages and tests DMDirc parsers.</description>
 
     <property name="parsers.src" location="src"/>
+    <property name="parsers.test" location="test"/>
     <property name="parsers.build" location="build"/>
     <property name="parsers.build.main" location="${parsers.build}/main"/>
     <property name="parsers.build.irc" location="${parsers.build}/irc"/>
+    <property name="parsers.build.test" location="${parsers.build}/test"/>
+    <property name="parsers.reports" location="reports"/>
+    <property name="parsers.lib" location="lib"/>
     <property name="parsers.dist" location="dist"/>
+
+    <path id="parsers.classpath.test">
+        <pathelement path="${parsers.build.main}"/>
+        <pathelement path="${parsers.build.irc}"/>
+        <fileset dir="${parsers.lib}" includes="*.jar"/>
+    </path>
 
     <target name="-init-compile">
        <mkdir dir="${parsers.build.main}"/>
        <mkdir dir="${parsers.build.irc}"/>
     </target>
 
+    <target name="-init-compile-tests">
+       <mkdir dir="${parsers.build.test}"/>
+    </target>
+
     <target name="-init-jar">
        <mkdir dir="${parsers.dist}"/>
+    </target>
+
+    <target name="-init-test">
+       <mkdir dir="${parsers.reports}"/>
     </target>
 
     <target name="-retrieve-versions">
@@ -58,6 +76,29 @@
               classpath="${parsers.build.main}"/> 
     </target>
 
+    <target name="compile-tests" depends="compile,-init-compile-tests">
+       <javac srcdir="${parsers.test}" destdir="${parsers.build.test}"
+              includeantruntime="false" classpathref="parsers.classpath.test">
+       </javac>
+    </target>
+
+    <target name="test" depends="compile-tests,-init-test">
+       <junit printsummary="true">
+          <classpath>
+             <path refid="parsers.classpath.test"/>
+             <pathelement location="${parsers.build.test}"/>
+          </classpath> 
+          <batchtest todir="${parsers.reports}">
+             <fileset dir="${parsers.build.test}" includes="**/*Test.class"/>
+             <formatter type="xml"/>
+          </batchtest>
+       </junit>
+
+       <junitreport todir="${parsers.reports}">
+          <fileset dir="${parsers.reports}" includes="TEST-*.xml"/>
+       </junitreport>
+    </target>
+
     <target name="jar" depends="compile,-init-jar,-retrieve-versions">
        <jar destfile="${parsers.dist}/parser.common.jar" basedir="${parsers.build.main}">
           <manifest>
@@ -80,5 +121,6 @@
     <target name="clean">
        <delete dir="${parsers.build}"/>
        <delete dir="${parsers.dist}"/>
+       <delete dir="${parsers.reports}"/>
     </target>
 </project>
