@@ -39,11 +39,11 @@ public class ProcessWallops extends IRCProcessor {
     @Override
     public void process(final String sParam, final String[] token) {
         if (token.length < 3) { return; }
-        
+
         String user = token[0];
-        String message = token[token.length-1];
+        final String message = token[token.length - 1];
         if (user.charAt(0) == ':' && user.length() > 1) { user = user.substring(1); }
-        String[] bits = message.split(" ", 2);
+        final String[] bits = message.split(" ", 2);
 
         if (bits.length > 1) {
             if (message.charAt(0) == '*') {
@@ -56,7 +56,7 @@ public class ProcessWallops extends IRCProcessor {
         }
         callWallDesync(message, user);
     }
-    
+
     /**
      * Callback to all objects implementing the Wallop Callback.
      *
@@ -68,7 +68,7 @@ public class ProcessWallops extends IRCProcessor {
     protected boolean callWallop(final String message, final String host) {
         return getCallbackManager().getCallbackType(WallopListener.class).call(message, host);
     }
-    
+
     /**
      * Callback to all objects implementing the Walluser Callback.
      *
@@ -80,7 +80,7 @@ public class ProcessWallops extends IRCProcessor {
     protected boolean callWalluser(final String message, final String host) {
         return getCallbackManager().getCallbackType(WalluserListener.class).call(message, host);
     }
-    
+
     /**
      * Callback to all objects implementing the WallDesync Callback.
      *
@@ -92,8 +92,8 @@ public class ProcessWallops extends IRCProcessor {
     protected boolean callWallDesync(final String message, final String host) {
         return getCallbackManager().getCallbackType(WallDesyncListener.class).call(message, host);
     }
-    
-    
+
+
     /**
      * What does this IRCProcessor handle.
      *
@@ -102,14 +102,16 @@ public class ProcessWallops extends IRCProcessor {
     @Override
     public String[] handles() {
         return new String[]{"WALLOPS"};
-    } 
-    
+    }
+
     /**
      * Create a new instance of the IRCProcessor Object.
      *
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected ProcessWallops(IRCParser parser, ProcessingManager manager) { super(parser, manager); }
+    protected ProcessWallops(final IRCParser parser, final ProcessingManager manager) {
+        super(parser, manager);
+    }
 
 }

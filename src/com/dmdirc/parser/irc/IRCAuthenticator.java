@@ -32,11 +32,12 @@ import java.util.concurrent.Semaphore;
 
 /**
  * Handles proxy authentication for the parser.
- * 
+ *
  * @author Shane Mc Cormack
  * @see IRCParser
  */
-public class IRCAuthenticator extends Authenticator {
+public final class IRCAuthenticator extends Authenticator {
+
     /**
      * A version number for this class. It should be changed whenever the class
      * structure is changed (or anything else that would prevent serialized
@@ -46,7 +47,7 @@ public class IRCAuthenticator extends Authenticator {
 
     /** Singleton instance of IRCAuthenticator. */
     private static IRCAuthenticator me = null;
-    
+
     /** List of authentication replies. */
     private final Map<String, PasswordAuthentication> replies = new HashMap<String, PasswordAuthentication>();
 
@@ -63,9 +64,11 @@ public class IRCAuthenticator extends Authenticator {
      * Authenticator.
      */
     private IRCAuthenticator() {
+        super();
+
         Authenticator.setDefault(this);
     }
-    
+
     /**
      * Get the instance of IRCAuthenticator.
      *
@@ -93,9 +96,9 @@ public class IRCAuthenticator extends Authenticator {
         final String password = server.getProxyPass();
 
         if (username == null || password == null || username.isEmpty() || password.isEmpty()) { return; }
-        
+
         final PasswordAuthentication pass = new PasswordAuthentication(username, password.toCharArray());
-        final String fullhost = host.toLowerCase()+":"+port;
+        final String fullhost = host.toLowerCase() + ":" + port;
 
         // Delete old username/password if one exists and then add the new one
         replies.remove(fullhost);
@@ -109,7 +112,7 @@ public class IRCAuthenticator extends Authenticator {
     }
 
     /**
-     * Get a copy of the semaphore
+     * Get a copy of the semaphore.
      *
      * @return the IRCAuthenticator semaphore.
      */
@@ -126,7 +129,7 @@ public class IRCAuthenticator extends Authenticator {
         final String host = server.getProxyHost();
         final int port = server.getProxyPort();
 
-        final String fullhost = host.toLowerCase()+":"+port;
+        final String fullhost = host.toLowerCase() + ":" + port;
 
         // See if any other servers are associated with this proxy.
         final List<ServerInfo> servers = owners.containsKey(fullhost) ? owners.get(fullhost) : new ArrayList<ServerInfo>();
@@ -137,7 +140,7 @@ public class IRCAuthenticator extends Authenticator {
             replies.remove(fullhost);
         }
     }
-    
+
     /** {@inheritDoc} */
     @Override
     protected PasswordAuthentication getPasswordAuthentication() {
@@ -152,7 +155,7 @@ public class IRCAuthenticator extends Authenticator {
          * getRequestorType: SERVER
          */
 
-        final String fullhost = getRequestingHost().toLowerCase()+":"+getRequestingPort();
+        final String fullhost = getRequestingHost().toLowerCase() + ":" + getRequestingPort();
         return replies.get(fullhost);
     }
 }

@@ -82,5 +82,5 @@ public interface ClientInfo {
      * @return This ClientInfo's parser
      */
     Parser getParser();
-    
+
 }

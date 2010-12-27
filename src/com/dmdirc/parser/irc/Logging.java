@@ -29,7 +29,7 @@ import java.lang.reflect.Method;
  * Logging using log4j if available.
  */
 public class Logging {
-    /** Available Log Levels */
+    /** Available Log Levels. */
     public enum LogLevel {
         TRACE("trace", "isTraceEnabled"),
         DEBUG("debug", "isDebugEnabled"),
@@ -38,14 +38,14 @@ public class Logging {
         ERROR("error", "isErrorEnabled"),
         FATAL("fatal", "isFatalEnabled");
 
-        /** Method name */
+        /** Method name. */
         private final String methodName;
 
-        /** Check Method name */
+        /** Check Method name. */
         private final String checkMethodName;
 
         /**
-         * Create a new LogLevel
+         * Create a new LogLevel.
          *
          * @param methodName Name of method in log4j to log to
          * @param checkMethodName Name of method in log4j to sue to check logging
@@ -56,14 +56,14 @@ public class Logging {
         }
 
         /**
-         * Get the Name of method in log4j to log to
+         * Get the Name of method in log4j to log to.
          *
          * @return Name of method in log4j to log to
          */
         public String getMethodName() { return methodName; }
 
         /**
-         * Get the Name of the check method in log4j
+         * Get the Name of the check method in log4j.
          *
          * @return Name of check method in log4j
          */

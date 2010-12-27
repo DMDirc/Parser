@@ -86,12 +86,12 @@ public class IRCChannelInfo implements ChannelInfo {
     private final List<Character> lAddingModes = new LinkedList<Character>();
     /** Modes waiting to be sent to the server. */
     private final List<String> lModeQueue = new LinkedList<String>();
-    /** A Map to allow applications to attach misc data to this object */
+    /** A Map to allow applications to attach misc data to this object. */
     private Map<Object, Object> myMap;
 
-    /** Queue of requested list modes */
+    /** Queue of requested list modes. */
     private final Queue<Character> listModeQueue = new LinkedList<Character>();
-    /** Listmode Queue Time */
+    /** Listmode Queue Time. */
     private long listModeQueueTime = System.currentTimeMillis();
     /** Have we asked the server for the list modes for this channel yet? */
     private boolean askedForListModes = false;
@@ -120,7 +120,7 @@ public class IRCChannelInfo implements ChannelInfo {
         final long now = System.currentTimeMillis();
         // Incase of breakage, if getListModeQueue() was last called greater than
         // 60 seconds ago, we reset the list.
-        if (now-(30*1000) > listModeQueueTime) {
+        if (now - (30 * 1000) > listModeQueueTime) {
             result = new LinkedList<Character>();
             myParser.callDebugInfo(IRCParser.DEBUG_LMQ, "Resetting LMQ");
         }
@@ -153,7 +153,9 @@ public class IRCChannelInfo implements ChannelInfo {
         if (serverType != ServerType.UNREAL && serverType != ServerType.IRSEE && myParser.h005Info.containsKey("MODES")) {
             try {
                 modecount = Integer.parseInt(myParser.h005Info.get("MODES"));
-            } catch (NumberFormatException e) { /* use default modecount */}
+            } catch (NumberFormatException e) {
+                 modecount = 1;
+            }
         }
 
         // Support for potential future decent mode listing in the protocol
@@ -177,7 +179,7 @@ public class IRCChannelInfo implements ChannelInfo {
                 i++;
                 listmodes = listmodes + cTemp;
                 if (i >= modecount && !supportLISTMODE) {
-                    myParser.sendString("MODE "+getName()+" "+listmodes, QueuePriority.LOW);
+                    myParser.sendString("MODE " + getName() + " " + listmodes, QueuePriority.LOW);
                     i = 0;
                     listmodes = "";
                 }
@@ -185,9 +187,9 @@ public class IRCChannelInfo implements ChannelInfo {
         }
         if (i > 0) {
             if (supportLISTMODE) {
-                myParser.sendString("LISTMODE "+getName()+" "+listmodes, QueuePriority.LOW);
+                myParser.sendString("LISTMODE " + getName() + " " + listmodes, QueuePriority.LOW);
             } else {
-                myParser.sendString("MODE "+getName()+" "+listmodes, QueuePriority.LOW);
+                myParser.sendString("MODE " + getName() + " " + listmodes, QueuePriority.LOW);
             }
         }
     }
@@ -276,7 +278,7 @@ public class IRCChannelInfo implements ChannelInfo {
     /** {@inheritDoc} */
         @Override
     public Collection<ChannelClientInfo> getChannelClients() {
-        synchronized(hChannelUserList) {
+        synchronized (hChannelUserList) {
             return new ArrayList<ChannelClientInfo>(hChannelUserList.values());
         }
     }
@@ -312,7 +314,7 @@ public class IRCChannelInfo implements ChannelInfo {
             return hChannelUserList.get(who);
         }
         if (create) {
-            return new IRCChannelClientInfo(myParser, (new IRCClientInfo(myParser, client)).setFake(true), this);
+            return new IRCChannelClientInfo(myParser, new IRCClientInfo(myParser, client).setFake(true), this);
         } else {
             return null;
         }
@@ -352,7 +354,7 @@ public class IRCChannelInfo implements ChannelInfo {
      * @param cClient Client object to be removed from channel
      */
     protected void delClient(final IRCClientInfo cClient) {
-        IRCChannelClientInfo cTemp = getChannelClient(cClient);
+        final IRCChannelClientInfo cTemp = getChannelClient(cClient);
         if (cTemp != null) {
             final IRCClientInfo clTemp = cTemp.getClient();
             clTemp.delChannelClientInfo(cTemp);
@@ -522,8 +524,9 @@ public class IRCChannelInfo implements ChannelInfo {
         final ArrayList<ChannelListModeItem> lModes = hListModes.get(cMode);
         for (int i = 0; i < lModes.size(); i++) {
             if (myParser.getStringConverter().equalsIgnoreCase(lModes.get(i).getItem(), newItem.getItem())) {
-                if (bAdd) { return; }
-                else {
+                if (bAdd) {
+                    return;
+                } else {
                     lModes.remove(i);
                     break;
                 }
@@ -634,7 +637,7 @@ public class IRCChannelInfo implements ChannelInfo {
                     modestr = modestr + " " + parameter;
                 }
             } else {
-                myParser.callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Trying to alter unknown mode.  positive: '"+add+"' | mode: '"+mode+"' | parameter: '"+parameter+"' ", ""));
+                myParser.callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Trying to alter unknown mode.  positive: '" + add + "' | mode: '" + mode + "' | parameter: '" + parameter + "' ", ""));
             }
         }
         myParser.callDebugInfo(IRCParser.DEBUG_INFO, "Queueing mode: %s", modestr);
@@ -714,11 +717,14 @@ public class IRCChannelInfo implements ChannelInfo {
      * @param sType Type of CTCP
      * @param sMessage Optional Additional Parameters
      */
-    public void sendCTCP(final String sType, String sMessage) {
+    public void sendCTCP(final String sType, final String sMessage) {
         if (sType.isEmpty()) { return; }
         final char char1 = (char) 1;
-        if (!sMessage.isEmpty()) { sMessage = " " + sMessage; }
-        sendMessage(char1 + sType.toUpperCase() + sMessage + char1);
+        if (sMessage.isEmpty()) {
+            sendMessage(char1 + sType.toUpperCase() + sMessage + char1);
+        } else {
+            sendMessage(char1 + sType.toUpperCase() + " " + sMessage + char1);
+        }
     }
 
     /**
@@ -727,11 +733,14 @@ public class IRCChannelInfo implements ChannelInfo {
      * @param sType Type of CTCP
      * @param sMessage Optional Additional Parameters
      */
-    public void sendCTCPReply(final String sType, String sMessage) {
+    public void sendCTCPReply(final String sType, final String sMessage) {
         if (sType.isEmpty()) { return; }
         final char char1 = (char) 1;
-        if (!sMessage.isEmpty()) { sMessage = " " + sMessage; }
-        sendNotice(char1 + sType.toUpperCase() + sMessage + char1);
+        if (sMessage.isEmpty()) {
+            sendNotice(char1 + sType.toUpperCase() + sMessage + char1);
+        } else {
+            sendNotice(char1 + sType.toUpperCase() + " " + sMessage + char1);
+        }
     }
 
     /**

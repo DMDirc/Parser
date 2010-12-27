@@ -1,16 +1,16 @@
 /*
  *  Copyright (c) 2006-2010 Chris Smith, Shane Mc Cormack, Gregory Holmes
- * 
+ *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is
  *  furnished to do so, subject to the following conditions:
- * 
+ *
  *  The above copyright notice and this permission notice shall be included in
  *  all copies or substantial portions of the Software.
- * 
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -43,7 +43,7 @@ public abstract class QueueHandler extends Thread implements Comparator<QueueIte
     protected OutputQueue outputQueue;
 
     /**
-     * Create a new Queue Thread
+     * Create a new Queue Thread.
      *
      * @param outputQueue the OutputQueue that owns us.
      * @param queue Queue to handle
@@ -58,7 +58,7 @@ public abstract class QueueHandler extends Thread implements Comparator<QueueIte
     }
 
     /**
-     * Send the given item
+     * Send the given item.
      *
      * @param line Line to send.
      */
@@ -119,7 +119,7 @@ public abstract class QueueHandler extends Thread implements Comparator<QueueIte
      * This is the main even loop of the queue.
      * It needs to handle pulling items out of the queue and calling
      * sendLine.
-     * 
+     *
      * It also needs to handle any delays in sending that it deems needed.
      */
     @Override

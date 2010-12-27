@@ -34,7 +34,7 @@ public class ProcessorNotFoundException extends Exception {
      * objects being unserialized with the new class).
      */
     private static final long serialVersionUID = 1;
-    
+
     /**
      * Create a new ProcessorNotFound Exception.
      *

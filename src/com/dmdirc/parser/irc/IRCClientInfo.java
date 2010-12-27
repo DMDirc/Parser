@@ -58,9 +58,9 @@ public class IRCClientInfo implements LocalClientInfo {
     private boolean bIsFake;
     /** Reference to the parser object that owns this channel, Used for modes. */
     private final IRCParser myParser;
-    /** A Map to allow applications to attach misc data to this object */
+    /** A Map to allow applications to attach misc data to this object. */
     private Map<Object, Object> myMap;
-    /** List of ChannelClientInfos that point to this */
+    /** List of ChannelClientInfos that point to this. */
     private final Map<String, IRCChannelClientInfo> myChannelClientInfos = new HashMap<String, IRCChannelClientInfo>();
     /** Modes waiting to be sent to the server. */
     private final List<String> lModeQueue = new LinkedList<String>();
@@ -133,11 +133,14 @@ public class IRCClientInfo implements LocalClientInfo {
      * @param sWho Hostname to parse
      * @return Array containing details. (result[0] -> Nick | result[1] -> Ident | result[2] -> Host)
      */
-    public static String[] parseHostFull(String sWho) {
+    public static String[] parseHostFull(final String sWho) {
         String[] sTemp = null;
         final String[] result = new String[3];
-        if (!sWho.isEmpty() && sWho.charAt(0) == ':') { sWho = sWho.substring(1); }
-        sTemp = sWho.split("@", 2);
+        if (!sWho.isEmpty() && sWho.charAt(0) == ':') {
+            sTemp = sWho.substring(1).split("@", 2);
+        } else {
+            sTemp = sWho.split("@", 2);
+        }
         if (sTemp.length == 1) { result[2] = ""; } else { result[2] = sTemp[1]; }
         sTemp = sTemp[0].split("!", 2);
         if (sTemp.length == 1) { result[1] = ""; } else { result[1] = sTemp[1]; }
@@ -415,7 +418,7 @@ public class IRCClientInfo implements LocalClientInfo {
 
     /** {@inheritDoc} */
     @Override
-    public void setAway(String reason) {
+    public void setAway(final String reason) {
         myParser.sendRawMessage("AWAY :" + reason);
     }
 

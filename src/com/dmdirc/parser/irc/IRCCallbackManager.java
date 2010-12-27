@@ -29,7 +29,7 @@ import com.dmdirc.parser.interfaces.callbacks.CallbackInterface;
 
 /**
  * Handles callbacks for the IRC Parser.
- * 
+ *
  * @author chris
  */
 public class IRCCallbackManager extends CallbackManager<IRCParser> {

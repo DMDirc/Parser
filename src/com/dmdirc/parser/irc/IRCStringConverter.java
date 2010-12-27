@@ -30,12 +30,12 @@ import com.dmdirc.parser.interfaces.StringConverter;
  * @author Shane Mc Cormack
  */
 public class IRCStringConverter implements StringConverter {
-    
+
     /** Characters to use when converting tolowercase. */
     private final char[] lowercase;
     /** Characters to use when converting touppercase. */
     private final char[] uppercase;
-    /** limit */
+    /** limit. */
     private final byte limit;
 
     /**
@@ -44,7 +44,7 @@ public class IRCStringConverter implements StringConverter {
     public IRCStringConverter() {
         this((byte) 4);
     }
-    
+
     /**
      * Create a new IRCStringConverter.
      * @param limit Number of post-alphabetical characters to convert
@@ -54,9 +54,12 @@ public class IRCStringConverter implements StringConverter {
      */
     public IRCStringConverter(final byte limit) {
         // If limit is out side the boundries, use rfc1459
-        if (limit > 4 || limit < 0) { this.limit = (byte) 4; }
-        else { this.limit = limit; }
-        
+        if (limit > 4 || limit < 0) {
+            this.limit = (byte) 4;
+        } else {
+            this.limit = limit;
+        }
+
         lowercase = new char[127];
         uppercase = new char[127];
         // Normal Chars
@@ -78,7 +81,7 @@ public class IRCStringConverter implements StringConverter {
      * @return last used chararray limit
      */
     protected int getLimit() { return limit; }
-    
+
     /** {@inheritDoc} */
         @Override
     public String toLowerCase(final String input) {

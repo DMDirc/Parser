@@ -88,14 +88,14 @@ public interface Parser extends Runnable {
     Collection<? extends ChannelInfo> getChannels();
 
     /**
-     * Get the IP address that this parser will bind to
+     * Get the IP address that this parser will bind to.
      *
      * @return IP that this parser is bound to ("" for default IP)
      */
     String getBindIP();
 
     /**
-     * Set the IP address that this parser will bind to
+     * Set the IP address that this parser will bind to.
      *
      * @param ip IP to bind to
      */
@@ -227,14 +227,14 @@ public interface Parser extends Runnable {
     String getServerSoftware();
 
     /**
-     * Retrieves the detected type of the software running on the server
+     * Retrieves the detected type of the software running on the server.
      *
      * @return This parser's server's software type
      */
     String getServerSoftwareType();
 
     /**
-     * Get the list of lines that lines that help describe the server
+     * Get the list of lines that lines that help describe the server.
      *
      * @return List of identification lines for the server.
      *

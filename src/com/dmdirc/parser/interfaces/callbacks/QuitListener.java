@@ -27,7 +27,7 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
-/** 
+/**
  * Called When we, or another client quits IRC (Called once in total).
  * This is called BEFORE client has been removed from the channel.
  */

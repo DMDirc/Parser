@@ -46,23 +46,23 @@ public class ProcessPart extends IRCProcessor {
         IRCClientInfo iClient;
         IRCChannelInfo iChannel;
         IRCChannelClientInfo iChannelClient;
-        
+
         iClient = getClientInfo(token[0]);
         iChannel = getChannel(token[2]);
-        
+
         if (iClient == null) { return; }
         if (IRCParser.ALWAYS_UPDATECLIENT && iClient.getHostname().isEmpty()) {
             // This may seem pointless - updating before they leave - but the formatter needs it!
             iClient.setUserBits(token[0], false);
         }
-        if (iChannel == null) { 
+        if (iChannel == null) {
             if (iClient != myParser.getLocalClient()) {
-                callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got part for channel ("+token[2]+") that I am not on. [User: "+token[0]+"]", myParser.getLastLine()));
+                callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got part for channel (" + token[2] + ") that I am not on. [User: " + token[0] + "]", myParser.getLastLine()));
             }
             return;
         } else {
             String sReason = "";
-            if (token.length > 3) { sReason = token[token.length-1]; }
+            if (token.length > 3) { sReason = token[token.length - 1]; }
             iChannelClient = iChannel.getChannelClient(iClient);
             if (iChannelClient == null) {
                 // callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got part for channel ("+token[2]+") for a non-existant user. [User: "+token[0]+"]", myParser.getLastLine()));
@@ -78,7 +78,7 @@ public class ProcessPart extends IRCProcessor {
             }
         }
     }
-    
+
     /**
      * Callback to all objects implementing the ChannelPart Callback.
      *
@@ -91,7 +91,7 @@ public class ProcessPart extends IRCProcessor {
     protected boolean callChannelPart(final ChannelInfo cChannel, final ChannelClientInfo cChannelClient, final String sReason) {
         return getCallbackManager().getCallbackType(ChannelPartListener.class).call(cChannel, cChannelClient, sReason);
     }
-    
+
     /**
      * What does this IRCProcessor handle.
      *
@@ -100,14 +100,16 @@ public class ProcessPart extends IRCProcessor {
     @Override
     public String[] handles() {
         return new String[]{"PART"};
-    } 
-    
+    }
+
     /**
      * Create a new instance of the IRCProcessor Object.
      *
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected ProcessPart(IRCParser parser, ProcessingManager manager) { super(parser, manager); }
+    protected ProcessPart(final IRCParser parser, final ProcessingManager manager) {
+        super(parser, manager);
+    }
 
 }

@@ -37,39 +37,39 @@ public class ProcessNames extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(String sParam, String[] token) {
+    public void process(final String sParam, final String[] token) {
         IRCChannelInfo iChannel;
-        if (sParam.equals("366")) {
+        if ("366".equals(sParam)) {
             // End of names
             iChannel = getChannel(token[3]);
             if (iChannel == null) { return; }
-            
+
             if (!iChannel.hadTopic()) {
                 callChannelTopic(iChannel, true);
             }
 
             iChannel.setAddingNames(false);
             callChannelGotNames(iChannel);
-            
-            if (!iChannel.hasAskedForListModes() 
+
+            if (!iChannel.hasAskedForListModes()
                     && myParser.getAutoListMode()) {
                 iChannel.requestListModes();
             }
         } else {
             // Names
-            
+
             IRCClientInfo iClient;
             IRCChannelClientInfo iChannelClient;
-            
+
             iChannel = getChannel(token[4]);
-        
+
             if (iChannel == null) { return; }
-            
+
             // If we are not expecting names, clear the current known names - this is fresh stuff!
             if (!iChannel.isAddingNames()) { iChannel.emptyChannel(); }
             iChannel.setAddingNames(true);
-            
-            String[] sNames = token[token.length-1].split(" ");
+
+            final String[] sNames = token[token.length - 1].split(" ");
             String sNameBit = "", sName = "";
             StringBuilder sModes = new StringBuilder();
             long nPrefix = 0;
@@ -79,7 +79,7 @@ public class ProcessNames extends IRCProcessor {
                 if (sNameBit.isEmpty()) { continue; }
                 // This next bit of code allows for any ircd which decides to use @+Foo in names
                 for (int i = 0; i < sNameBit.length(); ++i) {
-                    Character cMode = sNameBit.charAt(i);
+                    final Character cMode = sNameBit.charAt(i);
                     // hPrefixMap contains @, o, +, v this caused issue 107
                     // hPrefixModes only contains o, v so if the mode is in hPrefixMap
                     // and not in hPrefixModes, its ok to use.
@@ -92,7 +92,7 @@ public class ProcessNames extends IRCProcessor {
                     }
                 }
                 callDebugInfo(IRCParser.DEBUG_INFO, "Name: %s Modes: \"%s\" [%d]", sName, sModes.toString(), nPrefix);
-                
+
                 iClient = getClientInfo(sName);
                 if (iClient == null) { iClient = new IRCClientInfo(myParser, sName); myParser.addClient(iClient); }
                 iClient.setUserBits(sName, false); // Will do nothing if this isn't UHNAMES
@@ -105,7 +105,7 @@ public class ProcessNames extends IRCProcessor {
             }
         }
     }
-    
+
     /**
      * Callback to all objects implementing the ChannelTopic Callback.
      *
@@ -126,10 +126,10 @@ public class ProcessNames extends IRCProcessor {
      * @param cChannel Channel which the names reply is for
      * @return true if a method was called, false otherwise
      */
-    protected boolean callChannelGotNames(ChannelInfo cChannel) {
+    protected boolean callChannelGotNames(final ChannelInfo cChannel) {
         return getCallbackManager().getCallbackType(ChannelNamesListener.class).call(cChannel);
     }
-    
+
     /**
      * What does this IRCProcessor handle.
      *
@@ -138,14 +138,16 @@ public class ProcessNames extends IRCProcessor {
     @Override
     public String[] handles() {
         return new String[]{"353", "366"};
-    } 
-    
+    }
+
     /**
      * Create a new instance of the IRCProcessor Object.
      *
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected ProcessNames(IRCParser parser, ProcessingManager manager) { super(parser, manager); }
+    protected ProcessNames(final IRCParser parser, final ProcessingManager manager) {
+        super(parser, manager);
+    }
 
 }

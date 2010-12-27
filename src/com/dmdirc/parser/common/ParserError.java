@@ -1,16 +1,16 @@
 /*
  * Copyright (c) 2006-2010 Chris Smith, Shane Mc Cormack, Gregory Holmes
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -24,7 +24,7 @@ package com.dmdirc.parser.common;
 
 /**
  * IRC Parser Error.
- * 
+ *
  * @author Shane Mc Cormack
  */
 public final class ParserError {
@@ -47,11 +47,11 @@ public final class ParserError {
     private Exception exceptionInfo;
 
     /** Last line of server input before this exception was triggered. */
-    private String lastLine = "";
+    private final String lastLine;
 
     /**
      * Create a new Error.
-     * 
+     *
      * @param level Set the error level.
      * @param data String containing information about the error.
      * @param line The last line of data recieved from the server before this
@@ -65,7 +65,7 @@ public final class ParserError {
 
     /**
      * Check if this error is considered Fatal.
-     * 
+     *
      * @return Returns true for a fatal error, false for a non-fatal error
      */
     public boolean isFatal() {
@@ -75,7 +75,7 @@ public final class ParserError {
     /**
      * Check if this error is considered an error (less severe than fatal, worse
      * than warning).
-     * 
+     *
      * @return Returns true for an "Error" level error, else false.
      */
     public boolean isError() {
@@ -84,7 +84,7 @@ public final class ParserError {
 
     /**
      * Check if this error is considered a warning.
-     * 
+     *
      * @return Returns true for a warning, else false.
      */
     public boolean isWarning() {
@@ -94,7 +94,7 @@ public final class ParserError {
     /**
      * Check if this error is considered a user-error rather than a server error.
      * For DMDirc this will cause the error not to be reported to the developers
-     * 
+     *
      * @return Returns true for a user error, else false.
      */
     public boolean isUserError() {
@@ -103,7 +103,7 @@ public final class ParserError {
 
     /**
      * Check if this error was generated from an exception.
-     * 
+     *
      * @return Returns true if getException will return an exception.
      */
     public boolean isException() {
@@ -112,7 +112,7 @@ public final class ParserError {
 
     /**
      * Check if this error has a lastLine parameter.
-     * 
+     *
      * @return Returns true if getLastLine returns anything non null, non empty.
      */
     public boolean hasLastLine() {
@@ -121,7 +121,7 @@ public final class ParserError {
 
     /**
      * Set the Exception object.
-     * 
+     *
      * @param newException The exception object to store
      */
     public void setException(final Exception newException) {
@@ -133,7 +133,7 @@ public final class ParserError {
 
     /**
      * Get the Exception object.
-     * 
+     *
      * @return Returns the exception object
      */
     public Exception getException() {
@@ -142,7 +142,7 @@ public final class ParserError {
 
     /**
      * Get the full ErrorLevel.
-     * 
+     *
      * @return Returns the error level
      */
     public int getLevel() {
@@ -151,7 +151,7 @@ public final class ParserError {
 
     /**
      * Get the Error information.
-     * 
+     *
      * @return Returns the error data
      */
     public String getData() {
@@ -160,7 +160,7 @@ public final class ParserError {
 
     /**
      * Add to the error information.
-     * 
+     *
      * @param data Information to add to the end of the existing Data
      */
     public void appendData(final String data) {
@@ -169,7 +169,7 @@ public final class ParserError {
 
     /**
      * Get the last line recieved from the server before this exception.
-     * 
+     *
      * @return Returns the error data
      */
     public String getLastLine() {

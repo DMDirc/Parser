@@ -1,16 +1,16 @@
 /*
  *  Copyright (c) 2006-2010 Chris Smith, Shane Mc Cormack, Gregory Holmes
- * 
+ *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is
  *  furnished to do so, subject to the following conditions:
- * 
+ *
  *  The above copyright notice and this permission notice shall be included in
  *  all copies or substantial portions of the Software.
- * 
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -25,21 +25,21 @@ package com.dmdirc.parser.irc.outputqueue;
 import com.dmdirc.parser.common.QueuePriority;
 
 /**
- * Queued Item
+ * Queued Item.
  *
  * @author shane
  */
 public class QueueItem implements Comparable<QueueItem> {
-    /** Global Item Number*/
+    /** Global Item Number. */
     private static long number = 0L;
 
-    /** Line to send */
+    /** Line to send. */
     private final String line;
 
     /** Time this line was added. */
     private final long time;
 
-    /** Item Number */
+    /** Item Number. */
     private final long itemNumber;
 
     /** What is the priority of this line? */
@@ -49,7 +49,7 @@ public class QueueItem implements Comparable<QueueItem> {
     private final QueueHandler handler;
 
     /**
-     * Get the value of line
+     * Get the value of line.
      *
      * @return the value of line
      */
@@ -58,7 +58,7 @@ public class QueueItem implements Comparable<QueueItem> {
     }
 
     /**
-     * Get the value of time
+     * Get the value of time.
      *
      * @return the value of time
      */
@@ -67,7 +67,7 @@ public class QueueItem implements Comparable<QueueItem> {
     }
 
     /**
-     * Get the number of this item
+     * Get the number of this item.
      *
      * @return the value of itemNumber
      */
@@ -76,7 +76,7 @@ public class QueueItem implements Comparable<QueueItem> {
     }
 
     /**
-     * Get the value of priority
+     * Get the value of priority.
      *
      * @return the value of priority
      */
@@ -85,11 +85,11 @@ public class QueueItem implements Comparable<QueueItem> {
     }
 
     /**
-     * Create a new QueueItem
+     * Create a new QueueItem.
      *
      * @param handler Handler for this QueueItem
      * @param line Line to send
-     * @param priority
+     * @param priority Priority for the queue item
      */
     public QueueItem(final QueueHandler handler, final String line, final QueuePriority priority) {
         this.handler = handler;

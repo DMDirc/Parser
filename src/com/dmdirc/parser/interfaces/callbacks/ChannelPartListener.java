@@ -28,7 +28,7 @@ import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.SpecificCallback;
 import java.util.Date;
 
-/** 
+/**
  * Called When we, or another client parts a channel.
  * This is called BEFORE client has been removed from the channel.
  */

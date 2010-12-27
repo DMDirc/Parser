@@ -178,7 +178,7 @@ public abstract class CallbackObject {
             }
             bResult = true;
         }
-        
+
         return bResult;
     }
 
@@ -227,7 +227,7 @@ public abstract class CallbackObject {
         for (Annotation[] anns : type.getMethods()[0].getParameterAnnotations()) {
             for (Annotation ann : anns) {
                 if (ann.annotationType().equals(FakableSource.class)) {
-                    Class<?> argType = type.getMethods()[0].getParameterTypes()[i];
+                    final Class<?> argType = type.getMethods()[0].getParameterTypes()[i];
 
                     sources.put(argType, args[i]);
                 }
@@ -258,10 +258,10 @@ public abstract class CallbackObject {
                 if (!found) {
                     param = getFakeArg(args, needed);
 
-                    if (param != null) {
-                        params[i] = param;
-                    } else {
+                    if (param == null) {
                         failed = true;
+                    } else {
+                        params[i] = param;
                     }
                 }
 
@@ -305,6 +305,6 @@ public abstract class CallbackObject {
      * @param type The type to be instansiated
      * @return A concrete implementation of that type
      */
-    protected abstract Class<?> getImplementation(Class<?> type);
-    
+    protected abstract Class<?> getImplementation(final Class<?> type);
+
 }
