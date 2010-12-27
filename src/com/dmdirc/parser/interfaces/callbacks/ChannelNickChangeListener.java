@@ -29,7 +29,7 @@ import com.dmdirc.parser.interfaces.SpecificCallback;
 
 import java.util.Date;
 
-/** 
+/**
  * Called when we or another user change nickname (Called once per channel the user is on).
  * This is called after the nickname change has been done internally
  */

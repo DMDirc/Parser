@@ -31,7 +31,7 @@ import com.dmdirc.parser.interfaces.SpecificCallback;
 
 import java.util.Date;
 
-/** 
+/**
  * Called when a users channel mode is changed.
  */
 @SpecificCallback

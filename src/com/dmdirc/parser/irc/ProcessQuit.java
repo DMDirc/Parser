@@ -47,18 +47,18 @@ public class ProcessQuit extends IRCProcessor {
         if (token.length < 2) { return; }
         IRCClientInfo iClient;
         IRCChannelClientInfo iChannelClient;
-        
+
         iClient = getClientInfo(token[0]);
-        
+
         if (iClient == null) { return; }
         if (IRCParser.ALWAYS_UPDATECLIENT && iClient.getHostname().isEmpty()) {
             // This may seem pointless - updating before they leave - but the formatter needs it!
             iClient.setUserBits(token[0], false);
         }
         String sReason = "";
-        if (token.length > 2) { sReason = token[token.length-1]; }
-        
-        ArrayList<IRCChannelInfo> channelList = new ArrayList<IRCChannelInfo>(myParser.getChannels());
+        if (token.length > 2) { sReason = token[token.length - 1]; }
+
+        final ArrayList<IRCChannelInfo> channelList = new ArrayList<IRCChannelInfo>(myParser.getChannels());
         for (IRCChannelInfo iChannel : channelList) {
             iChannelClient = iChannel.getChannelClient(iClient);
             if (iChannelClient != null) {
@@ -80,8 +80,8 @@ public class ProcessQuit extends IRCProcessor {
             myParser.removeClient(iClient);
         }
         if (!myParser.removeAfterCallback) { callQuit(iClient, sReason); }
-    }    
-    
+    }
+
     /**
      * Callback to all objects implementing the ChannelQuit Callback.
      *
@@ -94,7 +94,7 @@ public class ProcessQuit extends IRCProcessor {
     protected boolean callChannelQuit(final ChannelInfo cChannel, final ChannelClientInfo cChannelClient, final String sReason) {
         return getCallbackManager().getCallbackType(ChannelQuitListener.class).call(cChannel, cChannelClient, sReason);
     }
-    
+
     /**
      * Callback to all objects implementing the Quit Callback.
      *
@@ -106,7 +106,7 @@ public class ProcessQuit extends IRCProcessor {
     protected boolean callQuit(final ClientInfo cClient, final String sReason) {
         return getCallbackManager().getCallbackType(QuitListener.class).call(cClient, sReason);
     }
-    
+
     /**
      * What does this IRCProcessor handle.
      *
@@ -115,14 +115,16 @@ public class ProcessQuit extends IRCProcessor {
     @Override
     public String[] handles() {
         return new String[]{"QUIT"};
-    } 
-    
+    }
+
     /**
      * Create a new instance of the IRCProcessor Object.
      *
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected ProcessQuit(IRCParser parser, ProcessingManager manager) { super(parser, manager); }
+    protected ProcessQuit(final IRCParser parser, final ProcessingManager manager) {
+        super(parser, manager);
+    }
 
 }

@@ -34,7 +34,7 @@ import java.util.TimerTask;
 public class PingTimer extends TimerTask {
     /** Owning Parser. */
     final IRCParser myOwner;
-    /** The Timer that owns this task */
+    /** The Timer that owns this task. */
     final Timer myTimer;
     
     /**
@@ -44,6 +44,7 @@ public class PingTimer extends TimerTask {
      * @param timer Timer that owns this TimerTask.
      */
     public PingTimer(final IRCParser control, final Timer timer) {
+        super();
         myOwner = control;
         myTimer = timer;
     }

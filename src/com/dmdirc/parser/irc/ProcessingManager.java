@@ -34,7 +34,7 @@ import java.util.Map;
  * @author Shane Mc Cormack
  */
 public class ProcessingManager {
-    /** Reference to the parser object that owns this ProcessingManager */
+    /** Reference to the parser object that owns this ProcessingManager. */
     IRCParser myParser;
 
     /** Hashtable used to store the different types of IRCProcessor known. */
@@ -52,7 +52,7 @@ public class ProcessingManager {
      *
      * @param parser IRCParser that owns this Processing Manager
      */
-    public ProcessingManager(IRCParser parser) {
+    public ProcessingManager(final IRCParser parser) {
         myParser = parser;
         //------------------------------------------------
         // Add processors
@@ -135,14 +135,14 @@ public class ProcessingManager {
      * @param handles String Array of tokens to add this processor as a hadler for
      */
     public void addProcessor(final String[] handles, final IRCProcessor processor) {
-        doDebug("Adding processor: "+processor.getName());
+        doDebug("Adding processor: " + processor.getName());
 
         for (int i = 0; i < handles.length; ++i) {
             if (processHash.containsKey(handles[i].toLowerCase())) {
                 // New Processors take priority over old ones
                 processHash.remove(handles[i].toLowerCase());
             }
-            doDebug("\t Added handler for: "+handles[i]);
+            doDebug("\t Added handler for: " + handles[i]);
             processHash.put(handles[i].toLowerCase(), processor);
         }
     }
@@ -154,12 +154,12 @@ public class ProcessingManager {
      */
     public void delProcessor(final IRCProcessor processor) {
         IRCProcessor testProcessor;
-        doDebug("Deleting processor: "+processor.getName());
+        doDebug("Deleting processor: " + processor.getName());
         for (String elementName : processHash.keySet()) {
-            doDebug("\t Checking handler for: "+elementName);
+            doDebug("\t Checking handler for: " + elementName);
             testProcessor = processHash.get(elementName);
             if (testProcessor.getName().equalsIgnoreCase(processor.getName())) {
-                doDebug("\t Removed handler for: "+elementName);
+                doDebug("\t Removed handler for: " + elementName);
                 processHash.remove(elementName);
             }
         }
@@ -176,7 +176,7 @@ public class ProcessingManager {
         if (processHash.containsKey(sParam.toLowerCase())) {
             return processHash.get(sParam.toLowerCase());
         } else {
-            throw new ProcessorNotFoundException("No processors will handle "+sParam);
+            throw new ProcessorNotFoundException("No processors will handle " + sParam);
         }
     }
 
@@ -195,7 +195,7 @@ public class ProcessingManager {
         } catch (ProcessorNotFoundException p) {
             throw p;
         } catch (Exception e) {
-            final ParserError ei = new ParserError(ParserError.ERROR_ERROR,"Exception in Processor. ["+messageProcessor+"]: "+e.getMessage(), myParser.getLastLine());
+            final ParserError ei = new ParserError(ParserError.ERROR_ERROR,"Exception in Processor. [" + messageProcessor + "]: " + e.getMessage(), myParser.getLastLine());
             ei.setException(e);
             myParser.callErrorInfo(ei);
         } finally {

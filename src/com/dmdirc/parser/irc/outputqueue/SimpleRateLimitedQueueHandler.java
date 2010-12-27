@@ -1,16 +1,16 @@
 /*
  *  Copyright (c) 2006-2010 Chris Smith, Shane Mc Cormack, Gregory Holmes
- * 
+ *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is
  *  furnished to do so, subject to the following conditions:
- * 
+ *
  *  The above copyright notice and this permission notice shall be included in
  *  all copies or substantial portions of the Software.
- * 
+ *
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -36,12 +36,12 @@ import java.util.concurrent.BlockingQueue;
  */
 public class SimpleRateLimitedQueueHandler extends QueueHandler {
     /**
-     * Get a QueueFactory that produces PriorityQueueHandlers
+     * Get a QueueFactory that produces PriorityQueueHandlers.
      *
      * @return a QueueFactory that produces PrirortyQueueHandlers.
      */
     public static QueueFactory getFactory() {
-        return new QueueFactory(){
+        return new QueueFactory() {
             /** {@inheritDoc} */
             @Override
             public QueueHandler getQueueHandler(final OutputQueue outputQueue, final BlockingQueue<QueueItem> queue, final PrintWriter out) {
@@ -72,7 +72,7 @@ public class SimpleRateLimitedQueueHandler extends QueueHandler {
     private boolean alwaysUpdateTime = true;
 
     /**
-     * Create a new SimpleRateLimitedQueueHandler
+     * Create a new SimpleRateLimitedQueueHandler.
      *
      * @param outputQueue Owner of this Queue Handler
      * @param queue Queue to use
@@ -84,7 +84,7 @@ public class SimpleRateLimitedQueueHandler extends QueueHandler {
 
     /**
      * Get the number of items needed to activate rate limiting.
-     * 
+     *
      * @return Number of items needed to activate rate limiting.
      */
     public int getItems() {
@@ -159,7 +159,7 @@ public class SimpleRateLimitedQueueHandler extends QueueHandler {
      *
      * If true, assuming the default settings) items sent at 0, 3, 6, 9 will
      * activate rate limiting, if false it would need to be 0, 1, 2, 3.
-     * 
+     *
      * @param alwaysUpdateTime Should LastItemTime always updated?
      */
     public void setAlwaysUpdateTime(final boolean alwaysUpdateTime) {
@@ -168,7 +168,7 @@ public class SimpleRateLimitedQueueHandler extends QueueHandler {
 
     /**
      * Are we currently limiting?
-     * 
+     *
      * @return True if limiting is active.
      */
     public boolean isLimiting() {
@@ -183,16 +183,16 @@ public class SimpleRateLimitedQueueHandler extends QueueHandler {
      */
     @Override
     public int compare(final QueueItem mainObject, final QueueItem otherObject) {
-        if (mainObject.getPriority().compareTo(otherObject.getPriority()) != 0) {
-            return mainObject.getPriority().compareTo(otherObject.getPriority());
-        } else {
+        if (mainObject.getPriority().compareTo(otherObject.getPriority()) == 0) {
             return super.compare(mainObject, otherObject);
+        } else {
+            return mainObject.getPriority().compareTo(otherObject.getPriority());
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public QueueItem getQueueItem(String line, QueuePriority priority) {
+    public QueueItem getQueueItem(final String line, final QueuePriority priority) {
         // Was the last line added less than limitTime ago?
         synchronized (this) {
             final boolean overTime = (lastItemTime + limitTime > System.currentTimeMillis());
@@ -219,7 +219,7 @@ public class SimpleRateLimitedQueueHandler extends QueueHandler {
                 lastItemTime = System.currentTimeMillis();
             }
         }
-        
+
         return super.getQueueItem(line, priority);
     }
 
@@ -229,7 +229,7 @@ public class SimpleRateLimitedQueueHandler extends QueueHandler {
         try {
             while (outputQueue.isQueueEnabled()) {
                 final QueueItem item = queue.take();
-                
+
                 sendLine(item.getLine());
 
                 final boolean doSleep;

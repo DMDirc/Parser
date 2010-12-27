@@ -41,5 +41,5 @@ public interface ErrorInfoListener extends CallbackInterface {
      * @see com.dmdirc.parser.irc.IRCParser#callErrorInfo
      */
     void onErrorInfo(Parser parser, Date date, ParserError errorInfo);
-    
+
 }

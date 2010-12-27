@@ -50,11 +50,11 @@ public class ProcessWho extends IRCProcessor {
         //              0               1      2        3     4              5                      6       7     8      9
         // :server 352 mynickname channel username address server nick flags :hops info
         //     0    1      2         3     4          5      6      7    8        9
-        
+
         final IRCClientInfo client = getClientInfo(token[7]);
         if (client != null) {
             // Update ident/host
-            client.setUserBits(token[7]+"!"+token[4]+"@"+token[5], false);
+            client.setUserBits(token[7] + "!" + token[4] + "@" + token[5], false);
             // Update real name
             if (client.getRealname().isEmpty()) {
                 final String name = token[9].split(" ", 2)[1];
@@ -70,7 +70,7 @@ public class ProcessWho extends IRCProcessor {
                     callAwayState(oldState, client.getAwayState(), client.getAwayReason());
                 } else {
                     callAwayStateOther(client, oldState, isAway);
-                    
+
                     ChannelClientInfo iChannelClient;
                     for (ChannelInfo iChannel : myParser.getChannels()) {
                         iChannelClient = iChannel.getChannelClient(client);
@@ -82,7 +82,7 @@ public class ProcessWho extends IRCProcessor {
             }
         }
     }
-    
+
     /**
      * Callback to all objects implementing the onAwayState Callback.
      *
@@ -95,7 +95,7 @@ public class ProcessWho extends IRCProcessor {
     protected boolean callAwayState(final AwayState oldState, final AwayState currentState, final String reason) {
         return getCallbackManager().getCallbackType(AwayStateListener.class).call(oldState, currentState, reason);
     }
-    
+
     /**
      * Callback to all objects implementing the onAwayStateOther Callback.
      *
@@ -108,7 +108,7 @@ public class ProcessWho extends IRCProcessor {
     protected boolean callAwayStateOther(final ClientInfo client, final AwayState oldState, final AwayState state) {
         return getCallbackManager().getCallbackType(OtherAwayStateListener.class).call(client, oldState, state);
     }
-    
+
     /**
      * Callback to all objects implementing the onChannelAwayStateOther Callback.
      *
@@ -122,7 +122,7 @@ public class ProcessWho extends IRCProcessor {
     protected boolean callChannelAwayStateOther(final ChannelInfo channel, final ChannelClientInfo channelClient, final AwayState oldState, final AwayState state) {
         return getCallbackManager().getCallbackType(ChannelOtherAwayStateListener.class).call(channel, channelClient, oldState, state);
     }
-    
+
     /**
      * What does this IRCProcessor handle.
      *
@@ -131,14 +131,16 @@ public class ProcessWho extends IRCProcessor {
     @Override
     public String[] handles() {
         return new String[]{"352"};
-    } 
-    
+    }
+
     /**
      * Create a new instance of the IRCProcessor Object.
      *
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected ProcessWho(IRCParser parser, ProcessingManager manager) { super(parser, manager); }
+    protected ProcessWho(final IRCParser parser, final ProcessingManager manager) {
+        super(parser, manager);
+    }
 
 }

@@ -32,10 +32,10 @@ import com.dmdirc.parser.common.QueuePriority;
  *
  * @author Shane Mc Cormack
  */
-abstract class IRCProcessor {
+public abstract class IRCProcessor {
     /** Reference to the IRCParser that owns this IRCProcessor. */
     protected IRCParser myParser;
-    
+
     /** Reference to the Processing in charge of this IRCProcessor. */
     protected ProcessingManager myManager;
 
@@ -62,7 +62,7 @@ abstract class IRCProcessor {
     protected final boolean callErrorInfo(final ParserError errorInfo) {
         return myParser.callErrorInfo(errorInfo);
     }
-    
+
     /**
      * Callback to all objects implementing the DebugInfo Callback.
      *
@@ -75,7 +75,7 @@ abstract class IRCProcessor {
     protected final boolean callDebugInfo(final int level, final String data, final Object... args) {
         return myParser.callDebugInfo(level, String.format(data, args));
     }
-    
+
     /**
      * Callback to all objects implementing the DebugInfo Callback.
      *
@@ -87,7 +87,7 @@ abstract class IRCProcessor {
     protected final boolean callDebugInfo(final int level, final String data) {
         return myParser.callDebugInfo(level, data);
     }
-    
+
     /**
      * Check if a channel name is valid .
      *
@@ -97,7 +97,7 @@ abstract class IRCProcessor {
     protected final boolean isValidChannelName(final String sChannelName) {
         return myParser.isValidChannelName(sChannelName);
     }
-    
+
     /**
      * Get the ClientInfo object for a person.
      *
@@ -107,7 +107,7 @@ abstract class IRCProcessor {
     protected final IRCClientInfo getClientInfo(final String sWho) {
         return myParser.isKnownClient(sWho) ? myParser.getClient(sWho) : null;
     }
-    
+
     /**
      * Get the ChannelInfo object for a channel.
      *
@@ -117,7 +117,7 @@ abstract class IRCProcessor {
     protected final IRCChannelInfo getChannel(final String name) {
         return myParser.getChannel(name);
     }
-    
+
     /**
      * Get a reference to the CallbackManager.
      *
@@ -126,7 +126,7 @@ abstract class IRCProcessor {
     protected final CallbackManager<?> getCallbackManager() {
         return myParser.getCallbackManager();
     }
-    
+
     /**
      * Send a line to the server and add proper line ending.
      *
@@ -145,7 +145,7 @@ abstract class IRCProcessor {
     protected final void sendString(final String line, final QueuePriority priority) {
         myParser.sendString(line, priority);
     }
-    
+
     /**
      * Process a Line.
      *
@@ -153,15 +153,15 @@ abstract class IRCProcessor {
      * @param token IRCTokenised line to process
      */
     public abstract void process(final String sParam, final String[] token);
-    
+
     /**
      * What does this IRCProcessor handle.
      *
      * @return String[] with the names of the tokens we handle.
      */
     public abstract String[] handles();
-    
-    /** 
+
+    /**
      * Get the name for this Processor.
      * @return the name of this processor
      */
@@ -173,20 +173,20 @@ abstract class IRCProcessor {
         }
         return this.getClass().getName().substring(packageLength);
     }
-    
-    /** 
+
+    /**
      * Get the name for this Processor in lowercase.
      * @return lower case name of this processor
      */
     public final String getLowerName() {
         return this.getName().toLowerCase();
     }
-    
-    /** 
+
+    /**
      * Get the name for this Processor.
      * @return the name of this processor
      */
         @Override
     public final String toString() { return this.getName(); }
-    
+
 }

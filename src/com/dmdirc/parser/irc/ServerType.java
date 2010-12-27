@@ -65,7 +65,7 @@ public enum ServerType {
     HYBRID7("hybrid7", ".*ircd.hybrid.*", "eI"),
     /** Older versions of Hybrid. */
     HYBRID("hybrid", ".*hybrid.*", "eI"),
-    /** Charybdis */
+    /** Charybdis. */
     CHARYBDIS("charybdis", ".*charybdis.*", "eI"),
     /** Freenodes New IRCD. */
     IRCD_SEVEN("ircd-seven", ".*ircd-seven.*", "eI"),
@@ -203,7 +203,7 @@ public enum ServerType {
     }
 
     /**
-     * Get the MatchType of this ServerType
+     * Get the MatchType of this ServerType.
      *
      * @return The MatchType of this ServerType
      */

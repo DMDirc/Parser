@@ -41,8 +41,11 @@ import java.util.Map;
  */
 public class IRCCallbackObject extends CallbackObject {
 
-    /** A map of interfaces to the classes which should be instansiated for them. */
-    protected static final Map<Class<?>, Class<?>> IMPL_MAP = new HashMap<Class<?>, Class<?>>();
+    /**
+     * A map of interfaces to the classes which should be instansiated for them.
+     */
+    protected static final Map<Class<?>, Class<?>> IMPL_MAP
+            = new HashMap<Class<?>, Class<?>>();
 
     static {
         IMPL_MAP.put(ChannelClientInfo.class, IRCChannelClientInfo.class);
@@ -51,14 +54,22 @@ public class IRCCallbackObject extends CallbackObject {
         IMPL_MAP.put(LocalClientInfo.class, IRCClientInfo.class);
     }
 
-    public IRCCallbackObject(Parser parser, CallbackManager<?> manager,
-            Class<? extends CallbackInterface> type) {
+    /**
+     * Creates a new IRC parser callback object.
+     *
+     * @param parser Parser this callback is owned by
+     * @param manager Manager callback is owned by
+     * @param type Callback type
+     */
+    public IRCCallbackObject(final Parser parser,
+            final CallbackManager<?> manager,
+            final Class<? extends CallbackInterface> type) {
         super(parser, manager, type);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected Class<?> getImplementation(Class<?> type) {
+    protected Class<?> getImplementation(final Class<?> type) {
         return IMPL_MAP.containsKey(type) ? IMPL_MAP.get(type) : type;
     }
 

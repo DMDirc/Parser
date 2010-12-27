@@ -68,7 +68,7 @@ public class ProcessMessage extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, String[] token) {
+    public void process(final String sParam, final String[] token) {
         // Ignore people!
         String sMessage = "";
         if (token[0].charAt(0) == ':') { sMessage = token[0].substring(1); } else { sMessage = token[0]; }
@@ -76,7 +76,7 @@ public class ProcessMessage extends IRCProcessor {
         try {
             if (myParser.getIgnoreList().matches(sMessage) > -1) { return; }
         } catch (PatternSyntaxException pse) {
-             final ParserError pe = new ParserError(ParserError.ERROR_WARNING + ParserError.ERROR_USER, "Error with ignore list regex: "+pse, myParser.getLastLine());
+             final ParserError pe = new ParserError(ParserError.ERROR_WARNING + ParserError.ERROR_USER, "Error with ignore list regex: " + pse, myParser.getLastLine());
              pe.setException(pse);
              callErrorInfo(pe);
         }
@@ -101,7 +101,7 @@ public class ProcessMessage extends IRCProcessor {
         if (token.length < 4) {
             sMessage = "";
         } else {
-            sMessage = token[token.length-1];
+            sMessage = token[token.length - 1];
         }
         String[] bits = sMessage.split(" ", 2);
         final Character char1 = Character.valueOf((char) 1);
@@ -114,18 +114,18 @@ public class ProcessMessage extends IRCProcessor {
             // Bits is the message been split into 2 parts
             //         the first word and the rest
             if (sParam.equalsIgnoreCase("PRIVMSG") && bits[0].equalsIgnoreCase(
-                    char1+"ACTION") && Character.valueOf(sMessage.charAt(
-                    sMessage.length()-1)).equals(char1)) {
+                    char1 + "ACTION") && Character.valueOf(sMessage.charAt(
+                    sMessage.length() - 1)).equals(char1)) {
                 isAction = true;
                 if (bits.length > 1) {
                     sMessage = bits[1];
-                    sMessage = sMessage.substring(0, sMessage.length()-1);
+                    sMessage = sMessage.substring(0, sMessage.length() - 1);
                 } else { sMessage = ""; }
             }
             // If the message is not an action, check if it is another type of CTCP
             // CTCPs have Character(1) at the start/end of the line
             if (!isAction && Character.valueOf(sMessage.charAt(0)).equals(char1)
-                    && Character.valueOf(sMessage.charAt(sMessage.length()-1))
+                    && Character.valueOf(sMessage.charAt(sMessage.length() - 1))
                     .equals(char1)) {
                 isCTCP = true;
                 // Bits is the message been split into 2 parts, the first word and the rest
@@ -139,10 +139,10 @@ public class ProcessMessage extends IRCProcessor {
                 bits = bits[0].split(char1.toString(), 2);
                 sCTCP = bits[1];
                 // remove the trailing char1
-                if (!sMessage.isEmpty()) {
-                    sMessage = sMessage.split(char1.toString(), 2)[0];
-                } else {
+                if (sMessage.isEmpty()) {
                     sCTCP = sCTCP.split(char1.toString(), 2)[0];
+                } else {
+                    sMessage = sMessage.split(char1.toString(), 2)[0];
                 }
                 callDebugInfo(IRCParser.DEBUG_INFO, "CTCP: \"%s\" \"%s\"",
                         sCTCP, sMessage);
@@ -184,7 +184,9 @@ public class ProcessMessage extends IRCProcessor {
             }
             if (iClient != null) { iChannelClient = iChannel.getChannelClient(iClient); }
             if (sParam.equalsIgnoreCase("PRIVMSG")) {
-                if (!isAction) {
+                if (isAction) {
+                    callChannelAction(iChannel, iChannelClient, sMessage, token[0]);
+                } else {
                     if (isCTCP) {
                         callChannelCTCP(iChannel, iChannelClient, sCTCP, sMessage, token[0]);
                     } else if (hasModePrefix) {
@@ -192,8 +194,6 @@ public class ProcessMessage extends IRCProcessor {
                     } else {
                         callChannelMessage(iChannel, iChannelClient, sMessage, token[0]);
                     }
-                } else {
-                    callChannelAction(iChannel, iChannelClient, sMessage, token[0]);
                 }
             } else if (sParam.equalsIgnoreCase("NOTICE")) {
                 if (isCTCP) {
@@ -206,20 +206,20 @@ public class ProcessMessage extends IRCProcessor {
             }
         } else if (myParser.getStringConverter().equalsIgnoreCase(token[2], myParser.getMyNickname())) {
             if (sParam.equalsIgnoreCase("PRIVMSG")) {
-                if (!isAction) {
+                if (isAction) {
+                    callPrivateAction(sMessage, token[0]);
+                } else {
                     if (isCTCP) {
                         callPrivateCTCP(sCTCP, sMessage, token[0]);
                     } else {
                         callPrivateMessage(sMessage, token[0]);
                     }
-                } else {
-                    callPrivateAction(sMessage, token[0]);
                 }
             } else if (sParam.equalsIgnoreCase("NOTICE")) {
                 if (isCTCP) {
                     callPrivateCTCPReply(sCTCP, sMessage, token[0]);
                 } else {
-                    if (token[0].indexOf("@") == -1) {
+                    if (token[0].indexOf('@') == -1) {
                         callServerNotice(sMessage, token[0]);
                     } else {
                         callPrivateNotice(sMessage, token[0]);
@@ -227,22 +227,22 @@ public class ProcessMessage extends IRCProcessor {
                 }
             }
         } else {
-            callDebugInfo(IRCParser.DEBUG_INFO, "Message for Other ("+token[2]+")");
+            callDebugInfo(IRCParser.DEBUG_INFO, "Message for Other (" + token[2] + ")");
             if (sParam.equalsIgnoreCase("PRIVMSG")) {
-                if (!isAction) {
+                if (isAction) {
+                    callUnknownAction(sMessage, token[2], token[0]);
+                } else {
                     if (isCTCP) {
                         callUnknownCTCP(sCTCP, sMessage, token[2], token[0]);
                     } else {
                         callUnknownMessage(sMessage, token[2], token[0]);
                     }
-                } else {
-                    callUnknownAction(sMessage, token[2], token[0]);
                 }
             } else if (sParam.equalsIgnoreCase("NOTICE")) {
                 if (isCTCP) {
                     callUnknownCTCPReply(sCTCP, sMessage, token[2], token[0]);
                 } else {
-                    if (token[0].indexOf("@") == -1) {
+                    if (token[0].indexOf('@') == -1) {
                         callUnknownServerNotice(sMessage, token[2], token[0]);
                     } else {
                         callUnknownNotice(sMessage, token[2], token[0]);
@@ -525,6 +525,8 @@ public class ProcessMessage extends IRCProcessor {
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected ProcessMessage(IRCParser parser, ProcessingManager manager) { super(parser, manager); }
+    protected ProcessMessage(final IRCParser parser, final ProcessingManager manager) {
+        super(parser, manager);
+    }
 
 }

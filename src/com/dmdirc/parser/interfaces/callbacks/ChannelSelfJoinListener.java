@@ -27,7 +27,7 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
-/** 
+/**
  * Called When we join a channel.
  * We are NOT added as a channelclient until after the names reply
  */
