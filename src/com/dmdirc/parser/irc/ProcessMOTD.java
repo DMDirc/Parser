@@ -38,16 +38,16 @@ public class ProcessMOTD extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(String sParam, String[] token) {
-        if (sParam.equals("375")) {
-            callMOTDStart(token[token.length-1]);
-        } else if (sParam.equals("372")) {
-            callMOTDLine(token[token.length-1]);
+    public void process(final String sParam, final String[] token) {
+        if ("375".equals(sParam)) {
+            callMOTDStart(token[token.length - 1]);
+        } else if ("372".equals(sParam)) {
+            callMOTDLine(token[token.length - 1]);
         } else {
-            callMOTDEnd(sParam.equals("422"), token[token.length-1]);
+            callMOTDEnd("422".equals(sParam), token[token.length - 1]);
         }
     }
-    
+
     /**
      * Callback to all objects implementing the MOTDEnd Callback.
      *
@@ -59,7 +59,7 @@ public class ProcessMOTD extends IRCProcessor {
     protected boolean callMOTDEnd(final boolean noMOTD, final String data) {
         return getCallbackManager().getCallbackType(MotdEndListener.class).call(noMOTD, data);
     }
-    
+
     /**
      * Callback to all objects implementing the MOTDLine Callback.
      *
@@ -70,7 +70,7 @@ public class ProcessMOTD extends IRCProcessor {
     protected boolean callMOTDLine(final String data) {
         return getCallbackManager().getCallbackType(MotdLineListener.class).call(data);
     }
-    
+
     /**
      * Callback to all objects implementing the MOTDStart Callback.
      *
@@ -78,10 +78,10 @@ public class ProcessMOTD extends IRCProcessor {
      * @param data Incomming Line.
      * @return true if a method was called, false otherwise
      */
-    protected boolean callMOTDStart(String data) {
+    protected boolean callMOTDStart(final String data) {
         return getCallbackManager().getCallbackType(MotdStartListener.class).call(data);
     }
-    
+
     /**
      * What does this IRCProcessor handle.
      *
@@ -90,14 +90,16 @@ public class ProcessMOTD extends IRCProcessor {
     @Override
     public String[] handles() {
         return new String[]{"372", "375", "376", "422"};
-    } 
-    
+    }
+
     /**
      * Create a new instance of the IRCProcessor Object.
      *
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected ProcessMOTD(IRCParser parser, ProcessingManager manager) { super(parser, manager); }
+    protected ProcessMOTD(final IRCParser parser, final ProcessingManager manager) {
+        super(parser, manager);
+    }
 
 }

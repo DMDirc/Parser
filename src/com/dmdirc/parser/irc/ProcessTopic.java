@@ -41,7 +41,7 @@ public class ProcessTopic extends IRCProcessor {
         if (sParam.equals("332")) {
             iChannel = getChannel(token[3]);
             if (iChannel == null) { return; }
-            iChannel.setInternalTopic(token[token.length-1]);
+            iChannel.setInternalTopic(token[token.length - 1]);
         } else if (sParam.equals("333")) {
             if (token.length > 3) {
                 iChannel = getChannel(token[3]);
@@ -57,18 +57,20 @@ public class ProcessTopic extends IRCProcessor {
         } else {
             if (IRCParser.ALWAYS_UPDATECLIENT) {
                 final IRCClientInfo iClient = getClientInfo(token[0]);
-                if (iClient != null && iClient.getHostname().isEmpty()) {iClient.setUserBits(token[0], false); }
+                if (iClient != null && iClient.getHostname().isEmpty()) {
+                    iClient.setUserBits(token[0], false);
+                }
             }
             iChannel = getChannel(token[2]);
             if (iChannel == null) { return; }
             iChannel.setTopicTime(System.currentTimeMillis() / 1000);
             if (token[0].charAt(0) == ':') { token[0] = token[0].substring(1); }
             iChannel.setTopicUser(token[0]);
-            iChannel.setInternalTopic(token[token.length-1]);
+            iChannel.setInternalTopic(token[token.length - 1]);
             callChannelTopic(iChannel, false);
         }
     }
-    
+
     /**
      * Callback to all objects implementing the ChannelTopic Callback.
      *
@@ -81,7 +83,7 @@ public class ProcessTopic extends IRCProcessor {
         ((IRCChannelInfo) cChannel).setHadTopic();
         return getCallbackManager().getCallbackType(ChannelTopicListener.class).call(cChannel, bIsJoinTopic);
     }
-    
+
     /**
      * What does this IRCProcessor handle.
      *
@@ -90,14 +92,16 @@ public class ProcessTopic extends IRCProcessor {
     @Override
     public String[] handles() {
         return new String[]{"TOPIC", "332", "333"};
-    } 
-    
+    }
+
     /**
      * Create a new instance of the IRCProcessor Object.
      *
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected ProcessTopic(IRCParser parser, ProcessingManager manager) { super(parser, manager); }
+    protected ProcessTopic(final IRCParser parser, final ProcessingManager manager) {
+        super(parser, manager);
+    }
 
 }

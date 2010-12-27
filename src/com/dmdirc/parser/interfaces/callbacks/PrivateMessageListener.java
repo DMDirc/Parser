@@ -28,7 +28,7 @@ import com.dmdirc.parser.interfaces.SpecificCallback;
 import java.util.Date;
 
 /**
- * Called when a person sends a message to you directly (PM). 
+ * Called when a person sends a message to you directly (PM).
  * sHost is the hostname of the person sending the message. (Can be a server or a person)<br>
  * cClient is null if user is a server, or not on any common channel.
  */

@@ -27,7 +27,7 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
-/** 
+/**
  * Called when user modes are changed.
  * cClient represents the user who's modes were changed (should ALWAYS be us)<br>
  * sSetby is the host of the person who set the mode (usually us, may be an oper or server in some cases)

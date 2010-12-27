@@ -46,10 +46,10 @@ public class MyInfo {
      */
     private String altNickname;
 
-    /** Realname string to use */
+    /** Realname string to use. */
     private String realname;
 
-    /** Username to use, this doesn't matter when an ident server is running */
+    /** Username to use, this doesn't matter when an ident server is running. */
     private String username;
 
     /**

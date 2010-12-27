@@ -58,15 +58,15 @@ public class ProcessNickInUse extends IRCProcessor {
                     if (myParser.getStringConverter().equalsIgnoreCase(myParser.thinkNickname, myParser.me.getAltNickname())) {
                         myParser.thinkNickname = myParser.me.getNickname();
                     }
-                    myParser.getLocalClient().setNickname(myParser.me.getPrependChar()+myParser.thinkNickname);
+                    myParser.getLocalClient().setNickname(myParser.me.getPrependChar() + myParser.thinkNickname);
                 } else {
                     myParser.getLocalClient().setNickname(myParser.me.getAltNickname());
-                    myParser.triedAlt = true; 
+                    myParser.triedAlt = true;
                 }
             }
         }
     }
-    
+
     /**
      * Callback to all objects implementing the NickInUse Callback.
      *
@@ -77,7 +77,7 @@ public class ProcessNickInUse extends IRCProcessor {
     protected boolean callNickInUse(final String nickname) {
         return getCallbackManager().getCallbackType(NickInUseListener.class).call(nickname);
     }
-    
+
     /**
      * What does this IRCProcessor handle.
      *
@@ -87,7 +87,7 @@ public class ProcessNickInUse extends IRCProcessor {
     public String[] handles() {
         return new String[]{"433"};
     }
-    
+
     /**
      * Create a new instance of the ProcessNickInUse Object.
      *

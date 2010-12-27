@@ -36,9 +36,9 @@ public class ProcessNoticeAuth extends IRCProcessor {
      */
     @Override
     public void process(final String sParam, final String[] token) {
-        callNoticeAuth(token[token.length-1]);
+        callNoticeAuth(token[token.length - 1]);
     }
-    
+
     /**
      * Callback to all objects implementing the NoticeAuth Callback.
      *
@@ -49,7 +49,7 @@ public class ProcessNoticeAuth extends IRCProcessor {
     protected boolean callNoticeAuth(final String data) {
         return getCallbackManager().getCallbackType(AuthNoticeListener.class).call(data);
     }
-    
+
     /**
      * What does this IRCProcessor handle.
      *
@@ -58,8 +58,8 @@ public class ProcessNoticeAuth extends IRCProcessor {
     @Override
     public String[] handles() {
         return new String[]{"Notice Auth"};
-    } 
-    
+    }
+
     /**
      * Create a new instance of the ProcessNoticeAuth Object.
      *

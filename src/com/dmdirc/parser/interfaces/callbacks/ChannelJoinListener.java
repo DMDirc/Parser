@@ -29,7 +29,7 @@ import com.dmdirc.parser.interfaces.SpecificCallback;
 
 import java.util.Date;
 
-/** 
+/**
  * Called When we, or another client joins a channel.
  * This is called AFTER client has been added to channel as a ChannelClientInfo
  */

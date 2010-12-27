@@ -69,7 +69,7 @@ public abstract class CallbackManager<T extends Parser> {
         WallDesyncListener.class, WallopListener.class, WalluserListener.class,
         ServerNoticeListener.class, UnknownServerNoticeListener.class,
     };
-    
+
     /** Hashtable used to store the different types of callback known. */
     private final Map<Class<? extends CallbackInterface>, CallbackObject> callbackHash
             = new HashMap<Class<? extends CallbackInterface>, CallbackObject>();
@@ -88,7 +88,7 @@ public abstract class CallbackManager<T extends Parser> {
      *
      * @param parser The parser associated with this CallbackManager
      */
-    protected void initialise(T parser) {
+    protected void initialise(final T parser) {
         for (Class<?> type : CLASSES) {
             if (type.isAnnotationPresent(SpecificCallback.class)) {
                 addCallbackType(getSpecificCallbackObject(parser, type));
@@ -229,7 +229,7 @@ public abstract class CallbackManager<T extends Parser> {
         if (o == null) {
             throw new NullPointerException("CallbackInterface is null");
         }
-        
+
         ((CallbackObjectSpecific) getCallbackType(callback)).add(o, target);
     }
 

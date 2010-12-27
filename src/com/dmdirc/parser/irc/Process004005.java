@@ -47,13 +47,13 @@ public class Process004005 extends IRCProcessor {
                 myParser.h005Info.put("002IRCD", matcher.group(1));
             }
         } else if (sParam.equals("003")) {
-            myParser.h005Info.put("003IRCD", token[token.length-1]);
+            myParser.h005Info.put("003IRCD", token[token.length - 1]);
         } else if (sParam.equals("004")) {
             // 004
             final boolean multiParam = token.length > 4;
             int i = multiParam ? 4 : 1;
             final String[] bits = multiParam ? token : token[3].split(" ");
-            
+
             myParser.h005Info.put("004IRCD", bits[i++]);
             // some IRCDs put a timestamp where the usermodes should be
             // (issues 4140. 4181 and 4183) so check to see if this is numeric
@@ -66,7 +66,7 @@ public class Process004005 extends IRCProcessor {
         } else if (sParam.equals("005")) {
             // 005
             for (int i = 3; i < token.length; i++) {
-                String[] bits = token[i].split("=", 2);
+                final String[] bits = token[i].split("=", 2);
                 if (bits[0].isEmpty()) { continue; }
                 final boolean isNegation = (bits[0].charAt(0) == '-');
                 final String sKey = (isNegation) ? bits[0].substring(1).toUpperCase() : bits[0].toUpperCase();
@@ -87,7 +87,7 @@ public class Process004005 extends IRCProcessor {
                     } else if (sValue.equalsIgnoreCase("ascii")) {
                         limit = (byte) 0;
                     } else if (!sValue.equalsIgnoreCase("rfc1459")) {
-                        myParser.callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Unknown casemapping: '"+sValue+"' - assuming rfc1459", myParser.getLastLine()));
+                        myParser.callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Unknown casemapping: '" + sValue + "' - assuming rfc1459", myParser.getLastLine()));
                     }
                     final boolean limitChanged = (myParser.getStringConverter().getLimit() != limit);
                     myParser.updateCharArrays(limit);
@@ -105,15 +105,15 @@ public class Process004005 extends IRCProcessor {
                 } else if (sKey.equals("CHANMODES")) {
                     myParser.parseChanModes();
                 } else if (sKey.equals("NAMESX") || sKey.equals("UHNAMES")) {
-                    myParser.sendString("PROTOCTL "+sKey);
+                    myParser.sendString("PROTOCTL " + sKey);
                 } else if (sKey.equals("LISTMODE")) {
                     // Support for potential future decent mode listing in the protocol
-                    // 
+                    //
                     // See my proposal: http://shanemcc.co.uk/irc/#listmode
                     // Add listmode handler
                     String[] handles = new String[2];
                     handles[0] = sValue; // List mode item
-                    final String endValue = ""+(Integer.parseInt(sValue) + 1);
+                    final String endValue = "" + (Integer.parseInt(sValue) + 1);
                     myParser.h005Info.put("LISTMODEEND", endValue);
                     handles[1] = endValue; // List mode end
                     // Add listmode handlers
@@ -124,7 +124,7 @@ public class Process004005 extends IRCProcessor {
             }
         }
     }
-    
+
     /**
      * What does this IRCProcessor handle.
      *
@@ -133,8 +133,8 @@ public class Process004005 extends IRCProcessor {
     @Override
     public String[] handles() {
         return new String[]{"002", "003", "004", "005"};
-    } 
-    
+    }
+
     /**
      * Callback to all objects implementing the GotNetwork Callback.
      * This takes no params of its own, but works them out itself.
@@ -146,10 +146,10 @@ public class Process004005 extends IRCProcessor {
         final String networkName = myParser.networkName;
         final String ircdVersion = myParser.getServerSoftware();
         final String ircdType = myParser.getServerSoftwareType();
-        
+
         return getCallbackManager().getCallbackType(NetworkDetectedListener.class).call(networkName, ircdVersion, ircdType);
     }
-    
+
     /**
      * Create a new instance of the IRCProcessor Object.
      *

@@ -34,7 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A specific callback object for use with the IRC Parser
+ * A specific callback object for use with the IRC Parser.
  *
  * @since 0.6.3m2
  * @author chris
@@ -64,7 +64,7 @@ public class IRCCallbackObjectSpecific extends CallbackObjectSpecific {
 
     /** {@inheritDoc} */
     @Override
-    protected Class<?> getImplementation(Class<?> type) {
+    protected Class<?> getImplementation(final Class<?> type) {
         return IMPL_MAP.containsKey(type) ? IMPL_MAP.get(type) : type;
     }
 

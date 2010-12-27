@@ -44,7 +44,7 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
     private final IRCParser myParser;
     /** Reference to the channel object that owns this channelclient. */
     private final ChannelInfo myChannel;
-    /** A Map to allow applications to attach misc data to this object */
+    /** A Map to allow applications to attach misc data to this object. */
     private Map<Object, Object> myMap;
 
     /**

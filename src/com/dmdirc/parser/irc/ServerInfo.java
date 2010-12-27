@@ -58,11 +58,15 @@ public class ServerInfo {
     private String proxyUser = "";
     /** Proxy password if required. */
     private String proxyPass = "";
-    /** URI used to create this ServerInfo if applicable */
+    /** URI used to create this ServerInfo if applicable. */
     private URI uri = null;
 
-    /** Constructor using Default values. */
-    public ServerInfo() { }
+    /**
+     * Constructor using default values.
+     */
+    public ServerInfo() {
+        //Use default values
+    }
 
     /**
      * Constructor using specifed host, port and password, SSL/Proxy must be specifed separately.
@@ -127,7 +131,7 @@ public class ServerInfo {
             // stupid settings to setXXXX()
             // In this case, try to return any given URI, else a blank one.
             try {
-                return (uri != null) ? uri : new URI("");
+                return (uri == null) ? new URI("") : uri;
             } catch (URISyntaxException ex2) {
                 /* This can't ever happen. */
                 return null;
@@ -292,9 +296,15 @@ public class ServerInfo {
         }
 
         String channelString = uri.getPath();
-        if (uri.getRawQuery() != null && !uri.getRawQuery().isEmpty()) { channelString += "?" + uri.getRawQuery(); }
-        if (uri.getRawFragment() != null && !uri.getRawFragment().isEmpty()) { channelString += "#" + uri.getRawFragment(); }
-        if (channelString.startsWith("/")) { channelString = channelString.substring(1); }
+        if (uri.getRawQuery() != null && !uri.getRawQuery().isEmpty()) {
+            channelString += "?" + uri.getRawQuery();
+        }
+        if (uri.getRawFragment() != null && !uri.getRawFragment().isEmpty()) {
+            channelString += "#" + uri.getRawFragment();
+        }
+        if (channelString.charAt(0) == '/') {
+            channelString = channelString.substring(1);
+        }
 
         return channelString;
     }

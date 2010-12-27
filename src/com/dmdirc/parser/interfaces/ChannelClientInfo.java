@@ -36,7 +36,7 @@ public interface ChannelClientInfo extends Comparable<ChannelClientInfo> {
     /**
      * Retrieves the {@link ClientInfo} object which this object corresponds
      * to.
-     * 
+     *
      * @return The client info object which this object represents
      */
     ClientInfo getClient();

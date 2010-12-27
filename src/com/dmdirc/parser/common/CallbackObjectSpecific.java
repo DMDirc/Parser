@@ -147,14 +147,14 @@ public abstract class CallbackObjectSpecific extends CallbackObject {
         createFakeArgs(newArgs);
 
         for (CallbackInterface iface : new ArrayList<CallbackInterface>(callbackInfo)) {
-            if (type.isAnnotationPresent(SpecificCallback.class) &&
-                    ((args[0] instanceof ClientInfo
+            if (type.isAnnotationPresent(SpecificCallback.class)
+                    && ((args[0] instanceof ClientInfo
                     && !isValidUser(iface, ((ClientInfo) args[0]).getHostname()))
                     || (args[0] instanceof ChannelInfo
                     && !isValidChan(iface, (ChannelInfo) args[0]))
                     || (!(args[0] instanceof ClientInfo
-                    || args[0] instanceof ChannelInfo) &&
-                    args[args.length - 1] instanceof String
+                    || args[0] instanceof ChannelInfo)
+                    && args[args.length - 1] instanceof String
                     && !isValidUser(iface, (String) args[args.length - 1])))) {
                 continue;
             }

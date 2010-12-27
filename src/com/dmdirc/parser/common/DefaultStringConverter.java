@@ -34,19 +34,19 @@ public class DefaultStringConverter implements StringConverter {
 
     /** {@inheritDoc} */
     @Override
-    public String toLowerCase(String input) {
+    public String toLowerCase(final String input) {
         return input.toLowerCase();
     }
 
     /** {@inheritDoc} */
     @Override
-    public String toUpperCase(String input) {
+    public String toUpperCase(final String input) {
         return input.toUpperCase();
     }
 
     /** {@inheritDoc} */
     @Override
-    public boolean equalsIgnoreCase(String first, String second) {
+    public boolean equalsIgnoreCase(final String first, final String second) {
         return first.equalsIgnoreCase(second);
     }
 

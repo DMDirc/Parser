@@ -41,7 +41,7 @@ public class ProcessInvite extends IRCProcessor {
             callInvite(token[0].substring(1), token[3]);
         }
     }
-    
+
     /**
      * Callback to all objects implementing the Invite Callback.
      *
@@ -53,7 +53,7 @@ public class ProcessInvite extends IRCProcessor {
     protected boolean callInvite(final String userHost, final String channel) {
         return getCallbackManager().getCallbackType(InviteListener.class).call(userHost, channel);
     }
-    
+
     /**
      * What does this IRCProcessor handle.
      *
@@ -62,14 +62,16 @@ public class ProcessInvite extends IRCProcessor {
     @Override
     public String[] handles() {
         return new String[]{"INVITE"};
-    } 
-    
+    }
+
     /**
      * Create a new instance of the IRCProcessor Object.
      *
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected ProcessInvite(IRCParser parser, ProcessingManager manager) { super(parser, manager); }
+    protected ProcessInvite(final IRCParser parser, final ProcessingManager manager) {
+        super(parser, manager);
+    }
 
 }
