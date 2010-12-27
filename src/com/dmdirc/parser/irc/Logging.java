@@ -85,8 +85,12 @@ public class Logging {
      * @return The instance of Logging
      */
     public static Logging getLogging() {
-        if (me == null) { me = new Logging(); }
-        return me;
+        synchronized (Logging.class) {
+            if (me == null) {
+                me = new Logging();
+            }
+            return me;
+        }
     }
 
     /** Create a new Logging. */

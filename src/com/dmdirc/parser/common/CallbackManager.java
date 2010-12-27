@@ -24,7 +24,7 @@ package com.dmdirc.parser.common;
 
 import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.SpecificCallback;
-import com.dmdirc.parser.interfaces.callbacks.*;
+import com.dmdirc.parser.interfaces.callbacks.*; //NOPMD
 
 import java.util.HashMap;
 import java.util.Map;
