@@ -32,7 +32,7 @@ import com.dmdirc.parser.common.SystemEncoder;
 import com.dmdirc.parser.interfaces.Encoder;
 import com.dmdirc.parser.interfaces.EncodingParser;
 import com.dmdirc.parser.interfaces.SecureParser;
-import com.dmdirc.parser.interfaces.callbacks.*;
+import com.dmdirc.parser.interfaces.callbacks.*; //NOPMD
 import com.dmdirc.parser.irc.IRCReader.ReadLine;
 import com.dmdirc.parser.irc.outputqueue.OutputQueue;
 
