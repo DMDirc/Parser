@@ -78,7 +78,9 @@ public class IRCReader implements Closeable {
             if (lastChr == ' ' && chr == ':' && paramOffset == -1) {
                 // We've found the last param
                 paramOffset = offset;
-            } else if (lastChr == '\r' && chr == '\n') {
+            } else if (chr == '\r') {
+                continue;
+            } else if (chr == '\n') {
                 // End of the line
                 break;
             }
