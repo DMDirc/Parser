@@ -77,7 +77,7 @@ public class Logging {
     private final boolean isAvailable;
 
     /** "Log" object if available. */
-    private Object log = null;
+    private Object log;
 
     /**
      * Get an instance of Logging.
@@ -85,8 +85,12 @@ public class Logging {
      * @return The instance of Logging
      */
     public static Logging getLogging() {
-        if (me == null) { me = new Logging(); }
-        return me;
+        synchronized (Logging.class) {
+            if (me == null) {
+                me = new Logging();
+            }
+            return me;
+        }
     }
 
     /** Create a new Logging. */
