@@ -74,6 +74,7 @@ public class IRCReader implements Closeable {
 
         while (offset < 512 && (chr = stream.read()) > -1) {
             if (chr == '\r') {
+                offset++;
                 continue;
             }
             
