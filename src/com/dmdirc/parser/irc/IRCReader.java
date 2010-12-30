@@ -75,6 +75,9 @@ public class IRCReader implements Closeable {
         while (offset < 512 && (chr = stream.read()) > -1) {
             if (chr == '\r') {
                 continue;
+            } else if (chr == '\n') {
+                // End of the line
+                break;
             }
             
             line[offset++] = (byte) chr;
@@ -82,9 +85,6 @@ public class IRCReader implements Closeable {
             if (lastChr == ' ' && chr == ':' && paramOffset == -1) {
                 // We've found the last param
                 paramOffset = offset;
-            } else if (chr == '\n') {
-                // End of the line
-                break;
             }
 
             lastChr = chr;
@@ -95,7 +95,7 @@ public class IRCReader implements Closeable {
             return null;
         }
 
-        return processLine(line, offset - 2, paramOffset);
+        return processLine(line, offset, paramOffset);
     }
 
     /**
