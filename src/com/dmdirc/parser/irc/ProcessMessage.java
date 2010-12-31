@@ -154,7 +154,7 @@ public class ProcessMessage extends IRCProcessor {
 
         iClient = getClientInfo(token[0]);
         // Facilitate DMDIRC Formatter
-        if ((IRCParser.ALWAYS_UPDATECLIENT && iClient != null) && iClient
+        if ((IRCParser.isAlwaysUpdateClient() && iClient != null) && iClient
                 .getHostname().isEmpty()) {
             iClient.setUserBits(token[0], false);
         }

@@ -27,43 +27,54 @@ import com.dmdirc.parser.interfaces.callbacks.NickInUseListener;
 /**
  * Process a NickInUse message.
  * Parser implements handling of this if Pre-001 and no other handler found,
- * adding the NickInUse handler (addNickInUse) after 001 is prefered over before.<br><br>
- * <br>
- * If the first nickname is in use, and a NickInUse message is recieved before 001, we
- * will attempt to use the altnickname instead.<br>
- * If this also fails, we will start prepending _ (or the value of me.cPrepend) to the main nickname.
+ * adding the NickInUse handler (addNickInUse) after 001 is prefered over
+ * before.<br><br><br>
+ * If the first nickname is in use, and a NickInUse message is recieved before
+ * 001, we will attempt to use the altnickname instead.<br>
+ * If this also fails, we will start prepending _ (or the value of me.cPrepend)
+ * to the main nickname.
  */
 public class ProcessNickInUse extends IRCProcessor {
     /**
      * Process a NickInUse message.
      * Parser implements handling of this if Pre-001 and no other handler found,
-     * adding the NickInUse handler (addNickInUse) after 001 is prefered over before.<br><br>
+     * adding the NickInUse handler (addNickInUse) after 001 is prefered
+     * over before.<br><br>
      * <br>
-     * If the first nickname is in use, and a NickInUse message is recieved before 001, we
+     * If the first nickname is in use, and a NickInUse message is recieved
+     * before 001, we
      * will attempt to use the altnickname instead.<br>
-     * If this also fails, we will start prepending _ (or the value of me.cPrepend) to the main nickname.
+     * If this also fails, we will start prepending _ (or the value of
+     * me.cPrepend) to the main nickname.
      *
      * @param sParam Type of line to process ("433")
      * @param token IRCTokenised line to process
      */
     @Override
     public void process(final String sParam, final String[] token) {
-        if (!callNickInUse(token[3])) {
-            // Manually handle nick in use.
-            callDebugInfo(IRCParser.DEBUG_INFO, "No Nick in use Handler.");
-            if (!myParser.got001) {
-                callDebugInfo(IRCParser.DEBUG_INFO, "Using inbuilt handler");
-                // If this is before 001 we will try and get a nickname, else we will leave the nick as-is
-                if (myParser.triedAlt) {
-                    if (myParser.getStringConverter().equalsIgnoreCase(myParser.thinkNickname, myParser.me.getAltNickname())) {
-                        myParser.thinkNickname = myParser.me.getNickname();
-                    }
-                    myParser.getLocalClient().setNickname(myParser.me.getPrependChar() + myParser.thinkNickname);
-                } else {
-                    myParser.getLocalClient().setNickname(myParser.me.getAltNickname());
-                    myParser.triedAlt = true;
-                }
+        if (callNickInUse(token[3])) {
+            return;
+        }
+        // Manually handle nick in use.
+        callDebugInfo(IRCParser.DEBUG_INFO, "No Nick in use Handler.");
+        if (myParser.got001) {
+            return;
+        }
+        callDebugInfo(IRCParser.DEBUG_INFO, "Using inbuilt handler");
+        // If this is before 001 we will try and get a nickname,
+        // else we will leave the nick as-is
+        if (myParser.triedAlt) {
+            if (myParser.getStringConverter().equalsIgnoreCase(
+                    myParser.thinkNickname,
+                    myParser.getMyInfo().getAltNickname())) {
+                myParser.thinkNickname = myParser.getMyInfo().getNickname();
             }
+            myParser.getLocalClient().setNickname(myParser.getMyInfo()
+                    .getPrependChar() + myParser.thinkNickname);
+        } else {
+            myParser.getLocalClient().setNickname(myParser.getMyInfo()
+                    .getAltNickname());
+            myParser.triedAlt = true;
         }
     }
 
@@ -75,7 +86,8 @@ public class ProcessNickInUse extends IRCProcessor {
      * @return true if a method was called, false otherwise
      */
     protected boolean callNickInUse(final String nickname) {
-        return getCallbackManager().getCallbackType(NickInUseListener.class).call(nickname);
+        return getCallbackManager().getCallbackType(NickInUseListener.class)
+                .call(nickname);
     }
 
     /**
@@ -94,6 +106,9 @@ public class ProcessNickInUse extends IRCProcessor {
      * @param parser IRCParser That owns this object
      * @param manager ProcessingManager that is in charge of this object
      */
-    protected ProcessNickInUse(final IRCParser parser, final ProcessingManager manager) { super(parser, manager); }
+    protected ProcessNickInUse(final IRCParser parser,
+            final ProcessingManager manager) {
+        super(parser, manager);
+    }
 
 }

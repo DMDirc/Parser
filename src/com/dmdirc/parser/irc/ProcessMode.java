@@ -126,8 +126,8 @@ public class ProcessMode extends IRCProcessor {
 
         setterCCI = iChannel.getChannelClient(token[0]);
         // Facilitate dmdirc formatter
-        if ((IRCParser.ALWAYS_UPDATECLIENT && setterCCI != null) && setterCCI
-                .getClient().getHostname().isEmpty()) {
+        if ((IRCParser.isAlwaysUpdateClient() && setterCCI != null)
+                && setterCCI.getClient().getHostname().isEmpty()) {
             setterCCI.getClient().setUserBits(token[0], false);
         }
 
@@ -194,12 +194,12 @@ public class ProcessMode extends IRCProcessor {
                     }
                 } else {
 
-                    if ((bPositive || nValue == IRCParser.MODE_LIST || ((nValue & IRCParser.MODE_UNSET) == IRCParser.MODE_UNSET)) && (sModestr.length <= nParam)) {
+                    if ((bPositive || IRCParser.isListMode(nValue) || IRCParser.isDoubleParameterMode(nValue)) && (sModestr.length <= nParam)) {
                         myParser.callErrorInfo(new ParserError(ParserError.ERROR_FATAL + ParserError.ERROR_USER, "Broken Modes. Parameter required but not given.", myParser.getLastLine()));
                         continue;
                     }
 
-                    if (nValue == IRCParser.MODE_LIST) {
+                    if (IRCParser.isListMode(nValue)) {
                         // List Mode
                         sModeParam = sModestr[nParam++];
                         sNonUserModeStrParams = sNonUserModeStrParams + " " + sModeParam;
@@ -222,7 +222,7 @@ public class ProcessMode extends IRCProcessor {
                             }
                         } else {
                             // -Mode - parameter isn't always needed, we need to check
-                            if ((nValue & IRCParser.MODE_UNSET) == IRCParser.MODE_UNSET) {
+                            if (IRCParser.isDoubleParameterMode(nValue)) {
                                 sModeParam = sModestr[nParam++];
                                 sNonUserModeStrParams = sNonUserModeStrParams + " " + sModeParam;
                             } else {
