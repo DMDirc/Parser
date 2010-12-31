@@ -37,38 +37,76 @@ public class ProcessTopic extends IRCProcessor {
      */
     @Override
     public void process(final String sParam, final String[] token) {
-        IRCChannelInfo iChannel;
-        if (sParam.equals("332")) {
-            iChannel = getChannel(token[3]);
-            if (iChannel == null) { return; }
-            iChannel.setInternalTopic(token[token.length - 1]);
-        } else if (sParam.equals("333")) {
-            if (token.length > 3) {
-                iChannel = getChannel(token[3]);
-                if (iChannel == null) { return; }
-                if (token.length > 4) {
-                    iChannel.setTopicUser(token[4]);
-                    if (token.length > 5) {
-                        iChannel.setTopicTime(Long.parseLong(token[5]));
-                    }
-                }
-                callChannelTopic(iChannel, true);
-            }
+        if ("332".equals(sParam)) {
+            handle332(token);
+        } else if ("333".equals(sParam)) {
+            handle333(token);
         } else {
-            if (IRCParser.ALWAYS_UPDATECLIENT) {
-                final IRCClientInfo iClient = getClientInfo(token[0]);
-                if (iClient != null && iClient.getHostname().isEmpty()) {
-                    iClient.setUserBits(token[0], false);
-                }
-            }
-            iChannel = getChannel(token[2]);
-            if (iChannel == null) { return; }
-            iChannel.setTopicTime(System.currentTimeMillis() / 1000);
-            if (token[0].charAt(0) == ':') { token[0] = token[0].substring(1); }
-            iChannel.setTopicUser(token[0]);
-            iChannel.setInternalTopic(token[token.length - 1]);
-            callChannelTopic(iChannel, false);
+            handleTopic(token);
         }
+    }
+
+    /**
+     * Handles topic time being set.
+     *
+     * @param token Line tokens
+     */
+    private void handle333(final String[] token) {
+        if (token.length < 3) {
+            return;
+        }
+        final IRCChannelInfo channel = getChannel(token[3]);
+        if (channel == null) {
+            return;
+        }
+        if (token.length > 4) {
+            channel.setTopicUser(token[4]);
+            if (token.length > 5) {
+                channel.setTopicTime(Long.parseLong(token[5]));
+            }
+        }
+        callChannelTopic(channel, true);
+    }
+
+    /**
+     * Handles topic being set.
+     *
+     * @param token Line tokens
+     */
+    private void handle332(final String[] token) {
+        if (token.length < 3) {
+            return;
+        }
+        final IRCChannelInfo channel = getChannel(token[3]);
+        if (channel == null) {
+            return;
+        }
+        channel.setInternalTopic(token[token.length - 1]);
+    }
+
+    /**
+     * Handles setting of the topic.
+     *
+     * @param token Line tokens
+     */
+    private void handleTopic(final String[] token) {
+        if (IRCParser.isAlwaysUpdateClient()) {
+            final IRCClientInfo client = getClientInfo(token[0]);
+            if (client != null && client.getHostname().isEmpty()) {
+                client.setUserBits(token[0], false);
+            }
+        }
+        final IRCChannelInfo channel = getChannel(token[2]);
+        if (channel == null) {
+            return;
+        }
+        channel.setTopicTime(System.currentTimeMillis() / 1000);
+        if (token[0].charAt(0) == ':') {
+            token[0] = token[0].substring(1);
+        }
+        channel.setTopicUser(token[0]);
+        channel.setInternalTopic(token[token.length - 1]);
+        callChannelTopic(channel, false);
     }
 
     /**
@@ -76,12 +114,15 @@ public class ProcessTopic extends IRCProcessor {
      *
      * @see IChannelTopic
      * @param cChannel Channel that topic was set on
-     * @param bIsJoinTopic True when getting topic on join, false if set by user/server
+     * @param bIsJoinTopic True when getting topic on join, false if set by
+     *        user/server
      * @return true if a method was called, false otherwise
      */
-    protected boolean callChannelTopic(final ChannelInfo cChannel, final boolean bIsJoinTopic) {
+    protected boolean callChannelTopic(final ChannelInfo cChannel,
+            final boolean bIsJoinTopic) {
         ((IRCChannelInfo) cChannel).setHadTopic();
-        return getCallbackManager().getCallbackType(ChannelTopicListener.class).call(cChannel, bIsJoinTopic);
+        return getCallbackManager().getCallbackType(ChannelTopicListener.class)
+                .call(cChannel, bIsJoinTopic);
     }
 
     /**
@@ -100,7 +141,8 @@ public class ProcessTopic extends IRCProcessor {
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected ProcessTopic(final IRCParser parser, final ProcessingManager manager) {
+    protected ProcessTopic(final IRCParser parser,
+            final ProcessingManager manager) {
         super(parser, manager);
     }
 

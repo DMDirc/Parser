@@ -69,7 +69,7 @@ public class Process001 extends IRCProcessor {
         callServerReady();
         myParser.startPingTimer();
 
-        final String channels = myParser.server.getChannels();
+        final String channels = myParser.getServerInfo().getChannels();
         if (channels != null) {
             myParser.joinChannel(channels);
         }

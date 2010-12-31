@@ -168,7 +168,7 @@ public class IRCChannelInfo implements ChannelInfo {
         int i = 0;
         for (Character cTemp : myParser.chanModesOther.keySet()) {
             final int nTemp = myParser.chanModesOther.get(cTemp);
-            if (nTemp == IRCParser.MODE_LIST) {
+            if (IRCParser.isModeList(nTemp)) {
                 if (!isOpped && serverType.isOpOnly(cTemp)) {
                     // IRCD doesn't allow non-ops to ask for these modes.
                     continue;
@@ -498,10 +498,14 @@ public class IRCChannelInfo implements ChannelInfo {
      * @param givenItem ChannelListModeItem representing the item
      * @param bAdd Add or remove the value. (true for add, false for remove)
      */
-    protected void setListModeParam(final Character givenMode, final ChannelListModeItem givenItem, final boolean bAdd) {
+    protected void setListModeParam(final Character givenMode,
+            final ChannelListModeItem givenItem, final boolean bAdd) {
         Character cMode = givenMode;
         ChannelListModeItem newItem = givenItem;
-        if (!myParser.chanModesOther.containsKey(cMode) || myParser.chanModesOther.get(cMode) != IRCParser.MODE_LIST) { return; }
+        if (!myParser.chanModesOther.containsKey(cMode)
+                || !IRCParser.isModeList(myParser.chanModesOther.get(cMode))) {
+            return;
+        }
 
         // Hyperion sucks.
         if (cMode == 'b' || cMode == 'q') {
@@ -513,7 +517,9 @@ public class IRCChannelInfo implements ChannelInfo {
                     cMode = 'b';
                 }
                 if (givenItem.getItem().charAt(0) == '%') {
-                    newItem = new ChannelListModeItem(givenItem.getItem().substring(1), givenItem.getOwner(), givenItem.getTime());
+                    newItem = new ChannelListModeItem(givenItem.getItem()
+                            .substring(1), givenItem.getOwner(),
+                            givenItem.getTime());
                 }
             }
         }
@@ -538,7 +544,10 @@ public class IRCChannelInfo implements ChannelInfo {
     /** {@inheritDoc} */
         @Override
     public Collection<ChannelListModeItem> getListMode(final char mode) {
-        if (!myParser.chanModesOther.containsKey(mode) || myParser.chanModesOther.get(mode) != IRCParser.MODE_LIST) { return null; }
+        if (!myParser.chanModesOther.containsKey(mode)
+                || !IRCParser.isModeList(myParser.chanModesOther.get(mode))) {
+            return null;
+        }
 
         if (!hListModes.containsKey(mode)) {
             hListModes.put(mode, new ArrayList<ChannelListModeItem>());
@@ -585,10 +594,11 @@ public class IRCChannelInfo implements ChannelInfo {
 
     /** {@inheritDoc} */
     @Override
-    public void alterMode(final boolean add, final Character mode, final String parameter) {
+    public void alterMode(final boolean add, final Character mode,
+            final String parameter) {
         int modecount = 1;
         int modeint = 0;
-        String modestr = "";
+
         if (myParser.h005Info.containsKey("MODES")) {
             try {
                 modecount = Integer.parseInt(myParser.h005Info.get("MODES"));
@@ -602,46 +612,56 @@ public class IRCChannelInfo implements ChannelInfo {
         }
         if (!myParser.isUserSettable(mode)) { return; }
 
-        modestr = ((add) ? "+" : "-") + mode;
+        final StringBuilder modestr = new StringBuilder();
+        modestr.append((add ? '+' : '-')).append(mode);
         if (myParser.chanModesBool.containsKey(mode)) {
-            final String teststr = ((add) ? "-" : "+") + mode;
+            final String teststr = (add ? "-" : "+") + mode;
             if (lModeQueue.contains(teststr)) {
                 lModeQueue.remove(teststr);
                 return;
-            } else if (lModeQueue.contains(modestr)) {
+            } else if (lModeQueue.contains(modestr.toString())) {
                 return;
             }
         } else {
             // May need a param
             if (myParser.prefixModes.containsKey(mode)) {
-                modestr = modestr + " " + parameter;
+                modestr.append(' ').append(parameter);
             } else if (myParser.chanModesOther.containsKey(mode)) {
                 modeint = myParser.chanModesOther.get(mode);
-                if ((modeint & IRCParser.MODE_LIST) == IRCParser.MODE_LIST) {
-                    modestr = modestr + " " + parameter;
-                } else if (!add && ((modeint & IRCParser.MODE_UNSET) == IRCParser.MODE_UNSET)) {
-                    modestr = modestr + " " + parameter;
-                } else if (add && ((modeint & IRCParser.MODE_SET) == IRCParser.MODE_SET)) {
+                if (IRCParser.isModeListSet(modeint)) {
+                    modestr.append(' ').append(parameter);
+                } else if (!add && IRCParser.isModeSetSet(modeint)) {
+                    modestr.append(' ').append(parameter);
+                } else if (add && IRCParser.isModeSetSet(modeint)) {
                     // Does mode require a param to unset aswell?
                     // We might need to queue an unset first
-                    if (((modeint & IRCParser.MODE_UNSET) == IRCParser.MODE_UNSET)) {
+                    if (IRCParser.isModeUnSetSet(modeint)) {
                         final String existingParam = getMode(mode);
                         if (!existingParam.isEmpty()) {
-                            final String reverseModeStr = "-" + mode + " " + existingParam;
+                            final String reverseModeStr = "-" + mode + " "
+                                    + existingParam;
 
-                            myParser.callDebugInfo(IRCParser.DEBUG_INFO, "Queueing mode: %s", reverseModeStr);
+                            myParser.callDebugInfo(IRCParser.DEBUG_INFO,
+                                    "Queueing mode: %s", reverseModeStr);
                             lModeQueue.add(reverseModeStr);
-                            if (lModeQueue.size() == modecount) { flushModes(); }
+                            if (lModeQueue.size() == modecount) {
+                                flushModes();
+                            }
                         }
                     }
-                    modestr = modestr + " " + parameter;
+                    modestr.append(" ").append(parameter);
                 }
             } else {
-                myParser.callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Trying to alter unknown mode.  positive: '" + add + "' | mode: '" + mode + "' | parameter: '" + parameter + "' ", ""));
+                myParser.callErrorInfo(new ParserError(
+                        ParserError.ERROR_WARNING,
+                        "Trying to alter unknown mode.  positive: '" + add
+                        + "' | mode: '" + mode + "' | parameter: '"
+                        + parameter + "' ", ""));
             }
         }
-        myParser.callDebugInfo(IRCParser.DEBUG_INFO, "Queueing mode: %s", modestr);
-        lModeQueue.add(modestr);
+        myParser.callDebugInfo(IRCParser.DEBUG_INFO, "Queueing mode: %s",
+                modestr.toString());
+        lModeQueue.add(modestr.toString());
         if (lModeQueue.size() == modecount) { flushModes(); }
     }
 
