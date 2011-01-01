@@ -299,10 +299,12 @@ public class ServerInfo {
         if (uri.getRawQuery() != null && !uri.getRawQuery().isEmpty()) {
             channelString += "?" + uri.getRawQuery();
         }
+
         if (uri.getRawFragment() != null && !uri.getRawFragment().isEmpty()) {
             channelString += "#" + uri.getRawFragment();
         }
-        if (channelString.startsWith("/")) {
+
+        if (!channelString.isEmpty() && channelString.charAt(0) == '/') {
             channelString = channelString.substring(1);
         }
 
