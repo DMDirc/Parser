@@ -965,10 +965,9 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
 
     /** {@inheritDoc} */
     @Override
-    public IRCChannelInfo getChannel(String channel) {
+    public IRCChannelInfo getChannel(final String channel) {
         synchronized (channelList) {
-            channel = getStringConverter().toLowerCase(channel);
-            if (channelList.containsKey(channel)) { return channelList.get(channel); } else { return null; }
+            return channelList.get(getStringConverter().toLowerCase(channel));
         }
     }
 
