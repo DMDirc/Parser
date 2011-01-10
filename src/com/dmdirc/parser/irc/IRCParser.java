@@ -61,6 +61,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -232,6 +233,15 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
 
     /** This is the socket used for reading from/writing to the IRC server. */
     private Socket socket;
+
+    /**
+     * The underlying socket used for reading/writing to the IRC server.
+     * For normal sockets this will be the same as {@link #socket} but for SSL
+     * connections this will be the underlying {@link Socket} while
+     * {@link #socket} will be an {@link SSLSocket}.
+     */
+    private Socket rawSocket;
+
     /** Used for writing to the server. */
     private OutputQueue out;
     /** The encoder to use to encode incoming lines. */
@@ -774,6 +784,8 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
             socket.connect(new InetSocketAddress(server.getHost(), server.getPort()), connectTimeout);
         }
 
+        rawSocket = socket;
+
         if (server.getSSL()) {
             callDebugInfo(DEBUG_SOCKET, "Server is SSL.");
 
@@ -784,7 +796,14 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
 
             final SSLSocketFactory socketFactory = sc.getSocketFactory();
             socket = socketFactory.createSocket(socket, server.getHost(), server.getPort(), false);
-            
+
+            // Manually start a handshake so we get proper SSL errors here,
+            // and so that we can control the connection timeout
+            final int timeout = socket.getSoTimeout();
+            socket.setSoTimeout(10000);
+            ((SSLSocket) socket).startHandshake();
+            socket.setSoTimeout(timeout);
+
             currentSocketState = SocketState.OPENING;
         }
 
@@ -902,7 +921,12 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
     /** Close socket on destroy. */
     @Override
     protected void finalize() throws Throwable {
-        try { socket.close(); }
+        try {
+            // See note at disconnect() method for why we close rawSocket.
+            if (rawSocket != null) {
+                rawSocket.close();
+            }
+        }
         catch (IOException e) {
             callDebugInfo(DEBUG_SOCKET, "Could not close socket");
         }
@@ -1713,7 +1737,13 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
         }
 
         try {
-            if (socket != null) { socket.close(); }
+            // SSLSockets try to close nicely and read data from the socket,
+            // which seems to hang indefinitely in some circumstances. We don't
+            // like indefinite hangs, so just close the underlying socket
+            // direct.
+            if (rawSocket != null) {
+                rawSocket.close();
+            }
         } catch (IOException e) {
             /* Do Nothing */
         } finally {
