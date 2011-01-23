@@ -332,7 +332,7 @@ public interface Parser extends Runnable {
      *
      * @return This parser's callback manager
      */
-    CallbackManager<? extends Parser> getCallbackManager();
+    CallbackManager getCallbackManager();
 
     /**
      * Retrieves the latency between the parser and the server in milliseconds.

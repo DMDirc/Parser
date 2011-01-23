@@ -39,12 +39,9 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * CallbackObject.
  * Superclass for all callback types.
- *
- * @author            Shane Mc Cormack
  */
-public abstract class CallbackObject {
+public class CallbackObject {
 
     /** The type of callback that this object is operating with. */
     protected final Class<? extends CallbackInterface> type;
@@ -57,7 +54,10 @@ public abstract class CallbackObject {
     protected Parser myParser;
 
     /** Reference to the CallbackManager in charge of this callback. */
-    protected CallbackManager<?> myManager;
+    protected CallbackManager myManager;
+    
+    /** A map of interfaces to their concrete implementations. */
+    private final Map<Class<?>, Class<?>> implementationMap;
 
     /**
      * Create a new instance of the Callback Object.
@@ -65,13 +65,17 @@ public abstract class CallbackObject {
      * @param parser Parser That owns this callback
      * @param manager CallbackManager that is in charge of this callback
      * @param type The type of callback to use
-     * @since 0.6.3m1
+     * @param implementationMap A map of interfaces to their parser-specific
+     * implementations
+     * @since 0.6.6
      */
-    public CallbackObject(final Parser parser, final CallbackManager<?> manager,
-            final Class<? extends CallbackInterface> type) {
+    public CallbackObject(final Parser parser, final CallbackManager manager,
+            final Class<? extends CallbackInterface> type,
+            final Map<Class<?>, Class<?>> implementationMap) {
         this.myParser = parser;
         this.myManager = manager;
         this.type = type;
+        this.implementationMap = implementationMap;
     }
 
     /**
@@ -305,6 +309,8 @@ public abstract class CallbackObject {
      * @param type The type to be instansiated
      * @return A concrete implementation of that type
      */
-    protected abstract Class<?> getImplementation(final Class<?> type);
+    protected Class<?> getImplementation(final Class<?> type) {
+        return implementationMap.containsKey(type) ? implementationMap.get(type) : type;
+    }
 
 }

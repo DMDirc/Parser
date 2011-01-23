@@ -33,12 +33,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * CallbackObjectSpecific.
  * Superclass for all callback types that have a "specific" target.
- *
- * @author            Shane Mc Cormack
  */
-public abstract class CallbackObjectSpecific extends CallbackObject {
+public class CallbackObjectSpecific extends CallbackObject {
 
     /** Hashtable for storing specific information for callback. */
     protected final Map<CallbackInterface, String> specificData
@@ -50,11 +47,13 @@ public abstract class CallbackObjectSpecific extends CallbackObject {
      * @param parser Parser That owns this callback
      * @param manager CallbackManager that is in charge of this callback
      * @param type The type of callback to use
+     * @param implementationMap A map of interfaces to their parser-specific
      * @since 0.6.3m1
      */
-    public CallbackObjectSpecific(final Parser parser, final CallbackManager<?> manager,
-            final Class<? extends CallbackInterface> type) {
-        super(parser, manager, type);
+    public CallbackObjectSpecific(final Parser parser, final CallbackManager manager,
+            final Class<? extends CallbackInterface> type,
+            final Map<Class<?>, Class<?>> implementationMap) {
+        super(parser, manager, type, implementationMap);
     }
 
     /**
@@ -91,7 +90,9 @@ public abstract class CallbackObjectSpecific extends CallbackObject {
      * @param hostname The hostname to be parsed
      * @return The translated hostname
      */
-    protected abstract String translateHostname(final String hostname);
+    protected String translateHostname(final String hostname) {
+        return myParser.parseHostmask(hostname)[0];
+    }
 
     // We override the default add method to make sure that any add with no
     // specifics will have the specific data removed.

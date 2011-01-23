@@ -30,15 +30,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * IRC Parser Callback Manager.
+ * Parser Callback Manager.
  * Manages adding/removing/calling callbacks.
- *
- * @param <T> The type of parser which this manager managers callbacks for
- * @author            Shane Mc Cormack
  */
-public abstract class CallbackManager<T extends Parser> {
+public class CallbackManager {
 
-    static final Class[] CLASSES = {
+    private static final Class[] CLASSES = {
         AwayStateListener.class, OtherAwayStateListener.class,
         ChannelOtherAwayStateListener.class, ChannelActionListener.class,
         ChannelCtcpListener.class, ChannelCtcpReplyListener.class,
@@ -60,7 +57,7 @@ public abstract class CallbackManager<T extends Parser> {
         PingSuccessListener.class, PingSentListener.class,
         PrivateActionListener.class, PrivateCtcpListener.class,
         PrivateCtcpReplyListener.class, PrivateMessageListener.class,
-        PrivateNoticeListener.class, Post005Listener.class, QuitListener.class,
+        PrivateNoticeListener.class, QuitListener.class,
         ServerErrorListener.class, ServerReadyListener.class,
         SocketCloseListener.class, UnknownActionListener.class,
         UnknownCtcpListener.class, UnknownCtcpReplyListener.class,
@@ -73,13 +70,18 @@ public abstract class CallbackManager<T extends Parser> {
     /** Hashtable used to store the different types of callback known. */
     private final Map<Class<? extends CallbackInterface>, CallbackObject> callbackHash
             = new HashMap<Class<? extends CallbackInterface>, CallbackObject>();
+    
+    private final Map<Class<?>, Class<?>> implementationMap;
 
     /**
      * Constructor to create a CallbackManager.
      *
      * @param parser Parser that owns this callback manager.
+     * @param implementationMap A map of implementations to use
      */
-    protected CallbackManager(final T parser) {
+    public CallbackManager(final Parser parser, final Map<Class<?>, Class<?>> implementationMap) {
+        this.implementationMap = implementationMap;
+        
         initialise(parser);
     }
 
@@ -88,7 +90,7 @@ public abstract class CallbackManager<T extends Parser> {
      *
      * @param parser The parser associated with this CallbackManager
      */
-    protected void initialise(final T parser) {
+    protected void initialise(final Parser parser) {
         for (Class<?> type : CLASSES) {
             if (type.isAnnotationPresent(SpecificCallback.class)) {
                 addCallbackType(getSpecificCallbackObject(parser, type));
@@ -105,7 +107,9 @@ public abstract class CallbackManager<T extends Parser> {
      * @param type The type of callback to create an object for
      * @return The relevant CallbackObject
      */
-    protected abstract CallbackObject getCallbackObject(T parser, Class<?> type);
+    protected CallbackObject getCallbackObject(Parser parser, Class<?> type) {
+        return new CallbackObject(parser, this, type.asSubclass(CallbackInterface.class), implementationMap);
+    }
 
     /**
      * Retrieves a relevant {@link CallbackObjectSpecific} for the specified type.
@@ -114,7 +118,9 @@ public abstract class CallbackManager<T extends Parser> {
      * @param type The type of callback to create an object for
      * @return The relevant CallbackObject
      */
-    protected abstract CallbackObjectSpecific getSpecificCallbackObject(T parser, Class<?> type);
+    protected CallbackObjectSpecific getSpecificCallbackObject(Parser parser, Class<?> type) {
+        return new CallbackObjectSpecific(parser, this, type.asSubclass(CallbackInterface.class), implementationMap);
+    }
 
     /**
      * Add new callback type.
