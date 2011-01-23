@@ -123,7 +123,7 @@ public abstract class IRCProcessor {
      *
      * @return Reference to the CallbackManager
      */
-    protected final CallbackManager<?> getCallbackManager() {
+    protected final CallbackManager getCallbackManager() {
         return myParser.getCallbackManager();
     }
 

@@ -20,52 +20,63 @@
  * SOFTWARE.
  */
 
-package com.dmdirc.parser.irc;
+package com.dmdirc.parser.common;
 
-import com.dmdirc.parser.common.CallbackManager;
-import com.dmdirc.parser.common.CallbackObjectSpecific;
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.ClientInfo;
-import com.dmdirc.parser.interfaces.LocalClientInfo;
-import com.dmdirc.parser.interfaces.Parser;
-import com.dmdirc.parser.interfaces.callbacks.CallbackInterface;
+
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A specific callback object for use with the IRC Parser.
- *
- * @since 0.6.3m2
- * @author chris
+ * Provides a basic implementation of the {@link ChannelClientInfo} interface.
  */
-public class IRCCallbackObjectSpecific extends CallbackObjectSpecific {
+public abstract class BaseChannelClientInfo implements ChannelClientInfo {
+    
+    /** A map for random data associated with the client to be stored in. */
+    private final Map<Object, Object> map = new HashMap<Object, Object>();
+    
+    /** The channel that the client is associated with. */
+    private final ChannelInfo channel;
+    
+    /** The client that is associated with the channel. */
+    private final ClientInfo client;
 
-    /** A map of interfaces to the classes which should be instansiated for them. */
-    protected static final Map<Class<?>, Class<?>> IMPL_MAP = new HashMap<Class<?>, Class<?>>();
-
-    static {
-        IMPL_MAP.put(ChannelClientInfo.class, IRCChannelClientInfo.class);
-        IMPL_MAP.put(ChannelInfo.class, IRCChannelInfo.class);
-        IMPL_MAP.put(ClientInfo.class, IRCClientInfo.class);
-        IMPL_MAP.put(LocalClientInfo.class, IRCClientInfo.class);
-    }
-
-    public IRCCallbackObjectSpecific(final Parser parser,
-            final CallbackManager<?> manager, final Class<? extends CallbackInterface> type) {
-        super(parser, manager, type);
+    /**
+     * Creates a new BaseChannelClientInfo object for the specified client's
+     * association with the specified channel.
+     *
+     * @param channel The channel the association is with
+     * @param client The user that holds the association
+     */
+    public BaseChannelClientInfo(final ChannelInfo channel, final ClientInfo client) {
+        this.channel = channel;
+        this.client = client;
     }
 
     /** {@inheritDoc} */
     @Override
-    protected String translateHostname(final String hostname) {
-        return IRCClientInfo.parseHost(hostname);
+    public ChannelInfo getChannel() {
+        return channel;
     }
 
     /** {@inheritDoc} */
     @Override
-    protected Class<?> getImplementation(final Class<?> type) {
-        return IMPL_MAP.containsKey(type) ? IMPL_MAP.get(type) : type;
+    public ClientInfo getClient() {
+        return client;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Map<Object, Object> getMap() {
+        return map;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return getImportantMode() + client.toString();
     }
 
 }

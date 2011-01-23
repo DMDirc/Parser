@@ -23,7 +23,6 @@
 package com.dmdirc.parser.irc;
 
 import com.dmdirc.parser.common.ParserError;
-import com.dmdirc.parser.interfaces.callbacks.ServerReadyListener;
 
 /**
  * Process a 001 message.
@@ -66,23 +65,12 @@ public class Process001 extends IRCProcessor {
             }
         }
 
-        callServerReady();
         myParser.startPingTimer();
 
         final String channels = myParser.server.getChannels();
         if (channels != null) {
             myParser.joinChannel(channels);
         }
-    }
-
-    /**
-     * Callback to all objects implementing the ServerReady Callback.
-     *
-     * @see IServerReady
-     * @return true if a method was called, false otherwise
-     */
-    protected boolean callServerReady() {
-        return getCallbackManager().getCallbackType(ServerReadyListener.class).call();
     }
 
     /**

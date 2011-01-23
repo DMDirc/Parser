@@ -29,8 +29,12 @@ import com.dmdirc.parser.common.MyInfo;
 import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.common.QueuePriority;
 import com.dmdirc.parser.common.SystemEncoder;
+import com.dmdirc.parser.interfaces.ChannelClientInfo;
+import com.dmdirc.parser.interfaces.ChannelInfo;
+import com.dmdirc.parser.interfaces.ClientInfo;
 import com.dmdirc.parser.interfaces.Encoder;
 import com.dmdirc.parser.interfaces.EncodingParser;
+import com.dmdirc.parser.interfaces.LocalClientInfo;
 import com.dmdirc.parser.interfaces.SecureParser;
 import com.dmdirc.parser.interfaces.callbacks.*; //NOPMD
 import com.dmdirc.parser.irc.IRCReader.ReadLine;
@@ -85,6 +89,16 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
     /** List Mode Queue Debug Information. */
     public static final int DEBUG_LMQ = 8;
     //public static final int DEBUG_SOMETHING = 16; //Next thingy
+    
+    /** A map of this parser's implementations of common interfaces. */
+    public static final Map<Class<?>, Class<?>> IMPL_MAP = new HashMap<Class<?>, Class<?>>();
+
+    static {
+        IMPL_MAP.put(ChannelClientInfo.class, IRCChannelClientInfo.class);
+        IMPL_MAP.put(ChannelInfo.class, IRCChannelInfo.class);
+        IMPL_MAP.put(ClientInfo.class, IRCClientInfo.class);
+        IMPL_MAP.put(LocalClientInfo.class, IRCClientInfo.class);
+    }
 
     /** Attempt to update user host all the time, not just on Who/Add/NickChange. */
     static final boolean ALWAYS_UPDATECLIENT = true;
@@ -218,7 +232,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
     private IgnoreList myIgnoreList = new IgnoreList();
 
     /** Reference to the callback Manager. */
-    private final CallbackManager<IRCParser> myCallbackManager = new IRCCallbackManager(this);
+    private final CallbackManager myCallbackManager = new CallbackManager(this, IMPL_MAP);
     /** Reference to the Processing Manager. */
     private final ProcessingManager myProcessingManager = new ProcessingManager(this);
 
@@ -485,7 +499,9 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
 
     /** {@inheritDoc} */
     @Override
-    public CallbackManager<IRCParser> getCallbackManager() { return myCallbackManager;    }
+    public CallbackManager getCallbackManager() {
+        return myCallbackManager;
+    }
 
     /**
      * Get a reference to the default TrustManager for SSL Sockets.
@@ -656,7 +672,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
         if (!h005Info.containsKey("USERMODES")) { parseUserModes(); }
         if (!h005Info.containsKey("CHANMODES")) { parseChanModes(); }
 
-        return getCallbackManager().getCallbackType(Post005Listener.class).call();
+        return getCallbackManager().getCallbackType(ServerReadyListener.class).call();
     }
 
     //---------------------------------------------------------------------------
