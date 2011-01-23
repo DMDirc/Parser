@@ -33,8 +33,8 @@ import com.dmdirc.parser.interfaces.callbacks.ChannelKickListener;
 import com.dmdirc.parser.interfaces.callbacks.ConnectErrorListener;
 import com.dmdirc.parser.interfaces.callbacks.ErrorInfoListener;
 import com.dmdirc.parser.interfaces.callbacks.NumericListener;
-import com.dmdirc.parser.interfaces.callbacks.Post005Listener;
 import com.dmdirc.parser.interfaces.callbacks.ServerErrorListener;
+import com.dmdirc.parser.interfaces.callbacks.ServerReadyListener;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -198,10 +198,10 @@ public class IRCParserTest {
     }
 
     @Test
-    public void testPost005() throws CallbackNotFoundException {
-        final Post005Listener test = mock(Post005Listener.class);
+    public void testServerReady() throws CallbackNotFoundException {
+        final ServerReadyListener test = mock(ServerReadyListener.class);
         final TestParser parser = new TestParser();
-        parser.getCallbackManager().addCallback(Post005Listener.class, test);
+        parser.getCallbackManager().addCallback(ServerReadyListener.class, test);
 
         final String[] strings = {
             "NOTICE AUTH :Blah, blah",
@@ -218,11 +218,11 @@ public class IRCParserTest {
         };
 
         for (String string : strings) {
-            verify(test, never()).onPost005((Parser) anyObject(), (Date) anyObject());
+            verify(test, never()).onServerReady((Parser) anyObject(), (Date) anyObject());
             parser.injectLine(string);
         }
 
-        verify(test).onPost005(same(parser), (Date) anyObject());
+        verify(test).onServerReady(same(parser), (Date) anyObject());
     }
 
     @Test
