@@ -31,45 +31,45 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 public class Process004005Test {
-    
-    private TestParser doCaseMappingTest(final String target, final int expected) {
+
+    private TestParser doCaseMappingTest(final String target, final IRCEncoding expected) {
         final TestParser parser = new TestParser();
         parser.injectConnectionStrings();
         parser.injectLine(":server 005 nick CASEMAPPING=" + target
                     + " :are supported by this server");
-        
-        assertEquals(expected, parser.getStringConverter().getLimit());
-        
+
+        assertEquals(expected, parser.getStringConverter().getEncoding());
+
         return parser;
     }
-    
+
     @Test
     public void testCaseMappingASCII() {
-        doCaseMappingTest("ascii", 0);
-        doCaseMappingTest("ASCII", 0);
+        doCaseMappingTest("ascii", IRCEncoding.ASCII);
+        doCaseMappingTest("ASCII", IRCEncoding.ASCII);
     }
-    
+
     @Test
     public void testCaseMappingRFC() {
-        doCaseMappingTest("rfc1459", 4);
-        doCaseMappingTest("RFC1459", 4);
+        doCaseMappingTest("rfc1459", IRCEncoding.RFC1459);
+        doCaseMappingTest("RFC1459", IRCEncoding.RFC1459);
     }
-    
+
     @Test
     public void testCaseMappingStrict() {
-        doCaseMappingTest("strict-rfc1459", 3);
-        doCaseMappingTest("strict-RFC1459", 3);        
+        doCaseMappingTest("strict-rfc1459", IRCEncoding.STRICT_RFC1459);
+        doCaseMappingTest("strict-RFC1459", IRCEncoding.STRICT_RFC1459);
     }
-    
+
     @Test
     public void testCaseMappingUnknown() {
-        final TestParser tp = doCaseMappingTest("rfc1459", 4);
+        final TestParser tp = doCaseMappingTest("rfc1459", IRCEncoding.RFC1459);
         final ErrorInfoListener info = mock(ErrorInfoListener.class);
-        
+
         tp.getCallbackManager().addCallback(ErrorInfoListener.class, info);
-        
+
         tp.injectLine(":server 005 nick CASEMAPPING=unknown :are supported by this server");
-        
+
         verify(info).onErrorInfo(same(tp), (Date) anyObject(), (ParserError) anyObject());
     }
 
