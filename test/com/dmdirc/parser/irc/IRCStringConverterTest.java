@@ -29,13 +29,13 @@ public class IRCStringConverterTest {
     @Test
     public void testCaseConversion() {
         final IRCParser asciiParser = new IRCParser();
-        asciiParser.updateCharArrays((byte) 0);
+        asciiParser.setEncoding(IRCEncoding.ASCII);
 
         final IRCParser rfcParser = new IRCParser();
-        rfcParser.updateCharArrays((byte) 4);
+        rfcParser.setEncoding(IRCEncoding.RFC1459);
 
         final IRCParser strictParser = new IRCParser();
-        strictParser.updateCharArrays((byte) 3);
+        strictParser.setEncoding(IRCEncoding.STRICT_RFC1459);
 
         final String[][] testcases = {
             {"12345", "12345", "12345", "12345"},
@@ -66,28 +66,21 @@ public class IRCStringConverterTest {
             assertEquals(testcase[0], strictU);
         }
     }
-    
-    @Test
-    public void testLimit() {
-        final IRCStringConverter ircsc = new IRCStringConverter((byte) 100);
-        
-        assertEquals(4, ircsc.getLimit());
-    }
 
     @Test
     public void testDefaultLimit() {
         final IRCStringConverter ircsc = new IRCStringConverter();
 
-        assertEquals(4, ircsc.getLimit());
+        assertEquals(IRCEncoding.RFC1459, ircsc.getEncoding());
     }
-    
+
     @Test
     public void testEqualsNull() {
-        final IRCStringConverter ircsc = new IRCStringConverter((byte) 100);
-        
+        final IRCStringConverter ircsc = new IRCStringConverter(IRCEncoding.ASCII);
+
         assertTrue(ircsc.equalsIgnoreCase(null, null));
         assertFalse(ircsc.equalsIgnoreCase("null", null));
         assertFalse(ircsc.equalsIgnoreCase(null, "null"));
-    }    
+    }
 
 }

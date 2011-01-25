@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
  * Process ISUPPORT lines.
  */
 public class Process004005 extends IRCProcessor {
+
     /**
      * Process ISUPPORT lines.
      *
@@ -40,80 +41,99 @@ public class Process004005 extends IRCProcessor {
      */
     @Override
     public void process(final String sParam, final String[] token) {
-        if (sParam.equals("002")) {
+        if ("002".equals(sParam)) {
             final Pattern pattern = Pattern.compile("running(?: version)? (.*)$");
             final Matcher matcher = pattern.matcher(myParser.getLastLine());
             if (matcher.find()) {
                 myParser.h005Info.put("002IRCD", matcher.group(1));
             }
-        } else if (sParam.equals("003")) {
+        } else if ("003".equals(sParam)) {
             myParser.h005Info.put("003IRCD", token[token.length - 1]);
-        } else if (sParam.equals("004")) {
+        } else if ("004".equals(sParam)) {
             // 004
             final boolean multiParam = token.length > 4;
             int i = multiParam ? 4 : 1;
             final String[] bits = multiParam ? token : token[3].split(" ");
 
             myParser.h005Info.put("004IRCD", bits[i++]);
-            // some IRCDs put a timestamp where the usermodes should be
-            // (issues 4140. 4181 and 4183) so check to see if this is numeric
-            // only, and if so, skip it.
-            if (bits[i].matches("^\\d+$")) { i++; }
+
+            if (bits[i].matches("^\\d+$")) {
+                // some IRCDs put a timestamp where the usermodes should be
+                // (issues 4140. 4181 and 4183) so check to see if this is
+                // numeric only, and if so, skip it.
+                i++;
+            }
+
             myParser.h005Info.put("USERMODES", bits[i++]);
             myParser.h005Info.put("USERCHANMODES", bits[i++]);
-            if (bits.length > i) { myParser.h005Info.put("USERCHANPARAMMODES", bits[i++]); } // INSPIRCD includes an extra param
+
+            if (bits.length > i) {
+                // INSPIRCD includes an extra param
+                myParser.h005Info.put("USERCHANPARAMMODES", bits[i++]);
+            }
+
             myParser.parseUserModes();
-        } else if (sParam.equals("005")) {
-            // 005
+        } else if ("005".equals(sParam)) {
             for (int i = 3; i < token.length; i++) {
                 final String[] bits = token[i].split("=", 2);
-                if (bits[0].isEmpty()) { continue; }
-                final boolean isNegation = (bits[0].charAt(0) == '-');
-                final String sKey = (isNegation) ? bits[0].substring(1).toUpperCase() : bits[0].toUpperCase();
-                final String sValue = (bits.length == 2) ? bits[1] : "";
-                callDebugInfo(IRCParser.DEBUG_INFO, "%s => %s", sKey, sValue);
-                if (isNegation) {
-                    myParser.h005Info.remove(sKey);
-                } else {
-                    myParser.h005Info.put(sKey, sValue);
+
+                if (bits[0].isEmpty()) {
+                    continue;
                 }
-                if (sKey.equals("NETWORK") && !isNegation) {
-                    myParser.networkName = sValue;
+
+                final boolean isNegation = bits[0].charAt(0) == '-';
+                final String key = (isNegation ? bits[0].substring(1) : bits[0]).toUpperCase();
+                final String value = bits.length == 2 ? bits[1] : "";
+
+                callDebugInfo(IRCParser.DEBUG_INFO, "%s => %s", key, value);
+
+                if (isNegation) {
+                    myParser.h005Info.remove(key);
+                } else {
+                    myParser.h005Info.put(key, value);
+                }
+
+                if ("NETWORK".equals(key) && !isNegation) {
+                    myParser.networkName = value;
                     callGotNetwork();
-                } else if (sKey.equals("CASEMAPPING") && !isNegation) {
-                    byte limit = (byte) 4;
-                    if (sValue.equalsIgnoreCase("strict-rfc1459")) {
-                        limit = (byte) 3;
-                    } else if (sValue.equalsIgnoreCase("ascii")) {
-                        limit = (byte) 0;
-                    } else if (!sValue.equalsIgnoreCase("rfc1459")) {
-                        myParser.callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Unknown casemapping: '" + sValue + "' - assuming rfc1459", myParser.getLastLine()));
+                } else if ("CASEMAPPING".equals(key) && !isNegation) {
+                    IRCEncoding encoding = IRCEncoding.RFC1459;
+
+                    try {
+                        encoding = IRCEncoding.valueOf(value.toUpperCase().replace('-', '_'));
+                    } catch (IllegalArgumentException ex) {
+                        myParser.callErrorInfo(new ParserError(
+                                ParserError.ERROR_WARNING,
+                                "Unknown casemapping: '" + value + "' - assuming rfc1459",
+                                myParser.getLastLine()));
                     }
-                    final boolean limitChanged = (myParser.getStringConverter().getLimit() != limit);
-                    myParser.updateCharArrays(limit);
-                    if (limitChanged && myParser.knownClients() == 1) {
+
+                    final boolean encodingChanged = myParser.getStringConverter().getEncoding() != encoding;
+                    myParser.setEncoding(encoding);
+
+                    if (encodingChanged && myParser.knownClients() == 1) {
                         // This means that the casemapping is not rfc1459
                         // We have only added ourselves so far (from 001)
                         // We can fix the hashtable easily.
                         myParser.removeClient(myParser.getLocalClient());
                         myParser.addClient(myParser.getLocalClient());
                     }
-                } else if (sKey.equals("CHANTYPES")) {
+                } else if ("CHANTYPES".equals(key)) {
                     myParser.parseChanPrefix();
-                } else if (sKey.equals("PREFIX")) {
+                } else if ("PREFIX".equals(key)) {
                     myParser.parsePrefixModes();
-                } else if (sKey.equals("CHANMODES")) {
+                } else if ("CHANMODES".equals(key)) {
                     myParser.parseChanModes();
-                } else if (sKey.equals("NAMESX") || sKey.equals("UHNAMES")) {
-                    myParser.sendString("PROTOCTL " + sKey);
-                } else if (sKey.equals("LISTMODE")) {
+                } else if ("NAMESX".equals(key) || "UHNAMES".equals(key)) {
+                    myParser.sendString("PROTOCTL " + key);
+                } else if ("LISTMODE".equals(key)) {
                     // Support for potential future decent mode listing in the protocol
                     //
                     // See my proposal: http://shanemcc.co.uk/irc/#listmode
                     // Add listmode handler
                     String[] handles = new String[2];
-                    handles[0] = sValue; // List mode item
-                    final String endValue = "" + (Integer.parseInt(sValue) + 1);
+                    handles[0] = value; // List mode item
+                    final String endValue = "" + (Integer.parseInt(value) + 1);
                     myParser.h005Info.put("LISTMODEEND", endValue);
                     handles[1] = endValue; // List mode end
                     // Add listmode handlers
@@ -156,6 +176,8 @@ public class Process004005 extends IRCProcessor {
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected Process004005(final IRCParser parser, final ProcessingManager manager) { super(parser, manager); }
+    protected Process004005(final IRCParser parser, final ProcessingManager manager) {
+        super(parser, manager);
+    }
 
 }

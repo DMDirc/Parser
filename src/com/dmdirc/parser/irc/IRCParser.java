@@ -712,8 +712,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
         stopPingTimer();
 
         currentSocketState = SocketState.CLOSED;
-        // Char Mapping
-        updateCharArrays((byte) 4);
+        setEncoding(IRCEncoding.RFC1459);
     }
 
     /**
@@ -1201,21 +1200,18 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
     @Override
     public IRCStringConverter getStringConverter() {
         if (stringConverter == null) {
-            stringConverter = new IRCStringConverter((byte) 4);
+            stringConverter = new IRCStringConverter(IRCEncoding.RFC1459);
         }
         return stringConverter;
     }
 
     /**
-     * Update the character arrays.
+     * Sets the encoding that this parser's string converter should use.
      *
-     * @param limit Number of post-alphabetical characters to convert
-     *              0 = ascii encoding
-     *              3 = strict-rfc1459 encoding
-     *              4 = rfc1459 encoding
+     * @param encoding The encoding to use
      */
-    protected void updateCharArrays(final byte limit) {
-        stringConverter = new IRCStringConverter(limit);
+    protected void setEncoding(final IRCEncoding encoding) {
+        stringConverter = new IRCStringConverter(encoding);
     }
 
     /**
