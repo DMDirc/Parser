@@ -36,7 +36,7 @@ public class PingTimer extends TimerTask {
     final IRCParser myOwner;
     /** The Timer that owns this task. */
     final Timer myTimer;
-    
+
     /**
      * Create the PingTimer.
      *
@@ -48,7 +48,7 @@ public class PingTimer extends TimerTask {
         myOwner = control;
         myTimer = timer;
     }
-    
+
     /** Timer has been executed. */
     public void run() {
         myOwner.pingTimerTask(myTimer);

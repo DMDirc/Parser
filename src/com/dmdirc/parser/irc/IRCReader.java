@@ -79,7 +79,7 @@ public class IRCReader implements Closeable {
                 // End of the line
                 break;
             }
-            
+
             line[offset++] = (byte) chr;
 
             if (lastChr == ' ' && chr == ':' && paramOffset == -1) {

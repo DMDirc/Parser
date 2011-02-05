@@ -35,13 +35,13 @@ import javax.net.SocketFactory;
  * options.
  */
 public abstract class BaseSocketAwareParser extends BaseParser {
-    
+
     /** The IP address or hostname that this parser's sockets should bind to. */
     private String bindIp = null;
-    
+
     /** The socket that was most recently created by this parser. */
     private Socket socket;
-    
+
     /** The local port that this parser's *most recently created* socket bound to. */
     private int localPort = -1;
 
@@ -60,13 +60,13 @@ public abstract class BaseSocketAwareParser extends BaseParser {
     public String getBindIP() {
         return bindIp;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public void setBindIP(final String ip) {
         bindIp = ip;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public int getLocalPort() {
@@ -78,7 +78,7 @@ public abstract class BaseSocketAwareParser extends BaseParser {
 
         return localPort;
     }
-    
+
     /**
      * Convenience method to record the local port of the specified socket.
      *
@@ -110,7 +110,7 @@ public abstract class BaseSocketAwareParser extends BaseParser {
                     return handleSocket(new Socket(host, port, InetAddress.getByName(bindIp), 0));
                 }
             }
-            
+
             /** {@inheritDoc} */
             @Override
             public Socket createSocket(final InetAddress host, final int port) throws IOException {
@@ -137,7 +137,7 @@ public abstract class BaseSocketAwareParser extends BaseParser {
                 return handleSocket(new Socket(address, port,
                         bindIp == null ? localAddress : InetAddress.getByName(bindIp), localPort));
             }
-            
+
         };
     }
 }

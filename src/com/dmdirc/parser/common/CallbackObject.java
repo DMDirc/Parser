@@ -55,7 +55,7 @@ public class CallbackObject {
 
     /** Reference to the CallbackManager in charge of this callback. */
     protected CallbackManager myManager;
-    
+
     /** A map of interfaces to their concrete implementations. */
     private final Map<Class<?>, Class<?>> implementationMap;
 

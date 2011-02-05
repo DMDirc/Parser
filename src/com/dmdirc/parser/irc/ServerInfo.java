@@ -28,8 +28,6 @@ import java.net.URISyntaxException;
 /**
  * Contains Server information.
  *
- * @author Shane Mc Cormack
- * @author Chris Smith
  * @see IRCParser
  */
 public class ServerInfo {

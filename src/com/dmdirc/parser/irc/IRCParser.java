@@ -89,7 +89,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
     /** List Mode Queue Debug Information. */
     public static final int DEBUG_LMQ = 8;
     //public static final int DEBUG_SOMETHING = 16; //Next thingy
-    
+
     /** A map of this parser's implementations of common interfaces. */
     public static final Map<Class<?>, Class<?>> IMPL_MAP = new HashMap<Class<?>, Class<?>>();
 

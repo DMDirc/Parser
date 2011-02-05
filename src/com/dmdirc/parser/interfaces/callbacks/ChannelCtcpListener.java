@@ -38,7 +38,7 @@ import java.util.Date;
  */
 @SpecificCallback
 public interface ChannelCtcpListener extends CallbackInterface {
-    
+
     /**
      * Called when a person sends a CTCP to a channel.
      * sHost is the hostname of the person sending the CTCP. (Can be a server or a person)<br>

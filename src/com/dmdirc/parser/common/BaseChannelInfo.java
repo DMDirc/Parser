@@ -34,16 +34,16 @@ import java.util.Map;
  * Provides a basic implementation of the {@link ChannelInfo} interface.
  */
 public abstract class BaseChannelInfo implements ChannelInfo {
-    
+
     /** The parser that owns this client. */
     private final Parser parser;
-    
+
     /** A map for random data associated with the client to be stored in. */
     private final Map<Object, Object> map = new HashMap<Object, Object>();
-    
+
     /** The clients in this channel. */
     private final Map<String, ChannelClientInfo> clients = new HashMap<String, ChannelClientInfo>();
-    
+
     /** The name of this channel. */
     private final String name;
 
@@ -69,7 +69,7 @@ public abstract class BaseChannelInfo implements ChannelInfo {
     public Parser getParser() {
         return parser;
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public void sendMessage(final String message) {
@@ -81,7 +81,7 @@ public abstract class BaseChannelInfo implements ChannelInfo {
     public void sendAction(final String action) {
         parser.sendAction(name, action);
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public Collection<ChannelClientInfo> getChannelClients() {
@@ -93,13 +93,13 @@ public abstract class BaseChannelInfo implements ChannelInfo {
     public int getChannelClientCount() {
         return clients.size();
     }
-    
+
     /** {@inheritDoc} */
     @Override
     public ChannelClientInfo getChannelClient(final String client) {
         return getChannelClient(client, false);
     }
-    
+
     /**
      * Adds a new client to this channel's user list.
      *
@@ -109,7 +109,7 @@ public abstract class BaseChannelInfo implements ChannelInfo {
     protected void addClient(final String key, final ChannelClientInfo client) {
         clients.put(key, client);
     }
-    
+
     /**
      * Removes an existing client from this channel's user list.
      *
@@ -118,7 +118,7 @@ public abstract class BaseChannelInfo implements ChannelInfo {
     protected void removeClient(final String key) {
         clients.remove(key);
     }
-    
+
     /**
      * Retrieves the client identified by the specified key.
      *

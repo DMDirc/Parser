@@ -29,7 +29,7 @@ import com.dmdirc.parser.interfaces.SpecificCallback;
 
 import java.util.Date;
 
-/** 
+/**
  * Called When we, or another client quits IRC (Called once per channel the user was on).
  * This is called BEFORE client has been removed from the channel.
  */
