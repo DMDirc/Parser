@@ -31,6 +31,7 @@ import java.net.URISyntaxException;
  * @see IRCParser
  */
 public class ServerInfo {
+
     /**
      * A version number for this class. It should be changed whenever the class
      * structure is changed (or anything else that would prevent serialized
@@ -38,14 +39,6 @@ public class ServerInfo {
      */
     private static final long serialVersionUID = 1;
 
-    /** Server to connect to (Default: "irc.quakenet.org"). */
-    private String host = "irc.quakenet.org";
-    /** Port server listens on for client connections (Default: 6667). */
-    private int port = 6667;
-    /** Optional password needed to connect to server (Default: ""). */
-    private String password = "";
-    /** Is this an ssl-enabled server (Default: false). */
-    private boolean isSSL = false;
     /** Are we using a socks proxy (Default: false). */
     private boolean useSocksProxy = false;
     /** Proxy server to connect to (Default: "127.0.0.1"). */
@@ -60,23 +53,25 @@ public class ServerInfo {
     private URI uri = null;
 
     /**
-     * Constructor using default values.
-     */
-    public ServerInfo() {
-        //Use default values
-    }
-
-    /**
-     * Constructor using specifed host, port and password, SSL/Proxy must be specifed separately.
+     * Constructor using specifed host, port and password, SSL/Proxy must be
+     * specifed separately.
      *
      * @param serverHost Host to use
      * @param serverPort Port to use
      * @param serverPass Password to use
      */
-    public ServerInfo(final String serverHost, final int serverPort, final String serverPass) {
-        host = serverHost;
-        port = serverPort;
-        password = serverPass;
+    public ServerInfo(final String serverHost, final int serverPort,
+            final String serverPass) {
+        try {
+            uri = new URI("irc", serverPass, serverHost, serverPort, null,
+                    null, null);
+        } catch (URISyntaxException ex) {
+            try {
+                uri = new URI("irc", null, "127.0.0.1", -1, null, null, null);
+            } catch (URISyntaxException ex1) {
+                //Won't happen
+            }
+        }
     }
 
     /**
@@ -87,7 +82,7 @@ public class ServerInfo {
      * @since 0.6.3
      */
     public ServerInfo(final URI uri) {
-        setURI(uri);
+        this.uri = uri;
     }
 
     /**
@@ -99,117 +94,44 @@ public class ServerInfo {
      * @return URI for this ServerInfo
      */
     public URI getURI() {
-        final StringBuilder uriString = new StringBuilder();
-
-        uriString.append(isSSL ? "ircs://" : "irc://");
-        if (!password.isEmpty()) {
-            uriString.append(password);
-            uriString.append("@");
-        }
-        uriString.append(host);
-        uriString.append(":");
-        uriString.append(port);
-        if (uri != null) {
-            if (!uri.getRawPath().isEmpty()) {
-                uriString.append(uri.getRawPath());
-            }
-            if (uri.getRawQuery() != null) {
-                uriString.append("?");
-                uriString.append(uri.getRawQuery());
-            }
-            if (uri.getRawFragment() != null) {
-                uriString.append("#");
-                uriString.append(uri.getRawFragment());
-            }
-        }
-        try {
-            return new URI(uriString.toString());
-        } catch (URISyntaxException ex) {
-            // Creating the new URI shouldn't fail unless the user passed
-            // stupid settings to setXXXX()
-            // In this case, try to return any given URI, else a blank one.
-            try {
-                return (uri == null) ? new URI("") : uri;
-            } catch (URISyntaxException ex2) {
-                /* This can't ever happen. */
-                return null;
-            }
-        }
+        return uri;
     }
-
-    /**
-     * Set the URI for this ServerInfo.
-     * This will overwrite host/port/password and isSSL.
-     *
-     * @param uri URI to use to configure this ServerInfo
-     */
-    public void setURI(final URI uri) {
-        this.uri = uri;
-        host = uri.getHost();
-        port = uri.getPort() > 0 ? uri.getPort() : 6667;
-
-        if ("ircs".equals(uri.getScheme())) {
-            setSSL(true);
-        }
-
-        password = uri.getUserInfo() == null ? "" : uri.getUserInfo();
-    }
-
-    /**
-     * Set the hostname.
-     *
-     * @param newValue Value to set to.
-     */
-    public void setHost(final String newValue) { host = newValue; }
 
     /**
      * Get the hostname.
      *
      * @return Current hostname
      */
-    public String getHost() { return host; }
-
-    /**
-     * Set the port.
-     *
-     * @param newValue Value to set to.
-     */
-    public void setPort(final int newValue) { port = newValue; }
+    public String getHost() {
+        return uri.getHost() == null ? "" : uri.getHost();
+    }
 
     /**
      * Get the port.
      *
      * @return Current port
      */
-    public int getPort() { return port; }
-
-    /**
-     * Set the password.
-     *
-     * @param newValue Value to set to.
-     */
-    public void setPassword(final String newValue) { password = newValue; }
+    public int getPort() {
+        return uri.getPort() == -1 ? 6667 : uri.getPort();
+    }
 
     /**
      * Get the password.
      *
      * @return Current Password
      */
-    public String getPassword() { return password; }
-
-    /**
-     * Set if the server uses ssl.
-     *
-     * @param newValue true if server uses ssl, else false
-     */
-    public void setSSL(final boolean newValue) { isSSL = newValue; }
+    public String getPassword() {
+        return uri.getUserInfo() == null ? "" : uri.getUserInfo();
+    }
 
     /**
      * Get if the server uses ssl.
      *
      * @return true if server uses ssl, else false
      */
-    public boolean getSSL() { return isSSL; }
+    public boolean isSSL() {
+        return "ircs".equals(uri.getScheme());
+    }
 
     /**
      * Set if we are connecting via a socks proxy.
