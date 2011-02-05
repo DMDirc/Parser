@@ -22,41 +22,62 @@
 
 package com.dmdirc.parser.irc;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class ServerInfoTest {
     
     @Test
-    public void testHost() {
-        final ServerInfo si = new ServerInfo("host0", 5, "");
+    public void testHost() throws URISyntaxException {
+        final ServerInfo si = new ServerInfo(new URI("ircs", "pass1", "host0", 
+                5, null, null, null));
         assertEquals("host0", si.getHost());
-        si.setHost("host1");
-        assertEquals("host1", si.getHost());
     }
-    
+
     @Test
-    public void testPort() {
-        final ServerInfo si = new ServerInfo("host0", 5, "");
+    public void testPort() throws URISyntaxException {
+        final ServerInfo si = new ServerInfo(new URI("ircs", "pass1", "host0",
+                5, null, null, null));
         assertEquals(5, si.getPort());
-        si.setPort(65530);
-        assertEquals(65530, si.getPort());
     }
-    
+
     @Test
-    public void testPassword() {
-        final ServerInfo si = new ServerInfo("host0", 5, "pass1");
+    public void testNoPort() throws URISyntaxException {
+        final ServerInfo si = new ServerInfo(new URI("ircs", "pass1", "host0",
+                -1, null, null, null));
+        assertEquals(6667, si.getPort());
+    }
+
+    @Test
+    public void testPassword() throws URISyntaxException {
+        final ServerInfo si = new ServerInfo(new URI("ircs", "pass1", "host0",
+                5, null, null, null));
         assertEquals("pass1", si.getPassword());
-        si.setPassword("pass2");
-        assertEquals("pass2", si.getPassword());
+
     }
-    
+
     @Test
-    public void testSSL() {
-        final ServerInfo si = new ServerInfo("host0", 5, "pass1");
-        assertFalse(si.getSSL());
-        si.setSSL(true);
-        assertTrue(si.getSSL());
+    public void testNoPassword() throws URISyntaxException {
+        final ServerInfo si = new ServerInfo(new URI("ircs", null, "host0",
+                5, null, null, null));
+        assertEquals("", si.getPassword());
+
+    }
+
+    @Test
+    public void testSSL() throws URISyntaxException {
+        final ServerInfo si = new ServerInfo(new URI("ircs", "pass1", "host0",
+                5, null, null, null));
+        assertTrue(si.isSSL());
+    }
+
+    @Test
+    public void testNonSSL() throws URISyntaxException {
+        final ServerInfo si = new ServerInfo(new URI("irc", "pass1", "host0",
+                5, null, null, null));
+        assertFalse(si.isSSL());
     }
     
     @Test
