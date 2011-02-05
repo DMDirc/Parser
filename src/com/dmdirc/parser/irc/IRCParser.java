@@ -117,7 +117,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
      */
     public MyInfo me = new MyInfo();
     /**    Server Info requested by user. */
-    public ServerInfo server = new ServerInfo();
+    public ServerInfo server;
 
     /** Should PINGs be sent to the server to check if its alive? */
     private boolean checkServerPing = true;
@@ -356,7 +356,12 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
 
     /** {@inheritDoc} */
     @Override
-    public URI getURI() { return server.getURI(); }
+    public URI getURI() {
+        if (server == null) {
+            return null;
+        }
+        return server.getURI();
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -752,6 +757,9 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
      * @throws KeyManagementException if the trustManager is invalid
      */
     private void connect() throws UnknownHostException, IOException, NoSuchAlgorithmException, KeyManagementException {
+        if (server == null) {
+            throw new UnknownHostException("Unspecified host.");
+        }
         resetState();
         callDebugInfo(DEBUG_SOCKET, "Connecting to " + server.getHost() + ":" + server.getPort());
 
@@ -801,7 +809,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
 
         rawSocket = socket;
 
-        if (server.getSSL()) {
+        if (server.isSSL()) {
             callDebugInfo(DEBUG_SOCKET, "Server is SSL.");
 
             if (myTrustManager == null) { myTrustManager = trustAllCerts; }

@@ -40,7 +40,7 @@ public class TestParser extends IRCParser implements Parser {
     public String network = null;
 
     public TestParser() {
-        super();
+        super(new ServerInfo("", -1, ""));
         currentSocketState = SocketState.OPEN;
     }
 
