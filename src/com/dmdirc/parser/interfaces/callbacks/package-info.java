@@ -21,7 +21,7 @@
  */
 
 /**
- * Parser callback interfaces.  Classes wanting to use callbacks will be 
+ * Parser callback interfaces.  Classes wanting to use callbacks will be
  * required to implement the appropriate interface from this package.
  *
  * @since 0.6.3m2

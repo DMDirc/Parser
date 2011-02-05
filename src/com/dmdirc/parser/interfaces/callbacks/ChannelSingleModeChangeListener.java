@@ -31,7 +31,7 @@ import com.dmdirc.parser.interfaces.SpecificCallback;
 
 import java.util.Date;
 
-/** 
+/**
  * Called when the channel modes are changed or discovered.
  * cChannelClient is null if the modes were found from raw 324 (/MODE #Chan reply) or if a server set the mode.<br>
  * If a Server set the mode, sHost is the servers name, else it is the full host of the user who set it

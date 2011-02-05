@@ -33,13 +33,13 @@ import java.util.Map;
  * Provides a basic implementation of the {@link ChannelClientInfo} interface.
  */
 public abstract class BaseChannelClientInfo implements ChannelClientInfo {
-    
+
     /** A map for random data associated with the client to be stored in. */
     private final Map<Object, Object> map = new HashMap<Object, Object>();
-    
+
     /** The channel that the client is associated with. */
     private final ChannelInfo channel;
-    
+
     /** The client that is associated with the channel. */
     private final ClientInfo client;
 
