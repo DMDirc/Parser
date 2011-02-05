@@ -801,7 +801,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
 
         rawSocket = socket;
 
-        if (server.getSSL()) {
+        if (server.isSSL()) {
             callDebugInfo(DEBUG_SOCKET, "Server is SSL.");
 
             if (myTrustManager == null) { myTrustManager = trustAllCerts; }
