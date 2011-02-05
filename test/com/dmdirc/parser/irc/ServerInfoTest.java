@@ -22,41 +22,21 @@
 
 package com.dmdirc.parser.irc;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class ServerInfoTest {
     
     @Test
-    public void testHost() {
-        final ServerInfo si = new ServerInfo("host0", 5, "");
+    public void testHost() throws URISyntaxException {
+        final ServerInfo si = new ServerInfo(new URI("ircs", "pass1", "host0", 
+                5, null, null, null));
         assertEquals("host0", si.getHost());
-        si.setHost("host1");
-        assertEquals("host1", si.getHost());
-    }
-    
-    @Test
-    public void testPort() {
-        final ServerInfo si = new ServerInfo("host0", 5, "");
         assertEquals(5, si.getPort());
-        si.setPort(65530);
-        assertEquals(65530, si.getPort());
-    }
-    
-    @Test
-    public void testPassword() {
-        final ServerInfo si = new ServerInfo("host0", 5, "pass1");
         assertEquals("pass1", si.getPassword());
-        si.setPassword("pass2");
-        assertEquals("pass2", si.getPassword());
-    }
-    
-    @Test
-    public void testSSL() {
-        final ServerInfo si = new ServerInfo("host0", 5, "pass1");
-        assertFalse(si.getSSL());
-        si.setSSL(true);
-        assertTrue(si.getSSL());
+        assertTrue(si.isSSL());
     }
     
     @Test
