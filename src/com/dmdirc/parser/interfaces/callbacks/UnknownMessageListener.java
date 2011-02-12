@@ -23,19 +23,16 @@
 package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.interfaces.Parser;
+
 import java.util.Date;
 
 /**
  * Called when a person sends a message not aimed specifically at you or a channel (ie $*).
- * sHost is the hostname of the person sending the message. (Can be a server or a person)<br>
- * cClient is null if user is a server, or not on any common channel.
  */
 public interface UnknownMessageListener extends CallbackInterface {
 
     /**
      * Called when a person sends a message not aimed specifically at you or a channel (ie $*).
-     * sHost is the hostname of the person sending the message. (Can be a server or a person)<br>
-     * cClient is null if user is a server, or not on any common channel.
      *
      * @param parser Reference to the parser object that made the callback.
      * @param date The date/time at which the event occured

@@ -24,12 +24,11 @@ package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.SpecificCallback;
+
 import java.util.Date;
 
 /**
  * Called when a person does an action to you (PM).
- * sHost is the hostname of the person sending the action. (Can be a server or a person)<br>
- * cClient is null if user is a server, or not on any common channel.
  */
 @SpecificCallback
 public interface PrivateActionListener extends CallbackInterface {

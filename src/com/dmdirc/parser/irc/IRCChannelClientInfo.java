@@ -24,14 +24,13 @@ package com.dmdirc.parser.irc;
 
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
+
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Contains information about a client on a channel.
  *
- * @author Shane Mc Cormack
- * @author Chris Smith
  * @see IRCParser
  */
 public class IRCChannelClientInfo implements ChannelClientInfo {
