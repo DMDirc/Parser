@@ -58,8 +58,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
 import java.util.Queue;
+import java.util.Timer;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -72,8 +72,6 @@ import javax.net.ssl.X509TrustManager;
 
 /**
  * IRC Parser.
- *
- * @author Shane Mc Cormack
  */
 public class IRCParser implements SecureParser, EncodingParser, Runnable {
 

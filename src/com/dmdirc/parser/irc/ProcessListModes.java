@@ -26,6 +26,7 @@ import com.dmdirc.parser.common.ChannelListModeItem;
 import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.callbacks.ChannelListModeListener;
+
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Queue;

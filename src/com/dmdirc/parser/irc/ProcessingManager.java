@@ -24,14 +24,13 @@ package com.dmdirc.parser.irc;
 
 import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.interfaces.callbacks.NumericListener;
+
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * IRC Parser Processing Manager.
  * Manages adding/removing/calling processing stuff.
- *
- * @author Shane Mc Cormack
  */
 public class ProcessingManager {
     /** Reference to the parser object that owns this ProcessingManager. */

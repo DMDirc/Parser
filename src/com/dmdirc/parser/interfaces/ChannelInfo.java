@@ -23,6 +23,7 @@
 package com.dmdirc.parser.interfaces;
 
 import com.dmdirc.parser.common.ChannelListModeItem;
+
 import java.util.Collection;
 import java.util.Map;
 
@@ -31,7 +32,6 @@ import java.util.Map;
  * performed on the channel.
  *
  * @since 0.6.3m2
- * @author chris
  */
 public interface ChannelInfo {
 

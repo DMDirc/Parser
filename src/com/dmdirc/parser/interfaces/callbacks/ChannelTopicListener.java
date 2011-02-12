@@ -25,11 +25,11 @@ package com.dmdirc.parser.interfaces.callbacks;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.SpecificCallback;
+
 import java.util.Date;
 
 /**
  * Called when the topic is changed or discovered for the first time.
- * bIsNewTopic is true if someone sets the topic, false if the topic is discovered on join
  */
 @SpecificCallback
 public interface ChannelTopicListener extends CallbackInterface {
