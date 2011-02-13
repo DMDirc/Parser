@@ -33,6 +33,16 @@ import com.dmdirc.parser.interfaces.callbacks.ChannelPartListener;
 public class ProcessPart extends IRCProcessor {
 
     /**
+     * Create a new instance of the IRCProcessor Object.
+     *
+     * @param parser IRCParser That owns this IRCProcessor
+     * @param manager ProcessingManager that is in charge of this IRCProcessor
+     */
+    protected ProcessPart(final IRCParser parser, final ProcessingManager manager) {
+        super(parser, manager);
+    }
+
+    /**
      * Process a channel part.
      *
      * @param sParam Type of line to process ("PART")
@@ -42,7 +52,9 @@ public class ProcessPart extends IRCProcessor {
     public void process(final String sParam, final String[] token) {
         // :nick!ident@host PART #Channel
         // :nick!ident@host PART #Channel :reason
-        if (token.length < 3) { return; }
+        if (token.length < 3) {
+            return;
+        }
         IRCClientInfo iClient;
         IRCChannelInfo iChannel;
         IRCChannelClientInfo iChannelClient;
@@ -50,31 +62,39 @@ public class ProcessPart extends IRCProcessor {
         iClient = getClientInfo(token[0]);
         iChannel = getChannel(token[2]);
 
-        if (iClient == null) { return; }
+        if (iClient == null) {
+            return;
+        }
         if (IRCParser.ALWAYS_UPDATECLIENT && iClient.getHostname().isEmpty()) {
             // This may seem pointless - updating before they leave - but the formatter needs it!
             iClient.setUserBits(token[0], false);
         }
         if (iChannel == null) {
-            if (iClient != myParser.getLocalClient()) {
-                callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got part for channel (" + token[2] + ") that I am not on. [User: " + token[0] + "]", myParser.getLastLine()));
+            if (iClient != parser.getLocalClient()) {
+                callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got part for channel (" + token[2] + ") that I am not on. [User: " + token[0] + "]", parser.getLastLine()));
             }
             return;
         } else {
             String sReason = "";
-            if (token.length > 3) { sReason = token[token.length - 1]; }
+            if (token.length > 3) {
+                sReason = token[token.length - 1];
+            }
             iChannelClient = iChannel.getChannelClient(iClient);
             if (iChannelClient == null) {
-                // callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got part for channel ("+token[2]+") for a non-existant user. [User: "+token[0]+"]", myParser.getLastLine()));
+                // callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got part for channel ("+token[2]+") for a non-existant user. [User: "+token[0]+"]", parser.getLastLine()));
                 return;
             }
-            if (myParser.removeAfterCallback) { callChannelPart(iChannel, iChannelClient, sReason); }
+            if (parser.removeAfterCallback) {
+                callChannelPart(iChannel, iChannelClient, sReason);
+            }
             callDebugInfo(IRCParser.DEBUG_INFO, "Removing %s from %s", iClient.getNickname(), iChannel.getName());
             iChannel.delClient(iClient);
-            if (!myParser.removeAfterCallback) { callChannelPart(iChannel, iChannelClient, sReason); }
-            if (iClient == myParser.getLocalClient()) {
+            if (!parser.removeAfterCallback) {
+                callChannelPart(iChannel, iChannelClient, sReason);
+            }
+            if (iClient == parser.getLocalClient()) {
                 iChannel.emptyChannel();
-                myParser.removeChannel(iChannel);
+                parser.removeChannel(iChannel);
             }
         }
     }
@@ -101,15 +121,4 @@ public class ProcessPart extends IRCProcessor {
     public String[] handles() {
         return new String[]{"PART"};
     }
-
-    /**
-     * Create a new instance of the IRCProcessor Object.
-     *
-     * @param parser IRCParser That owns this IRCProcessor
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
-     */
-    protected ProcessPart(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager);
-    }
-
 }

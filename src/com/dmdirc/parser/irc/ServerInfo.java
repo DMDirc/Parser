@@ -38,7 +38,6 @@ public class ServerInfo {
      * objects being unserialized with the new class).
      */
     private static final long serialVersionUID = 1;
-
     /** Are we using a socks proxy (Default: false). */
     private boolean useSocksProxy = false;
     /** Proxy server to connect to (Default: "127.0.0.1"). */
@@ -138,70 +137,90 @@ public class ServerInfo {
      *
      * @param newValue true if we are using socks, else false
      */
-    public void setUseSocks(final boolean newValue) { useSocksProxy = newValue; }
+    public void setUseSocks(final boolean newValue) {
+        useSocksProxy = newValue;
+    }
 
     /**
      * Get if we are connecting via a socks proxy.
      *
      * @return true if we are using socks, else false
      */
-    public boolean getUseSocks() { return useSocksProxy; }
+    public boolean getUseSocks() {
+        return useSocksProxy;
+    }
 
     /**
      * Set the Proxy hostname.
      *
      * @param newValue Value to set to.
      */
-    public void setProxyHost(final String newValue) { proxyHost = newValue; }
+    public void setProxyHost(final String newValue) {
+        proxyHost = newValue;
+    }
 
     /**
      * Get the Proxy hostname.
      *
      * @return Current Proxy hostname
      */
-    public String getProxyHost() { return proxyHost; }
+    public String getProxyHost() {
+        return proxyHost;
+    }
 
     /**
      * Set the Proxy port.
      *
      * @param newValue Value to set to.
      */
-    public void setProxyPort(final int newValue) { proxyPort = newValue; }
+    public void setProxyPort(final int newValue) {
+        proxyPort = newValue;
+    }
 
     /**
      * Get the Proxy port.
      *
      * @return Current Proxy port
      */
-    public int getProxyPort() { return proxyPort; }
+    public int getProxyPort() {
+        return proxyPort;
+    }
 
     /**
      * Set the Proxy username.
      *
      * @param newValue Value to set to.
      */
-    public void setProxyUser(final String newValue) { proxyUser = newValue; }
+    public void setProxyUser(final String newValue) {
+        proxyUser = newValue;
+    }
 
     /**
      * Get the Proxy username.
      *
      * @return Current Proxy username
      */
-    public String getProxyUser() { return proxyUser; }
+    public String getProxyUser() {
+        return proxyUser;
+    }
 
     /**
      * Set the Proxy password.
      *
      * @param newValue Value to set to.
      */
-    public void setProxyPass(final String newValue) { proxyPass = newValue; }
+    public void setProxyPass(final String newValue) {
+        proxyPass = newValue;
+    }
 
     /**
      * Get the Proxy password.
      *
      * @return Current Proxy password
      */
-    public String getProxyPass() { return proxyPass; }
+    public String getProxyPass() {
+        return proxyPass;
+    }
 
     /**
      * Retrieves a String describing any channels included in this ServerInfo's
@@ -231,4 +250,3 @@ public class ServerInfo {
         return channelString;
     }
 }
-

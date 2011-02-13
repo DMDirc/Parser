@@ -34,6 +34,16 @@ import java.util.regex.Pattern;
 public class Process004005 extends IRCProcessor {
 
     /**
+     * Create a new instance of the IRCProcessor Object.
+     *
+     * @param parser IRCParser That owns this IRCProcessor
+     * @param manager ProcessingManager that is in charge of this IRCProcessor
+     */
+    protected Process004005(final IRCParser parser, final ProcessingManager manager) {
+        super(parser, manager);
+    }
+
+    /**
      * Process ISUPPORT lines.
      *
      * @param sParam Type of line to process ("005", "004")
@@ -43,19 +53,19 @@ public class Process004005 extends IRCProcessor {
     public void process(final String sParam, final String[] token) {
         if ("002".equals(sParam)) {
             final Pattern pattern = Pattern.compile("running(?: version)? (.*)$");
-            final Matcher matcher = pattern.matcher(myParser.getLastLine());
+            final Matcher matcher = pattern.matcher(parser.getLastLine());
             if (matcher.find()) {
-                myParser.h005Info.put("002IRCD", matcher.group(1));
+                parser.h005Info.put("002IRCD", matcher.group(1));
             }
         } else if ("003".equals(sParam)) {
-            myParser.h005Info.put("003IRCD", token[token.length - 1]);
+            parser.h005Info.put("003IRCD", token[token.length - 1]);
         } else if ("004".equals(sParam)) {
             // 004
             final boolean multiParam = token.length > 4;
             int i = multiParam ? 4 : 1;
             final String[] bits = multiParam ? token : token[3].split(" ");
 
-            myParser.h005Info.put("004IRCD", bits[i++]);
+            parser.h005Info.put("004IRCD", bits[i++]);
 
             if (bits[i].matches("^\\d+$")) {
                 // some IRCDs put a timestamp where the usermodes should be
@@ -64,15 +74,15 @@ public class Process004005 extends IRCProcessor {
                 i++;
             }
 
-            myParser.h005Info.put("USERMODES", bits[i++]);
-            myParser.h005Info.put("USERCHANMODES", bits[i++]);
+            parser.h005Info.put("USERMODES", bits[i++]);
+            parser.h005Info.put("USERCHANMODES", bits[i++]);
 
             if (bits.length > i) {
                 // INSPIRCD includes an extra param
-                myParser.h005Info.put("USERCHANPARAMMODES", bits[i++]);
+                parser.h005Info.put("USERCHANPARAMMODES", bits[i++]);
             }
 
-            myParser.parseUserModes();
+            parser.parseUserModes();
         } else if ("005".equals(sParam)) {
             for (int i = 3; i < token.length; i++) {
                 final String[] bits = token[i].split("=", 2);
@@ -88,13 +98,13 @@ public class Process004005 extends IRCProcessor {
                 callDebugInfo(IRCParser.DEBUG_INFO, "%s => %s", key, value);
 
                 if (isNegation) {
-                    myParser.h005Info.remove(key);
+                    parser.h005Info.remove(key);
                 } else {
-                    myParser.h005Info.put(key, value);
+                    parser.h005Info.put(key, value);
                 }
 
                 if ("NETWORK".equals(key) && !isNegation) {
-                    myParser.networkName = value;
+                    parser.networkName = value;
                     callGotNetwork();
                 } else if ("CASEMAPPING".equals(key) && !isNegation) {
                     IRCEncoding encoding = IRCEncoding.RFC1459;
@@ -102,30 +112,30 @@ public class Process004005 extends IRCProcessor {
                     try {
                         encoding = IRCEncoding.valueOf(value.toUpperCase().replace('-', '_'));
                     } catch (IllegalArgumentException ex) {
-                        myParser.callErrorInfo(new ParserError(
+                        parser.callErrorInfo(new ParserError(
                                 ParserError.ERROR_WARNING,
                                 "Unknown casemapping: '" + value + "' - assuming rfc1459",
-                                myParser.getLastLine()));
+                                parser.getLastLine()));
                     }
 
-                    final boolean encodingChanged = myParser.getStringConverter().getEncoding() != encoding;
-                    myParser.setEncoding(encoding);
+                    final boolean encodingChanged = parser.getStringConverter().getEncoding() != encoding;
+                    parser.setEncoding(encoding);
 
-                    if (encodingChanged && myParser.knownClients() == 1) {
+                    if (encodingChanged && parser.knownClients() == 1) {
                         // This means that the casemapping is not rfc1459
                         // We have only added ourselves so far (from 001)
                         // We can fix the hashtable easily.
-                        myParser.removeClient(myParser.getLocalClient());
-                        myParser.addClient(myParser.getLocalClient());
+                        parser.removeClient(parser.getLocalClient());
+                        parser.addClient(parser.getLocalClient());
                     }
                 } else if ("CHANTYPES".equals(key)) {
-                    myParser.parseChanPrefix();
+                    parser.parseChanPrefix();
                 } else if ("PREFIX".equals(key)) {
-                    myParser.parsePrefixModes();
+                    parser.parsePrefixModes();
                 } else if ("CHANMODES".equals(key)) {
-                    myParser.parseChanModes();
+                    parser.parseChanModes();
                 } else if ("NAMESX".equals(key) || "UHNAMES".equals(key)) {
-                    myParser.sendString("PROTOCTL " + key);
+                    parser.sendString("PROTOCTL " + key);
                 } else if ("LISTMODE".equals(key)) {
                     // Support for potential future decent mode listing in the protocol
                     //
@@ -134,12 +144,13 @@ public class Process004005 extends IRCProcessor {
                     String[] handles = new String[2];
                     handles[0] = value; // List mode item
                     final String endValue = "" + (Integer.parseInt(value) + 1);
-                    myParser.h005Info.put("LISTMODEEND", endValue);
+                    parser.h005Info.put("LISTMODEEND", endValue);
                     handles[1] = endValue; // List mode end
                     // Add listmode handlers
                     try {
-                        myParser.getProcessingManager().addProcessor(handles, myParser.getProcessingManager().getProcessor("__LISTMODE__"));
-                    } catch (ProcessorNotFoundException e) { }
+                        parser.getProcessingManager().addProcessor(handles, parser.getProcessingManager().getProcessor("__LISTMODE__"));
+                    } catch (ProcessorNotFoundException e) {
+                    }
                 }
             }
         }
@@ -163,21 +174,10 @@ public class Process004005 extends IRCProcessor {
      * @return true if a method was called, false otherwise
      */
     protected boolean callGotNetwork() {
-        final String networkName = myParser.networkName;
-        final String ircdVersion = myParser.getServerSoftware();
-        final String ircdType = myParser.getServerSoftwareType();
+        final String networkName = parser.networkName;
+        final String ircdVersion = parser.getServerSoftware();
+        final String ircdType = parser.getServerSoftwareType();
 
         return getCallbackManager().getCallbackType(NetworkDetectedListener.class).call(networkName, ircdVersion, ircdType);
     }
-
-    /**
-     * Create a new instance of the IRCProcessor Object.
-     *
-     * @param parser IRCParser That owns this IRCProcessor
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
-     */
-    protected Process004005(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager);
-    }
-
 }

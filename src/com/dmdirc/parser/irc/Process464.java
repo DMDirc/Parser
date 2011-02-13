@@ -28,6 +28,17 @@ import com.dmdirc.parser.interfaces.callbacks.PasswordRequiredListener;
  * Process a 464 message.
  */
 public class Process464 extends IRCProcessor {
+
+    /**
+     * Create a new instance of the IRCProcessor Object.
+     *
+     * @param parser IRCParser That owns this IRCProcessor
+     * @param manager ProcessingManager that is in charge of this IRCProcessor
+     */
+    protected Process464(final IRCParser parser, final ProcessingManager manager) {
+        super(parser, manager);
+    }
+
     /**
      * Process a 464 message.
      *
@@ -37,8 +48,6 @@ public class Process464 extends IRCProcessor {
     @Override
     public void process(final String sParam, final String[] token) {
         callPasswordRequired();
-//        ParserError ei = new ParserError(ParserError.ERROR_ERROR, "Password Required");
-//        callErrorInfo(ei);
     }
 
     /**
@@ -60,15 +69,4 @@ public class Process464 extends IRCProcessor {
     protected boolean callPasswordRequired() {
         return getCallbackManager().getCallbackType(PasswordRequiredListener.class).call();
     }
-
-    /**
-     * Create a new instance of the IRCProcessor Object.
-     *
-     * @param parser IRCParser That owns this IRCProcessor
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
-     */
-    protected Process464(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager);
-    }
-
 }

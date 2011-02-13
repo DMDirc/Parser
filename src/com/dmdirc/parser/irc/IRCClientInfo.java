@@ -67,7 +67,7 @@ public class IRCClientInfo implements LocalClientInfo {
     /**
      * Create a new client object from a hostmask.
      *
-      * @param tParser Refernce to parser that owns this channelclient (used for modes)
+     * @param tParser Refernce to parser that owns this channelclient (used for modes)
      * @param sHostmask Hostmask parsed by parseHost to get nickname
      * @see ClientInfo#parseHost
      */
@@ -109,7 +109,8 @@ public class IRCClientInfo implements LocalClientInfo {
      * @return this Object
      */
     public IRCClientInfo setFake(final boolean newValue) {
-        fake = newValue; return this;
+        fake = newValue;
+        return this;
     }
 
     /**
@@ -486,5 +487,4 @@ public class IRCClientInfo implements LocalClientInfo {
     public void setBack() {
         parser.sendRawMessage("AWAY");
     }
-
 }

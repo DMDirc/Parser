@@ -36,6 +36,16 @@ import java.util.ArrayList;
 public class ProcessQuit extends IRCProcessor {
 
     /**
+     * Create a new instance of the IRCProcessor Object.
+     *
+     * @param parser IRCParser That owns this IRCProcessor
+     * @param manager ProcessingManager that is in charge of this IRCProcessor
+     */
+    protected ProcessQuit(final IRCParser parser, final ProcessingManager manager) {
+        super(parser, manager);
+    }
+
+    /**
      * Process a Quit message.
      *
      * @param sParam Type of line to process ("QUIT")
@@ -45,42 +55,56 @@ public class ProcessQuit extends IRCProcessor {
     public void process(final String sParam, final String[] token) {
         // :nick!ident@host QUIT
         // :nick!ident@host QUIT :reason
-        if (token.length < 2) { return; }
+        if (token.length < 2) {
+            return;
+        }
         IRCClientInfo iClient;
         IRCChannelClientInfo iChannelClient;
 
         iClient = getClientInfo(token[0]);
 
-        if (iClient == null) { return; }
+        if (iClient == null) {
+            return;
+        }
         if (IRCParser.ALWAYS_UPDATECLIENT && iClient.getHostname().isEmpty()) {
             // This may seem pointless - updating before they leave - but the formatter needs it!
             iClient.setUserBits(token[0], false);
         }
         String sReason = "";
-        if (token.length > 2) { sReason = token[token.length - 1]; }
+        if (token.length > 2) {
+            sReason = token[token.length - 1];
+        }
 
-        final ArrayList<IRCChannelInfo> channelList = new ArrayList<IRCChannelInfo>(myParser.getChannels());
+        final ArrayList<IRCChannelInfo> channelList = new ArrayList<IRCChannelInfo>(parser.getChannels());
         for (IRCChannelInfo iChannel : channelList) {
             iChannelClient = iChannel.getChannelClient(iClient);
             if (iChannelClient != null) {
-                if (myParser.removeAfterCallback) { callChannelQuit(iChannel, iChannelClient, sReason); }
-                if (iClient == myParser.getLocalClient()) {
+                if (parser.removeAfterCallback) {
+                    callChannelQuit(iChannel, iChannelClient, sReason);
+                }
+                if (iClient == parser.getLocalClient()) {
                     iChannel.emptyChannel();
-                    myParser.removeChannel(iChannel);
+                    parser.removeChannel(iChannel);
                 } else {
                     iChannel.delClient(iClient);
                 }
-                if (!myParser.removeAfterCallback) { callChannelQuit(iChannel, iChannelClient, sReason); }
+                if (!parser.removeAfterCallback) {
+                    callChannelQuit(iChannel, iChannelClient, sReason);
+                }
             }
         }
 
-        if (myParser.removeAfterCallback) { callQuit(iClient, sReason); }
-        if (iClient == myParser.getLocalClient()) {
-            myParser.clearClients();
-        } else {
-            myParser.removeClient(iClient);
+        if (parser.removeAfterCallback) {
+            callQuit(iClient, sReason);
         }
-        if (!myParser.removeAfterCallback) { callQuit(iClient, sReason); }
+        if (iClient == parser.getLocalClient()) {
+            parser.clearClients();
+        } else {
+            parser.removeClient(iClient);
+        }
+        if (!parser.removeAfterCallback) {
+            callQuit(iClient, sReason);
+        }
     }
 
     /**
@@ -117,15 +141,4 @@ public class ProcessQuit extends IRCProcessor {
     public String[] handles() {
         return new String[]{"QUIT"};
     }
-
-    /**
-     * Create a new instance of the IRCProcessor Object.
-     *
-     * @param parser IRCParser That owns this IRCProcessor
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
-     */
-    protected ProcessQuit(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager);
-    }
-
 }

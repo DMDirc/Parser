@@ -24,10 +24,9 @@ package com.dmdirc.parser.irc;
 
 /**
  * IRC Parser Processor Not Found Exception.
- *
- * @author Shane Mc Cormack
  */
 public class ProcessorNotFoundException extends Exception {
+
     /**
      * A version number for this class. It should be changed whenever the class
      * structure is changed (or anything else that would prevent serialized
@@ -40,6 +39,7 @@ public class ProcessorNotFoundException extends Exception {
      *
      * @param message Reason for exception
      */
-    public ProcessorNotFoundException(final String message) { super(message); }
-
+    public ProcessorNotFoundException(final String message) {
+        super(message);
+    }
 }

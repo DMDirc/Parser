@@ -35,6 +35,16 @@ import com.dmdirc.parser.interfaces.callbacks.ChannelSelfJoinListener;
 public class ProcessJoin extends IRCProcessor {
 
     /**
+     * Create a new instance of the IRCProcessor Object.
+     *
+     * @param parser IRCParser That owns this IRCProcessor
+     * @param manager ProcessingManager that is in charge of this IRCProcessor
+     */
+    protected ProcessJoin(final IRCParser parser, final ProcessingManager manager) {
+        super(parser, manager);
+    }
+
+    /**
      * Process a channel join.
      *
      * @param sParam Type of line to process ("JOIN")
@@ -42,68 +52,72 @@ public class ProcessJoin extends IRCProcessor {
      */
     @Override
     public void process(final String sParam, final String[] token) {
-        if (sParam.equals("329")) {
-            if (token.length < 5) { return; }
-            final IRCChannelInfo iChannel = myParser.getChannel(token[3]);
+        if ("329".equals(sParam)) {
+            if (token.length < 5) {
+                return;
+            }
+            final IRCChannelInfo iChannel = parser.getChannel(token[3]);
             if (iChannel != null) {
                 try {
                     iChannel.setCreateTime(Integer.parseInt(token[4]));
                 } catch (NumberFormatException nfe) {
-                    /* Oh well, not a normal ircd I guess */
+                    // Oh well, not a normal ircd I guess
                 }
             }
         } else {
             // :nick!ident@host JOIN (:)#Channel
-            if (token.length < 3) { return; }
+            if (token.length < 3) {
+                return;
+            }
             IRCClientInfo iClient;
             IRCChannelInfo iChannel;
             IRCChannelClientInfo iChannelClient;
 
             iClient = getClientInfo(token[0]);
-            iChannel = myParser.getChannel(token[token.length - 1]);
+            iChannel = parser.getChannel(token[token.length - 1]);
 
             if (iClient == null) {
-                iClient = new IRCClientInfo(myParser, token[0]);
-                myParser.addClient(iClient);
+                iClient = new IRCClientInfo(parser, token[0]);
+                parser.addClient(iClient);
             }
             // Check to see if we know the host/ident for this client to facilitate dmdirc Formatter
-            if (iClient.getHostname().isEmpty()) { iClient.setUserBits(token[0], false); }
+            if (iClient.getHostname().isEmpty()) {
+                iClient.setUserBits(token[0], false);
+            }
             if (iChannel != null) {
-                if (iClient == myParser.getLocalClient()) {
+                if (iClient == parser.getLocalClient()) {
                     try {
                         if (iChannel.getChannelClient(iClient) == null) {
                             // Otherwise we have a channel known, that we are not in?
-                            myParser.callErrorInfo(new ParserError(ParserError.ERROR_FATAL, "Joined known channel that we wern't already on..", myParser.getLastLine()));
+                            parser.callErrorInfo(new ParserError(ParserError.ERROR_FATAL, "Joined known channel that we wern't already on..", parser.getLastLine()));
                         } else {
                             // If we are joining a channel we are already on, fake a part from
                             // the channel internally, and rejoin.
-                            myParser.getProcessingManager().process("PART", token);
+                            parser.getProcessingManager().process("PART", token);
                         }
-                    } catch (ProcessorNotFoundException e) { }
-                } else if (iChannel.getChannelClient(iClient) != null) {
-                    // Client joined channel that we already know of.
-                    return;
-                } else {
+                    } catch (ProcessorNotFoundException e) {
+                    }
+                } else if (iChannel.getChannelClient(iClient) == null) {
                     // This is only done if we are already the channel, and it isn't us that
                     // joined.
                     iChannelClient = iChannel.addClient(iClient);
                     callChannelJoin(iChannel, iChannelClient);
                     return;
+                } else {
+                    // Client joined channel that we already know of.
+                    return;
                 }
             }
-            //if (iClient != myParser.getMyself()) {
-                // callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got join for channel ("+token[token.length-1]+") that I am not on. [Me: "+myParser.getMyself()+"]", myParser.getLastLine()));
-            //}
-            iChannel = new IRCChannelInfo(myParser, token[token.length - 1]);
+
+            iChannel = new IRCChannelInfo(parser, token[token.length - 1]);
             // Add ourself to the channel, this will be overridden by the NAMES reply
             iChannel.addClient(iClient);
-            myParser.addChannel(iChannel);
+            parser.addChannel(iChannel);
             sendString("MODE " + iChannel.getName(), QueuePriority.LOW);
 
             callChannelSelfJoin(iChannel);
         }
     }
-
 
     /**
      * Callback to all objects implementing the ChannelJoin Callback.
@@ -137,15 +151,4 @@ public class ProcessJoin extends IRCProcessor {
     public String[] handles() {
         return new String[]{"JOIN", "329"};
     }
-
-    /**
-     * Create a new instance of the IRCProcessor Object.
-     *
-     * @param parser IRCParser That owns this IRCProcessor
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
-     */
-    protected ProcessJoin(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager);
-    }
-
 }

@@ -29,6 +29,7 @@ import java.util.List;
  * Groups of servers do things the same way as each other.
  */
 public enum ServerTypeGroup {
+
     /**
      * Freenode Group.
      */
@@ -47,10 +48,8 @@ public enum ServerTypeGroup {
      * rather than as a channel user mode.
      */
     PROTECTED_388("Protected List", new ServerType[]{ServerType.SWIFTIRC, ServerType.AUSTHEX8});
-
     /** Name of the group. */
     final String name;
-
     /** Group Members. */
     final List<ServerType> members;
 

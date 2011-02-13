@@ -56,6 +56,17 @@ import java.util.regex.PatternSyntaxException;
  * Each type has 5 Calls, making 15 callbacks handled here.
  */
 public class ProcessMessage extends IRCProcessor {
+
+    /**
+     * Create a new instance of the IRCProcessor Object.
+     *
+     * @param parser IRCParser That owns this IRCProcessor
+     * @param manager ProcessingManager that is in charge of this IRCProcessor
+     */
+    protected ProcessMessage(final IRCParser parser, final ProcessingManager manager) {
+        super(parser, manager);
+    }
+
     /**
      * Process PRIVMSGs and NOTICEs.
      * This horrible thing handles PRIVMSGs and NOTICES<br>
@@ -71,26 +82,35 @@ public class ProcessMessage extends IRCProcessor {
     public void process(final String sParam, final String[] token) {
         // Ignore people!
         String sMessage = "";
-        if (token[0].charAt(0) == ':') { sMessage = token[0].substring(1); } else { sMessage = token[0]; }
+        if (token[0].charAt(0) == ':') {
+            sMessage = token[0].substring(1);
+        } else {
+            sMessage = token[0];
+        }
         // We use sMessage to be the users host (first token in the line)
         try {
-            if (myParser.getIgnoreList().matches(sMessage) > -1) { return; }
+            if (parser.getIgnoreList().matches(sMessage) > -1) {
+                return;
+            }
         } catch (PatternSyntaxException pse) {
-             final ParserError pe = new ParserError(ParserError.ERROR_WARNING + ParserError.ERROR_USER, "Error with ignore list regex: " + pse, myParser.getLastLine());
-             pe.setException(pse);
-             callErrorInfo(pe);
+            final ParserError pe = new ParserError(ParserError.ERROR_WARNING + ParserError.ERROR_USER, "Error with ignore list regex: " + pse, parser.getLastLine());
+            pe.setException(pse);
+            callErrorInfo(pe);
         }
 
         // Lines such as:
         // "nick!user@host PRIVMSG"
         // are invalid, stop processing.
-        if (token.length < 3) { return; }
+        if (token.length < 3) {
+            return;
+        }
 
         // Is this actually a notice auth?
         if (token[0].indexOf('!') == -1 && token[1].equalsIgnoreCase("NOTICE") && token[2].equalsIgnoreCase("AUTH")) {
             try {
-                myParser.getProcessingManager().process("Notice Auth", token);
-            } catch (ProcessorNotFoundException e) { }
+                parser.getProcessingManager().process("Notice Auth", token);
+            } catch (ProcessorNotFoundException e) {
+            }
             return;
         }
 
@@ -120,13 +140,14 @@ public class ProcessMessage extends IRCProcessor {
                 if (bits.length > 1) {
                     sMessage = bits[1];
                     sMessage = sMessage.substring(0, sMessage.length() - 1);
-                } else { sMessage = ""; }
+                } else {
+                    sMessage = "";
+                }
             }
             // If the message is not an action, check if it is another type of CTCP
             // CTCPs have Character(1) at the start/end of the line
             if (!isAction && Character.valueOf(sMessage.charAt(0)).equals(char1)
-                    && Character.valueOf(sMessage.charAt(sMessage.length() - 1))
-                    .equals(char1)) {
+                    && Character.valueOf(sMessage.charAt(sMessage.length() - 1)).equals(char1)) {
                 isCTCP = true;
                 // Bits is the message been split into 2 parts, the first word and the rest
                 // Some CTCPs have messages and some do not
@@ -150,12 +171,13 @@ public class ProcessMessage extends IRCProcessor {
         }
 
         // Remove the leading : from the host.
-        if (token[0].charAt(0) == ':' && token[0].length() > 1) { token[0] = token[0].substring(1); }
+        if (token[0].charAt(0) == ':' && token[0].length() > 1) {
+            token[0] = token[0].substring(1);
+        }
 
         iClient = getClientInfo(token[0]);
         // Facilitate DMDIRC Formatter
-        if ((IRCParser.ALWAYS_UPDATECLIENT && iClient != null) && iClient
-                .getHostname().isEmpty()) {
+        if ((IRCParser.ALWAYS_UPDATECLIENT && iClient != null) && iClient.getHostname().isEmpty()) {
             iClient.setUserBits(token[0], false);
         }
 
@@ -173,16 +195,18 @@ public class ProcessMessage extends IRCProcessor {
         // handled as if the prefix wasn't used. This can be changed in the future
         // if desired.
         final char modePrefix = token[2].charAt(0);
-        final boolean hasModePrefix =  (myParser.prefixMap.containsKey(modePrefix) && !myParser.prefixModes.containsKey(modePrefix));
+        final boolean hasModePrefix = (parser.prefixMap.containsKey(modePrefix) && !parser.prefixModes.containsKey(modePrefix));
         final String targetName = (hasModePrefix) ? token[2].substring(1) : token[2];
 
         if (isValidChannelName(targetName)) {
             iChannel = getChannel(targetName);
             if (iChannel == null) {
-                // callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got message for channel ("+targetName+") that I am not on.", myParser.getLastLine()));
+                // callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got message for channel ("+targetName+") that I am not on.", parser.getLastLine()));
                 return;
             }
-            if (iClient != null) { iChannelClient = iChannel.getChannelClient(iClient); }
+            if (iClient != null) {
+                iChannelClient = iChannel.getChannelClient(iClient);
+            }
             if (sParam.equalsIgnoreCase("PRIVMSG")) {
                 if (isAction) {
                     callChannelAction(iChannel, iChannelClient, sMessage, token[0]);
@@ -204,7 +228,7 @@ public class ProcessMessage extends IRCProcessor {
                     callChannelNotice(iChannel, iChannelClient, sMessage, token[0]);
                 }
             }
-        } else if (myParser.getStringConverter().equalsIgnoreCase(token[2], myParser.getMyNickname())) {
+        } else if (parser.getStringConverter().equalsIgnoreCase(token[2], parser.getMyNickname())) {
             if (sParam.equalsIgnoreCase("PRIVMSG")) {
                 if (isAction) {
                     callPrivateAction(sMessage, token[0]);
@@ -508,7 +532,6 @@ public class ProcessMessage extends IRCProcessor {
         return getCallbackManager().getCallbackType(UnknownServerNoticeListener.class).call(sMessage, sTarget, sHost);
     }
 
-
     /**
      * What does this IRCProcessor handle.
      *
@@ -518,15 +541,4 @@ public class ProcessMessage extends IRCProcessor {
     public String[] handles() {
         return new String[]{"PRIVMSG", "NOTICE"};
     }
-
-    /**
-     * Create a new instance of the IRCProcessor Object.
-     *
-     * @param parser IRCParser That owns this IRCProcessor
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
-     */
-    protected ProcessMessage(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager);
-    }
-
 }
