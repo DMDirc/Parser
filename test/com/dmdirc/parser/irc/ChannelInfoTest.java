@@ -24,8 +24,6 @@ package com.dmdirc.parser.irc;
 import com.dmdirc.harness.parser.TestParser;
 
 import com.dmdirc.parser.interfaces.ChannelInfo;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -47,15 +45,6 @@ public class ChannelInfoTest {
         ci.setAddingNames(false);
 
         assertFalse(ci.isAddingNames());
-    }
-
-    @Test
-    public void testMap() {
-        final Map map = new HashMap();
-
-        ci.setMap(map);
-
-        assertEquals(map, ci.getMap());
     }
 
     @Test

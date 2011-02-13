@@ -19,7 +19,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package com.dmdirc.parser.irc;
 
 import java.net.Authenticator;
@@ -33,7 +32,6 @@ import java.util.concurrent.Semaphore;
 /**
  * Handles proxy authentication for the parser.
  *
- * @author Shane Mc Cormack
  * @see IRCParser
  */
 public final class IRCAuthenticator extends Authenticator {
@@ -44,16 +42,12 @@ public final class IRCAuthenticator extends Authenticator {
      * objects being unserialized with the new class).
      */
     private static final long serialVersionUID = 1;
-
     /** Singleton instance of IRCAuthenticator. */
-    private static IRCAuthenticator me = null;
-
+    private static IRCAuthenticator me;
     /** List of authentication replies. */
     private final Map<String, PasswordAuthentication> replies = new HashMap<String, PasswordAuthentication>();
-
     /** List of servers for each host. */
     private final Map<String, List<ServerInfo>> owners = new HashMap<String, List<ServerInfo>>();
-
     /** Semaphore for connection limiting. */
     private final Semaphore mySemaphore = new Semaphore(1, true);
 
@@ -90,13 +84,15 @@ public final class IRCAuthenticator extends Authenticator {
      * @param server ServerInfo object with proxy details.
      */
     public void addAuthentication(final ServerInfo server) {
-        final String host = server.getProxyHost();
-        final int port = server.getProxyPort();
         final String username = server.getProxyUser();
         final String password = server.getProxyPass();
 
-        if (username == null || password == null || username.isEmpty() || password.isEmpty()) { return; }
+        if (username == null || password == null || username.isEmpty() || password.isEmpty()) {
+            return;
+        }
 
+        final String host = server.getProxyHost();
+        final int port = server.getProxyPort();
         final PasswordAuthentication pass = new PasswordAuthentication(username, password.toCharArray());
         final String fullhost = host.toLowerCase() + ":" + port;
 
@@ -134,7 +130,8 @@ public final class IRCAuthenticator extends Authenticator {
         // See if any other servers are associated with this proxy.
         final List<ServerInfo> servers = owners.containsKey(fullhost) ? owners.get(fullhost) : new ArrayList<ServerInfo>();
         servers.remove(server);
-        if (servers.size() == 0) {
+
+        if (servers.isEmpty()) {
             // No more servers need this authentication info, remove.
             owners.remove(fullhost);
             replies.remove(fullhost);

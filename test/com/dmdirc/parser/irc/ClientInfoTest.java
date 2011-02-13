@@ -23,23 +23,12 @@
 package com.dmdirc.parser.irc;
 
 import com.dmdirc.parser.common.AwayState;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 public class ClientInfoTest {
-    
-    @Test
-    public void testMap() {
-        final IRCClientInfo ci = new IRCClientInfo(new IRCParser(), "nick!ident@host");
-        final Map<Object, Object> map = new HashMap<Object, Object>();
-        
-        ci.setMap(map);
-        assertEquals(map, ci.getMap());
-    }
-    
+
     @Test
     public void testFake() {
         final IRCClientInfo ci = new IRCClientInfo(new IRCParser(), "nick!ident@host");
@@ -49,55 +38,55 @@ public class ClientInfoTest {
         ci.setFake(false);
         assertFalse(ci.isFake());
     }
-    
+
     @Test
     public void testParseHost() {
         final String string1 = ":nick!ident@host";
         final String string2 = "nick";
         final String string3 = ":nick@host";
-        
+
         assertEquals("nick", IRCClientInfo.parseHost(string1));
         assertEquals("nick", IRCClientInfo.parseHost(string2));
         assertEquals("nick", IRCClientInfo.parseHost(string3));
     }
-    
+
     @Test
     public void testParseHostFull() {
         final String string1 = ":nick!ident@host";
         final String string2 = "nick";
         final String string3 = ":nick@host";
-        
+
         assertEquals("nick", IRCClientInfo.parseHostFull(string1)[0]);
         assertEquals("ident", IRCClientInfo.parseHostFull(string1)[1]);
         assertEquals("host", IRCClientInfo.parseHostFull(string1)[2]);
-        
+
         assertEquals("nick", IRCClientInfo.parseHostFull(string2)[0]);
         assertEquals("nick", IRCClientInfo.parseHostFull(string3)[0]);
         assertEquals("host", IRCClientInfo.parseHostFull(string3)[2]);
     }
-    
+
     @Test
     public void testSetUserBits() {
         final IRCClientInfo ci = new IRCClientInfo(new IRCParser(), "nick!ident@host");
         ci.setUserBits("nick2!ident2@host2", false);
-        
+
         assertEquals("nick", ci.getNickname());
         assertEquals("ident2", ci.getUsername());
         assertEquals("host2", ci.getHostname());
-        
+
         ci.setUserBits(":nick3@host3", true);
-        
+
         assertEquals("nick3", ci.getNickname());
         assertEquals("ident2", ci.getUsername());
         assertEquals("host3", ci.getHostname());
     }
-    
+
     @Test
     public void testToString() {
         final IRCClientInfo ci = new IRCClientInfo(new IRCParser(), "nick!ident@host");
         assertEquals("nick!ident@host", ci.toString());
     }
-    
+
     @Test
     public void testAwayState() {
         final IRCClientInfo ci = new IRCClientInfo(new IRCParser(), "nick!ident@host");
@@ -105,18 +94,18 @@ public class ClientInfoTest {
         ci.setAwayState(AwayState.HERE);
         assertTrue(ci.getAwayState() == AwayState.HERE);
     }
-    
+
     @Test
     public void testAwayReason() {
         final IRCClientInfo ci = new IRCClientInfo(new IRCParser(), "nick!ident@host");
         ci.setAwayState(AwayState.AWAY);
         ci.setAwayReason("away reason");
-        
+
         assertEquals("away reason", ci.getAwayReason());
         ci.setAwayState(AwayState.HERE);
         assertEquals("", ci.getAwayReason());
     }
-    
+
     @Test
     public void testRealName() {
         final IRCClientInfo ci = new IRCClientInfo(new IRCParser(), "nick!ident@host");
@@ -125,5 +114,5 @@ public class ClientInfoTest {
         ci.setRealName("abc 123 def");
         assertEquals("abc 123 def", ci.getRealname());
     }
-    
+
 }
