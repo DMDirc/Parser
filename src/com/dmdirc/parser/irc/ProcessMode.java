@@ -41,6 +41,17 @@ import java.util.Calendar;
  * Process a Mode line.
  */
 public class ProcessMode extends IRCProcessor {
+
+    /**
+     * Create a new instance of the IRCProcessor Object.
+     *
+     * @param parser IRCParser That owns this IRCProcessor
+     * @param manager ProcessingManager that is in charge of this IRCProcessor
+     */
+    protected ProcessMode(final IRCParser parser, final ProcessingManager manager) {
+        super(parser, manager);
+    }
+
     /**
      * Process a Mode Line.
      *
@@ -114,9 +125,6 @@ public class ProcessMode extends IRCProcessor {
 
         iChannel = getChannel(sChannelName);
         if (iChannel == null) {
-            // callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got modes for channel ("+sChannelName+") that I am not on.", myParser.getLastLine()));
-            // iChannel = new ChannelInfo(myParser, sChannelName);
-            // myParser.addChannel(iChannel);
             return;
         }
         // Get the current channel modes
@@ -126,8 +134,7 @@ public class ProcessMode extends IRCProcessor {
 
         setterCCI = iChannel.getChannelClient(token[0]);
         // Facilitate dmdirc formatter
-        if ((IRCParser.ALWAYS_UPDATECLIENT && setterCCI != null) && setterCCI
-                .getClient().getHostname().isEmpty()) {
+        if ((IRCParser.ALWAYS_UPDATECLIENT && setterCCI != null) && setterCCI.getClient().getHostname().isEmpty()) {
             setterCCI.getClient().setUserBits(token[0], false);
         }
 
@@ -140,48 +147,54 @@ public class ProcessMode extends IRCProcessor {
 
             sNonUserModeStr = sNonUserModeStr + cMode;
             if (cMode.equals("+".charAt(0))) {
-                cPositive = '+'; bPositive = true;
+                cPositive = '+';
+                bPositive = true;
             } else if (cMode.equals("-".charAt(0))) {
-                cPositive = '-'; bPositive = false;
+                cPositive = '-';
+                bPositive = false;
             } else {
-                if (myParser.chanModesBool.containsKey(cMode)) {
-                    nValue = myParser.chanModesBool.get(cMode); bBooleanMode = true;
-                } else if (myParser.chanModesOther.containsKey(cMode)) {
-                    nValue = myParser.chanModesOther.get(cMode); bBooleanMode = false;
-                } else if (myParser.prefixModes.containsKey(cMode)) {
+                if (parser.chanModesBool.containsKey(cMode)) {
+                    nValue = parser.chanModesBool.get(cMode);
+                    bBooleanMode = true;
+                } else if (parser.chanModesOther.containsKey(cMode)) {
+                    nValue = parser.chanModesOther.get(cMode);
+                    bBooleanMode = false;
+                } else if (parser.prefixModes.containsKey(cMode)) {
                     // (de) OP/Voice someone
                     if (sModestr.length <= nParam) {
-                        myParser.callErrorInfo(new ParserError(ParserError.ERROR_FATAL + ParserError.ERROR_USER, "Broken Modes. Parameter required but not given.", myParser.getLastLine()));
+                        parser.callErrorInfo(new ParserError(ParserError.ERROR_FATAL + ParserError.ERROR_USER, "Broken Modes. Parameter required but not given.", parser.getLastLine()));
                         return;
                     }
                     sModeParam = sModestr[nParam++];
-                    nValue = myParser.prefixModes.get(cMode);
+                    nValue = parser.prefixModes.get(cMode);
                     callDebugInfo(IRCParser.DEBUG_INFO, "User Mode: %c / %d [%s] {Positive: %b}", cMode, nValue, sModeParam, bPositive);
                     iChannelClientInfo = iChannel.getChannelClient(sModeParam);
                     if (iChannelClientInfo == null) {
                         // Client not known?
                         iClient = getClientInfo(sModeParam);
                         if (iClient == null) {
-                            iClient = new IRCClientInfo(myParser, sModeParam);
-                            myParser.addClient(iClient);
+                            iClient = new IRCClientInfo(parser, sModeParam);
+                            parser.addClient(iClient);
                         }
                         iChannelClientInfo = iChannel.addClient(iClient);
                     }
                     callDebugInfo(IRCParser.DEBUG_INFO, "\tOld Mode Value: %d", iChannelClientInfo.getChanMode());
                     if (bPositive) {
-                        iChannelClientInfo.setChanMode(iChannelClientInfo.getChanMode() | nValue); sTemp = "+";
+                        iChannelClientInfo.setChanMode(iChannelClientInfo.getChanMode() | nValue);
+                        sTemp = "+";
                     } else {
-                        iChannelClientInfo.setChanMode(iChannelClientInfo.getChanMode() ^ (iChannelClientInfo.getChanMode() & nValue)); sTemp = "-";
+                        iChannelClientInfo.setChanMode(iChannelClientInfo.getChanMode() ^ (iChannelClientInfo.getChanMode() & nValue));
+                        sTemp = "-";
                     }
                     sTemp = sTemp + cMode;
                     callChannelUserModeChanged(iChannel, iChannelClientInfo, setterCCI, token[0], sTemp);
                     continue;
                 } else {
                     // unknown mode - add as boolean
-                    myParser.chanModesBool.put(cMode, myParser.nextKeyCMBool);
-                    nValue = myParser.nextKeyCMBool;
+                    parser.chanModesBool.put(cMode, parser.nextKeyCMBool);
+                    nValue = parser.nextKeyCMBool;
                     bBooleanMode = true;
-                    myParser.nextKeyCMBool = myParser.nextKeyCMBool * 2;
+                    parser.nextKeyCMBool = parser.nextKeyCMBool * 2;
                 }
 
                 if (bBooleanMode) {
@@ -195,7 +208,7 @@ public class ProcessMode extends IRCProcessor {
                 } else {
 
                     if ((bPositive || nValue == IRCParser.MODE_LIST || ((nValue & IRCParser.MODE_UNSET) == IRCParser.MODE_UNSET)) && (sModestr.length <= nParam)) {
-                        myParser.callErrorInfo(new ParserError(ParserError.ERROR_FATAL + ParserError.ERROR_USER, "Broken Modes. Parameter required but not given.", myParser.getLastLine()));
+                        parser.callErrorInfo(new ParserError(ParserError.ERROR_FATAL + ParserError.ERROR_USER, "Broken Modes. Parameter required but not given.", parser.getLastLine()));
                         continue;
                     }
 
@@ -240,7 +253,9 @@ public class ProcessMode extends IRCProcessor {
         }
 
         // Call Callbacks
-        for (int i = 0; i < sModestr.length; ++i) { sFullModeStr.append(sModestr[i]).append(" "); }
+        for (int i = 0; i < sModestr.length; ++i) {
+            sFullModeStr.append(sModestr[i]).append(" ");
+        }
 
         iChannel.setMode(nCurrent);
         if (sParam.equals("324")) {
@@ -266,7 +281,9 @@ public class ProcessMode extends IRCProcessor {
 
         final IRCClientInfo iClient = getClientInfo(token[2]);
 
-        if (iClient == null) { return; }
+        if (iClient == null) {
+            return;
+        }
 
         if (clearOldModes) {
             nCurrent = 0;
@@ -283,14 +300,14 @@ public class ProcessMode extends IRCProcessor {
             } else if (cMode.equals(":".charAt(0))) {
                 continue;
             } else {
-                if (myParser.userModes.containsKey(cMode)) {
-                    nValue = myParser.userModes.get(cMode);
+                if (parser.userModes.containsKey(cMode)) {
+                    nValue = parser.userModes.get(cMode);
                 } else {
                     // Unknown mode
-                    callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got unknown user mode " + cMode + " - Added", myParser.getLastLine()));
-                    myParser.userModes.put(cMode, myParser.nNextKeyUser);
-                    nValue = myParser.nNextKeyUser;
-                    myParser.nNextKeyUser = myParser.nNextKeyUser * 2;
+                    callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got unknown user mode " + cMode + " - Added", parser.getLastLine()));
+                    parser.userModes.put(cMode, parser.nNextKeyUser);
+                    nValue = parser.nNextKeyUser;
+                    parser.nNextKeyUser = parser.nNextKeyUser * 2;
                 }
                 // Usermodes are always boolean
                 callDebugInfo(IRCParser.DEBUG_INFO, "User Mode: %c [%d] {Positive: %b}", cMode, nValue, bPositive);
@@ -373,15 +390,4 @@ public class ProcessMode extends IRCProcessor {
     public String[] handles() {
         return new String[]{"MODE", "324", "221"};
     }
-
-    /**
-     * Create a new instance of the IRCProcessor Object.
-     *
-     * @param parser IRCParser That owns this IRCProcessor
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
-     */
-    protected ProcessMode(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager);
-    }
-
 }

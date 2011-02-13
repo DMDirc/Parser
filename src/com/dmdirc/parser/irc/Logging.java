@@ -29,18 +29,18 @@ import java.lang.reflect.Method;
  * Logging using log4j if available.
  */
 public class Logging {
+
     /** Available Log Levels. */
     public enum LogLevel {
+
         TRACE("trace", "isTraceEnabled"),
         DEBUG("debug", "isDebugEnabled"),
         INFO("info", "isInfoEnabled"),
         WARN("warn", "isWarnEnabled"),
         ERROR("error", "isErrorEnabled"),
         FATAL("fatal", "isFatalEnabled");
-
         /** Method name. */
         private final String methodName;
-
         /** Check Method name. */
         private final String checkMethodName;
 
@@ -60,22 +60,23 @@ public class Logging {
          *
          * @return Name of method in log4j to log to
          */
-        public String getMethodName() { return methodName; }
+        public String getMethodName() {
+            return methodName;
+        }
 
         /**
          * Get the Name of the check method in log4j.
          *
          * @return Name of check method in log4j
          */
-        public String getCheckMethodName() { return checkMethodName; }
+        public String getCheckMethodName() {
+            return checkMethodName;
+        }
     };
-
     /** Singleton Instance of Logging. */
     private static Logging me;
-
     /** Is log4j available. */
     private final boolean isAvailable;
-
     /** "Log" object if available. */
     private Object log;
 
@@ -154,7 +155,9 @@ public class Logging {
      * @param throwable Throwable to log alongside message
      */
     public void log(final LogLevel level, final String message, final Throwable throwable) {
-        if (!isAvailable) { return; }
+        if (!isAvailable) {
+            return;
+        }
         try {
             if (throwable == null) {
                 final Method method = log.getClass().getMethod(level.getMethodName(), new Class[]{String.class});

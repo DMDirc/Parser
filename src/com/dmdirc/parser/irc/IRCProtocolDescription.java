@@ -28,7 +28,6 @@ import com.dmdirc.parser.interfaces.ProtocolDescription;
  * Provides a description of the IRC protocol.
  *
  * @since 0.6.4
- * @author chris
  */
 public class IRCProtocolDescription implements ProtocolDescription {
 
@@ -43,5 +42,4 @@ public class IRCProtocolDescription implements ProtocolDescription {
     public String[] parseHostmask(final String hostmask) {
         return IRCClientInfo.parseHostFull(hostmask);
     }
-
 }

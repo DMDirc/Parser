@@ -35,7 +35,6 @@ public enum IRCEncoding {
     STRICT_RFC1459(3),
     /** Standard RFC1459. */
     RFC1459(4);
-
     /** The limit used for this encoding. */
     private final int limit;
 

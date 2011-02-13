@@ -34,6 +34,17 @@ import com.dmdirc.parser.interfaces.callbacks.OtherAwayStateListener;
  * Process a /who reply.
  */
 public class ProcessWho extends IRCProcessor {
+
+    /**
+     * Create a new instance of the IRCProcessor Object.
+     *
+     * @param parser IRCParser That owns this IRCProcessor
+     * @param manager ProcessingManager that is in charge of this IRCProcessor
+     */
+    protected ProcessWho(final IRCParser parser, final ProcessingManager manager) {
+        super(parser, manager);
+    }
+
     /**
      * Process a /who reply.
      *
@@ -66,13 +77,13 @@ public class ProcessWho extends IRCProcessor {
             if (client.getAwayState() != isAway) {
                 final AwayState oldState = client.getAwayState();
                 client.setAwayState(isAway);
-                if (client == myParser.getLocalClient()) {
+                if (client == parser.getLocalClient()) {
                     callAwayState(oldState, client.getAwayState(), client.getAwayReason());
                 } else {
                     callAwayStateOther(client, oldState, isAway);
 
                     ChannelClientInfo iChannelClient;
-                    for (ChannelInfo iChannel : myParser.getChannels()) {
+                    for (ChannelInfo iChannel : parser.getChannels()) {
                         iChannelClient = iChannel.getChannelClient(client);
                         if (iChannelClient != null) {
                             callChannelAwayStateOther(iChannel, iChannelClient, oldState, isAway);
@@ -132,15 +143,4 @@ public class ProcessWho extends IRCProcessor {
     public String[] handles() {
         return new String[]{"352"};
     }
-
-    /**
-     * Create a new instance of the IRCProcessor Object.
-     *
-     * @param parser IRCParser That owns this IRCProcessor
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
-     */
-    protected ProcessWho(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager);
-    }
-
 }

@@ -23,22 +23,20 @@
 package com.dmdirc.parser.irc.outputqueue;
 
 import com.dmdirc.parser.common.QueuePriority;
+
 import java.io.PrintWriter;
 import java.util.Comparator;
 import java.util.concurrent.BlockingQueue;
 
 /**
  * Sending queue.
- *
- * @author shane
  */
 public abstract class QueueHandler extends Thread implements Comparator<QueueItem> {
+
     /** Queue we are handling. */
     protected final BlockingQueue<QueueItem> queue;
-
     /** Where to send the output. */
     private final PrintWriter out;
-
     /** The output queue that owns us. */
     protected OutputQueue outputQueue;
 

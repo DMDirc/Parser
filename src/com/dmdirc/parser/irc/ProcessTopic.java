@@ -29,6 +29,17 @@ import com.dmdirc.parser.interfaces.callbacks.ChannelTopicListener;
  * Process a topic change.
  */
 public class ProcessTopic extends IRCProcessor {
+
+    /**
+     * Create a new instance of the IRCProcessor Object.
+     *
+     * @param parser IRCParser That owns this IRCProcessor
+     * @param manager ProcessingManager that is in charge of this IRCProcessor
+     */
+    protected ProcessTopic(final IRCParser parser, final ProcessingManager manager) {
+        super(parser, manager);
+    }
+
     /**
      * Process a topic change.
      *
@@ -40,12 +51,16 @@ public class ProcessTopic extends IRCProcessor {
         IRCChannelInfo iChannel;
         if (sParam.equals("332")) {
             iChannel = getChannel(token[3]);
-            if (iChannel == null) { return; }
+            if (iChannel == null) {
+                return;
+            }
             iChannel.setInternalTopic(token[token.length - 1]);
         } else if (sParam.equals("333")) {
             if (token.length > 3) {
                 iChannel = getChannel(token[3]);
-                if (iChannel == null) { return; }
+                if (iChannel == null) {
+                    return;
+                }
                 if (token.length > 4) {
                     iChannel.setTopicUser(token[4]);
                     if (token.length > 5) {
@@ -62,9 +77,13 @@ public class ProcessTopic extends IRCProcessor {
                 }
             }
             iChannel = getChannel(token[2]);
-            if (iChannel == null) { return; }
+            if (iChannel == null) {
+                return;
+            }
             iChannel.setTopicTime(System.currentTimeMillis() / 1000);
-            if (token[0].charAt(0) == ':') { token[0] = token[0].substring(1); }
+            if (token[0].charAt(0) == ':') {
+                token[0] = token[0].substring(1);
+            }
             iChannel.setTopicUser(token[0]);
             iChannel.setInternalTopic(token[token.length - 1]);
             callChannelTopic(iChannel, false);
@@ -93,15 +112,4 @@ public class ProcessTopic extends IRCProcessor {
     public String[] handles() {
         return new String[]{"TOPIC", "332", "333"};
     }
-
-    /**
-     * Create a new instance of the IRCProcessor Object.
-     *
-     * @param parser IRCParser That owns this IRCProcessor
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
-     */
-    protected ProcessTopic(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager);
-    }
-
 }

@@ -33,6 +33,17 @@ import com.dmdirc.parser.interfaces.callbacks.NickChangeListener;
  * Process a Nick change.
  */
 public class ProcessNick extends IRCProcessor {
+
+    /**
+     * Create a new instance of the IRCProcessor Object.
+     *
+     * @param parser IRCParser That owns this IRCProcessor
+     * @param manager ProcessingManager that is in charge of this IRCProcessor
+     */
+    protected ProcessNick(final IRCParser parser, final ProcessingManager manager) {
+        super(parser, manager);
+    }
+
     /**
      * Process a Nick change.
      *
@@ -49,24 +60,24 @@ public class ProcessNick extends IRCProcessor {
         if (iClient == null) {
             return;
         }
-        oldNickname = myParser.getStringConverter().toLowerCase(iClient.getNickname());
+        oldNickname = parser.getStringConverter().toLowerCase(iClient.getNickname());
         // Remove the client from the known clients list
-        final boolean isSameNick = myParser.getStringConverter().equalsIgnoreCase(oldNickname, token[token.length - 1]);
+        final boolean isSameNick = parser.getStringConverter().equalsIgnoreCase(oldNickname, token[token.length - 1]);
 
         if (!isSameNick) {
-            myParser.forceRemoveClient(getClientInfo(oldNickname));
+            parser.forceRemoveClient(getClientInfo(oldNickname));
         }
         // Change the nickame
         iClient.setUserBits(token[token.length - 1], true);
         // Readd the client
         if (!isSameNick && getClientInfo(iClient.getNickname()) != null) {
-            myParser.callErrorInfo(new ParserError(ParserError.ERROR_FATAL + ParserError.ERROR_USER, "Nick change would overwrite existing client", myParser.getLastLine()));
+            parser.callErrorInfo(new ParserError(ParserError.ERROR_FATAL + ParserError.ERROR_USER, "Nick change would overwrite existing client", parser.getLastLine()));
         } else {
             if (!isSameNick) {
-                myParser.addClient(iClient);
+                parser.addClient(iClient);
             }
 
-            for (IRCChannelInfo iChannel : myParser.getChannels()) {
+            for (IRCChannelInfo iChannel : parser.getChannels()) {
                 // Find the user (using the old nickname)
                 iChannelClient = iChannel.getChannelClient(oldNickname);
                 if (iChannelClient != null) {
@@ -118,15 +129,4 @@ public class ProcessNick extends IRCProcessor {
     public String[] handles() {
         return new String[]{"NICK"};
     }
-
-    /**
-     * Create a new instance of the IRCProcessor Object.
-     *
-     * @param parser IRCParser That owns this IRCProcessor
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
-     */
-    protected ProcessNick(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager);
-    }
-
 }

@@ -33,18 +33,11 @@ import java.util.Map;
  * Manages adding/removing/calling processing stuff.
  */
 public class ProcessingManager {
-    /** Reference to the parser object that owns this ProcessingManager. */
-    IRCParser myParser;
 
+    /** Reference to the parser object that owns this ProcessingManager. */
+    private final IRCParser parser;
     /** Hashtable used to store the different types of IRCProcessor known. */
     private final Map<String, IRCProcessor> processHash = new HashMap<String, IRCProcessor>();
-
-    /**
-     * Debugging Data to the console.
-     */
-    private void doDebug(final String line, final Object... args) {
-        myParser.callDebugInfo(IRCParser.DEBUG_PROCESSOR, line, args);
-    }
 
     /**
      * Constructor to create a ProcessingManager.
@@ -52,57 +45,57 @@ public class ProcessingManager {
      * @param parser IRCParser that owns this Processing Manager
      */
     public ProcessingManager(final IRCParser parser) {
-        myParser = parser;
+        this.parser = parser;
         //------------------------------------------------
         // Add processors
         //------------------------------------------------
         // NOTICE AUTH
-        addProcessor(new ProcessNoticeAuth(myParser, this));
+        addProcessor(new ProcessNoticeAuth(parser, this));
         // 001
-        addProcessor(new Process001(myParser, this));
+        addProcessor(new Process001(parser, this));
         // 004
         // 005
-        addProcessor(new Process004005(myParser, this));
+        addProcessor(new Process004005(parser, this));
         // 464
-        addProcessor(new Process464(myParser, this));
+        addProcessor(new Process464(parser, this));
         // 301
         // 305
         // 306
-        addProcessor(new ProcessAway(myParser, this));
+        addProcessor(new ProcessAway(parser, this));
         // 352
-        addProcessor(new ProcessWho(myParser, this));
+        addProcessor(new ProcessWho(parser, this));
         // INVITE
-        addProcessor(new ProcessInvite(myParser, this));
+        addProcessor(new ProcessInvite(parser, this));
         // JOIN
-        addProcessor(new ProcessJoin(myParser, this));
+        addProcessor(new ProcessJoin(parser, this));
         // KICK
-        addProcessor(new ProcessKick(myParser, this));
+        addProcessor(new ProcessKick(parser, this));
         // PRIVMSG
         // NOTICE
-        addProcessor(new ProcessMessage(myParser, this));
+        addProcessor(new ProcessMessage(parser, this));
         // MODE
         // 324
-        addProcessor(new ProcessMode(myParser, this));
+        addProcessor(new ProcessMode(parser, this));
         // 372
         // 375
         // 376
         // 422
-        addProcessor(new ProcessMOTD(myParser, this));
+        addProcessor(new ProcessMOTD(parser, this));
         // 353
         // 366
-        addProcessor(new ProcessNames(myParser, this));
+        addProcessor(new ProcessNames(parser, this));
         // 433
-        addProcessor(new ProcessNickInUse(myParser, this));
+        addProcessor(new ProcessNickInUse(parser, this));
         // NICK
-        addProcessor(new ProcessNick(myParser, this));
+        addProcessor(new ProcessNick(parser, this));
         // PART
-        addProcessor(new ProcessPart(myParser, this));
+        addProcessor(new ProcessPart(parser, this));
         // QUIT
-        addProcessor(new ProcessQuit(myParser, this));
+        addProcessor(new ProcessQuit(parser, this));
         // TOPIC
         // 332
         // 333
-        addProcessor(new ProcessTopic(myParser, this));
+        addProcessor(new ProcessTopic(parser, this));
         // 344
         // 345
         // 346
@@ -111,9 +104,16 @@ public class ProcessingManager {
         // 349
         // 367
         // 368
-        addProcessor(new ProcessListModes(myParser, this));
+        addProcessor(new ProcessListModes(parser, this));
         // WALLOPS
-        addProcessor(new ProcessWallops(myParser, this));
+        addProcessor(new ProcessWallops(parser, this));
+    }
+
+    /**
+     * Debugging Data to the console.
+     */
+    private void doDebug(final String line, final Object... args) {
+        parser.callDebugInfo(IRCParser.DEBUG_PROCESSOR, line, args);
     }
 
     /**
@@ -194,15 +194,16 @@ public class ProcessingManager {
         } catch (ProcessorNotFoundException p) {
             throw p;
         } catch (Exception e) {
-            final ParserError ei = new ParserError(ParserError.ERROR_ERROR,"Exception in Processor. [" + messageProcessor + "]: " + e.getMessage(), myParser.getLastLine());
+            final ParserError ei = new ParserError(ParserError.ERROR_ERROR, "Exception in Processor. [" + messageProcessor + "]: " + e.getMessage(), parser.getLastLine());
             ei.setException(e);
-            myParser.callErrorInfo(ei);
+            parser.callErrorInfo(ei);
         } finally {
             // Try to call callNumeric. We don't want this to work if sParam is a non
             // integer param, hense the empty catch
             try {
                 callNumeric(Integer.parseInt(sParam), token);
-            } catch (NumberFormatException e) { }
+            } catch (NumberFormatException e) {
+            }
         }
     }
 
@@ -215,8 +216,6 @@ public class ProcessingManager {
      * @return true if a method was called, false otherwise
      */
     protected boolean callNumeric(final int numeric, final String[] token) {
-        return myParser.getCallbackManager().getCallbackType(NumericListener.class).call(numeric, token);
+        return parser.getCallbackManager().getCallbackType(NumericListener.class).call(numeric, token);
     }
-
 }
-

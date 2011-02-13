@@ -84,8 +84,6 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
     public static final int DEBUG_PROCESSOR = 4;
     /** List Mode Queue Debug Information. */
     public static final int DEBUG_LMQ = 8;
-    //public static final int DEBUG_SOMETHING = 16; //Next thingy
-
     /** A map of this parser's implementations of common interfaces. */
     public static final Map<Class<?>, Class<?>> IMPL_MAP = new HashMap<Class<?>, Class<?>>();
 
@@ -95,7 +93,6 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
         IMPL_MAP.put(ClientInfo.class, IRCClientInfo.class);
         IMPL_MAP.put(LocalClientInfo.class, IRCClientInfo.class);
     }
-
     /** Attempt to update user host all the time, not just on Who/Add/NickChange. */
     static final boolean ALWAYS_UPDATECLIENT = true;
     /** Byte used to show that a non-boolean mode is a list (b). */
@@ -2231,7 +2228,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
 
     /**
      * Remove a client from the ClientList.
-    .     * This WILL allow cMyself to be removed from the list
+     * This WILL allow cMyself to be removed from the list
      *
      * @param client Client to remove
      */

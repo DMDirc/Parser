@@ -26,25 +26,19 @@ import com.dmdirc.parser.common.QueuePriority;
 
 /**
  * Queued Item.
- *
- * @author shane
  */
 public class QueueItem implements Comparable<QueueItem> {
+
     /** Global Item Number. */
     private static long number = 0L;
-
     /** Line to send. */
     private final String line;
-
     /** Time this line was added. */
     private final long time;
-
     /** Item Number. */
     private final long itemNumber;
-
     /** What is the priority of this line? */
     private final QueuePriority priority;
-
     /** Our handler. */
     private final QueueHandler handler;
 

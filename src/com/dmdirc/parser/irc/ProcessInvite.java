@@ -28,6 +28,17 @@ import com.dmdirc.parser.interfaces.callbacks.InviteListener;
  * Process an Invite Request.
  */
 public class ProcessInvite extends IRCProcessor {
+
+    /**
+     * Create a new instance of the IRCProcessor Object.
+     *
+     * @param parser IRCParser That owns this IRCProcessor
+     * @param manager ProcessingManager that is in charge of this IRCProcessor
+     */
+    protected ProcessInvite(final IRCParser parser, final ProcessingManager manager) {
+        super(parser, manager);
+    }
+
     /**
      * Process an Invite Request.
      *
@@ -63,15 +74,4 @@ public class ProcessInvite extends IRCProcessor {
     public String[] handles() {
         return new String[]{"INVITE"};
     }
-
-    /**
-     * Create a new instance of the IRCProcessor Object.
-     *
-     * @param parser IRCParser That owns this IRCProcessor
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
-     */
-    protected ProcessInvite(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager);
-    }
-
 }

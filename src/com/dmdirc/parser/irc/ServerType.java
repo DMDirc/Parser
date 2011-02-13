@@ -24,15 +24,14 @@ package com.dmdirc.parser.irc;
 
 /**
  * This defines server types.
- * ServerTypes define a regex that will be matched against a lower-cased verison
+ * ServerTypes define a regex that will be matched against a lower-cased version
  * of the input, an array of modes that only ops can request, and what they are
  * matching against.
  * Lowercaseing will be handled using javas built in toLowercase() rather than
- * usig the Server-Specific one.
- *
- * @author shane
+ * using the Server-Specific one.
  */
 public enum ServerType {
+
     /** Unreal IRCD prior to version 4. */
     UNREAL("unreal", ".*unreal[^4-9].*"),
     /** Unreal IRCD after version 4 (inspircd based). */
@@ -132,6 +131,7 @@ public enum ServerType {
 
     /** Define what this ServerType should match on. */
     private enum MatchType {
+
         /** Match using the ircd version from 004. */
         VERSION,
         /** Match using the network name. */
@@ -143,16 +143,12 @@ public enum ServerType {
         /** Never Match (Used by generic). */
         NEVER;
     }
-
     /** Type of for this ServerType. */
     private final String type;
-
     /** Regex for this ServerType. */
     private final String regex;
-
     /** String of chars that only ops can access. */
     private final String opOnly;
-
     /** What does this ServerType match? */
     private final MatchType matchType;
 
@@ -165,7 +161,6 @@ public enum ServerType {
     ServerType(final String type, final String regex) {
         this(type, regex, null);
     }
-
 
     /**
      * Create a new server type.
@@ -257,16 +252,24 @@ public enum ServerType {
         for (ServerType type : ServerType.values()) {
             switch (type.getMatchType()) {
                 case VERSION:
-                    if (version.matches(type.getRegex())) { return type; }
+                    if (version.matches(type.getRegex())) {
+                        return type;
+                    }
                     break;
                 case NETWORK:
-                    if (network.matches(type.getRegex())) { return type; }
+                    if (network.matches(type.getRegex())) {
+                        return type;
+                    }
                     break;
                 case RAW003:
-                    if (raw003.matches(type.getRegex())) { return type; }
+                    if (raw003.matches(type.getRegex())) {
+                        return type;
+                    }
                     break;
                 case RAW002:
-                    if (raw002.matches(type.getRegex())) { return type; }
+                    if (raw002.matches(type.getRegex())) {
+                        return type;
+                    }
                     break;
                 case NEVER:
                     break;

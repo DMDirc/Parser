@@ -28,6 +28,17 @@ import com.dmdirc.parser.interfaces.callbacks.AuthNoticeListener;
  * Process a NoticeAuth message.
  */
 public class ProcessNoticeAuth extends IRCProcessor {
+
+    /**
+     * Create a new instance of the ProcessNoticeAuth Object.
+     *
+     * @param parser IRCParser That owns this object
+     * @param manager ProcessingManager that is in charge of this object
+     */
+    protected ProcessNoticeAuth(final IRCParser parser, final ProcessingManager manager) {
+        super(parser, manager);
+    }
+
     /**
      * Process a NoticeAuth message.
      *
@@ -59,13 +70,4 @@ public class ProcessNoticeAuth extends IRCProcessor {
     public String[] handles() {
         return new String[]{"Notice Auth"};
     }
-
-    /**
-     * Create a new instance of the ProcessNoticeAuth Object.
-     *
-     * @param parser IRCParser That owns this object
-     * @param manager ProcessingManager that is in charge of this object
-     */
-    protected ProcessNoticeAuth(final IRCParser parser, final ProcessingManager manager) { super(parser, manager); }
-
 }

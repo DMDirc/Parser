@@ -32,6 +32,16 @@ import com.dmdirc.parser.interfaces.callbacks.MotdStartListener;
 public class ProcessMOTD extends IRCProcessor {
 
     /**
+     * Create a new instance of the IRCProcessor Object.
+     *
+     * @param parser IRCParser That owns this IRCProcessor
+     * @param manager ProcessingManager that is in charge of this IRCProcessor
+     */
+    protected ProcessMOTD(final IRCParser parser, final ProcessingManager manager) {
+        super(parser, manager);
+    }
+
+    /**
      * Process a MOTD Related Line.
      *
      * @param sParam Type of line to process ("375", "372", "376", "422")
@@ -91,15 +101,4 @@ public class ProcessMOTD extends IRCProcessor {
     public String[] handles() {
         return new String[]{"372", "375", "376", "422"};
     }
-
-    /**
-     * Create a new instance of the IRCProcessor Object.
-     *
-     * @param parser IRCParser That owns this IRCProcessor
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
-     */
-    protected ProcessMOTD(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager);
-    }
-
 }

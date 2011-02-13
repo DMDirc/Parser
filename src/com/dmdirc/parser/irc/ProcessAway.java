@@ -29,6 +29,17 @@ import com.dmdirc.parser.interfaces.callbacks.AwayStateListener;
  * Process an Away/Back message.
  */
 public class ProcessAway extends IRCProcessor {
+
+    /**
+     * Create a new instance of the IRCProcessor Object.
+     *
+     * @param parser IRCParser That owns this IRCProcessor
+     * @param manager ProcessingManager that is in charge of this IRCProcessor
+     */
+    protected ProcessAway(final IRCParser parser, final ProcessingManager manager) {
+        super(parser, manager);
+    }
+
     /**
      * Process an Away/Back message.
      *
@@ -43,9 +54,9 @@ public class ProcessAway extends IRCProcessor {
                 iClient.setAwayReason(token[token.length - 1]);
             }
         } else {
-            final AwayState oldState = myParser.getLocalClient().getAwayState();
-            myParser.getLocalClient().setAwayState("306".equals(sParam) ? AwayState.AWAY : AwayState.HERE);
-            callAwayState(oldState, myParser.getLocalClient().getAwayState(), myParser.getLocalClient().getAwayReason());
+            final AwayState oldState = parser.getLocalClient().getAwayState();
+            parser.getLocalClient().setAwayState("306".equals(sParam) ? AwayState.AWAY : AwayState.HERE);
+            callAwayState(oldState, parser.getLocalClient().getAwayState(), parser.getLocalClient().getAwayReason());
         }
     }
 
@@ -71,15 +82,4 @@ public class ProcessAway extends IRCProcessor {
     public String[] handles() {
         return new String[]{"301", "305", "306"};
     }
-
-    /**
-     * Create a new instance of the IRCProcessor Object.
-     *
-     * @param parser IRCParser That owns this IRCProcessor
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
-     */
-    protected ProcessAway(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager);
-    }
-
 }
