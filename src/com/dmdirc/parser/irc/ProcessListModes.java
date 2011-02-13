@@ -51,7 +51,6 @@ public class ProcessListModes extends IRCProcessor {
      * @param sParam Type of line to process
      * @param token IRCTokenised line to process
      */
-    @SuppressWarnings("unchecked")
     @Override
     public void process(final String sParam, final String[] token) {
         final IRCChannelInfo channel = getChannel(token[3]);
@@ -67,16 +66,16 @@ public class ProcessListModes extends IRCProcessor {
             return;
         }
 
-        if (sParam.equals("367") || sParam.equals("368")) {
+        if ("367".equals(sParam) || "368".equals(sParam)) {
             // Ban List/Item.
             // (Also used for +d and +q on dancer/hyperion... -_-)
             // (Also used for +q on ircd-seven... -_-)
             mode = 'b';
-            isItem = sParam.equals("367");
-        } else if (sParam.equals("348") || sParam.equals("349")) {
+            isItem = "367".equals(sParam);
+        } else if ("348".equals(sParam) || "349".equals(sParam)) {
             // Except / Exempt List etc
             mode = 'e';
-            isItem = sParam.equals("348");
+            isItem = "348".equals(sParam);
         } else if (sParam.equals("346") || sParam.equals("347")) {
             // Invite List
             mode = 'I';
@@ -115,7 +114,7 @@ public class ProcessListModes extends IRCProcessor {
 
         final Queue<Character> listModeQueue = channel.getListModeQueue();
         if (!isCleverMode && listModeQueue != null) {
-            if (sParam.equals("482")) {
+            if ("482".equals(sParam)) {
                 parser.callDebugInfo(IRCParser.DEBUG_LMQ, "Dropped LMQ mode " + listModeQueue.poll());
                 return;
             } else {
@@ -132,23 +131,22 @@ public class ProcessListModes extends IRCProcessor {
                     // Only raise an LMQ error if the lmqmode isn't one of bdq if the
                     // guess is one of bdq
                     if (ServerTypeGroup.FREENODE.isMember(serverType) && (mode == 'b' || mode == 'q' || mode == 'd')) {
-                        final LinkedList<Character> lmq = (LinkedList<Character>) listModeQueue;
                         if (mode == 'b') {
-                            error = !(oldMode == 'q' || oldMode == 'd');
-                            lmq.remove((Character) 'q');
+                            error = oldMode != 'q' && oldMode != 'd';
+                            listModeQueue.remove('q');
                             parser.callDebugInfo(IRCParser.DEBUG_LMQ, "Dropping q from list");
                         } else if (mode == 'q') {
-                            error = !(oldMode == 'b' || oldMode == 'd');
-                            lmq.remove((Character) 'b');
+                            error = oldMode != 'b' && oldMode != 'd';
+                            listModeQueue.remove('b');
                             parser.callDebugInfo(IRCParser.DEBUG_LMQ, "Dropping b from list");
                         } else if (mode == 'd') {
-                            error = !(oldMode == 'b' || oldMode == 'q');
+                            error = oldMode != 'b' && oldMode != 'q';
                         }
                     } else if (ServerTypeGroup.CHARYBDIS.isMember(serverType) && (mode == 'b' || mode == 'q')) {
                         // Finally freenode appear to have an ircd which isn't completely annoying.
                         // Only error if the LMQ thinks the mode should be
                         // something thats not the other one of these 2 modes.
-                        error = (mode == 'b') ? oldMode != 'q' : oldMode != 'b';
+                        error = oldMode != (mode == 'b' ? 'q' : 'b');
                     }
 
                     // If the lmq and the actual mode are not the same or the
@@ -166,7 +164,7 @@ public class ProcessListModes extends IRCProcessor {
         }
 
         if (isItem) {
-            if ((!isCleverMode) && listModeQueue == null && ServerTypeGroup.FREENODE.isMember(serverType) && token.length > 4 && mode == 'b') {
+            if (!isCleverMode && listModeQueue == null && ServerTypeGroup.FREENODE.isMember(serverType) && token.length > 4 && mode == 'b') {
                 // Assume mode is a 'd' mode
                 mode = 'd';
                 // Now work out if its not (or attempt to.)

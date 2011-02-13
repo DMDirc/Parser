@@ -80,6 +80,30 @@ public class Logging {
     /** "Log" object if available. */
     private Object log;
 
+    /** Create a new Logging. */
+    @SuppressWarnings("unchecked")
+    private Logging() {
+        boolean classExists = false;
+        try {
+            Class factory = null;
+            // Check for classes
+            Class.forName("org.apache.commons.logging.Log");
+            factory = Class.forName("org.apache.commons.logging.LogFactory");
+
+            classExists = factory != null;
+            if (classExists) {
+                final Method getLog = factory.getMethod("getLog", new Class[]{Class.class});
+                log = getLog.invoke(null, this.getClass());
+            }
+        } catch (ClassNotFoundException cnfe) {
+        } catch (NoSuchMethodException nsme) {
+        } catch (IllegalAccessException iae) {
+        } catch (InvocationTargetException ite) {
+        }
+
+        isAvailable = classExists && log != null;
+    }
+
     /**
      * Get an instance of Logging.
      *
@@ -92,30 +116,6 @@ public class Logging {
             }
             return me;
         }
-    }
-
-    /** Create a new Logging. */
-    @SuppressWarnings("unchecked")
-    private Logging() {
-        boolean classExists = false;
-        try {
-            Class factory = null;
-            // Check for classes
-            Class.forName("org.apache.commons.logging.Log");
-            factory = Class.forName("org.apache.commons.logging.LogFactory");
-
-            classExists = (factory != null);
-            if (classExists) {
-                final Method getLog = factory.getMethod("getLog", new Class[]{Class.class});
-                log = getLog.invoke(null, this.getClass());
-            }
-        } catch (ClassNotFoundException cnfe) {
-        } catch (NoSuchMethodException nsme) {
-        } catch (IllegalAccessException iae) {
-        } catch (InvocationTargetException ite) {
-        }
-
-        isAvailable = (classExists && log != null);
     }
 
     /**
