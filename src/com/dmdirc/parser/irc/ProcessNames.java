@@ -30,6 +30,17 @@ import com.dmdirc.parser.interfaces.callbacks.ChannelTopicListener;
  * Process a Names reply.
  */
 public class ProcessNames extends IRCProcessor {
+
+    /**
+     * Create a new instance of the IRCProcessor Object.
+     *
+     * @param parser IRCParser That owns this IRCProcessor
+     * @param manager ProcessingManager that is in charge of this IRCProcessor
+     */
+    protected ProcessNames(final IRCParser parser, final ProcessingManager manager) {
+        super(parser, manager);
+    }
+
     /**
      * Process a Names reply.
      *
@@ -42,7 +53,9 @@ public class ProcessNames extends IRCProcessor {
         if ("366".equals(sParam)) {
             // End of names
             iChannel = getChannel(token[3]);
-            if (iChannel == null) { return; }
+            if (iChannel == null) {
+                return;
+            }
 
             if (!iChannel.hadTopic()) {
                 callChannelTopic(iChannel, true);
@@ -52,7 +65,7 @@ public class ProcessNames extends IRCProcessor {
             callChannelGotNames(iChannel);
 
             if (!iChannel.hasAskedForListModes()
-                    && myParser.getAutoListMode()) {
+                    && parser.getAutoListMode()) {
                 iChannel.requestListModes();
             }
         } else {
@@ -63,10 +76,14 @@ public class ProcessNames extends IRCProcessor {
 
             iChannel = getChannel(token[4]);
 
-            if (iChannel == null) { return; }
+            if (iChannel == null) {
+                return;
+            }
 
             // If we are not expecting names, clear the current known names - this is fresh stuff!
-            if (!iChannel.isAddingNames()) { iChannel.emptyChannel(); }
+            if (!iChannel.isAddingNames()) {
+                iChannel.emptyChannel();
+            }
             iChannel.setAddingNames(true);
 
             final String[] sNames = token[token.length - 1].split(" ");
@@ -76,16 +93,18 @@ public class ProcessNames extends IRCProcessor {
             for (int j = 0; j < sNames.length; ++j) {
                 sNameBit = sNames[j];
                 // If name is empty (ie there was an extra space) ignore it.
-                if (sNameBit.isEmpty()) { continue; }
+                if (sNameBit.isEmpty()) {
+                    continue;
+                }
                 // This next bit of code allows for any ircd which decides to use @+Foo in names
                 for (int i = 0; i < sNameBit.length(); ++i) {
                     final Character cMode = sNameBit.charAt(i);
                     // hPrefixMap contains @, o, +, v this caused issue 107
                     // hPrefixModes only contains o, v so if the mode is in hPrefixMap
                     // and not in hPrefixModes, its ok to use.
-                    if (myParser.prefixMap.containsKey(cMode) && !myParser.prefixModes.containsKey(cMode)) {
+                    if (parser.prefixMap.containsKey(cMode) && !parser.prefixModes.containsKey(cMode)) {
                         sModes.append(cMode);
-                        nPrefix = nPrefix + myParser.prefixModes.get(myParser.prefixMap.get(cMode));
+                        nPrefix = nPrefix + parser.prefixModes.get(parser.prefixMap.get(cMode));
                     } else {
                         sName = sNameBit.substring(i);
                         break;
@@ -94,7 +113,10 @@ public class ProcessNames extends IRCProcessor {
                 callDebugInfo(IRCParser.DEBUG_INFO, "Name: %s Modes: \"%s\" [%d]", sName, sModes.toString(), nPrefix);
 
                 iClient = getClientInfo(sName);
-                if (iClient == null) { iClient = new IRCClientInfo(myParser, sName); myParser.addClient(iClient); }
+                if (iClient == null) {
+                    iClient = new IRCClientInfo(parser, sName);
+                    parser.addClient(iClient);
+                }
                 iClient.setUserBits(sName, false); // Will do nothing if this isn't UHNAMES
                 iChannelClient = iChannel.addClient(iClient);
                 iChannelClient.setChanMode(nPrefix);
@@ -139,15 +161,4 @@ public class ProcessNames extends IRCProcessor {
     public String[] handles() {
         return new String[]{"353", "366"};
     }
-
-    /**
-     * Create a new instance of the IRCProcessor Object.
-     *
-     * @param parser IRCParser That owns this IRCProcessor
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
-     */
-    protected ProcessNames(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager);
-    }
-
 }

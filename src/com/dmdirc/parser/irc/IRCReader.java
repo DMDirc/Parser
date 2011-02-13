@@ -33,16 +33,13 @@ import java.io.InputStream;
  * protocol and can transcode text appropriately.
  *
  * @since 0.6.5
- * @author chris
  */
 public class IRCReader implements Closeable {
 
     /** Maximum length for an IRC line in bytes. */
     private static final int LINE_LENGTH = 512;
-
     /** The input stream to read input from. */
     private final InputStream stream;
-
     /** The encoder to use to encode lines. */
     private final Encoder encoder;
 
@@ -216,7 +213,5 @@ public class IRCReader implements Closeable {
         public String[] getTokens() {
             return tokens;
         }
-
     }
-
 }

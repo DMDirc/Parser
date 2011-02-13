@@ -38,5 +38,4 @@ class IRCParserException extends Exception {
     public IRCParserException(final String message) {
         super(message);
     }
-
 }

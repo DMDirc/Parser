@@ -27,10 +27,9 @@ import java.util.concurrent.BlockingQueue;
 
 /**
  * This does no rate limiting, and just sends based on priority.
- *
- * @author shane
  */
 public class PriorityQueueHandler extends QueueHandler {
+
     /**
      * Get a QueueFactory that produces PriorityQueueHandlers.
      *
@@ -38,6 +37,7 @@ public class PriorityQueueHandler extends QueueHandler {
      */
     public static QueueFactory getFactory() {
         return new QueueFactory() {
+
             /** {@inheritDoc} */
             @Override
             public QueueHandler getQueueHandler(final OutputQueue outputQueue, final BlockingQueue<QueueItem> queue, final PrintWriter out) {

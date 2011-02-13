@@ -29,18 +29,16 @@ import com.dmdirc.parser.common.QueuePriority;
 /**
  * IRCProcessor.
  * Superclass for all IRCProcessor types.
- *
- * @author Shane Mc Cormack
  */
 public abstract class IRCProcessor {
+
     /** Reference to the IRCParser that owns this IRCProcessor. */
-    protected IRCParser myParser;
-
+    protected final IRCParser parser;
     /** Reference to the Processing in charge of this IRCProcessor. */
-    protected ProcessingManager myManager;
+    protected final ProcessingManager manager;
 
-    // Some functions from the main parser are useful, and having to use myParser.functionName
-    // is annoying, so we also implement them here (calling them again using myParser)
+    // Some functions from the main parser are useful, and having to use parser.functionName
+    // is annoying, so we also implement them here (calling them again using parser)
     /**
      * Create a new instance of the IRCProcessor Object.
      *
@@ -48,8 +46,8 @@ public abstract class IRCProcessor {
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
     protected IRCProcessor(final IRCParser parser, final ProcessingManager manager) {
-        this.myParser = parser;
-        this.myManager = manager;
+        this.parser = parser;
+        this.manager = manager;
     }
 
     /**
@@ -60,7 +58,7 @@ public abstract class IRCProcessor {
      * @return true if a method was called, false otherwise
      */
     protected final boolean callErrorInfo(final ParserError errorInfo) {
-        return myParser.callErrorInfo(errorInfo);
+        return parser.callErrorInfo(errorInfo);
     }
 
     /**
@@ -73,7 +71,7 @@ public abstract class IRCProcessor {
      * @return true if a method was called, false otherwise
      */
     protected final boolean callDebugInfo(final int level, final String data, final Object... args) {
-        return myParser.callDebugInfo(level, String.format(data, args));
+        return parser.callDebugInfo(level, String.format(data, args));
     }
 
     /**
@@ -85,7 +83,7 @@ public abstract class IRCProcessor {
      * @return true if a method was called, false otherwise
      */
     protected final boolean callDebugInfo(final int level, final String data) {
-        return myParser.callDebugInfo(level, data);
+        return parser.callDebugInfo(level, data);
     }
 
     /**
@@ -95,7 +93,7 @@ public abstract class IRCProcessor {
      * @return true if name is valid on the current connection, false otherwise. (Always false before noMOTD/MOTDEnd)
      */
     protected final boolean isValidChannelName(final String sChannelName) {
-        return myParser.isValidChannelName(sChannelName);
+        return parser.isValidChannelName(sChannelName);
     }
 
     /**
@@ -105,7 +103,7 @@ public abstract class IRCProcessor {
      * @return ClientInfo Object for the client, or null
      */
     protected final IRCClientInfo getClientInfo(final String sWho) {
-        return myParser.isKnownClient(sWho) ? myParser.getClient(sWho) : null;
+        return parser.isKnownClient(sWho) ? parser.getClient(sWho) : null;
     }
 
     /**
@@ -115,7 +113,7 @@ public abstract class IRCProcessor {
      * @return ChannelInfo Object for the channel, or null
      */
     protected final IRCChannelInfo getChannel(final String name) {
-        return myParser.getChannel(name);
+        return parser.getChannel(name);
     }
 
     /**
@@ -124,7 +122,7 @@ public abstract class IRCProcessor {
      * @return Reference to the CallbackManager
      */
     protected final CallbackManager getCallbackManager() {
-        return myParser.getCallbackManager();
+        return parser.getCallbackManager();
     }
 
     /**
@@ -133,7 +131,7 @@ public abstract class IRCProcessor {
      * @param line Line to send (\r\n termination is added automatically)
      */
     protected final void sendString(final String line) {
-        myParser.sendString(line);
+        parser.sendString(line);
     }
 
     /**
@@ -143,7 +141,7 @@ public abstract class IRCProcessor {
      * @param priority Priority of this line.
      */
     protected final void sendString(final String line, final QueuePriority priority) {
-        myParser.sendString(line, priority);
+        parser.sendString(line, priority);
     }
 
     /**
@@ -186,7 +184,8 @@ public abstract class IRCProcessor {
      * Get the name for this Processor.
      * @return the name of this processor
      */
-        @Override
-    public final String toString() { return this.getName(); }
-
+    @Override
+    public final String toString() {
+        return this.getName();
+    }
 }

@@ -28,29 +28,29 @@ import java.util.TimerTask;
 /**
  * Used by the parser to ping the server at a set interval to check that the
  * server is still alive.
- *
- * @author Shane Mc Cormack
  */
 public class PingTimer extends TimerTask {
+
     /** Owning Parser. */
-    final IRCParser myOwner;
+    private final IRCParser parser;
     /** The Timer that owns this task. */
-    final Timer myTimer;
+    private final Timer timer;
 
     /**
      * Create the PingTimer.
      *
-     * @param control IRCParser that owns this TimerTask.
+     * @param parser IRCParser that owns this TimerTask.
      * @param timer Timer that owns this TimerTask.
      */
-    public PingTimer(final IRCParser control, final Timer timer) {
+    public PingTimer(final IRCParser parser, final Timer timer) {
         super();
-        myOwner = control;
-        myTimer = timer;
+        this.parser = parser;
+        this.timer = timer;
     }
 
     /** Timer has been executed. */
+    @Override
     public void run() {
-        myOwner.pingTimerTask(myTimer);
+        parser.pingTimerTask(timer);
     }
 }

@@ -35,11 +35,10 @@ import java.util.Map;
 /**
  * Contains information about known users.
  *
- * @author Shane Mc Cormack
- * @author Chris Smith
  * @see IRCParser
  */
 public class IRCClientInfo implements LocalClientInfo {
+
     /** Known nickname of client. */
     private String sNickname = "";
     /** Known ident of client. */
@@ -68,7 +67,7 @@ public class IRCClientInfo implements LocalClientInfo {
     /**
      * Create a new client object from a hostmask.
      *
-      * @param tParser Refernce to parser that owns this channelclient (used for modes)
+     * @param tParser Refernce to parser that owns this channelclient (used for modes)
      * @param sHostmask Hostmask parsed by parseHost to get nickname
      * @see ClientInfo#parseHost
      */
@@ -88,9 +87,9 @@ public class IRCClientInfo implements LocalClientInfo {
     }
 
     /** {@inheritDoc} */
-        @Override
+    @Override
     public Map<Object, Object> getMap() {
-            return myMap;
+        return myMap;
     }
 
     /**
@@ -98,13 +97,19 @@ public class IRCClientInfo implements LocalClientInfo {
      *
      * @return True if this is a fake client, else false
      */
-    public boolean isFake() { return bIsFake; }
+    public boolean isFake() {
+        return bIsFake;
+    }
+
     /**
      * Check if this client is actually a server.
      *
      * @return True if this client is actually a server.
      */
-    public boolean isServer() { return !(sNickname.indexOf(':') == -1); }
+    public boolean isServer() {
+        return !(sNickname.indexOf(':') == -1);
+    }
+
     /**
      * Set if this is a fake client.
      * This returns "this" and thus can be used in the construction line.
@@ -112,7 +117,10 @@ public class IRCClientInfo implements LocalClientInfo {
      * @param newValue new value for isFake - True if this is a fake client, else false
      * @return this Object
      */
-    public IRCClientInfo setFake(final boolean newValue) { bIsFake = newValue; return this; }
+    public IRCClientInfo setFake(final boolean newValue) {
+        bIsFake = newValue;
+        return this;
+    }
 
     /**
      * Get a nickname of a user from a hostmask.
@@ -141,9 +149,17 @@ public class IRCClientInfo implements LocalClientInfo {
         } else {
             sTemp = sWho.split("@", 2);
         }
-        if (sTemp.length == 1) { result[2] = ""; } else { result[2] = sTemp[1]; }
+        if (sTemp.length == 1) {
+            result[2] = "";
+        } else {
+            result[2] = sTemp[1];
+        }
         sTemp = sTemp[0].split("!", 2);
-        if (sTemp.length == 1) { result[1] = ""; } else { result[1] = sTemp[1]; }
+        if (sTemp.length == 1) {
+            result[1] = "";
+        } else {
+            result[1] = sTemp[1];
+        }
         result[0] = sTemp[0];
 
         return result;
@@ -169,9 +185,15 @@ public class IRCClientInfo implements LocalClientInfo {
      */
     public void setUserBits(final String sHostmask, final boolean bUpdateNick, final boolean allowBlank) {
         final String[] sTemp = parseHostFull(sHostmask);
-        if (!sTemp[2].isEmpty() || allowBlank) { sHost = sTemp[2]; }
-        if (!sTemp[1].isEmpty() || allowBlank) { sIdent = sTemp[1]; }
-        if (bUpdateNick) { sNickname = sTemp[0]; }
+        if (!sTemp[2].isEmpty() || allowBlank) {
+            sHost = sTemp[2];
+        }
+        if (!sTemp[1].isEmpty() || allowBlank) {
+            sIdent = sTemp[1];
+        }
+        if (bUpdateNick) {
+            sNickname = sTemp[0];
+        }
     }
 
     /**
@@ -180,7 +202,9 @@ public class IRCClientInfo implements LocalClientInfo {
      * @return String representation of the user.
      */
     @Override
-    public String toString() { return sNickname + "!" + sIdent + "@" + sHost; }
+    public String toString() {
+        return sNickname + "!" + sIdent + "@" + sHost;
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -196,15 +220,21 @@ public class IRCClientInfo implements LocalClientInfo {
     }
 
     /** {@inheritDoc} */
-    public String getRealNickname() { return sNickname; }
+    public String getRealNickname() {
+        return sNickname;
+    }
 
     /** {@inheritDoc} */
     @Override
-    public String getUsername() { return sIdent; }
+    public String getUsername() {
+        return sIdent;
+    }
 
     /** {@inheritDoc} */
-  @Override
-    public String getHostname() { return sHost; }
+    @Override
+    public String getHostname() {
+        return sHost;
+    }
 
     /**
      * Set the away state of a user.
@@ -214,7 +244,9 @@ public class IRCClientInfo implements LocalClientInfo {
      */
     protected void setAwayState(final AwayState bNewState) {
         away = bNewState;
-        if (away != AwayState.AWAY) { myAwayReason = ""; }
+        if (away != AwayState.AWAY) {
+            myAwayReason = "";
+        }
     }
 
     /**
@@ -222,14 +254,18 @@ public class IRCClientInfo implements LocalClientInfo {
      *
      * @return AwayState of the user.
      */
-    public AwayState getAwayState() { return away; }
+    public AwayState getAwayState() {
+        return away;
+    }
 
     /**
      * Get the Away Reason for this user.
      *
      * @return Known away reason for user.
      */
-    public String getAwayReason() { return myAwayReason; }
+    public String getAwayReason() {
+        return myAwayReason;
+    }
 
     /**
      * Set the Away Reason for this user.
@@ -237,35 +273,45 @@ public class IRCClientInfo implements LocalClientInfo {
      *
      * @param newValue new away reason for user.
      */
-    protected void setAwayReason(final String newValue) { myAwayReason = newValue; }
+    protected void setAwayReason(final String newValue) {
+        myAwayReason = newValue;
+    }
 
     /** {@inheritDoc} */
-        @Override
-    public String getRealname() { return sRealName; }
+    @Override
+    public String getRealname() {
+        return sRealName;
+    }
 
     /**
      * Set the RealName for this user.
      *
      * @param newValue new RealName for user.
      */
-    protected void setRealName(final String newValue) { sRealName = newValue; }
+    protected void setRealName(final String newValue) {
+        sRealName = newValue;
+    }
 
     /**
      * Set the user modes (as an integer).
      *
      * @param nNewMode new long representing channel modes. (Boolean only)
      */
-    protected void setUserMode(final long nNewMode) { nModes = nNewMode; }
+    protected void setUserMode(final long nNewMode) {
+        nModes = nNewMode;
+    }
 
     /**
      * Get the user modes (as an integer).
      *
      * @return long representing channel modes. (Boolean only)
      */
-    public long getUserMode() { return nModes; }
+    public long getUserMode() {
+        return nModes;
+    }
 
     /** {@inheritDoc} */
-        @Override
+    @Override
     public String getModes() {
         final StringBuilder sModes = new StringBuilder("+");
         long nTemp = 0;
@@ -273,7 +319,9 @@ public class IRCClientInfo implements LocalClientInfo {
 
         for (char cTemp : myParser.userModes.keySet()) {
             nTemp = myParser.userModes.get(cTemp);
-            if ((nChanModes & nTemp) == nTemp) { sModes.append(cTemp); }
+            if ((nChanModes & nTemp) == nTemp) {
+                sModes.append(cTemp);
+            }
         }
 
         return sModes.toString();
@@ -325,7 +373,7 @@ public class IRCClientInfo implements LocalClientInfo {
     }
 
     /** {@inheritDoc} */
-        @Override
+    @Override
     public int getChannelCount() {
         return myChannelClientInfos.size();
     }
@@ -344,9 +392,11 @@ public class IRCClientInfo implements LocalClientInfo {
     }
 
     /** {@inheritDoc} */
-        @Override
+    @Override
     public void alterMode(final boolean add, final Character mode) {
-        if (isFake()) { return; }
+        if (isFake()) {
+            return;
+        }
         int modecount = 1;
         String modestr = "";
         if (myParser.h005Info.containsKey("MODES")) {
@@ -357,7 +407,9 @@ public class IRCClientInfo implements LocalClientInfo {
             }
         }
         modestr = ((add) ? "+" : "-") + mode;
-        if (!myParser.userModes.containsKey(mode)) { return; }
+        if (!myParser.userModes.containsKey(mode)) {
+            return;
+        }
         final String teststr = ((add) ? "-" : "+") + mode;
         if (lModeQueue.contains(teststr)) {
             lModeQueue.remove(teststr);
@@ -367,13 +419,17 @@ public class IRCClientInfo implements LocalClientInfo {
         }
         myParser.callDebugInfo(IRCParser.DEBUG_INFO, "Queueing user mode: %s", modestr);
         lModeQueue.add(modestr);
-        if (lModeQueue.size() == modecount) { flushModes(); }
+        if (lModeQueue.size() == modecount) {
+            flushModes();
+        }
     }
 
     /** {@inheritDoc} */
-        @Override
+    @Override
     public void flushModes() {
-        if (lModeQueue.isEmpty()) { return; }
+        if (lModeQueue.isEmpty()) {
+            return;
+        }
         final StringBuilder positivemode = new StringBuilder();
         final StringBuilder negativemode = new StringBuilder();
         final StringBuilder sendModeStr = new StringBuilder();
@@ -388,8 +444,12 @@ public class IRCClientInfo implements LocalClientInfo {
                 negativemode.append(modestr.charAt(1));
             }
         }
-        if (negativemode.length() > 0) { sendModeStr.append("-").append(negativemode); }
-        if (positivemode.length() > 0) { sendModeStr.append("+").append(positivemode); }
+        if (negativemode.length() > 0) {
+            sendModeStr.append("-").append(negativemode);
+        }
+        if (positivemode.length() > 0) {
+            sendModeStr.append("+").append(positivemode);
+        }
         myParser.callDebugInfo(IRCParser.DEBUG_INFO, "Sending mode: %s", sendModeStr.toString());
         myParser.sendRawMessage("MODE " + sNickname + " " + sendModeStr.toString());
         clearModeQueue();
@@ -403,18 +463,20 @@ public class IRCClientInfo implements LocalClientInfo {
     }
 
     /** {@inheritDoc} */
-        @Override
-    public Parser getParser() { return myParser; }
+    @Override
+    public Parser getParser() {
+        return myParser;
+    }
 
-        /** {@inheritDoc} */
-        @Override
-        public void setNickname(final String name) {
-            if (myParser.getLocalClient().equals(this)) {
-                myParser.setNickname(name);
-            } else {
-                throw new UnsupportedOperationException("Cannot call setNickname on non-local client");
-            }
+    /** {@inheritDoc} */
+    @Override
+    public void setNickname(final String name) {
+        if (myParser.getLocalClient().equals(this)) {
+            myParser.setNickname(name);
+        } else {
+            throw new UnsupportedOperationException("Cannot call setNickname on non-local client");
         }
+    }
 
     /** {@inheritDoc} */
     @Override
@@ -427,5 +489,4 @@ public class IRCClientInfo implements LocalClientInfo {
     public void setBack() {
         myParser.sendRawMessage("AWAY");
     }
-
 }

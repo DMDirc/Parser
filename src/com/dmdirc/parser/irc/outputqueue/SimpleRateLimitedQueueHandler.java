@@ -31,10 +31,9 @@ import java.util.concurrent.BlockingQueue;
  * If more than 4 items are added in 4 seconds it will start limiting.
  * The first 4 items will be sent un-limited and then limiting will commence at
  * a rate of 1 per second.
- *
- * @author shane
  */
 public class SimpleRateLimitedQueueHandler extends QueueHandler {
+
     /**
      * Get a QueueFactory that produces PriorityQueueHandlers.
      *
@@ -42,6 +41,7 @@ public class SimpleRateLimitedQueueHandler extends QueueHandler {
      */
     public static QueueFactory getFactory() {
         return new QueueFactory() {
+
             /** {@inheritDoc} */
             @Override
             public QueueHandler getQueueHandler(final OutputQueue outputQueue, final BlockingQueue<QueueItem> queue, final PrintWriter out) {
@@ -49,25 +49,18 @@ public class SimpleRateLimitedQueueHandler extends QueueHandler {
             }
         };
     }
-
     /** Current count. */
-    private int count = 0;
-
+    private int count;
     /** Time last item was added. */
-    private long lastItemTime = 0L;
-
+    private long lastItemTime;
     /** Are we limiting? */
-    private boolean isLimiting = false;
-
+    private boolean isLimiting;
     /** How many items are allowed before limiting? */
     private int items = 4;
-
     /** How many microseconds do we care about when checking for items? */
     private int limitTime = 4000;
-
     /** How long to wait in between each item when limiting? */
     private int waitTime = 3000;
-
     /** Always update the lastItemTime or only if its been > limitTime? */
     private boolean alwaysUpdateTime = true;
 

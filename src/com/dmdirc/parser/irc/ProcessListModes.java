@@ -35,6 +35,17 @@ import java.util.Queue;
  * Process a List Modes.
  */
 public class ProcessListModes extends IRCProcessor {
+
+    /**
+     * Create a new instance of the IRCProcessor Object.
+     *
+     * @param parser IRCParser That owns this IRCProcessor
+     * @param manager ProcessingManager that is in charge of this IRCProcessor
+     */
+    protected ProcessListModes(final IRCParser parser, final ProcessingManager manager) {
+        super(parser, manager);
+    }
+
     /**
      * Process a ListModes.
      *
@@ -45,7 +56,7 @@ public class ProcessListModes extends IRCProcessor {
     @Override
     public void process(final String sParam, final String[] token) {
         final IRCChannelInfo channel = getChannel(token[3]);
-        final ServerType serverType = myParser.getServerType();
+        final ServerType serverType = parser.getServerType();
         String item = "";
         String owner = "";
         byte tokenStart = 4; // Where do the relevent tokens start?
@@ -53,7 +64,9 @@ public class ProcessListModes extends IRCProcessor {
         long time = 0;
         char mode = 'b';
         boolean isItem = true; // true if item listing, false if "end of .." item
-        if (channel == null) { return; }
+        if (channel == null) {
+            return;
+        }
 
         if (sParam.equals("367") || sParam.equals("368")) {
             // Ban List/Item.
@@ -91,12 +104,12 @@ public class ProcessListModes extends IRCProcessor {
             // Protected User list
             mode = 'a';
             isItem = sParam.equals("389");
-        } else if (sParam.equals(myParser.h005Info.get("LISTMODE")) || sParam.equals(myParser.h005Info.get("LISTMODEEND"))) {
+        } else if (sParam.equals(parser.h005Info.get("LISTMODE")) || sParam.equals(parser.h005Info.get("LISTMODEEND"))) {
             // Support for potential future decent mode listing in the protocol
             //
             // See my proposal: http://shane.dmdirc.com/listmodes.php
             mode = token[4].charAt(0);
-            isItem = sParam.equals(myParser.h005Info.get("LISTMODE"));
+            isItem = sParam.equals(parser.h005Info.get("LISTMODE"));
             tokenStart = 5;
             isCleverMode = true;
         }
@@ -104,13 +117,13 @@ public class ProcessListModes extends IRCProcessor {
         final Queue<Character> listModeQueue = channel.getListModeQueue();
         if (!isCleverMode && listModeQueue != null) {
             if (sParam.equals("482")) {
-                myParser.callDebugInfo(IRCParser.DEBUG_LMQ, "Dropped LMQ mode " + listModeQueue.poll());
+                parser.callDebugInfo(IRCParser.DEBUG_LMQ, "Dropped LMQ mode " + listModeQueue.poll());
                 return;
             } else {
                 if (listModeQueue.peek() != null) {
                     final Character oldMode = mode;
                     mode = listModeQueue.peek();
-                    myParser.callDebugInfo(IRCParser.DEBUG_LMQ, "LMQ says this is " + mode);
+                    parser.callDebugInfo(IRCParser.DEBUG_LMQ, "LMQ says this is " + mode);
 
                     boolean error = true;
 
@@ -124,11 +137,11 @@ public class ProcessListModes extends IRCProcessor {
                         if (mode == 'b') {
                             error = !(oldMode == 'q' || oldMode == 'd');
                             lmq.remove((Character) 'q');
-                            myParser.callDebugInfo(IRCParser.DEBUG_LMQ, "Dropping q from list");
+                            parser.callDebugInfo(IRCParser.DEBUG_LMQ, "Dropping q from list");
                         } else if (mode == 'q') {
                             error = !(oldMode == 'b' || oldMode == 'd');
                             lmq.remove((Character) 'b');
-                            myParser.callDebugInfo(IRCParser.DEBUG_LMQ, "Dropping b from list");
+                            parser.callDebugInfo(IRCParser.DEBUG_LMQ, "Dropping b from list");
                         } else if (mode == 'd') {
                             error = !(oldMode == 'b' || oldMode == 'q');
                         }
@@ -143,8 +156,7 @@ public class ProcessListModes extends IRCProcessor {
                     // freenode-specific hacks above think the mode should be
                     // something else, error.
                     if (oldMode != mode && error) {
-                        myParser.callDebugInfo(IRCParser.DEBUG_LMQ, "LMQ disagrees with guess. LMQ: " + mode + " Guess: " + oldMode);
-//                        myParser.callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "LMQ disagrees with guess. LMQ: "+mode+" Guess: "+oldMode, myParser.getLastLine()));
+                        parser.callDebugInfo(IRCParser.DEBUG_LMQ, "LMQ disagrees with guess. LMQ: " + mode + " Guess: " + oldMode);
                     }
 
                     if (!isItem) {
@@ -175,7 +187,7 @@ public class ProcessListModes extends IRCProcessor {
                 callDebugInfo(IRCParser.DEBUG_INFO, "New List Mode Batch (" + mode + "): Clearing!");
                 final Collection<ChannelListModeItem> list = channel.getListMode(mode);
                 if (list == null) {
-                    myParser.callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got list mode: '" + mode + "' - but channel object doesn't agree.", myParser.getLastLine()));
+                    parser.callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got list mode: '" + mode + "' - but channel object doesn't agree.", parser.getLastLine()));
                 } else {
                     list.clear();
                     if (ServerTypeGroup.FREENODE.isMember(serverType) && (mode == 'b' || mode == 'q')) {
@@ -186,7 +198,7 @@ public class ProcessListModes extends IRCProcessor {
                             callDebugInfo(IRCParser.DEBUG_INFO, "New List Mode Batch (" + mode + "): Clearing!");
                             final Collection<ChannelListModeItem> otherList = channel.getListMode(otherMode);
                             if (otherList == null) {
-                                myParser.callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got list mode: '" + otherMode + "' - but channel object doesn't agree.", myParser.getLastLine()));
+                                parser.callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got list mode: '" + otherMode + "' - but channel object doesn't agree.", parser.getLastLine()));
                             } else {
                                 otherList.clear();
                             }
@@ -222,8 +234,8 @@ public class ProcessListModes extends IRCProcessor {
                 channel.setHasGotListModes(true);
 
                 if (isCleverMode) {
-                    for (Character thisMode : myParser.chanModesOther.keySet()) {
-                        if (myParser.chanModesOther.get(thisMode) == IRCParser.MODE_LIST) {
+                    for (Character thisMode : parser.chanModesOther.keySet()) {
+                        if (parser.chanModesOther.get(thisMode) == IRCParser.MODE_LIST) {
                             callChannelGotListModes(channel, thisMode);
                         }
                     }
@@ -241,16 +253,15 @@ public class ProcessListModes extends IRCProcessor {
      */
     @Override
     public String[] handles() {
-        return new String[]{"367", "368",  /* Bans */
-                            "344", "345",  /* Reop list (ircnet) or bad words (euirc) */
-                            "346", "347",  /* Invite List */
-                            "348", "349",  /* Except/Exempt List */
-                            "386", "387",  /* Channel Owner List (swiftirc ) */
-                            "388", "389",  /* Protected User List (swiftirc) */
-                            "940", "941",  /* Censored words list */
-                            "482",         /* Permission Denied */
-                            "__LISTMODE__" /* Sensible List Modes */
-                           };
+        return new String[]{"367", "368", /* Bans */
+                    "344", "345", /* Reop list (ircnet) or bad words (euirc) */
+                    "346", "347", /* Invite List */
+                    "348", "349", /* Except/Exempt List */
+                    "386", "387", /* Channel Owner List (swiftirc ) */
+                    "388", "389", /* Protected User List (swiftirc) */
+                    "940", "941", /* Censored words list */
+                    "482", /* Permission Denied */
+                    "__LISTMODE__" /* Sensible List Modes */};
     }
 
     /**
@@ -264,15 +275,4 @@ public class ProcessListModes extends IRCProcessor {
     protected boolean callChannelGotListModes(final ChannelInfo cChannel, final char mode) {
         return getCallbackManager().getCallbackType(ChannelListModeListener.class).call(cChannel, mode);
     }
-
-    /**
-     * Create a new instance of the IRCProcessor Object.
-     *
-     * @param parser IRCParser That owns this IRCProcessor
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
-     */
-    protected ProcessListModes(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager);
-    }
-
 }

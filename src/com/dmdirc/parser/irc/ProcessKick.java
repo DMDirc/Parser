@@ -33,6 +33,16 @@ import com.dmdirc.parser.interfaces.callbacks.ChannelKickListener;
 public class ProcessKick extends IRCProcessor {
 
     /**
+     * Create a new instance of the IRCProcessor Object.
+     *
+     * @param parser IRCParser That owns this IRCProcessor
+     * @param manager ProcessingManager that is in charge of this IRCProcessor
+     */
+    protected ProcessKick(final IRCParser parser, final ProcessingManager manager) {
+        super(parser, manager);
+    }
+
+    /**
      * Process a channel kick.
      *
      * @param sParam Type of line to process ("KICK")
@@ -51,7 +61,9 @@ public class ProcessKick extends IRCProcessor {
         iKicker = getClientInfo(token[0]);
         iChannel = getChannel(token[2]);
 
-        if (iClient == null) { return; }
+        if (iClient == null) {
+            return;
+        }
 
         if ((IRCParser.ALWAYS_UPDATECLIENT && iKicker != null)
                 && iKicker.getHostname().isEmpty()) {
@@ -60,8 +72,8 @@ public class ProcessKick extends IRCProcessor {
         }
 
         if (iChannel == null) {
-            if (iClient != myParser.getLocalClient()) {
-                callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got kick for channel (" + token[2] + ") that I am not on. [User: " + token[3] + "]", myParser.getLastLine()));
+            if (iClient != parser.getLocalClient()) {
+                callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got kick for channel (" + token[2] + ") that I am not on. [User: " + token[3] + "]", parser.getLastLine()));
             }
             return;
         } else {
@@ -70,16 +82,20 @@ public class ProcessKick extends IRCProcessor {
             }
             iChannelClient = iChannel.getChannelClient(iClient);
             if (iChannelClient == null) {
-                // callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got kick for channel ("+token[2]+") for a non-existant user. [User: "+token[0]+"]", myParser.getLastLine()));
+                // callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got kick for channel ("+token[2]+") for a non-existant user. [User: "+token[0]+"]", parser.getLastLine()));
                 return;
             }
             iChannelKicker = iChannel.getChannelClient(token[0]);
-            if (myParser.removeAfterCallback) { callChannelKick(iChannel, iChannelClient, iChannelKicker, sReason, token[0]); }
+            if (parser.removeAfterCallback) {
+                callChannelKick(iChannel, iChannelClient, iChannelKicker, sReason, token[0]);
+            }
             iChannel.delClient(iClient);
-            if (!myParser.removeAfterCallback) { callChannelKick(iChannel, iChannelClient, iChannelKicker, sReason, token[0]); }
-            if (iClient == myParser.getLocalClient()) {
+            if (!parser.removeAfterCallback) {
+                callChannelKick(iChannel, iChannelClient, iChannelKicker, sReason, token[0]);
+            }
+            if (iClient == parser.getLocalClient()) {
                 iChannel.emptyChannel();
-                myParser.removeChannel(iChannel);
+                parser.removeChannel(iChannel);
             }
         }
     }
@@ -108,15 +124,4 @@ public class ProcessKick extends IRCProcessor {
     public String[] handles() {
         return new String[]{"KICK"};
     }
-
-    /**
-     * Create a new instance of the IRCProcessor Object.
-     *
-     * @param parser IRCParser That owns this IRCProcessor
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
-     */
-    protected ProcessKick(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager);
-    }
-
 }

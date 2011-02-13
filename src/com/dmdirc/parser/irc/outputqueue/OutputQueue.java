@@ -23,6 +23,7 @@
 package com.dmdirc.parser.irc.outputqueue;
 
 import com.dmdirc.parser.common.QueuePriority;
+
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.concurrent.BlockingQueue;
@@ -30,25 +31,19 @@ import java.util.concurrent.PriorityBlockingQueue;
 
 /**
  * This class handles the Parser output Queue.
- *
- * @author shane
  */
 public class OutputQueue {
-    /** PrintWriter for sending output. */
-    private PrintWriter out = null;
 
+    /** PrintWriter for sending output. */
+    private PrintWriter out;
     /** Is queueing enabled? */
     private boolean queueEnabled = true;
-
     /** The output queue! */
     private final BlockingQueue<QueueItem> queue = new PriorityBlockingQueue<QueueItem>();
-
     /** Thread for the sending queue. */
     private QueueHandler queueHandler;
-
     /** The QueueFactory for this OutputQueue. */
     private QueueFactory queueFactory = PriorityQueueHandler.getFactory();
-    // private QueueFactory queueFactory = SimpleRateLimitedQueueHandler.getFactory();
 
     /**
      * Set the output stream for this queue.

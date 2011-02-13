@@ -72,35 +72,49 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
     }
 
     /** {@inheritDoc} */
-        @Override
-    public Map<Object, Object> getMap() { return myMap; }
+    @Override
+    public Map<Object, Object> getMap() {
+        return myMap;
+    }
 
     /** {@inheritDoc} */
-        @Override
-    public IRCClientInfo getClient() { return cClient; }
+    @Override
+    public IRCClientInfo getClient() {
+        return cClient;
+    }
 
     /** {@inheritDoc} */
-        @Override
-    public ChannelInfo getChannel() { return myChannel; }
+    @Override
+    public ChannelInfo getChannel() {
+        return myChannel;
+    }
+
     /**
      * Get the nickname of the client object represented by this channelclient.
      *
      * @return Nickname of the Client object represented by this channelclient
      */
-    public String getNickname() { return cClient.getNickname(); }
+    public String getNickname() {
+        return cClient.getNickname();
+    }
 
     /**
      * Set the modes this client has (Prefix modes).
      *
      * @param nNewMode integer representing the modes this client has.
      */
-    public void setChanMode(final long nNewMode) { nModes = nNewMode; }
+    public void setChanMode(final long nNewMode) {
+        nModes = nNewMode;
+    }
+
     /**
      * Get the modes this client has (Prefix modes).
      *
      * @return integer representing the modes this client has.
      */
-    public long getChanMode() { return nModes; }
+    public long getChanMode() {
+        return nModes;
+    }
 
     /**
      * Get the modes this client has (Prefix modes) as a string.
@@ -121,7 +135,9 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
                 for (char cTemp : myParser.prefixModes.keySet()) {
                     nTemp = myParser.prefixModes.get(cTemp);
                     if (nTemp == i) {
-                        if (bPrefix) { cTemp = myParser.prefixMap.get(cTemp); }
+                        if (bPrefix) {
+                            cTemp = myParser.prefixMap.get(cTemp);
+                        }
                         sModes = sModes.append(cTemp);
                         break;
                     }
@@ -146,27 +162,32 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
      */
     public long getImportantModeValue() {
         for (long i = myParser.nextKeyPrefix; i > 0; i = i / 2) {
-            if ((nModes & i) == i) { return i; }
+            if ((nModes & i) == i) {
+                return i;
+            }
         }
         return 0;
     }
 
     /** {@inheritDoc} */
-        @Override
+    @Override
     public String getImportantMode() {
         String sModes = this.getChanModeStr(false);
-        if (!sModes.isEmpty()) { sModes = "" + sModes.charAt(0); }
+        if (!sModes.isEmpty()) {
+            sModes = "" + sModes.charAt(0);
+        }
         return sModes;
     }
 
     /** {@inheritDoc} */
-        @Override
+    @Override
     public String getImportantModePrefix() {
         String sModes = this.getChanModeStr(true);
-        if (!sModes.isEmpty()) { sModes = "" + sModes.charAt(0); }
+        if (!sModes.isEmpty()) {
+            sModes = "" + sModes.charAt(0);
+        }
         return sModes;
     }
-
 
     /**
      * Get the String Value of ChannelClientInfo (ie @Nickname).
@@ -179,7 +200,7 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
     }
 
     /** {@inheritDoc} */
-        @Override
+    @Override
     public void kick(final String sReason) {
         myParser.sendString("KICK " + myChannel + " " + this.getNickname() + (sReason.isEmpty() ? sReason : " :" + sReason));
     }
@@ -189,18 +210,18 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
      *
      * @return String Value of user (inc prefix) (ie @+Nickname)
      */
-    public String toFullString() { return this.getChanModeStr(true) + this.getNickname(); }
+    public String toFullString() {
+        return this.getChanModeStr(true) + this.getNickname();
+    }
 
-        /** {@inheritDoc} */
-        @Override
-        public int compareTo(final ChannelClientInfo arg0) {
-            if (arg0 instanceof IRCChannelClientInfo) {
-                final IRCChannelClientInfo other = (IRCChannelClientInfo) arg0;
-                return (int) (getImportantModeValue() - other.getImportantModeValue());
-            }
-
-            return 0;
+    /** {@inheritDoc} */
+    @Override
+    public int compareTo(final ChannelClientInfo arg0) {
+        if (arg0 instanceof IRCChannelClientInfo) {
+            final IRCChannelClientInfo other = (IRCChannelClientInfo) arg0;
+            return (int) (getImportantModeValue() - other.getImportantModeValue());
         }
 
+        return 0;
+    }
 }
-

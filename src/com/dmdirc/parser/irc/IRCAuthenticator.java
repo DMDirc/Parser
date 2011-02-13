@@ -33,7 +33,6 @@ import java.util.concurrent.Semaphore;
 /**
  * Handles proxy authentication for the parser.
  *
- * @author Shane Mc Cormack
  * @see IRCParser
  */
 public final class IRCAuthenticator extends Authenticator {
@@ -44,16 +43,12 @@ public final class IRCAuthenticator extends Authenticator {
      * objects being unserialized with the new class).
      */
     private static final long serialVersionUID = 1;
-
     /** Singleton instance of IRCAuthenticator. */
     private static IRCAuthenticator me = null;
-
     /** List of authentication replies. */
     private final Map<String, PasswordAuthentication> replies = new HashMap<String, PasswordAuthentication>();
-
     /** List of servers for each host. */
     private final Map<String, List<ServerInfo>> owners = new HashMap<String, List<ServerInfo>>();
-
     /** Semaphore for connection limiting. */
     private final Semaphore mySemaphore = new Semaphore(1, true);
 
@@ -95,7 +90,9 @@ public final class IRCAuthenticator extends Authenticator {
         final String username = server.getProxyUser();
         final String password = server.getProxyPass();
 
-        if (username == null || password == null || username.isEmpty() || password.isEmpty()) { return; }
+        if (username == null || password == null || username.isEmpty() || password.isEmpty()) {
+            return;
+        }
 
         final PasswordAuthentication pass = new PasswordAuthentication(username, password.toCharArray());
         final String fullhost = host.toLowerCase() + ":" + port;

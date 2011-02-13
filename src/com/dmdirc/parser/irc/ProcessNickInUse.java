@@ -34,6 +34,17 @@ import com.dmdirc.parser.interfaces.callbacks.NickInUseListener;
  * If this also fails, we will start prepending _ (or the value of me.cPrepend) to the main nickname.
  */
 public class ProcessNickInUse extends IRCProcessor {
+
+    /**
+     * Create a new instance of the ProcessNickInUse Object.
+     *
+     * @param parser IRCParser That owns this object
+     * @param manager ProcessingManager that is in charge of this object
+     */
+    protected ProcessNickInUse(final IRCParser parser, final ProcessingManager manager) {
+        super(parser, manager);
+    }
+
     /**
      * Process a NickInUse message.
      * Parser implements handling of this if Pre-001 and no other handler found,
@@ -51,17 +62,17 @@ public class ProcessNickInUse extends IRCProcessor {
         if (!callNickInUse(token[3])) {
             // Manually handle nick in use.
             callDebugInfo(IRCParser.DEBUG_INFO, "No Nick in use Handler.");
-            if (!myParser.got001) {
+            if (!parser.got001) {
                 callDebugInfo(IRCParser.DEBUG_INFO, "Using inbuilt handler");
                 // If this is before 001 we will try and get a nickname, else we will leave the nick as-is
-                if (myParser.triedAlt) {
-                    if (myParser.getStringConverter().equalsIgnoreCase(myParser.thinkNickname, myParser.me.getAltNickname())) {
-                        myParser.thinkNickname = myParser.me.getNickname();
+                if (parser.triedAlt) {
+                    if (parser.getStringConverter().equalsIgnoreCase(parser.thinkNickname, parser.me.getAltNickname())) {
+                        parser.thinkNickname = parser.me.getNickname();
                     }
-                    myParser.getLocalClient().setNickname(myParser.me.getPrependChar() + myParser.thinkNickname);
+                    parser.getLocalClient().setNickname(parser.me.getPrependChar() + parser.thinkNickname);
                 } else {
-                    myParser.getLocalClient().setNickname(myParser.me.getAltNickname());
-                    myParser.triedAlt = true;
+                    parser.getLocalClient().setNickname(parser.me.getAltNickname());
+                    parser.triedAlt = true;
                 }
             }
         }
@@ -87,13 +98,4 @@ public class ProcessNickInUse extends IRCProcessor {
     public String[] handles() {
         return new String[]{"433"};
     }
-
-    /**
-     * Create a new instance of the ProcessNickInUse Object.
-     *
-     * @param parser IRCParser That owns this object
-     * @param manager ProcessingManager that is in charge of this object
-     */
-    protected ProcessNickInUse(final IRCParser parser, final ProcessingManager manager) { super(parser, manager); }
-
 }

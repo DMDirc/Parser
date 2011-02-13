@@ -27,8 +27,6 @@ import java.util.concurrent.BlockingQueue;
 
 /**
  * A QueueFactory produces QueueHandlers for OutputQueue.
- *
- * @author shane
  */
 public interface QueueFactory {
 
@@ -42,5 +40,4 @@ public interface QueueFactory {
      */
     QueueHandler getQueueHandler(final OutputQueue outputQueue,
             final BlockingQueue<QueueItem> queue, final PrintWriter out);
-
 }

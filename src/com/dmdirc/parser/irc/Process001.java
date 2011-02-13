@@ -28,6 +28,17 @@ import com.dmdirc.parser.common.ParserError;
  * Process a 001 message.
  */
 public class Process001 extends IRCProcessor {
+
+    /**
+     * Create a new instance of the IRCProcessor Object.
+     *
+     * @param parser IRCParser That owns this IRCProcessor
+     * @param manager ProcessingManager that is in charge of this IRCProcessor
+     */
+    protected Process001(final IRCParser parser, final ProcessingManager manager) {
+        super(parser, manager);
+    }
+
     /**
      * Process a 001 message.
      *
@@ -36,40 +47,40 @@ public class Process001 extends IRCProcessor {
      */
     @Override
     public void process(final String sParam, final String[] token) {
-        myParser.got001 = true;
+        parser.got001 = true;
         // << :demon1.uk.quakenet.org 001 Java-Test :Welcome to the QuakeNet IRC Network, Java-Test
-        myParser.serverName = token[0].substring(1, token[0].length());
+        parser.serverName = token[0].substring(1, token[0].length());
         final String sNick = token[2];
 
         // myself will be fake if we havn't recieved a 001 yet
-        if (myParser.getLocalClient().isFake()) {
+        if (parser.getLocalClient().isFake()) {
             // Update stored information
-            myParser.getLocalClient().setUserBits(sNick, true, true);
-            myParser.getLocalClient().setFake(false);
-            myParser.addClient(myParser.getLocalClient());
+            parser.getLocalClient().setUserBits(sNick, true, true);
+            parser.getLocalClient().setFake(false);
+            parser.addClient(parser.getLocalClient());
         } else {
             // Another 001? if nicknames change then we need to update the hashtable
-            if (!myParser.getLocalClient().getNickname().equalsIgnoreCase(sNick)) {
+            if (!parser.getLocalClient().getNickname().equalsIgnoreCase(sNick)) {
                 // Nick changed, remove old me
-                myParser.forceRemoveClient(myParser.getLocalClient());
+                parser.forceRemoveClient(parser.getLocalClient());
                 /// Update stored information
-                myParser.getLocalClient().setUserBits(sNick, true, true);
+                parser.getLocalClient().setUserBits(sNick, true, true);
                 // Check that we don't already know someone by this name
-                if (getClientInfo(myParser.getLocalClient().getNickname()) == null) {
+                if (getClientInfo(parser.getLocalClient().getNickname()) == null) {
                     // And add to list
-                    myParser.addClient(myParser.getLocalClient());
+                    parser.addClient(parser.getLocalClient());
                 } else {
                     // Someone else already know? this is bad!
-                    myParser.callErrorInfo(new ParserError(ParserError.ERROR_FATAL, "001 overwrites existing client?", myParser.getLastLine()));
+                    parser.callErrorInfo(new ParserError(ParserError.ERROR_FATAL, "001 overwrites existing client?", parser.getLastLine()));
                 }
             }
         }
 
-        myParser.startPingTimer();
+        parser.startPingTimer();
 
-        final String channels = myParser.server.getChannels();
+        final String channels = parser.server.getChannels();
         if (channels != null) {
-            myParser.joinChannel(channels);
+            parser.joinChannel(channels);
         }
     }
 
@@ -82,15 +93,4 @@ public class Process001 extends IRCProcessor {
     public String[] handles() {
         return new String[]{"001"};
     }
-
-    /**
-     * Create a new instance of the IRCProcessor Object.
-     *
-     * @param parser IRCParser That owns this IRCProcessor
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
-     */
-    protected Process001(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager);
-    }
-
 }
