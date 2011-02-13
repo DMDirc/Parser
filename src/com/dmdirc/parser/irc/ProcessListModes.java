@@ -19,7 +19,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package com.dmdirc.parser.irc;
 
 import com.dmdirc.parser.common.ChannelListModeItem;
@@ -35,6 +34,17 @@ import java.util.Queue;
  * Process a List Modes.
  */
 public class ProcessListModes extends IRCProcessor {
+
+    /**
+     * Create a new instance of the IRCProcessor Object.
+     *
+     * @param parser IRCParser That owns this IRCProcessor
+     * @param manager ProcessingManager that is in charge of this IRCProcessor
+     */
+    protected ProcessListModes(final IRCParser parser, final ProcessingManager manager) {
+        super(parser, manager);
+    }
+
     /**
      * Process a ListModes.
      *
@@ -53,7 +63,9 @@ public class ProcessListModes extends IRCProcessor {
         long time = 0;
         char mode = 'b';
         boolean isItem = true; // true if item listing, false if "end of .." item
-        if (channel == null) { return; }
+        if (channel == null) {
+            return;
+        }
 
         if (sParam.equals("367") || sParam.equals("368")) {
             // Ban List/Item.
@@ -144,7 +156,6 @@ public class ProcessListModes extends IRCProcessor {
                     // something else, error.
                     if (oldMode != mode && error) {
                         myParser.callDebugInfo(IRCParser.DEBUG_LMQ, "LMQ disagrees with guess. LMQ: " + mode + " Guess: " + oldMode);
-//                        myParser.callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "LMQ disagrees with guess. LMQ: "+mode+" Guess: "+oldMode, myParser.getLastLine()));
                     }
 
                     if (!isItem) {
@@ -241,16 +252,15 @@ public class ProcessListModes extends IRCProcessor {
      */
     @Override
     public String[] handles() {
-        return new String[]{"367", "368",  /* Bans */
-                            "344", "345",  /* Reop list (ircnet) or bad words (euirc) */
-                            "346", "347",  /* Invite List */
-                            "348", "349",  /* Except/Exempt List */
-                            "386", "387",  /* Channel Owner List (swiftirc ) */
-                            "388", "389",  /* Protected User List (swiftirc) */
-                            "940", "941",  /* Censored words list */
-                            "482",         /* Permission Denied */
-                            "__LISTMODE__" /* Sensible List Modes */
-                           };
+        return new String[]{"367", "368", /* Bans */
+                    "344", "345", /* Reop list (ircnet) or bad words (euirc) */
+                    "346", "347", /* Invite List */
+                    "348", "349", /* Except/Exempt List */
+                    "386", "387", /* Channel Owner List (swiftirc ) */
+                    "388", "389", /* Protected User List (swiftirc) */
+                    "940", "941", /* Censored words list */
+                    "482", /* Permission Denied */
+                    "__LISTMODE__" /* Sensible List Modes */};
     }
 
     /**
@@ -264,15 +274,4 @@ public class ProcessListModes extends IRCProcessor {
     protected boolean callChannelGotListModes(final ChannelInfo cChannel, final char mode) {
         return getCallbackManager().getCallbackType(ChannelListModeListener.class).call(cChannel, mode);
     }
-
-    /**
-     * Create a new instance of the IRCProcessor Object.
-     *
-     * @param parser IRCParser That owns this IRCProcessor
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
-     */
-    protected ProcessListModes(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager);
-    }
-
 }
