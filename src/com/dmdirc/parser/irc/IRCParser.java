@@ -53,6 +53,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -790,11 +791,10 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
      * Connect to IRC.
      *
      * @throws IOException if the socket can not be connected
-     * @throws UnknownHostException if the hostname can not be resolved
      * @throws NoSuchAlgorithmException if SSL is not available
      * @throws KeyManagementException if the trustManager is invalid
      */
-    private void connect() throws UnknownHostException, IOException, NoSuchAlgorithmException, KeyManagementException {
+    private void connect() throws IOException, NoSuchAlgorithmException, KeyManagementException {
         if (server == null) {
             throw new UnknownHostException("Unspecified host.");
         }
@@ -1127,12 +1127,11 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
         if (newLine[0].equalsIgnoreCase("away") && newLine.length > 1) {
             myself.setAwayReason(newLine[newLine.length - 1]);
         } else if (newLine[0].equalsIgnoreCase("mode") && newLine.length == 3) {
-            // This makes sure we don't add the same item to the LMQ twice, even if its requested twice,
-            // as the ircd will only reply once.
-            final LinkedList<Character> foundModes = new LinkedList<Character>();
-
             final IRCChannelInfo channel = getChannel(newLine[1]);
             if (channel != null) {
+                // This makes sure we don't add the same item to the LMQ twice,
+                // even if its requested twice, as the ircd will only reply once
+                final Deque<Character> foundModes = new LinkedList<Character>();
                 final Queue<Character> listModeQueue = channel.getListModeQueue();
                 for (int i = 0; i < newLine[2].length(); ++i) {
                     final Character mode = newLine[2].charAt(i);

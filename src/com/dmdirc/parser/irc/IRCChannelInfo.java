@@ -539,7 +539,8 @@ public class IRCChannelInfo implements ChannelInfo {
         if (!listModes.containsKey(cMode)) {
             listModes.put(cMode, new ArrayList<ChannelListModeItem>());
         }
-        final ArrayList<ChannelListModeItem> lModes = listModes.get(cMode);
+
+        final List<ChannelListModeItem> lModes = listModes.get(cMode);
         for (int i = 0; i < lModes.size(); i++) {
             if (parser.getStringConverter().equalsIgnoreCase(lModes.get(i).getItem(), newItem.getItem())) {
                 if (bAdd) {
@@ -628,9 +629,9 @@ public class IRCChannelInfo implements ChannelInfo {
             return;
         }
 
-        modestr = ((add) ? "+" : "-") + mode;
+        modestr = (add ? "+" : "-") + mode;
         if (parser.chanModesBool.containsKey(mode)) {
-            final String teststr = ((add) ? "-" : "+") + mode;
+            final String teststr = (add ? "-" : "+") + mode;
             if (modeQueue.contains(teststr)) {
                 modeQueue.remove(teststr);
                 return;
@@ -650,7 +651,7 @@ public class IRCChannelInfo implements ChannelInfo {
                 } else if (add && ((modeint & IRCParser.MODE_SET) == IRCParser.MODE_SET)) {
                     // Does mode require a param to unset aswell?
                     // We might need to queue an unset first
-                    if (((modeint & IRCParser.MODE_UNSET) == IRCParser.MODE_UNSET)) {
+                    if ((modeint & IRCParser.MODE_UNSET) == IRCParser.MODE_UNSET) {
                         final String existingParam = getMode(mode);
                         if (!existingParam.isEmpty()) {
                             final String reverseModeStr = "-" + mode + " " + existingParam;

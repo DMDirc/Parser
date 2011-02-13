@@ -47,7 +47,6 @@ public interface ChannelNickChangeListener extends CallbackInterface {
      * @param oldNick Nickname before change
      * @see com.dmdirc.parser.irc.ProcessNick#callChannelNickChanged
      */
-     void onChannelNickChanged(Parser parser, Date date, ChannelInfo channel,
-             ChannelClientInfo client, String oldNick);
-
+    void onChannelNickChanged(Parser parser, Date date, ChannelInfo channel,
+            ChannelClientInfo client, String oldNick);
 }
