@@ -47,5 +47,4 @@ public interface PrivateNoticeListener extends CallbackInterface {
      * @see com.dmdirc.parser.irc.ProcessMessage#callPrivateNotice
      */
     void onPrivateNotice(Parser parser, Date date, String message, String host);
-
 }

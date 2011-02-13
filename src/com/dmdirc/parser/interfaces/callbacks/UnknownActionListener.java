@@ -28,15 +28,11 @@ import java.util.Date;
 
 /**
  * Called when a person sends an action not aimed specifically at you or a channel (ie $*).
- * sHost is the hostname of the person sending the message. (Can be a server or a person)<br>
- * cClient is null if user is a server, or not on any common channel.
  */
 public interface UnknownActionListener extends CallbackInterface {
 
     /**
      * Called when a person sends an action not aimed specifically at you or a channel (ie $*).
-     * sHost is the hostname of the person sending the message. (Can be a server or a person)<br>
-     * cClient is null if user is a server, or not on any common channel.
      *
      * @param parser Reference to the parser object that made the callback.
      * @param date The date/time at which the event occured
@@ -47,5 +43,4 @@ public interface UnknownActionListener extends CallbackInterface {
      */
     void onUnknownAction(Parser parser, Date date, String message,
             String target, String host);
-
 }

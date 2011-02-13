@@ -29,6 +29,7 @@ import com.dmdirc.parser.interfaces.callbacks.ChannelQuitListener;
 import com.dmdirc.parser.interfaces.callbacks.QuitListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Process a Quit message.
@@ -75,7 +76,7 @@ public class ProcessQuit extends IRCProcessor {
             sReason = token[token.length - 1];
         }
 
-        final ArrayList<IRCChannelInfo> channelList = new ArrayList<IRCChannelInfo>(parser.getChannels());
+        final List<IRCChannelInfo> channelList = new ArrayList<IRCChannelInfo>(parser.getChannels());
         for (IRCChannelInfo iChannel : channelList) {
             iChannelClient = iChannel.getChannelClient(iClient);
             if (iChannelClient != null) {

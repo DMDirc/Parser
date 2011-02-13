@@ -28,6 +28,7 @@ import com.dmdirc.parser.interfaces.callbacks.ChannelListModeListener;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 /**
@@ -132,14 +133,13 @@ public class ProcessListModes extends IRCProcessor {
                     // Only raise an LMQ error if the lmqmode isn't one of bdq if the
                     // guess is one of bdq
                     if (ServerTypeGroup.FREENODE.isMember(serverType) && (mode == 'b' || mode == 'q' || mode == 'd')) {
-                        final LinkedList<Character> lmq = (LinkedList<Character>) listModeQueue;
                         if (mode == 'b') {
                             error = !(oldMode == 'q' || oldMode == 'd');
-                            lmq.remove((Character) 'q');
+                            listModeQueue.remove((Character) 'q');
                             parser.callDebugInfo(IRCParser.DEBUG_LMQ, "Dropping q from list");
                         } else if (mode == 'q') {
                             error = !(oldMode == 'b' || oldMode == 'd');
-                            lmq.remove((Character) 'b');
+                            listModeQueue.remove((Character) 'b');
                             parser.callDebugInfo(IRCParser.DEBUG_LMQ, "Dropping b from list");
                         } else if (mode == 'd') {
                             error = !(oldMode == 'b' || oldMode == 'q');

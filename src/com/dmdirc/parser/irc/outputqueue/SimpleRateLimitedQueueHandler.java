@@ -1,28 +1,29 @@
 /*
- *  Copyright (c) 2006-2011 Chris Smith, Shane Mc Cormack, Gregory Holmes
+ * Copyright (c) 2006-2011 Chris Smith, Shane Mc Cormack, Gregory Holmes
  *
- *  Permission is hereby granted, free of charge, to any person obtaining a copy
- *  of this software and associated documentation files (the "Software"), to deal
- *  in the Software without restriction, including without limitation the rights
- *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- *  copies of the Software, and to permit persons to whom the Software is
- *  furnished to do so, subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- *  The above copyright notice and this permission notice shall be included in
- *  all copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
- *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- *  SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 
 package com.dmdirc.parser.irc.outputqueue;
 
 import com.dmdirc.parser.common.QueuePriority;
+
 import java.io.PrintWriter;
 import java.util.concurrent.BlockingQueue;
 
@@ -34,21 +35,6 @@ import java.util.concurrent.BlockingQueue;
  */
 public class SimpleRateLimitedQueueHandler extends QueueHandler {
 
-    /**
-     * Get a QueueFactory that produces PriorityQueueHandlers.
-     *
-     * @return a QueueFactory that produces PrirortyQueueHandlers.
-     */
-    public static QueueFactory getFactory() {
-        return new QueueFactory() {
-
-            /** {@inheritDoc} */
-            @Override
-            public QueueHandler getQueueHandler(final OutputQueue outputQueue, final BlockingQueue<QueueItem> queue, final PrintWriter out) {
-                return new SimpleRateLimitedQueueHandler(outputQueue, queue, out);
-            }
-        };
-    }
     /** Current count. */
     private int count;
     /** Time last item was added. */
@@ -73,6 +59,22 @@ public class SimpleRateLimitedQueueHandler extends QueueHandler {
      */
     public SimpleRateLimitedQueueHandler(final OutputQueue outputQueue, final BlockingQueue<QueueItem> queue, final PrintWriter out) {
         super(outputQueue, queue, out);
+    }
+
+    /**
+     * Get a QueueFactory that produces PriorityQueueHandlers.
+     *
+     * @return a QueueFactory that produces PrirortyQueueHandlers.
+     */
+    public static QueueFactory getFactory() {
+        return new QueueFactory() {
+
+            /** {@inheritDoc} */
+            @Override
+            public QueueHandler getQueueHandler(final OutputQueue outputQueue, final BlockingQueue<QueueItem> queue, final PrintWriter out) {
+                return new SimpleRateLimitedQueueHandler(outputQueue, queue, out);
+            }
+        };
     }
 
     /**
@@ -188,7 +190,7 @@ public class SimpleRateLimitedQueueHandler extends QueueHandler {
     public QueueItem getQueueItem(final String line, final QueuePriority priority) {
         // Was the last line added less than limitTime ago?
         synchronized (this) {
-            final boolean overTime = (lastItemTime + limitTime > System.currentTimeMillis());
+            final boolean overTime = lastItemTime + limitTime > System.currentTimeMillis();
             if (overTime) {
                 // If we are not currently limiting, and this is the items-th item
                 // added in the last limitTime, start limiting.
@@ -196,18 +198,19 @@ public class SimpleRateLimitedQueueHandler extends QueueHandler {
                     isLimiting = true;
                     count = 0;
                 }
-            } else if (!isLimiting) {
-                // If it has been more than limitTime seconds since the last line
-                // and we are not currently limiting, reset the count.
-                count = 0;
-            } else {
+            } else if (isLimiting) {
                 // It has been longer than limitTime and we are still shown as
                 // limiting, check to see if the queue is empty or not, if it is
                 // disable limiting.
                 if (queue.size() == 0) {
                     isLimiting = false;
                 }
+            } else {
+                // If it has been more than limitTime seconds since the last line
+                // and we are not currently limiting, reset the count.
+                count = 0;
             }
+
             if (alwaysUpdateTime || overTime) {
                 lastItemTime = System.currentTimeMillis();
             }

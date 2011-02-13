@@ -39,7 +39,7 @@ public class ServerInfo {
      */
     private static final long serialVersionUID = 1;
     /** Are we using a socks proxy (Default: false). */
-    private boolean useSocksProxy = false;
+    private boolean useSocksProxy;
     /** Proxy server to connect to (Default: "127.0.0.1"). */
     private String proxyHost = "127.0.0.1";
     /** Port server listens on for client connections (Default: 8080). */
@@ -49,7 +49,7 @@ public class ServerInfo {
     /** Proxy password if required. */
     private String proxyPass = "";
     /** URI used to create this ServerInfo if applicable. */
-    private URI uri = null;
+    private URI uri;
 
     /**
      * Constructor using specifed host, port and password, SSL/Proxy must be

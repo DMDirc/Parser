@@ -29,7 +29,6 @@ import java.util.Map;
  * interact with it.
  *
  * @since 0.6.3m2
- * @author chris
  */
 public interface ChannelClientInfo extends Comparable<ChannelClientInfo> {
 

@@ -216,7 +216,7 @@ public class ProcessMode extends IRCProcessor {
                         // List Mode
                         sModeParam = sModestr[nParam++];
                         sNonUserModeStrParams = sNonUserModeStrParams + " " + sModeParam;
-                        nTemp = (Calendar.getInstance().getTimeInMillis() / 1000);
+                        nTemp = Calendar.getInstance().getTimeInMillis() / 1000;
                         iChannel.setListModeParam(cMode, new ChannelListModeItem(sModeParam, token[0], nTemp), bPositive);
                         callDebugInfo(IRCParser.DEBUG_INFO, "List Mode: %c [%s] {Positive: %b}", cMode, sModeParam, bPositive);
                         if (cbSingle != null) {
