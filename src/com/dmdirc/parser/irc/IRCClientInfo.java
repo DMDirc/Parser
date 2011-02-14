@@ -246,11 +246,8 @@ public class IRCClientInfo implements LocalClientInfo {
         }
     }
 
-    /**
-     * Get the away state of a user.
-     *
-     * @return AwayState of the user.
-     */
+    /** {@inheritDoc} */
+    @Override
     public AwayState getAwayState() {
         return away;
     }
