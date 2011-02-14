@@ -22,13 +22,14 @@
 
 package com.dmdirc.parser.interfaces;
 
+import com.dmdirc.parser.common.AwayState;
+
 import java.util.Map;
 
 /**
  * Holds information about a client, and provides various methods for
  * interacting with that client.
  *
- * @author chris
  * @since 0.6.3m2
  */
 public interface ClientInfo {
@@ -67,6 +68,13 @@ public interface ClientInfo {
      * @return The number of channels the client is known to be on
      */
     int getChannelCount();
+
+    /**
+     * Get the away state of a user.
+     *
+     * @return AwayState of the user.
+     */
+    AwayState getAwayState();
 
     /**
      * Retrieves a {@link Map} which can be used to store arbitrary data
