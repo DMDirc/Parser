@@ -23,6 +23,7 @@
 package com.dmdirc.parser.irc;
 
 import com.dmdirc.parser.interfaces.ProtocolDescription;
+import java.net.URI;
 
 /**
  * Provides a description of the IRC protocol.
@@ -41,5 +42,11 @@ public class IRCProtocolDescription implements ProtocolDescription {
     @Override
     public String[] parseHostmask(final String hostmask) {
         return IRCClientInfo.parseHostFull(hostmask);
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public boolean isSecure(final URI uri) {
+        return uri.getScheme().endsWith("s");
     }
 }
