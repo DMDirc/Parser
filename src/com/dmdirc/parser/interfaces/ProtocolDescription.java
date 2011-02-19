@@ -22,12 +22,13 @@
 
 package com.dmdirc.parser.interfaces;
 
+import java.net.URI;
+
 /**
  * Describes the default properties a protocol handled by a {@link Parser}
  * instance.
  *
  * @since 0.6.4
- * @author chris
  */
 public interface ProtocolDescription {
 
@@ -46,5 +47,16 @@ public interface ProtocolDescription {
      * @return An array containing the nickname, username and hostname
      */
     String[] parseHostmask(String hostmask);
+
+    /**
+     * Checks if the specified URI is going via a secure connection or not.
+     *
+     * @param uri URI to check
+     *
+     * @return true if the URI is secure false otherwise
+     *
+     * @since 0.6.6
+     */
+    boolean isSecure(URI uri);
 
 }
