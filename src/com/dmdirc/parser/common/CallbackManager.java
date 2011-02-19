@@ -26,6 +26,10 @@ import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.SpecificCallback;
 import com.dmdirc.parser.interfaces.callbacks.*; //NOPMD
 
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -71,7 +75,11 @@ public class CallbackManager {
     private final Map<Class<? extends CallbackInterface>, CallbackObject> callbackHash
             = new HashMap<Class<? extends CallbackInterface>, CallbackObject>();
 
+    /** A map of implementations to use for parser interfaces. */
     private final Map<Class<?>, Class<?>> implementationMap;
+
+    /** The parser this callback manager is for. */
+    private final Parser parser;
 
     /**
      * Constructor to create a CallbackManager.
@@ -81,6 +89,7 @@ public class CallbackManager {
      */
     public CallbackManager(final Parser parser, final Map<Class<?>, Class<?>> implementationMap) {
         this.implementationMap = implementationMap;
+        this.parser = parser;
 
         initialise(parser);
     }
@@ -287,5 +296,55 @@ public class CallbackManager {
     public void delCallback(final Class<? extends CallbackInterface> callback,
             final CallbackInterface o) {
         getCallbackType(callback).del(o);
+    }
+
+    /**
+     * Gets a proxy object which can be used to despatch callbacks of the
+     * specified type. Callers may pass <code>null</code> for the first two
+     * arguments of any callback, and these will automatically be replaced
+     * by the relevant Parser instance and the current date.
+     *
+     * @param <T> The type of the callback to retrieve
+     * @param callback The callback to retrieve
+     * @return A proxy object which can be used to call the specified callback
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends CallbackInterface> T getCallback(final Class<T> callback) {
+        return (T) Proxy.newProxyInstance(getClass().getClassLoader(),
+                new Class[]{ callback }, new CallbackHandler(callback));
+    }
+
+    /**
+     * A Proxy invocation handler for a specified parser callback.
+     */
+    private class CallbackHandler implements InvocationHandler {
+
+        /** The callback that should be called. */
+        private final Class<? extends CallbackInterface> callback;
+
+        /**
+         * Creates a new callback handler for the specified callback.
+         *
+         * @param callback The callback to handle
+         */
+        public CallbackHandler(final Class<? extends CallbackInterface> callback) {
+            this.callback = callback;
+        }
+
+        /** {@inheritDoc} */
+        @Override
+        public Object invoke(final Object proxy, final Method method, final Object[] args) {
+            final Object[] modifiedArgs = new Object[args.length - 2];
+            System.arraycopy(args, 2, modifiedArgs, 0, args.length - 2);
+
+            if (args[1] == null) {
+                getCallbackType(callback).call(modifiedArgs);
+            } else {
+                getCallbackType(callback).call((Date) args[1], modifiedArgs);
+            }
+
+            return null;
+        }
+
     }
 }

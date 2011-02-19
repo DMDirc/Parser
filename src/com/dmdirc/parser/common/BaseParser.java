@@ -23,6 +23,7 @@
 package com.dmdirc.parser.common;
 
 import com.dmdirc.parser.interfaces.Parser;
+import com.dmdirc.parser.interfaces.callbacks.CallbackInterface;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -120,6 +121,20 @@ public abstract class BaseParser implements Parser {
     @Override
     public CallbackManager getCallbackManager() {
         return callbackManager;
+    }
+
+    /**
+     * Gets a proxy object which can be used to despatch callbacks of the
+     * specified type. Callers may pass <code>null</code> for the first two
+     * arguments of any callback, and these will automatically be replaced
+     * by the relevant Parser instance and the current date.
+     *
+     * @param <T> The type of the callback to retrieve
+     * @param callback The callback to retrieve
+     * @return A proxy object which can be used to call the specified callback
+     */
+    protected <T extends CallbackInterface> T getCallback(final Class<T> callback) {
+        return callbackManager.getCallback(callback);
     }
 
     /** {@inheritDoc} */
