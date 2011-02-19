@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URI;
-import java.util.Map;
 
 import javax.net.SocketFactory;
 
@@ -49,10 +48,9 @@ public abstract class BaseSocketAwareParser extends BaseParser {
      * Creates a new base parser for the specified URI.
      *
      * @param uri The URI this parser will connect to.
-     * @param implementations A map of interface implementations for this parser
      */
-    public BaseSocketAwareParser(final URI uri, final Map<Class<?>, Class<?>> implementations) {
-        super(uri, implementations);
+    public BaseSocketAwareParser(final URI uri) {
+        super(uri);
     }
 
     /** {@inheritDoc} */

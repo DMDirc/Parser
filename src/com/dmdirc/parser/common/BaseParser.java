@@ -29,7 +29,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Implements common base functionality for parsers.
+ * Implements common base functionality for parsers.<p>
+ * Implementations of this class must be annotated with
+ * {@link ChildImplementations} to define the implementations to use for
+ * instances of {@link ClientInfo}, {@link ChannelInfo}, etc.
  */
 public abstract class BaseParser implements Parser {
 
@@ -55,10 +58,19 @@ public abstract class BaseParser implements Parser {
      * Creates a new base parser for the specified URI.
      *
      * @param uri The URI this parser will connect to.
-     * @param implementations A map of interface implementations for this parser
      */
-    public BaseParser(final URI uri, final Map<Class<?>, Class<?>> implementations) {
+    public BaseParser(final URI uri) {
         this.uri = uri;
+
+        final Map<Class<?>, Class<?>> implementations
+                = new HashMap<Class<?>, Class<?>>();
+
+        for (Class<?> child : this.getClass().getAnnotation(ChildImplementations.class).value()) {
+            for (Class<?> iface : child.getInterfaces()) {
+                implementations.put(iface, child);
+            }
+        }
+
         this.callbackManager = new CallbackManager(this, implementations);
     }
 
