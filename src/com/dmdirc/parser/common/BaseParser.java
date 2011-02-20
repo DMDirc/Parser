@@ -49,6 +49,9 @@ public abstract class BaseParser implements Parser {
     /** The ping timer fraction for this parser. */
     private int pingTimerFraction;
 
+    /** The cached name of the server this parser is connected to. */
+    private String serverName;
+
     /** The callback manager to use for this parser. */
     private final CallbackManager callbackManager;
 
@@ -153,6 +156,21 @@ public abstract class BaseParser implements Parser {
     @Override
     public void joinChannel(final String channel, final String key) {
         joinChannels(new ChannelJoinRequest(channel, key));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getServerName() {
+        return serverName;
+    }
+
+    /**
+     * Sets the name of this parser's server.
+     *
+     * @param serverName The new name for this parser's server
+     */
+    protected void setServerName(final String serverName) {
+        this.serverName = serverName;
     }
 
 }

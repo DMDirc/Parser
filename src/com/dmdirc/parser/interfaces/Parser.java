@@ -206,7 +206,8 @@ public interface Parser extends Runnable {
     Collection<? extends ChannelJoinRequest> extractChannels(final URI uri);
 
     /**
-     * Retrieves the name of the server that this parser is connected to.
+     * Retrieves the name of the server that this parser is, or has been,
+     * connected to.
      *
      * @return This parser's server's name
      */
