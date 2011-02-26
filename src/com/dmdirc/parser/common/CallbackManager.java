@@ -78,9 +78,6 @@ public class CallbackManager {
     /** A map of implementations to use for parser interfaces. */
     private final Map<Class<?>, Class<?>> implementationMap;
 
-    /** The parser this callback manager is for. */
-    private final Parser parser;
-
     /**
      * Constructor to create a CallbackManager.
      *
@@ -89,7 +86,6 @@ public class CallbackManager {
      */
     public CallbackManager(final Parser parser, final Map<Class<?>, Class<?>> implementationMap) {
         this.implementationMap = implementationMap;
-        this.parser = parser;
 
         initialise(parser);
     }
