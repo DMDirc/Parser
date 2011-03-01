@@ -174,7 +174,7 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
     public String getImportantMode() {
         String sModes = this.getChanModeStr(false);
         if (!sModes.isEmpty()) {
-            sModes = "" + sModes.charAt(0);
+            sModes = Character.toString(sModes.charAt(0));
         }
         return sModes;
     }
@@ -184,7 +184,7 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
     public String getImportantModePrefix() {
         String sModes = this.getChanModeStr(true);
         if (!sModes.isEmpty()) {
-            sModes = "" + sModes.charAt(0);
+            sModes = Character.toString(sModes.charAt(0));
         }
         return sModes;
     }

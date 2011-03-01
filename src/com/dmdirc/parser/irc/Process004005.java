@@ -143,7 +143,7 @@ public class Process004005 extends IRCProcessor {
                     // Add listmode handler
                     String[] handles = new String[2];
                     handles[0] = value; // List mode item
-                    final String endValue = "" + (Integer.parseInt(value) + 1);
+                    final String endValue = Integer.toString(Integer.parseInt(value) + 1);
                     parser.h005Info.put("LISTMODEEND", endValue);
                     handles[1] = endValue; // List mode end
                     // Add listmode handlers
