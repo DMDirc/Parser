@@ -23,6 +23,7 @@ package com.dmdirc.parser.irc;
 
 import com.dmdirc.parser.common.CallbackManager;
 import com.dmdirc.parser.common.ChannelJoinRequest;
+import com.dmdirc.parser.common.CompositionState;
 import com.dmdirc.parser.common.IgnoreList;
 import com.dmdirc.parser.common.MyInfo;
 import com.dmdirc.parser.common.ParserError;
@@ -2335,5 +2336,11 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
     @Override
     public int getMaxLength() {
         return MAX_LINELENGTH;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void setCompositionState(final String host, final CompositionState state) {
+        // Do nothing
     }
 }

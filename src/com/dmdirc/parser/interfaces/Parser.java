@@ -24,6 +24,7 @@ package com.dmdirc.parser.interfaces;
 
 import com.dmdirc.parser.common.CallbackManager;
 import com.dmdirc.parser.common.ChannelJoinRequest;
+import com.dmdirc.parser.common.CompositionState;
 import com.dmdirc.parser.common.IgnoreList;
 import com.dmdirc.parser.common.QueuePriority;
 
@@ -476,5 +477,14 @@ public interface Parser extends Runnable {
      * @return This parser's ping timer fraction
      */
     int getPingTimerFraction();
+
+    /**
+     * Sets the local user's composition state for a conversation with the
+     * specified host.
+     *
+     * @param host The host of the user who the conversation is with
+     * @param state The new composition state
+     */
+    void setCompositionState(String host, CompositionState state);
 
 }
