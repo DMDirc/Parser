@@ -29,6 +29,8 @@ import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.callbacks.ChannelJoinListener;
 import com.dmdirc.parser.interfaces.callbacks.ChannelSelfJoinListener;
 
+import java.util.Arrays;
+
 /**
  * Process a channel join.
  */
@@ -52,6 +54,8 @@ public class ProcessJoin extends IRCProcessor {
      */
     @Override
     public void process(final String sParam, final String[] token) {
+        callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: %s | %s", sParam, Arrays.toString(token));
+
         if ("329".equals(sParam)) {
             if (token.length < 5) {
                 return;
@@ -76,9 +80,13 @@ public class ProcessJoin extends IRCProcessor {
             iClient = getClientInfo(token[0]);
             iChannel = parser.getChannel(token[token.length - 1]);
 
+            callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: client: %s", iClient);
+            callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: channel: %s", iChannel);
+
             if (iClient == null) {
                 iClient = new IRCClientInfo(parser, token[0]);
                 parser.addClient(iClient);
+                callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: new client.", iClient);
             }
             // Check to see if we know the host/ident for this client to facilitate dmdirc Formatter
             if (iClient.getHostname().isEmpty()) {
@@ -100,11 +108,14 @@ public class ProcessJoin extends IRCProcessor {
                 } else if (iChannel.getChannelClient(iClient) == null) {
                     // This is only done if we are already the channel, and it isn't us that
                     // joined.
+                    callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Adding client to channel.");
                     iChannelClient = iChannel.addClient(iClient);
                     callChannelJoin(iChannel, iChannelClient);
+                    callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Added client to channel.");
                     return;
                 } else {
                     // Client joined channel that we already know of.
+                    callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Not adding client to channel they are already on.");
                     return;
                 }
             }
