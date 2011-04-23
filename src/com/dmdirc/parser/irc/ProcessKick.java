@@ -26,6 +26,7 @@ import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.callbacks.ChannelKickListener;
+import java.util.Arrays;
 
 /**
  * Process a channel kick.
@@ -50,6 +51,8 @@ public class ProcessKick extends IRCProcessor {
      */
     @Override
     public void process(final String sParam, final String[] token) {
+        callDebugInfo(IRCParser.DEBUG_INFO, "processKick: %s | %s", sParam, Arrays.toString(token));
+
         IRCChannelClientInfo iChannelClient;
         IRCChannelClientInfo iChannelKicker;
         IRCChannelInfo iChannel;
@@ -65,8 +68,7 @@ public class ProcessKick extends IRCProcessor {
             return;
         }
 
-        if ((IRCParser.ALWAYS_UPDATECLIENT && iKicker != null)
-                && iKicker.getHostname().isEmpty()) {
+        if ((IRCParser.ALWAYS_UPDATECLIENT && iKicker != null) && iKicker.getHostname().isEmpty()) {
             // To facilitate dmdirc formatter, get user information
             iKicker.setUserBits(token[0], false);
         }
@@ -87,10 +89,14 @@ public class ProcessKick extends IRCProcessor {
             }
             iChannelKicker = iChannel.getChannelClient(token[0]);
             if (parser.removeAfterCallback) {
+                callDebugInfo(IRCParser.DEBUG_INFO, "processKick: calling kick before. {%s | %s | %s | %s | %s}", iChannel, iChannelClient, iChannelKicker, sReason, token[0]);
                 callChannelKick(iChannel, iChannelClient, iChannelKicker, sReason, token[0]);
             }
+            callDebugInfo(IRCParser.DEBUG_INFO, "processKick: removing client from channel { %s | %s }", iChannel, iClient);
             iChannel.delClient(iClient);
+            callDebugInfo(IRCParser.DEBUG_INFO, "processKick: removed client from channel { %s | %s }", iChannel, iClient);
             if (!parser.removeAfterCallback) {
+                callDebugInfo(IRCParser.DEBUG_INFO, "processKick: calling kick after. {%s | %s | %s | %s | %s}", iChannel, iChannelClient, iChannelKicker, sReason, token[0]);
                 callChannelKick(iChannel, iChannelClient, iChannelKicker, sReason, token[0]);
             }
             if (iClient == parser.getLocalClient()) {
