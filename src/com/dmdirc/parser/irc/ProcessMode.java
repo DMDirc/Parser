@@ -112,7 +112,6 @@ public class ProcessMode extends IRCProcessor {
         char cPositive = '+';
         IRCChannelInfo iChannel;
         IRCChannelClientInfo iChannelClientInfo;
-        IRCClientInfo iClient;
         IRCChannelClientInfo setterCCI;
 
         CallbackObject cbSingle = null;
@@ -171,12 +170,8 @@ public class ProcessMode extends IRCProcessor {
                     iChannelClientInfo = iChannel.getChannelClient(sModeParam);
                     if (iChannelClientInfo == null) {
                         // Client not known?
-                        iClient = getClientInfo(sModeParam);
-                        if (iClient == null) {
-                            iClient = new IRCClientInfo(parser, sModeParam);
-                            parser.addClient(iClient);
-                        }
-                        iChannelClientInfo = iChannel.addClient(iClient);
+                        callDebugInfo(IRCParser.DEBUG_INFO, "User Mode for client not on channel. Ignoring (%s)", iChannelClientInfo);
+                        continue;
                     }
                     callDebugInfo(IRCParser.DEBUG_INFO, "\tOld Mode Value: %d", iChannelClientInfo.getChanMode());
                     if (bPositive) {
