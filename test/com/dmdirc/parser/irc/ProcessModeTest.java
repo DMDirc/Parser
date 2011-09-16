@@ -95,38 +95,13 @@ public class ProcessModeTest {
         parser.injectLine(":luser!me@my MODE #DMDirc_testing +v :moo");
         
         assertNotNull(parser.getClient("moo"));
-        assertEquals(1, parser.getClient("moo").getChannelCount());
+        assertEquals(0, parser.getClient("moo").getChannelCount());
         
-        final IRCChannelClientInfo cci = parser.getClient("moo").getChannelClients().get(0);
-        
-        assertEquals("+", cci.getChanModeStr(true));        
         assertEquals("Parser should update ident when it sees a MODE line",
                 "me", parser.getClient("luser").getUsername());
         assertEquals("Parser should update host when it sees a MODE line",
                 "my", parser.getClient("luser").getHostname());
     }
-    
-    @Test
-    public void testUnknownUser2() {
-        final TestParser parser = new TestParser();
-
-        parser.injectConnectionStrings();
-        parser.injectLine(":nick JOIN #DMDirc_testing");
-        parser.injectLine(":server 353 nick = #DMDirc_testing :@nick +luser");
-        parser.injectLine(":server 366 nick #DMDirc_testing :End of /NAMES list");
-        parser.injectLine(":nick JOIN #DMDirc_testing2");
-        parser.injectLine(":server 353 nick = #DMDirc_testing2 :@nick +moo");
-        parser.injectLine(":server 366 nick #DMDirc_testing2 :End of /NAMES list");        
-
-        parser.injectLine(":server MODE #DMDirc_testing +v moo");
-        
-        assertNotNull(parser.getClient("moo"));
-        assertEquals(2, parser.getClient("moo").getChannelCount());
-        
-        final IRCChannelClientInfo cci = parser.getClient("moo").getChannelClients().get(0);
-        
-        assertEquals("+", cci.getChanModeStr(true));        
-    }   
     
     @Test
     public void testChannelModes() {
