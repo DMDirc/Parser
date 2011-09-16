@@ -25,6 +25,7 @@ package com.dmdirc.parser.irc;
 import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.interfaces.callbacks.NumericListener;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -187,10 +188,26 @@ public class ProcessingManager {
      * @throws ProcessorNotFoundException exception if no processors exists to handle the line
      */
     public void process(final String sParam, final String[] token) throws ProcessorNotFoundException {
+        process(new Date(), sParam, token);
+    }
+
+    /**
+     * Process a Line.
+     *
+     * @param date Date of line.
+     * @param sParam Type of line to process ("005", "PRIVMSG" etc)
+     * @param token IRCTokenised line to process
+     * @throws ProcessorNotFoundException exception if no processors exists to handle the line
+     */
+    public void process(final Date date, final String sParam, final String[] token) throws ProcessorNotFoundException {
         IRCProcessor messageProcessor = null;
         try {
             messageProcessor = getProcessor(sParam);
-            messageProcessor.process(sParam, token);
+            if (messageProcessor instanceof TimestampedIRCProcessor) {
+                ((TimestampedIRCProcessor)messageProcessor).process(date, sParam, token);
+            } else {
+                messageProcessor.process(sParam, token);
+            }
         } catch (ProcessorNotFoundException p) {
             throw p;
         } catch (Exception e) {
