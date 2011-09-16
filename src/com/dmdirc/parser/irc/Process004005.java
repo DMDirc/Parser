@@ -23,6 +23,7 @@
 package com.dmdirc.parser.irc;
 
 import com.dmdirc.parser.common.ParserError;
+import com.dmdirc.parser.common.QueuePriority;
 import com.dmdirc.parser.interfaces.callbacks.NetworkDetectedListener;
 
 import java.util.regex.Matcher;
@@ -112,10 +113,7 @@ public class Process004005 extends IRCProcessor {
                     try {
                         encoding = IRCEncoding.valueOf(value.toUpperCase().replace('-', '_'));
                     } catch (IllegalArgumentException ex) {
-                        parser.callErrorInfo(new ParserError(
-                                ParserError.ERROR_WARNING,
-                                "Unknown casemapping: '" + value + "' - assuming rfc1459",
-                                parser.getLastLine()));
+                        parser.callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Unknown casemapping: '" + value + "' - assuming rfc1459", parser.getLastLine()));
                     }
 
                     final boolean encodingChanged = parser.getStringConverter().getEncoding() != encoding;
@@ -151,6 +149,11 @@ public class Process004005 extends IRCProcessor {
                         parser.getProcessingManager().addProcessor(handles, parser.getProcessingManager().getProcessor("__LISTMODE__"));
                     } catch (ProcessorNotFoundException e) {
                     }
+                } else if ("TIMESTAMPEDIRC".equals(key)) {
+                    parser.timestampedIRC = true;
+                    // Let the server know we also understand timestamped irc.
+                    // See my other proposal: http://shanemcc.co.uk/irc/#timestamping
+                    parser.sendString("TIMESTAMPEDIRC ON", QueuePriority.HIGH);
                 }
             }
         }
