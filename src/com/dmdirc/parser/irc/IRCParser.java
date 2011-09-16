@@ -54,6 +54,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -207,6 +208,10 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
     private IRCClientInfo myself = new IRCClientInfo(this, "myself").setFake(true);
     /** Hashtable storing all information gathered from 005. */
     final Map<String, String> h005Info = new HashMap<String, String>();
+    /** Does this server support timestamped IRC? */
+    boolean timestampedIRC = false;
+    /** difference in ms between our time and the servers time. */
+    long tsdiff;
     /** Ignore List. */
     private IgnoreList myIgnoreList = new IgnoreList();
     /** Reference to the callback Manager. */
@@ -1043,6 +1048,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
         if (tokens.length < 1) {
             tokens = new String[]{""};
         }
+
         return tokens;
     }
 
@@ -1187,7 +1193,17 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
     protected void processLine(final ReadLine line) {
         callDataIn(line.getLine());
 
-        final String[] token = line.getTokens();
+        String[] token = line.getTokens();
+        Date lineTS = new Date();
+        if (timestampedIRC && token[0].charAt(0) == '@') {
+            try {
+                final int tsEnd = token[0].indexOf('@', 1);
+                final long ts = Long.parseLong(token[0].substring(1, tsEnd));
+                token[0] = token[0].substring(tsEnd + 1);
+                lineTS = new Date(ts - tsdiff);
+            } catch (final NumberFormatException nfe) { /* Do nothing. */ }
+        }
+
         int nParam;
         setPingNeeded(false);
 
@@ -1211,13 +1227,22 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
                     errorMessage.append(token[i]);
                 }
                 callServerError(errorMessage.toString());
+            } else if (timestampedIRC && token[1].equalsIgnoreCase("TSIRC") && token.length > 3) {
+                if (token[2].equals("1")) {
+                    try {
+                        final long ts = Long.parseLong(token[3]);
+                        tsdiff = ts - System.currentTimeMillis();
+                    } catch (final NumberFormatException nfe) { /* Do nothing. */ }
+                } else {
+                    timestampedIRC = false;
+                }
             } else {
                 if (got001) {
                     // Freenode sends a random notice in a stupid place, others might do aswell
                     // These shouldn't cause post005 to be fired, so handle them here.
                     if (token[0].equalsIgnoreCase("NOTICE") || (token.length > 2 && token[2].equalsIgnoreCase("NOTICE"))) {
                         try {
-                            myProcessingManager.process("Notice Auth", token);
+                            myProcessingManager.process(lineTS, "Notice Auth", token);
                         } catch (ProcessorNotFoundException e) {
                             // ???
                         }
@@ -1243,7 +1268,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
                     }
                     // After 001 we potentially care about everything!
                     try {
-                        myProcessingManager.process(sParam, token);
+                        myProcessingManager.process(lineTS, sParam, token);
                     } catch (ProcessorNotFoundException e) {
                         // ???
                     }
@@ -1267,7 +1292,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
                             // Some networks send a CTCP during the auth process, handle it
                             if (token.length > 3 && !token[3].isEmpty() && token[3].charAt(0) == (char) 1 && token[3].charAt(token[3].length() - 1) == (char) 1) {
                                 try {
-                                    myProcessingManager.process(sParam, token);
+                                    myProcessingManager.process(lineTS, sParam, token);
                                 } catch (ProcessorNotFoundException e) {
                                 }
                                 break;
@@ -1280,7 +1305,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
 
                             // Otherwise, send to Notice Auth
                             try {
-                                myProcessingManager.process("Notice Auth", token);
+                                myProcessingManager.process(lineTS, "Notice Auth", token);
                             } catch (ProcessorNotFoundException e) {
                             }
                             break;
@@ -1293,6 +1318,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
             callErrorInfo(ei);
         }
     }
+
     /** The IRCStringConverter for this parser */
     private IRCStringConverter stringConverter = null;
 
