@@ -47,7 +47,7 @@ public final class IRCAuthenticator extends Authenticator {
     /** List of authentication replies. */
     private final Map<String, PasswordAuthentication> replies = new HashMap<String, PasswordAuthentication>();
     /** List of servers for each host. */
-    private final Map<String, List<ServerInfo>> owners = new HashMap<String, List<ServerInfo>>();
+    private final Map<String, List<IRCServerInfo>> owners = new HashMap<String, List<IRCServerInfo>>();
     /** Semaphore for connection limiting. */
     private final Semaphore mySemaphore = new Semaphore(1, true);
 
@@ -83,7 +83,7 @@ public final class IRCAuthenticator extends Authenticator {
      *
      * @param server ServerInfo object with proxy details.
      */
-    public void addAuthentication(final ServerInfo server) {
+    public void addAuthentication(final IRCServerInfo server) {
         final String username = server.getProxyUser();
         final String password = server.getProxyPass();
 
@@ -101,7 +101,7 @@ public final class IRCAuthenticator extends Authenticator {
         replies.put(fullhost, pass);
 
         // Store which servers are associated with which proxy
-        final List<ServerInfo> servers = owners.containsKey(fullhost) ? owners.get(fullhost) : new ArrayList<ServerInfo>();
+        final List<IRCServerInfo> servers = owners.containsKey(fullhost) ? owners.get(fullhost) : new ArrayList<IRCServerInfo>();
         owners.remove(fullhost);
         servers.add(server);
         owners.put(fullhost, servers);
@@ -121,14 +121,14 @@ public final class IRCAuthenticator extends Authenticator {
      *
      * @param server ServerInfo object with proxy details.
      */
-    public void removeAuthentication(final ServerInfo server) {
+    public void removeAuthentication(final IRCServerInfo server) {
         final String host = server.getProxyHost();
         final int port = server.getProxyPort();
 
         final String fullhost = host.toLowerCase() + ":" + port;
 
         // See if any other servers are associated with this proxy.
-        final List<ServerInfo> servers = owners.containsKey(fullhost) ? owners.get(fullhost) : new ArrayList<ServerInfo>();
+        final List<IRCServerInfo> servers = owners.containsKey(fullhost) ? owners.get(fullhost) : new ArrayList<IRCServerInfo>();
         servers.remove(server);
 
         if (servers.isEmpty()) {

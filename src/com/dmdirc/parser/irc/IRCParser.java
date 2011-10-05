@@ -36,6 +36,7 @@ import com.dmdirc.parser.interfaces.Encoder;
 import com.dmdirc.parser.interfaces.EncodingParser;
 import com.dmdirc.parser.interfaces.LocalClientInfo;
 import com.dmdirc.parser.interfaces.SecureParser;
+import com.dmdirc.parser.interfaces.ServerInfo;
 import com.dmdirc.parser.interfaces.callbacks.*; //NOPMD
 import com.dmdirc.parser.irc.IRCReader.ReadLine;
 import com.dmdirc.parser.irc.outputqueue.OutputQueue;
@@ -111,7 +112,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
      */
     public MyInfo me = new MyInfo();
     /**    Server Info requested by user. */
-    public ServerInfo server;
+    private IRCServerInfo server;
     /** Should PINGs be sent to the server to check if its alive? */
     private boolean checkServerPing = true;
     /** Timer for server ping. */
@@ -283,17 +284,17 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
      *
      * @param serverDetails Server information.
      */
-    public IRCParser(final ServerInfo serverDetails) {
+    public IRCParser(final IRCServerInfo serverDetails) {
         this(null, serverDetails);
     }
 
     /**
-     * Constructor with MyInfo, ServerInfo needs to be added separately (using IRC.server).
+     * Constructor with MyInfo, ServerInfo needs to be added separately (using IRC.setServerInfo).
      *
      * @param myDetails Client information.
      */
     public IRCParser(final MyInfo myDetails) {
-        this(myDetails, (ServerInfo) null);
+        this(myDetails, (IRCServerInfo) null);
     }
 
     /**
@@ -302,7 +303,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
      * @param serverDetails Server information.
      * @param myDetails Client information.
      */
-    public IRCParser(final MyInfo myDetails, final ServerInfo serverDetails) {
+    public IRCParser(final MyInfo myDetails, final IRCServerInfo serverDetails) {
         out = new OutputQueue();
         if (myDetails != null) {
             this.me = myDetails;
@@ -322,7 +323,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
      * @param uri The URI to connect to
      */
     public IRCParser(final MyInfo myDetails, final URI uri) {
-        this(myDetails, new ServerInfo(uri));
+        this(myDetails, new IRCServerInfo(uri));
     }
 
     /**
@@ -359,7 +360,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
     @Override
     public boolean compareURI(final URI uri) {
         // Parse the given URI to set any defaults.
-        final ServerInfo si = new ServerInfo(uri);
+        final IRCServerInfo si = new IRCServerInfo(uri);
         final URI newURI = si.getURI();
         // Get the old URI.
         final URI oldURI = server.getURI();
@@ -375,7 +376,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
     /** {@inheritDoc} */
     @Override
     public Collection<? extends ChannelJoinRequest> extractChannels(final URI uri) {
-        return extractChannels(new ServerInfo(uri).getChannels());
+        return extractChannels(new IRCServerInfo(uri).getChannels());
     }
 
     /**
@@ -2368,5 +2369,13 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
     @Override
     public void setCompositionState(final String host, final CompositionState state) {
         // Do nothing
+    }
+
+    public ServerInfo getServerInfo() {
+        return server;
+    }
+
+    public void setServerInfo(ServerInfo server) {
+        this.server = (IRCServerInfo)server;
     }
 }

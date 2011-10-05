@@ -25,12 +25,14 @@ package com.dmdirc.parser.irc;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import com.dmdirc.parser.interfaces.ServerInfo;
+
 /**
  * Contains Server information.
  *
  * @see IRCParser
  */
-public class ServerInfo {
+public class IRCServerInfo implements ServerInfo {
 
     /**
      * A version number for this class. It should be changed whenever the class
@@ -59,7 +61,7 @@ public class ServerInfo {
      * @param serverPort Port to use
      * @param serverPass Password to use
      */
-    public ServerInfo(final String serverHost, final int serverPort,
+    public IRCServerInfo(final String serverHost, final int serverPort,
             final String serverPass) {
         try {
             uri = new URI("irc", serverPass, serverHost, serverPort, null,
@@ -80,7 +82,7 @@ public class ServerInfo {
      * @param uri The URI of the server
      * @since 0.6.3
      */
-    public ServerInfo(final URI uri) {
+    public IRCServerInfo(final URI uri) {
         this.uri = uri;
     }
 

@@ -22,6 +22,8 @@
 
 package com.dmdirc.parser.interfaces;
 
+import com.dmdirc.parser.interfaces.ServerInfo;
+
 import com.dmdirc.parser.common.CallbackManager;
 import com.dmdirc.parser.common.ChannelJoinRequest;
 import com.dmdirc.parser.common.CompositionState;
@@ -487,4 +489,19 @@ public interface Parser extends Runnable {
      */
     void setCompositionState(String host, CompositionState state);
 
+    /**
+     * Retrieves the ServerInfo configuration object for this parser
+     *
+     * @return This parser's configuration
+     */
+    ServerInfo getServerInfo();
+
+    /**
+     * Sets a new configuration object for the parser. Only really makes sense
+     * if you do this before a connection is called.
+     *
+     * @param serverInfo The new server configuration object
+     */
+    void setServerInfo(ServerInfo serverInfo);
+    
 }
