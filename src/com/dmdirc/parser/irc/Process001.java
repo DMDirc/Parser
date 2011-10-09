@@ -22,6 +22,7 @@
 
 package com.dmdirc.parser.irc;
 
+import com.dmdirc.parser.common.ChannelJoinRequest;
 import com.dmdirc.parser.common.ParserError;
 
 /**
@@ -49,7 +50,7 @@ public class Process001 extends IRCProcessor {
     public void process(final String sParam, final String[] token) {
         parser.got001 = true;
         // << :demon1.uk.quakenet.org 001 Java-Test :Welcome to the QuakeNet IRC Network, Java-Test
-        parser.serverName = token[0].substring(1, token[0].length());
+        parser.setServerName(token[0].substring(1, token[0].length()));
         final String sNick = token[2];
 
         // myself will be fake if we havn't recieved a 001 yet
@@ -77,11 +78,7 @@ public class Process001 extends IRCProcessor {
         }
 
         parser.startPingTimer();
-
-        final String channels = parser.getServerInfo().getChannels();
-        if (channels != null) {
-            parser.joinChannel(channels);
-        }
+        parser.joinChannels(parser.extractChannels(parser.getURI()).toArray(new ChannelJoinRequest[0]));
     }
 
     /**
