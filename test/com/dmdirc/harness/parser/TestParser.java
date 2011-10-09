@@ -27,6 +27,7 @@ import com.dmdirc.parser.common.QueuePriority;
 import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.irc.*;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
@@ -36,11 +37,11 @@ public class TestParser extends IRCParser implements Parser {
     public final List<String> sentLines = new ArrayList<String>();
 
     public String nick = "nick";
-    
+
     public String network = null;
 
     public TestParser() {
-        super(new ServerInfo("", -1, ""));
+        super(new ServerInfo(buildURI()));
         currentSocketState = SocketState.OPEN;
     }
 
@@ -49,20 +50,28 @@ public class TestParser extends IRCParser implements Parser {
         currentSocketState = SocketState.OPEN;
     }
 
+    private static URI buildURI() {
+        try {
+            return new URI("irc://host:1234/");
+        } catch (URISyntaxException ex) {
+            return null;
+        }
+    }
+
     @Override
     protected boolean doSendString(String line, QueuePriority priority, boolean fromParser) {
         sentLines.add(line);
         return true;
     }
-    
+
     public String[] getLine(int index) {
         return tokeniseLine(sentLines.get(index));
     }
-    
+
     public void injectLine(String line) {
         processLine(new IRCReader.ReadLine(line, IRCParser.tokeniseLine(line)));
     }
-    
+
     public void injectConnectionStrings() {
         final String[] lines = new String[]{
             "NOTICE AUTH :Blah, blah",
@@ -76,13 +85,13 @@ public class TestParser extends IRCParser implements Parser {
             ":server 005 " + nick + " MAXNICKLEN=15 TOPICLEN=250 AWAYLEN=160 MODES=6 " +
                     "CHANMODES=bIeR,k,l,imnpstrDducCNMT :are supported by this server",
         };
-        
+
         sendConnectionStrings();
-        
+
         for (String line : lines) {
             injectLine(line);
         }
-        
+
         sentLines.clear();
     }
 
@@ -95,7 +104,7 @@ public class TestParser extends IRCParser implements Parser {
     public void run() {
         injectConnectionStrings();
     }
-    
+
     public void runSuper() {
         super.run();
     }
