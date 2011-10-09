@@ -52,6 +52,9 @@ public abstract class BaseParser implements Parser {
     /** The cached name of the server this parser is connected to. */
     private String serverName;
 
+    /** The URI of the proxy to use when connecting, if any. */
+    private URI proxy;
+
     /** The callback manager to use for this parser. */
     private final CallbackManager callbackManager;
 
@@ -82,6 +85,18 @@ public abstract class BaseParser implements Parser {
     @Override
     public URI getURI() {
         return uri;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public URI getProxy() {
+        return proxy;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void setProxy(final URI proxy) {
+        this.proxy = proxy;
     }
 
     /** {@inheritDoc} */

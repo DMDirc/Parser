@@ -23,6 +23,7 @@ package com.dmdirc.parser.irc;
 
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -81,18 +82,22 @@ public final class IRCAuthenticator extends Authenticator {
     /**
      * Add a server to authenticate for.
      *
-     * @param server ServerInfo object with proxy details.
+     * @param server ServerInfo object with server details.
+     * @param proxy The URI of the proxy that is being used.
      */
-    public void addAuthentication(final ServerInfo server) {
-        final String username = server.getProxyUser();
-        final String password = server.getProxyPass();
+    public void addAuthentication(final ServerInfo server, final URI proxy) {
+        final String userInfo = proxy.getUserInfo();
+        int offset;
 
-        if (username == null || password == null || username.isEmpty() || password.isEmpty()) {
+        if (userInfo == null || (offset = userInfo.indexOf(':')) == -1) {
             return;
         }
 
-        final String host = server.getProxyHost();
-        final int port = server.getProxyPort();
+        final String username = userInfo.substring(0, offset);
+        final String password = userInfo.substring(offset + 1);
+
+        final String host = proxy.getHost();
+        final int port = proxy.getPort();
         final PasswordAuthentication pass = new PasswordAuthentication(username, password.toCharArray());
         final String fullhost = host.toLowerCase() + ":" + port;
 
@@ -119,11 +124,12 @@ public final class IRCAuthenticator extends Authenticator {
     /**
      * Remove a server to authenticate for.
      *
-     * @param server ServerInfo object with proxy details.
+     * @param server ServerInfo object with server details.
+     * @param proxy The proxy that was in use for the given server.
      */
-    public void removeAuthentication(final ServerInfo server) {
-        final String host = server.getProxyHost();
-        final int port = server.getProxyPort();
+    public void removeAuthentication(final ServerInfo server, final URI proxy) {
+        final String host = proxy.getHost();
+        final int port = proxy.getPort();
 
         final String fullhost = host.toLowerCase() + ":" + port;
 

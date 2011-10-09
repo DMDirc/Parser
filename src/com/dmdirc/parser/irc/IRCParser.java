@@ -112,6 +112,8 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
     public MyInfo me = new MyInfo();
     /**    Server Info requested by user. */
     public ServerInfo server;
+    /** The proxy to use to connect. */
+    private URI proxy;
     /** Should PINGs be sent to the server to check if its alive? */
     private boolean checkServerPing = true;
     /** Timer for server ping. */
@@ -344,6 +346,18 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
     @Override
     public void setBindIP(final String ip) {
         bindIP = ip;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public URI getProxy() {
+        return proxy;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void setProxy(final URI proxy) {
+        this.proxy = proxy;
     }
 
     /** {@inheritDoc} */
@@ -811,33 +825,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
             throw new IOException("Server port (" + server.getPort() + ") is invalid.");
         }
 
-        if (server.getUseSocks()) {
-            callDebugInfo(DEBUG_SOCKET, "Using Proxy");
-            if (bindIP != null && !bindIP.isEmpty()) {
-                callDebugInfo(DEBUG_SOCKET, "IP Binding is not possible when using a proxy.");
-            }
-            if (server.getProxyPort() > 65535 || server.getProxyPort() <= 0) {
-                throw new IOException("Proxy port (" + server.getProxyPort() + ") is invalid.");
-            }
-
-            final Proxy.Type proxyType = Proxy.Type.SOCKS;
-            socket = new Socket(new Proxy(proxyType, new InetSocketAddress(server.getProxyHost(), server.getProxyPort())));
-            currentSocketState = SocketState.OPENING;
-
-            final IRCAuthenticator ia = IRCAuthenticator.getIRCAuthenticator();
-
-            try {
-                try {
-                    ia.getSemaphore().acquire();
-                } catch (InterruptedException ex) {
-                }
-                ia.addAuthentication(server);
-                socket.connect(new InetSocketAddress(server.getHost(), server.getPort()), connectTimeout);
-            } finally {
-                ia.removeAuthentication(server);
-                ia.getSemaphore().release();
-            }
-        } else {
+        if (this.proxy == null) {
             callDebugInfo(DEBUG_SOCKET, "Not using Proxy");
             socket = new Socket();
 
@@ -852,6 +840,38 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
 
             currentSocketState = SocketState.OPENING;
             socket.connect(new InetSocketAddress(server.getHost(), server.getPort()), connectTimeout);
+        } else {
+            callDebugInfo(DEBUG_SOCKET, "Using Proxy");
+
+            if (bindIP != null && !bindIP.isEmpty()) {
+                callDebugInfo(DEBUG_SOCKET, "IP Binding is not possible when using a proxy.");
+            }
+
+            final String proxyHost = proxy.getHost();
+            final int proxyPort = proxy.getPort();
+
+            if (proxyPort > 65535 || proxyPort <= 0) {
+                throw new IOException("Proxy port (" + proxyPort + ") is invalid.");
+            }
+
+            final Proxy.Type proxyType = Proxy.Type.valueOf(proxy.getScheme().toUpperCase());
+            socket = new Socket(new Proxy(proxyType, new InetSocketAddress(proxyHost, proxyPort)));
+            currentSocketState = SocketState.OPENING;
+
+            final IRCAuthenticator ia = IRCAuthenticator.getIRCAuthenticator();
+
+            try {
+                try {
+                    ia.getSemaphore().acquire();
+                } catch (InterruptedException ex) {
+                }
+
+                ia.addAuthentication(server, proxy);
+                socket.connect(new InetSocketAddress(server.getHost(), server.getPort()), connectTimeout);
+            } finally {
+                ia.removeAuthentication(server, proxy);
+                ia.getSemaphore().release();
+            }
         }
 
         rawSocket = socket;

@@ -103,6 +103,34 @@ public interface Parser extends Runnable {
     void setBindIP(String ip);
 
     /**
+     * Gets the proxy URI that this parser will use.
+     *
+     * @return A URI representing the proxy this parser is configured to use,
+     * or <code>null</code> if no proxy is set.
+     * @since 0.6.7
+     * @see #setProxy(java.net.URI)
+     */
+    URI getProxy();
+
+    /**
+     * Configures the proxy that this parser will use. The URI should consist
+     * of the following components:
+     * <ul>
+     *  <li>scheme: the proxy type (socks, http, etc)</li>
+     *  <li>user-info: optionally, username and password separated by a ':'</li>
+     *  <li>host: the hostname or IP of the proxy server</li>
+     *  <li>port: the port to use</li>
+     * </ul>
+     * e.g.: <code>socks://user:pass@dmdirc.com:123/</code>.
+     *
+     * @param proxy A URI representing the proxy this parser should use,
+     * or <code>null</code> to connect directly.
+     * @since 0.6.7
+     * @see #getProxy()
+     */
+    void setProxy(URI proxy);
+
+    /**
      * Retrieves a {@link Map} which can be used to store arbitrary data
      * about the client.
      *
