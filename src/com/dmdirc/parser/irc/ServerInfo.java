@@ -23,7 +23,6 @@
 package com.dmdirc.parser.irc;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 
 /**
  * Contains Server information.
@@ -37,41 +36,10 @@ public class ServerInfo {
      * structure is changed (or anything else that would prevent serialized
      * objects being unserialized with the new class).
      */
-    private static final long serialVersionUID = 1;
-    /** Are we using a socks proxy (Default: false). */
-    private boolean useSocksProxy;
-    /** Proxy server to connect to (Default: "127.0.0.1"). */
-    private String proxyHost = "127.0.0.1";
-    /** Port server listens on for client connections (Default: 8080). */
-    private int proxyPort = 1080;
-    /** Proxy username if required. */
-    private String proxyUser = "";
-    /** Proxy password if required. */
-    private String proxyPass = "";
+    private static final long serialVersionUID = 2;
+
     /** URI used to create this ServerInfo if applicable. */
     private URI uri;
-
-    /**
-     * Constructor using specifed host, port and password, SSL/Proxy must be
-     * specifed separately.
-     *
-     * @param serverHost Host to use
-     * @param serverPort Port to use
-     * @param serverPass Password to use
-     */
-    public ServerInfo(final String serverHost, final int serverPort,
-            final String serverPass) {
-        try {
-            uri = new URI("irc", serverPass, serverHost, serverPort, null,
-                    null, null);
-        } catch (URISyntaxException ex) {
-            try {
-                uri = new URI("irc", null, "127.0.0.1", -1, null, null, null);
-            } catch (URISyntaxException ex1) {
-                //Won't happen
-            }
-        }
-    }
 
     /**
      * Creates a new ServerInfo which will represent the server described by
@@ -130,96 +98,6 @@ public class ServerInfo {
      */
     public boolean isSSL() {
         return "ircs".equals(uri.getScheme());
-    }
-
-    /**
-     * Set if we are connecting via a socks proxy.
-     *
-     * @param newValue true if we are using socks, else false
-     */
-    public void setUseSocks(final boolean newValue) {
-        useSocksProxy = newValue;
-    }
-
-    /**
-     * Get if we are connecting via a socks proxy.
-     *
-     * @return true if we are using socks, else false
-     */
-    public boolean getUseSocks() {
-        return useSocksProxy;
-    }
-
-    /**
-     * Set the Proxy hostname.
-     *
-     * @param newValue Value to set to.
-     */
-    public void setProxyHost(final String newValue) {
-        proxyHost = newValue;
-    }
-
-    /**
-     * Get the Proxy hostname.
-     *
-     * @return Current Proxy hostname
-     */
-    public String getProxyHost() {
-        return proxyHost;
-    }
-
-    /**
-     * Set the Proxy port.
-     *
-     * @param newValue Value to set to.
-     */
-    public void setProxyPort(final int newValue) {
-        proxyPort = newValue;
-    }
-
-    /**
-     * Get the Proxy port.
-     *
-     * @return Current Proxy port
-     */
-    public int getProxyPort() {
-        return proxyPort;
-    }
-
-    /**
-     * Set the Proxy username.
-     *
-     * @param newValue Value to set to.
-     */
-    public void setProxyUser(final String newValue) {
-        proxyUser = newValue;
-    }
-
-    /**
-     * Get the Proxy username.
-     *
-     * @return Current Proxy username
-     */
-    public String getProxyUser() {
-        return proxyUser;
-    }
-
-    /**
-     * Set the Proxy password.
-     *
-     * @param newValue Value to set to.
-     */
-    public void setProxyPass(final String newValue) {
-        proxyPass = newValue;
-    }
-
-    /**
-     * Get the Proxy password.
-     *
-     * @return Current Proxy password
-     */
-    public String getProxyPass() {
-        return proxyPass;
     }
 
     /**
