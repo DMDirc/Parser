@@ -21,20 +21,17 @@
  */
 package com.dmdirc.parser.irc;
 
-import com.dmdirc.parser.common.CallbackManager;
+import com.dmdirc.parser.common.BaseParser;
 import com.dmdirc.parser.common.ChannelJoinRequest;
+import com.dmdirc.parser.common.ChildImplementations;
 import com.dmdirc.parser.common.CompositionState;
 import com.dmdirc.parser.common.IgnoreList;
 import com.dmdirc.parser.common.MyInfo;
 import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.common.QueuePriority;
 import com.dmdirc.parser.common.SystemEncoder;
-import com.dmdirc.parser.interfaces.ChannelClientInfo;
-import com.dmdirc.parser.interfaces.ChannelInfo;
-import com.dmdirc.parser.interfaces.ClientInfo;
 import com.dmdirc.parser.interfaces.Encoder;
 import com.dmdirc.parser.interfaces.EncodingParser;
-import com.dmdirc.parser.interfaces.LocalClientInfo;
 import com.dmdirc.parser.interfaces.SecureParser;
 import com.dmdirc.parser.interfaces.callbacks.*; //NOPMD
 import com.dmdirc.parser.irc.IRCReader.ReadLine;
@@ -75,7 +72,13 @@ import javax.net.ssl.X509TrustManager;
 /**
  * IRC Parser.
  */
-public class IRCParser implements SecureParser, EncodingParser, Runnable {
+@ChildImplementations({
+    IRCChannelClientInfo.class,
+    IRCChannelInfo.class,
+    IRCClientInfo.class
+})
+public class IRCParser extends BaseParser implements SecureParser,
+        EncodingParser, Runnable {
 
     /** Max length an outgoing line should be (NOT including \r\n). */
     public static final int MAX_LINELENGTH = 510;
@@ -87,15 +90,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
     public static final int DEBUG_PROCESSOR = 4;
     /** List Mode Queue Debug Information. */
     public static final int DEBUG_LMQ = 8;
-    /** A map of this parser's implementations of common interfaces. */
-    public static final Map<Class<?>, Class<?>> IMPL_MAP = new HashMap<Class<?>, Class<?>>();
 
-    static {
-        IMPL_MAP.put(ChannelClientInfo.class, IRCChannelClientInfo.class);
-        IMPL_MAP.put(ChannelInfo.class, IRCChannelInfo.class);
-        IMPL_MAP.put(ClientInfo.class, IRCClientInfo.class);
-        IMPL_MAP.put(LocalClientInfo.class, IRCClientInfo.class);
-    }
     /** Attempt to update user host all the time, not just on Who/Add/NickChange. */
     static final boolean ALWAYS_UPDATECLIENT = true;
     /** Byte used to show that a non-boolean mode is a list (b). */
@@ -110,18 +105,12 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
      * ClientInfo variable tParser.getMyself() should be used for accurate info.
      */
     private MyInfo me = new MyInfo();
-    /**    Server Info requested by user. */
-    private ServerInfo server;
-    /** The proxy to use to connect. */
-    private URI proxy;
     /** Should PINGs be sent to the server to check if its alive? */
     private boolean checkServerPing = true;
     /** Timer for server ping. */
     private Timer pingTimer = null;
     /** Semaphore for access to pingTimer. */
     private final Semaphore pingTimerSem = new Semaphore(1);
-    /** Length of time to wait between ping stuff. */
-    private long pingTimerLength = 10000;
     /** Is a ping needed? */
     private final AtomicBoolean pingNeeded = new AtomicBoolean(false);
     /** Time last ping was sent at. */
@@ -140,21 +129,14 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
      * @see setPingCountDownLength
      */
     private int pingCountDown;
-    /**
-     * Amount of times the timer has to fire for inactivity before sending a ping.
-     *
-     * @see setPingCountDownLength
-     */
-    private int pingCountDownLength = 6;
-    /** Name the server calls itself. */
-    String serverName;
+
     /** Network name. This is "" if no network name is provided */
     String networkName;
     /** This is what we think the nickname should be. */
     String thinkNickname;
     /** When using inbuilt pre-001 NickInUse handler, have we tried our AltNick. */
     boolean triedAlt;
-    /** Have we recieved the 001. */
+    /** Have we received the 001. */
     boolean got001;
     /** Have we fired post005? */
     boolean post005;
@@ -196,7 +178,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
      * see MODE_UNSET<br>
      */
     final Map<Character, Byte> chanModesOther = new HashMap<Character, Byte>();
-    /** The last line of input recieved from the server */
+    /** The last line of input received from the server */
     private ReadLine lastLine = null;
     /** Should the lastline (where given) be appended to the "data" part of any onErrorInfo call? */
     private boolean addLastLine = false;
@@ -214,18 +196,12 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
     boolean timestampedIRC = false;
     /** difference in ms between our time and the servers time. */
     long tsdiff;
-    /** Ignore List. */
-    private IgnoreList myIgnoreList = new IgnoreList();
-    /** Reference to the callback Manager. */
-    private final CallbackManager myCallbackManager = new CallbackManager(this, IMPL_MAP);
     /** Reference to the Processing Manager. */
     private final ProcessingManager myProcessingManager = new ProcessingManager(this);
     /** Should we automatically disconnect on fatal errors?. */
     private boolean disconnectOnFatal = true;
     /** Current Socket State. */
     protected SocketState currentSocketState = SocketState.NULL;
-    /** Map to store arbitrary data. */
-    private final Map<Object, Object> myMap = new HashMap<Object, Object>();
     /** This is the socket used for reading from/writing to the IRC server. */
     private Socket socket;
     /**
@@ -266,8 +242,6 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
     private TrustManager[] myTrustManager = trustAllCerts;
     /** The KeyManagers used for client certificates for SSL sockets. */
     private KeyManager[] myKeyManagers;
-    /** This is the IP we want to bind to. */
-    private String bindIP = "";
     /** This is list containing 001 - 005 inclusive. */
     private final List<String> serverInformationLines = new LinkedList<String>();
 
@@ -281,10 +255,10 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
     /**
      * Constructor with ServerInfo, MyInfo needs to be added separately (using IRC.me).
      *
-     * @param serverDetails Server information.
+     * @param uri The URI to connect to
      */
-    public IRCParser(final ServerInfo serverDetails) {
-        this(null, serverDetails);
+    public IRCParser(final URI uri) {
+        this(null, uri);
     }
 
     /**
@@ -293,24 +267,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
      * @param myDetails Client information.
      */
     public IRCParser(final MyInfo myDetails) {
-        this(myDetails, (ServerInfo) null);
-    }
-
-    /**
-     * Constructor with ServerInfo and MyInfo.
-     *
-     * @param serverDetails Server information.
-     * @param myDetails Client information.
-     */
-    public IRCParser(final MyInfo myDetails, final ServerInfo serverDetails) {
-        out = new OutputQueue();
-        if (myDetails != null) {
-            this.me = myDetails;
-        }
-        if (serverDetails != null) {
-            this.server = serverDetails;
-        }
-        resetState();
+        this(myDetails, null);
     }
 
     /**
@@ -322,7 +279,15 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
      * @param uri The URI to connect to
      */
     public IRCParser(final MyInfo myDetails, final URI uri) {
-        this(myDetails, new ServerInfo(uri));
+        super(uri);
+
+        out = new OutputQueue();
+        if (myDetails != null) {
+            this.me = myDetails;
+        }
+
+        setIgnoreList(new IgnoreList());
+        resetState();
     }
 
     /**
@@ -336,45 +301,12 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
 
     /** {@inheritDoc} */
     @Override
-    public String getBindIP() {
-        return bindIP;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void setBindIP(final String ip) {
-        bindIP = ip;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public URI getProxy() {
-        return proxy;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void setProxy(final URI proxy) {
-        this.proxy = proxy;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public URI getURI() {
-        if (server == null) {
-            return null;
-        }
-        return server.getURI();
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public boolean compareURI(final URI uri) {
         // Parse the given URI to set any defaults.
         final ServerInfo si = new ServerInfo(uri);
         final URI newURI = si.getURI();
         // Get the old URI.
-        final URI oldURI = server.getURI();
+        final URI oldURI = getURI();
 
         // Check that protocol, host and port are the same.
         // Anything else won't change the server we connect to just what we
@@ -413,12 +345,6 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
         }
 
         return res;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Map<Object, Object> getMap() {
-        return myMap;
     }
 
     /**
@@ -514,12 +440,6 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
         return myProcessingManager;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public CallbackManager getCallbackManager() {
-        return myCallbackManager;
-    }
-
     /**
      * Get a reference to the default TrustManager for SSL Sockets.
      *
@@ -550,41 +470,28 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
         myKeyManagers = managers;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public IgnoreList getIgnoreList() {
-        return myIgnoreList;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void setIgnoreList(final IgnoreList ignoreList) {
-        myIgnoreList = ignoreList;
-    }
-
     //---------------------------------------------------------------------------
     // Start Callbacks
     //---------------------------------------------------------------------------
+
     /**
      * Callback to all objects implementing the ServerError Callback.
      *
      * @see com.dmdirc.parser.irc.callbacks.interfaces.IServerError
      * @param message The error message
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callServerError(final String message) {
-        return myCallbackManager.getCallbackType(ServerErrorListener.class).call(message);
+    protected void callServerError(final String message) {
+        getCallback(ServerErrorListener.class).onServerError(null, null, message);
     }
 
     /**
      * Callback to all objects implementing the DataIn Callback.
      *
      * @see com.dmdirc.parser.irc.callbacks.interfaces.IDataIn
-     * @param data Incomming Line.
-     * @return true if a method was called, false otherwise
+     * @param data Incoming Line.
      */
-    protected boolean callDataIn(final String data) {
-        return myCallbackManager.getCallbackType(DataInListener.class).call(data);
+    protected void callDataIn(final String data) {
+        getCallback(DataInListener.class).onDataIn(null, null, data);
     }
 
     /**
@@ -592,11 +499,10 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
      *
      * @param data Outgoing Data
      * @param fromParser True if parser sent the data, false if sent using .sendLine
-     * @return true if a method was called, false otherwise
      * @see com.dmdirc.parser.irc.callbacks.interfaces.IDataOut
      */
-    protected boolean callDataOut(final String data, final boolean fromParser) {
-        return myCallbackManager.getCallbackType(DataOutListener.class).call(data, fromParser);
+    protected void callDataOut(final String data, final boolean fromParser) {
+        getCallback(DataOutListener.class).onDataOut(null, null, data, fromParser);
     }
 
     /**
@@ -606,10 +512,9 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
      * @param level Debugging Level (DEBUG_INFO, DEBUG_SOCKET etc)
      * @param data Debugging Information as a format string
      * @param args Formatting String Options
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callDebugInfo(final int level, final String data, final Object... args) {
-        return callDebugInfo(level, String.format(data, args));
+    protected void callDebugInfo(final int level, final String data, final Object... args) {
+        callDebugInfo(level, String.format(data, args));
     }
 
     /**
@@ -618,10 +523,9 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
      * @see com.dmdirc.parser.irc.callbacks.interfaces.IDebugInfo
      * @param level Debugging Level (DEBUG_INFO, DEBUG_SOCKET etc)
      * @param data Debugging Information
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callDebugInfo(final int level, final String data) {
-        return myCallbackManager.getCallbackType(DebugInfoListener.class).call(level, data);
+    protected void callDebugInfo(final int level, final String data) {
+        getCallback(DebugInfoListener.class).onDebugInfo(null, null, level, data);
     }
 
     /**
@@ -629,10 +533,9 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
      *
      * @see com.dmdirc.parser.irc.callbacks.interfaces.IErrorInfo
      * @param errorInfo ParserError object representing the error.
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callErrorInfo(final ParserError errorInfo) {
-        return myCallbackManager.getCallbackType(ErrorInfoListener.class).call(errorInfo);
+    protected void callErrorInfo(final ParserError errorInfo) {
+        getCallback(ErrorInfoListener.class).onErrorInfo(null, null, errorInfo);
     }
 
     /**
@@ -640,62 +543,58 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
      *
      * @see com.dmdirc.parser.irc.callbacks.interfaces.IConnectError
      * @param errorInfo ParserError object representing the error.
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callConnectError(final ParserError errorInfo) {
-        return myCallbackManager.getCallbackType(ConnectErrorListener.class).call(errorInfo);
+    protected void callConnectError(final ParserError errorInfo) {
+        getCallback(ConnectErrorListener.class).onConnectError(null, null, errorInfo);
     }
 
     /**
      * Callback to all objects implementing the SocketClosed Callback.
      *
      * @see com.dmdirc.parser.irc.callbacks.interfaces.ISocketClosed
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callSocketClosed() {
-        return myCallbackManager.getCallbackType(SocketCloseListener.class).call();
+    protected void callSocketClosed() {
+        getCallback(SocketCloseListener.class).onSocketClosed(null, null);
     }
 
     /**
      * Callback to all objects implementing the PingFailed Callback.
      *
      * @see com.dmdirc.parser.irc.callbacks.interfaces.IPingFailed
-     * @return true if a method was called, false otherwise
+     * @return True if any callback was called, false otherwise.
      */
     protected boolean callPingFailed() {
-        return myCallbackManager.getCallbackType(PingFailureListener.class).call();
+        return getCallbackManager().getCallbackType(PingFailureListener.class).call();
     }
 
     /**
      * Callback to all objects implementing the PingSent Callback.
      *
      * @see com.dmdirc.parser.irc.callbacks.interfaces.IPingSent
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callPingSent() {
-        return myCallbackManager.getCallbackType(PingSentListener.class).call();
+    protected void callPingSent() {
+        getCallback(PingSentListener.class).onPingSent(null, null);
     }
 
     /**
      * Callback to all objects implementing the PingSuccess Callback.
      *
      * @see com.dmdirc.parser.irc.callbacks.interfaces.IPingSuccess
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callPingSuccess() {
-        return myCallbackManager.getCallbackType(PingSuccessListener.class).call();
+    protected void callPingSuccess() {
+        getCallback(PingSuccessListener.class).onPingSuccess(null, null);
     }
 
     /**
      * Callback to all objects implementing the Post005 Callback.
      *
-     * @return true if any callbacks were called.
      * @see IPost005
      */
-    protected synchronized boolean callPost005() {
+    protected synchronized void callPost005() {
         if (post005) {
-            return false;
+            return;
         }
+
         post005 = true;
 
         if (!h005Info.containsKey("CHANTYPES")) {
@@ -711,7 +610,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
             parseChanModes();
         }
 
-        return getCallbackManager().getCallbackType(ServerReadyListener.class).call();
+        getCallback(ServerReadyListener.class).onServerReady(null, null);
     }
 
     //---------------------------------------------------------------------------
@@ -741,7 +640,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
         nextKeyPrefix = 1;
         nextKeyCMBool = 1;
         nNextKeyUser = 1;
-        serverName = "";
+        setServerName("");
         networkName = "";
         lastLine = null;
         myself = new IRCClientInfo(this, "myself").setFake(true);
@@ -795,46 +694,47 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
      * @throws KeyManagementException if the trustManager is invalid
      */
     private void connect() throws IOException, NoSuchAlgorithmException, KeyManagementException {
-        if (server == null) {
+        if (getURI() == null || getURI().getHost() == null) {
             throw new UnknownHostException("Unspecified host.");
         }
-        resetState();
-        callDebugInfo(DEBUG_SOCKET, "Connecting to " + server.getHost() + ":" + server.getPort());
 
-        if (server.getPort() > 65535 || server.getPort() <= 0) {
-            throw new IOException("Server port (" + server.getPort() + ") is invalid.");
+        resetState();
+        callDebugInfo(DEBUG_SOCKET, "Connecting to " + getURI().getHost() + ":" + getURI().getPort());
+
+        if (getURI().getPort() > 65535 || getURI().getPort() <= 0) {
+            throw new IOException("Server port (" + getURI().getPort() + ") is invalid.");
         }
 
-        if (this.proxy == null) {
+        if (getProxy() == null) {
             callDebugInfo(DEBUG_SOCKET, "Not using Proxy");
             socket = new Socket();
 
-            if (bindIP != null && !bindIP.isEmpty()) {
-                callDebugInfo(DEBUG_SOCKET, "Binding to IP: " + bindIP);
+            if (getBindIP() != null && !getBindIP().isEmpty()) {
+                callDebugInfo(DEBUG_SOCKET, "Binding to IP: " + getBindIP());
                 try {
-                    socket.bind(new InetSocketAddress(InetAddress.getByName(bindIP), 0));
+                    socket.bind(new InetSocketAddress(InetAddress.getByName(getBindIP()), 0));
                 } catch (IOException e) {
                     callDebugInfo(DEBUG_SOCKET, "Binding failed: " + e.getMessage());
                 }
             }
 
             currentSocketState = SocketState.OPENING;
-            socket.connect(new InetSocketAddress(server.getHost(), server.getPort()), connectTimeout);
+            socket.connect(new InetSocketAddress(getURI().getHost(), getURI().getPort()), connectTimeout);
         } else {
             callDebugInfo(DEBUG_SOCKET, "Using Proxy");
 
-            if (bindIP != null && !bindIP.isEmpty()) {
+            if (getBindIP() != null && !getBindIP().isEmpty()) {
                 callDebugInfo(DEBUG_SOCKET, "IP Binding is not possible when using a proxy.");
             }
 
-            final String proxyHost = proxy.getHost();
-            final int proxyPort = proxy.getPort();
+            final String proxyHost = getProxy().getHost();
+            final int proxyPort = getProxy().getPort();
 
             if (proxyPort > 65535 || proxyPort <= 0) {
                 throw new IOException("Proxy port (" + proxyPort + ") is invalid.");
             }
 
-            final Proxy.Type proxyType = Proxy.Type.valueOf(proxy.getScheme().toUpperCase());
+            final Proxy.Type proxyType = Proxy.Type.valueOf(getProxy().getScheme().toUpperCase());
             socket = new Socket(new Proxy(proxyType, new InetSocketAddress(proxyHost, proxyPort)));
             currentSocketState = SocketState.OPENING;
 
@@ -846,17 +746,17 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
                 } catch (InterruptedException ex) {
                 }
 
-                ia.addAuthentication(server, proxy);
-                socket.connect(new InetSocketAddress(server.getHost(), server.getPort()), connectTimeout);
+                ia.addAuthentication(getURI(), getProxy());
+                socket.connect(new InetSocketAddress(getURI().getHost(), getURI().getPort()), connectTimeout);
             } finally {
-                ia.removeAuthentication(server, proxy);
+                ia.removeAuthentication(getURI(), getProxy());
                 ia.getSemaphore().release();
             }
         }
 
         rawSocket = socket;
 
-        if (server.isSSL()) {
+        if (getURI().getScheme().endsWith("s")) {
             callDebugInfo(DEBUG_SOCKET, "Server is SSL.");
 
             if (myTrustManager == null) {
@@ -867,7 +767,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
             sc.init(myKeyManagers, myTrustManager, new java.security.SecureRandom());
 
             final SSLSocketFactory socketFactory = sc.getSocketFactory();
-            socket = socketFactory.createSocket(socket, server.getHost(), server.getPort(), false);
+            socket = socketFactory.createSocket(socket, getURI().getHost(), getURI().getPort(), false);
 
             // Manually start a handshake so we get proper SSL errors here,
             // and so that we can control the connection timeout
@@ -892,8 +792,8 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
      * Send server connection strings (NICK/USER/PASS).
      */
     protected void sendConnectionStrings() {
-        if (!server.getPassword().isEmpty()) {
-            sendString("PASS " + server.getPassword());
+        if (getURI().getUserInfo() != null && !getURI().getUserInfo().isEmpty()) {
+            sendString("PASS " + getURI().getUserInfo());
         }
         sendString("NICK " + me.getNickname());
         thinkNickname = me.getNickname();
@@ -903,7 +803,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
         } catch (UnknownHostException uhe) {
             localhost = "*";
         }
-        sendString("USER " + me.getUsername() + " " + localhost + " " + server.getHost() + " :" + me.getRealname());
+        sendString("USER " + me.getUsername() + " " + localhost + " " + getURI().getHost() + " :" + me.getRealname());
     }
 
     /**
@@ -1163,22 +1063,6 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
     @Override
     public String getNetworkName() {
         return networkName;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String getServerName() {
-        return serverName;
-    }
-
-    /**
-     * Gets the ServerInfo object that corresponds to the server that this
-     * parser is configured to connect to.
-     *
-     * @return This parser's configured server info.
-     */
-    public ServerInfo getServerInfo() {
-        return server;
     }
 
     /** {@inheritDoc} */
@@ -1627,18 +1511,6 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
 
     /** {@inheritDoc} */
     @Override
-    public void joinChannel(final String channel) {
-        joinChannels(extractChannels(channel).toArray(new ChannelJoinRequest[0]));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void joinChannel(final String channel, final String key) {
-        joinChannels(new ChannelJoinRequest(channel, key));
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public void joinChannels(final ChannelJoinRequest... channels) {
         // We store a map from key->channels to allow intelligent joining of
         // channels using as few JOIN commands as needed.
@@ -2017,27 +1889,10 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
 
     /** {@inheritDoc} */
     @Override
-    public long getPingTimerInterval() {
-        return pingTimerLength;
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public void setPingTimerInterval(final long newValue) {
-        pingTimerLength = newValue;
+        super.setPingTimerInterval(newValue);
+
         startPingTimer();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public int getPingTimerFraction() {
-        return pingCountDownLength;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void setPingTimerFraction(final int newValue) {
-        pingCountDownLength = newValue;
     }
 
     /**
@@ -2051,7 +1906,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
             pingTimer.cancel();
         }
         pingTimer = new Timer("IRCParser pingTimer");
-        pingTimer.schedule(new PingTimer(this, pingTimer), 0, pingTimerLength);
+        pingTimer.schedule(new PingTimer(this, pingTimer), 0, getPingTimerInterval());
         pingCountDown = 1;
 
         pingTimerSem.release();
@@ -2104,7 +1959,7 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
             if (pingCountDown < 1) {
                 pingTime = System.currentTimeMillis();
                 setPingNeeded(true);
-                pingCountDown = pingCountDownLength;
+                pingCountDown = getPingTimerFraction();
                 lastPingValue = String.valueOf(System.currentTimeMillis());
                 if (sendString("PING " + lastPingValue, QueuePriority.HIGH)) {
                     callPingSent();
@@ -2117,6 +1972,12 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
     @Override
     public long getServerLatency() {
         return serverLag;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void setServerName(final String serverName) {
+        super.setServerName(serverName);
     }
 
     /**

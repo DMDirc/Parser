@@ -41,7 +41,7 @@ public class TestParser extends IRCParser implements Parser {
     public String network = null;
 
     public TestParser() {
-        super(new ServerInfo(buildURI()));
+        super(buildURI());
         currentSocketState = SocketState.OPEN;
     }
 
