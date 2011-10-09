@@ -263,16 +263,6 @@ public class IRCParserTest {
     }
 
     @Test
-    public void testCreateFake() {
-        final TestParser parser = new TestParser();
-
-        parser.setCreateFake(false);
-        assertFalse(parser.getCreateFake());
-        parser.setCreateFake(true);
-        assertTrue(parser.getCreateFake());
-    }
-
-    @Test
     public void testAutoListMode() {
         final TestParser parser = new TestParser();
 
@@ -329,7 +319,7 @@ public class IRCParserTest {
         assertEquals("bar :abc def", TestParser.getParam("foo :bar :abc def"));
         assertEquals("abc def", TestParser.getParam("abc def"));
     }
-    
+
     @Test
     public void testKick() throws CallbackNotFoundException {
         final TestParser parser = new TestParser();
@@ -344,7 +334,7 @@ public class IRCParserTest {
                 (IRCChannelClientInfo) anyObject(), (IRCChannelClientInfo) anyObject(),
                 anyString(), anyString());
     }
-    
+
     @Test
     public void testIllegalPort2() throws URISyntaxException {
         final TestParser tp = new TestParser(new MyInfo(), new URI("irc://127.0.0.1:65570/"));

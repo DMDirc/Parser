@@ -84,12 +84,12 @@ public class ProcessPart extends IRCProcessor {
                 // callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got part for channel ("+token[2]+") for a non-existant user. [User: "+token[0]+"]", parser.getLastLine()));
                 return;
             }
-            if (parser.removeAfterCallback) {
+            if (parser.getRemoveAfterCallback()) {
                 callChannelPart(iChannel, iChannelClient, sReason);
             }
             callDebugInfo(IRCParser.DEBUG_INFO, "Removing %s from %s", iClient.getNickname(), iChannel.getName());
             iChannel.delClient(iClient);
-            if (!parser.removeAfterCallback) {
+            if (!parser.getRemoveAfterCallback()) {
                 callChannelPart(iChannel, iChannelClient, sReason);
             }
             if (iClient == parser.getLocalClient()) {

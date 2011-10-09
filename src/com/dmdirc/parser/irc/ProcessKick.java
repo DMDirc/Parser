@@ -89,14 +89,14 @@ public class ProcessKick extends IRCProcessor {
                 return;
             }
             iChannelKicker = iChannel.getChannelClient(token[0]);
-            if (parser.removeAfterCallback) {
+            if (parser.getRemoveAfterCallback()) {
                 callDebugInfo(IRCParser.DEBUG_INFO, "processKick: calling kick before. {%s | %s | %s | %s | %s}", iChannel, iChannelClient, iChannelKicker, sReason, token[0]);
                 callChannelKick(iChannel, iChannelClient, iChannelKicker, sReason, token[0]);
             }
             callDebugInfo(IRCParser.DEBUG_INFO, "processKick: removing client from channel { %s | %s }", iChannel, iClient);
             iChannel.delClient(iClient);
             callDebugInfo(IRCParser.DEBUG_INFO, "processKick: removed client from channel { %s | %s }", iChannel, iClient);
-            if (!parser.removeAfterCallback) {
+            if (!parser.getRemoveAfterCallback()) {
                 callDebugInfo(IRCParser.DEBUG_INFO, "processKick: calling kick after. {%s | %s | %s | %s | %s}", iChannel, iChannelClient, iChannelKicker, sReason, token[0]);
                 callChannelKick(iChannel, iChannelClient, iChannelKicker, sReason, token[0]);
             }

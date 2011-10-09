@@ -109,9 +109,9 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
      * Nickname here is *not* always accurate.<br><br>
      * ClientInfo variable tParser.getMyself() should be used for accurate info.
      */
-    public MyInfo me = new MyInfo();
+    private MyInfo me = new MyInfo();
     /**    Server Info requested by user. */
-    public ServerInfo server;
+    private ServerInfo server;
     /** The proxy to use to connect. */
     private URI proxy;
     /** Should PINGs be sent to the server to check if its alive? */
@@ -258,12 +258,10 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
             public void checkServerTrusted(final X509Certificate[] certs, final String authType) {
             }
         },};
-    /** Should fake (channel)clients be created for callbacks where they do not exist? */
-    private boolean createFake = true;
     /** Should channels automatically request list modes? */
     private boolean autoListMode = true;
     /** Should part/quit/kick callbacks be fired before removing the user internally? */
-    boolean removeAfterCallback = true;
+    private boolean removeAfterCallback = true;
     /** This is the TrustManager used for SSL Sockets. */
     private TrustManager[] myTrustManager = trustAllCerts;
     /** The KeyManagers used for client certificates for SSL sockets. */
@@ -421,24 +419,6 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
     @Override
     public Map<Object, Object> getMap() {
         return myMap;
-    }
-
-    /**
-     * Get the current Value of createFake.
-     *
-     * @return Value of createFake (true if fake clients will be added for callbacks, else false)
-     */
-    public boolean getCreateFake() {
-        return createFake;
-    }
-
-    /**
-     * Set the current Value of createFake.
-     *
-     * @param newValue New value to set createFake
-     */
-    public void setCreateFake(final boolean newValue) {
-        createFake = newValue;
     }
 
     /**
@@ -1191,6 +1171,16 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
         return serverName;
     }
 
+    /**
+     * Gets the ServerInfo object that corresponds to the server that this
+     * parser is configured to connect to.
+     *
+     * @return This parser's configured server info.
+     */
+    public ServerInfo getServerInfo() {
+        return server;
+    }
+
     /** {@inheritDoc} */
     @Override
     public String getLastLine() {
@@ -1358,33 +1348,6 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
      */
     protected void setEncoding(final IRCEncoding encoding) {
         stringConverter = new IRCStringConverter(encoding);
-    }
-
-    /**
-     * Get the known boolean chanmodes in 005 order.
-     * Modes are returned in the order that the ircd specifies the modes in 005
-     * with any newly-found modes (mode being set that wasn't specified in 005)
-     * being added at the end.
-     *
-     * @return All the currently known boolean modes
-     */
-    public String getBoolChanModes005() {
-        // This code isn't the nicest, as Hashtable's don't lend themselves to being
-        // ordered.
-        // Order isn't really important, and this code only takes 3 lines of we
-        // don't care about it but ordered guarentees that on a specific ircd this
-        // method will ALWAYs return the same value.
-        final char[] modes = new char[chanModesBool.size()];
-
-        for (Map.Entry<Character, Long> entry : chanModesBool.entrySet()) {
-            // nTemp should never be less than 0
-            if (entry.getValue() > 0) {
-                final double pos = Math.log(entry.getValue()) / Math.log(2);
-                modes[(int) pos] = entry.getKey();
-            }
-        }
-
-        return new String(modes);
     }
 
     /**
@@ -1660,15 +1623,6 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
         }
 
         h005Info.put("PREFIXSTRING", bits[0]);
-    }
-
-    /**
-     * Check if server is ready.
-     *
-     * @return true if 001 has been recieved, false otherwise.
-     */
-    public boolean isReady() {
-        return got001;
     }
 
     /** {@inheritDoc} */
@@ -2017,22 +1971,6 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
         return ServerType.findServerType(h005Info.get("004IRCD"), networkName, h005Info.get("003IRCD"), h005Info.get("002IRCD"));
     }
 
-    /**
-     * Get the name of the ircd.
-     *
-     * @param getType if this is false the string from 004 is returned. Else a guess of the type (ircu, hybrid, ircnet)
-     * @return IRCD Version or Type
-     * @deprecated Use getServerSoftware() or getServerSoftwareType() instead.
-     */
-    @Deprecated
-    public String getIRCD(final boolean getType) {
-        if (getType) {
-            return getServerSoftwareType();
-        } else {
-            return getServerSoftware();
-        }
-    }
-
     /** {@inheritDoc} */
     @Override
     public String getServerSoftware() {
@@ -2239,6 +2177,16 @@ public class IRCParser implements SecureParser, EncodingParser, Runnable {
         } else {
             return myself.getRealNickname();
         }
+    }
+
+    /**
+     * Retrieves the local user information that this parser was configured
+     * with.
+     *
+     * @return This parser's local user configuration
+     */
+    public MyInfo getMyInfo() {
+        return me;
     }
 
     /**
