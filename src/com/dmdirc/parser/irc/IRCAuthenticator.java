@@ -48,7 +48,7 @@ public final class IRCAuthenticator extends Authenticator {
     /** List of authentication replies. */
     private final Map<String, PasswordAuthentication> replies = new HashMap<String, PasswordAuthentication>();
     /** List of servers for each host. */
-    private final Map<String, List<ServerInfo>> owners = new HashMap<String, List<ServerInfo>>();
+    private final Map<String, List<URI>> owners = new HashMap<String, List<URI>>();
     /** Semaphore for connection limiting. */
     private final Semaphore mySemaphore = new Semaphore(1, true);
 
@@ -85,7 +85,7 @@ public final class IRCAuthenticator extends Authenticator {
      * @param server ServerInfo object with server details.
      * @param proxy The URI of the proxy that is being used.
      */
-    public void addAuthentication(final ServerInfo server, final URI proxy) {
+    public void addAuthentication(final URI server, final URI proxy) {
         final String userInfo = proxy.getUserInfo();
         int offset;
 
@@ -106,7 +106,7 @@ public final class IRCAuthenticator extends Authenticator {
         replies.put(fullhost, pass);
 
         // Store which servers are associated with which proxy
-        final List<ServerInfo> servers = owners.containsKey(fullhost) ? owners.get(fullhost) : new ArrayList<ServerInfo>();
+        final List<URI> servers = owners.containsKey(fullhost) ? owners.get(fullhost) : new ArrayList<URI>();
         owners.remove(fullhost);
         servers.add(server);
         owners.put(fullhost, servers);
@@ -127,14 +127,14 @@ public final class IRCAuthenticator extends Authenticator {
      * @param server ServerInfo object with server details.
      * @param proxy The proxy that was in use for the given server.
      */
-    public void removeAuthentication(final ServerInfo server, final URI proxy) {
+    public void removeAuthentication(final URI server, final URI proxy) {
         final String host = proxy.getHost();
         final int port = proxy.getPort();
 
         final String fullhost = host.toLowerCase() + ":" + port;
 
         // See if any other servers are associated with this proxy.
-        final List<ServerInfo> servers = owners.containsKey(fullhost) ? owners.get(fullhost) : new ArrayList<ServerInfo>();
+        final List<URI> servers = owners.containsKey(fullhost) ? owners.get(fullhost) : new ArrayList<URI>();
         servers.remove(server);
 
         if (servers.isEmpty()) {
