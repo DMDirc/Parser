@@ -80,7 +80,7 @@ public class ProcessQuit extends IRCProcessor {
         for (IRCChannelInfo iChannel : channelList) {
             iChannelClient = iChannel.getChannelClient(iClient);
             if (iChannelClient != null) {
-                if (parser.removeAfterCallback) {
+                if (parser.getRemoveAfterCallback()) {
                     callChannelQuit(iChannel, iChannelClient, sReason);
                 }
                 if (iClient == parser.getLocalClient()) {
@@ -89,13 +89,13 @@ public class ProcessQuit extends IRCProcessor {
                 } else {
                     iChannel.delClient(iClient);
                 }
-                if (!parser.removeAfterCallback) {
+                if (!parser.getRemoveAfterCallback()) {
                     callChannelQuit(iChannel, iChannelClient, sReason);
                 }
             }
         }
 
-        if (parser.removeAfterCallback) {
+        if (parser.getRemoveAfterCallback()) {
             callQuit(iClient, sReason);
         }
         if (iClient == parser.getLocalClient()) {
@@ -103,7 +103,7 @@ public class ProcessQuit extends IRCProcessor {
         } else {
             parser.removeClient(iClient);
         }
-        if (!parser.removeAfterCallback) {
+        if (!parser.getRemoveAfterCallback()) {
             callQuit(iClient, sReason);
         }
     }
