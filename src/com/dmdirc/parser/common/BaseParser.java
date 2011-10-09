@@ -52,6 +52,9 @@ public abstract class BaseParser implements Parser {
     /** The cached name of the server this parser is connected to. */
     private String serverName;
 
+    /** The IP that this parser should bind to. */
+    private String bindIp;
+
     /** The URI of the proxy to use when connecting, if any. */
     private URI proxy;
 
@@ -186,6 +189,18 @@ public abstract class BaseParser implements Parser {
      */
     protected void setServerName(final String serverName) {
         this.serverName = serverName;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getBindIP() {
+        return bindIp;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void setBindIP(final String ip) {
+        this.bindIp = ip;
     }
 
 }

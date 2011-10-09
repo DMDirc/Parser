@@ -55,10 +55,9 @@ public abstract class IRCProcessor {
      *
      * @see com.dmdirc.parser.irc.callbacks.interfaces.IErrorInfo
      * @param errorInfo ParserError object representing the error.
-     * @return true if a method was called, false otherwise
      */
-    protected final boolean callErrorInfo(final ParserError errorInfo) {
-        return parser.callErrorInfo(errorInfo);
+    protected final void callErrorInfo(final ParserError errorInfo) {
+        parser.callErrorInfo(errorInfo);
     }
 
     /**
@@ -68,10 +67,9 @@ public abstract class IRCProcessor {
      * @param level Debugging Level (DEBUG_INFO, ndSocket etc)
      * @param data Debugging Information
      * @param args Formatting String Options
-     * @return true if a method was called, false otherwise
      */
-    protected final boolean callDebugInfo(final int level, final String data, final Object... args) {
-        return parser.callDebugInfo(level, String.format(data, args));
+    protected final void callDebugInfo(final int level, final String data, final Object... args) {
+        parser.callDebugInfo(level, String.format(data, args));
     }
 
     /**
@@ -80,10 +78,9 @@ public abstract class IRCProcessor {
      * @see com.dmdirc.parser.irc.callbacks.interfaces.IDebugInfo
      * @param level Debugging Level (DEBUG_INFO, ndSocket etc)
      * @param data Debugging Information
-     * @return true if a method was called, false otherwise
      */
-    protected final boolean callDebugInfo(final int level, final String data) {
-        return parser.callDebugInfo(level, data);
+    protected final void callDebugInfo(final int level, final String data) {
+        parser.callDebugInfo(level, data);
     }
 
     /**
