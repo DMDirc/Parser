@@ -35,9 +35,6 @@ import javax.net.SocketFactory;
  */
 public abstract class BaseSocketAwareParser extends BaseParser {
 
-    /** The IP address or hostname that this parser's sockets should bind to. */
-    private String bindIp = null;
-
     /** The socket that was most recently created by this parser. */
     private Socket socket;
 
@@ -51,18 +48,6 @@ public abstract class BaseSocketAwareParser extends BaseParser {
      */
     public BaseSocketAwareParser(final URI uri) {
         super(uri);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String getBindIP() {
-        return bindIp;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void setBindIP(final String ip) {
-        bindIp = ip;
     }
 
     /** {@inheritDoc} */
@@ -102,20 +87,20 @@ public abstract class BaseSocketAwareParser extends BaseParser {
             /** {@inheritDoc} */
             @Override
             public Socket createSocket(final String host, final int port) throws IOException {
-                if (bindIp == null) {
+                if (getBindIP() == null) {
                     return handleSocket(new Socket(host, port));
                 } else {
-                    return handleSocket(new Socket(host, port, InetAddress.getByName(bindIp), 0));
+                    return handleSocket(new Socket(host, port, InetAddress.getByName(getBindIP()), 0));
                 }
             }
 
             /** {@inheritDoc} */
             @Override
             public Socket createSocket(final InetAddress host, final int port) throws IOException {
-                if (bindIp == null) {
+                if (getBindIP() == null) {
                     return handleSocket(new Socket(host, port));
                 } else {
-                    return handleSocket(new Socket(host, port, InetAddress.getByName(bindIp), 0));
+                    return handleSocket(new Socket(host, port, InetAddress.getByName(getBindIP()), 0));
                 }
             }
 
@@ -124,7 +109,7 @@ public abstract class BaseSocketAwareParser extends BaseParser {
             public Socket createSocket(final String host, final int port,
                     final InetAddress localHost, final int localPort) throws IOException {
                 return handleSocket(new Socket(host, port,
-                        bindIp == null ? localHost : InetAddress.getByName(bindIp), localPort));
+                        getBindIP() == null ? localHost : InetAddress.getByName(getBindIP()), localPort));
             }
 
             /** {@inheritDoc} */
@@ -133,7 +118,7 @@ public abstract class BaseSocketAwareParser extends BaseParser {
                     final int port, final InetAddress localAddress,
                     final int localPort) throws IOException {
                 return handleSocket(new Socket(address, port,
-                        bindIp == null ? localAddress : InetAddress.getByName(bindIp), localPort));
+                        getBindIP() == null ? localAddress : InetAddress.getByName(getBindIP()), localPort));
             }
 
         };
