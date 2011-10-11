@@ -43,6 +43,7 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.Socket;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -77,8 +78,7 @@ import javax.net.ssl.X509TrustManager;
     IRCChannelInfo.class,
     IRCClientInfo.class
 })
-public class IRCParser extends BaseParser implements SecureParser,
-        EncodingParser, Runnable {
+public class IRCParser extends BaseParser implements SecureParser, EncodingParser, Runnable {
 
     /** Max length an outgoing line should be (NOT including \r\n). */
     public static final int MAX_LINELENGTH = 510;
@@ -279,7 +279,7 @@ public class IRCParser extends BaseParser implements SecureParser,
      * @param uri The URI to connect to
      */
     public IRCParser(final MyInfo myDetails, final URI uri) {
-        super(uri);
+        super(fixURI(uri));
 
         out = new OutputQueue();
         if (myDetails != null) {
@@ -304,13 +304,40 @@ public class IRCParser extends BaseParser implements SecureParser,
     public boolean compareURI(final URI uri) {
         // Get the old URI.
         final URI oldURI = getURI();
+        final URI newURI = fixURI(uri);
 
         // Check that protocol, host and port are the same.
         // Anything else won't change the server we connect to just what we
         // would do after connecting, so is not relevent.
-        return uri.getScheme().equalsIgnoreCase(oldURI.getScheme())
-                && uri.getHost().equalsIgnoreCase(oldURI.getHost())
-                && uri.getPort() == oldURI.getPort();
+        return newURI.getScheme().equalsIgnoreCase(oldURI.getScheme())
+                && newURI.getHost().equalsIgnoreCase(oldURI.getHost())
+                && (newURI.getUserInfo() != null && !newURI.getUserInfo().isEmpty() && newURI.getUserInfo().equalsIgnoreCase((oldURI.getUserInfo() == null ? "" : oldURI.getUserInfo())))
+                && newURI.getPort() == oldURI.getPort();
+    }
+
+    /**
+     * Check that the given URI makes sense.
+     *
+     * @param uri Suggested URI.
+     * @return A "sensible" version of the given URI. (eg, with a default port)
+     */
+    private static URI fixURI(final URI checkURI) {
+        // Starter URI
+        URI uri = checkURI;
+
+        // Make changes if required.
+
+        // Default port.
+        if (uri.getPort() == -1) {
+            try {
+                uri = new URI(uri.getScheme(), uri.getUserInfo(), uri.getHost(), 6667, uri.getPath(), uri.getQuery(), uri.getFragment());
+            } catch (URISyntaxException ex) { /* Won't happen. */ }
+        }
+
+        // Other changes here...
+
+        // Return the sensible URI.
+        return uri;
     }
 
     /** {@inheritDoc} */
@@ -1100,10 +1127,9 @@ public class IRCParser extends BaseParser implements SecureParser,
      */
     protected void processLine(final ReadLine line) {
         callDataIn(line.getLine());
-
         String[] token = line.getTokens();
         Date lineTS = new Date();
-        if (timestampedIRC && token[0].charAt(0) == '@') {
+        if (!token[0].isEmpty() && timestampedIRC && token[0].charAt(0) == '@') {
             try {
                 final int tsEnd = token[0].indexOf('@', 1);
                 final long ts = Long.parseLong(token[0].substring(1, tsEnd));
