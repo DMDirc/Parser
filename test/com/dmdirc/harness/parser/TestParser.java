@@ -22,6 +22,7 @@
 
 package com.dmdirc.harness.parser;
 
+import com.dmdirc.parser.common.ChildImplementations;
 import com.dmdirc.parser.common.MyInfo;
 import com.dmdirc.parser.common.QueuePriority;
 import com.dmdirc.parser.interfaces.Parser;
@@ -32,6 +33,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 
+@ChildImplementations({
+    IRCChannelClientInfo.class,
+    IRCChannelInfo.class,
+    IRCClientInfo.class
+})
 public class TestParser extends IRCParser implements Parser {
 
     public final List<String> sentLines = new ArrayList<String>();
