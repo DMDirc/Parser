@@ -1901,15 +1901,19 @@ public class IRCParser extends BaseParser implements SecureParser,
     protected void startPingTimer() {
         pingTimerSem.acquireUninterruptibly();
 
-        setPingNeeded(false);
-        if (pingTimer != null) {
-            pingTimer.cancel();
-        }
-        pingTimer = new Timer("IRCParser pingTimer");
-        pingTimer.schedule(new PingTimer(this, pingTimer), 0, getPingTimerInterval());
-        pingCountDown = 1;
+        try {
+            setPingNeeded(false);
 
-        pingTimerSem.release();
+            if (pingTimer != null) {
+                pingTimer.cancel();
+            }
+
+            pingTimer = new Timer("IRCParser pingTimer");
+            pingTimer.schedule(new PingTimer(this, pingTimer), 0, getPingTimerInterval());
+            pingCountDown = 1;
+        } finally {
+            pingTimerSem.release();
+        }
     }
 
     /**
