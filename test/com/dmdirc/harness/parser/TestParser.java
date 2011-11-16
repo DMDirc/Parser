@@ -22,6 +22,7 @@
 
 package com.dmdirc.harness.parser;
 
+import com.dmdirc.parser.common.ChildImplementations;
 import com.dmdirc.parser.common.MyInfo;
 import com.dmdirc.parser.common.QueuePriority;
 import com.dmdirc.parser.interfaces.Parser;
@@ -32,6 +33,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 
+@ChildImplementations({
+    IRCChannelClientInfo.class,
+    IRCChannelInfo.class,
+    IRCClientInfo.class
+})
 public class TestParser extends IRCParser implements Parser {
 
     public final List<String> sentLines = new ArrayList<String>();
@@ -43,11 +49,15 @@ public class TestParser extends IRCParser implements Parser {
     public TestParser() {
         super(buildURI());
         currentSocketState = SocketState.OPEN;
+        setPingTimerFraction(10);
+        setPingTimerInterval(60000);
     }
 
     public TestParser(MyInfo myDetails, URI address) {
         super(myDetails, address);
         currentSocketState = SocketState.OPEN;
+        setPingTimerFraction(10);
+        setPingTimerInterval(60000);
     }
 
     private static URI buildURI() {
