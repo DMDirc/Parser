@@ -1751,6 +1751,12 @@ public class IRCParser extends BaseParser implements SecureParser,
         sendString("NOTICE " + target + " :" + char1 + type.toUpperCase() + " " + message + char1);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public void requestGroupList(final String searchTerms) {
+        sendString("LIST :" + searchTerms);
+    }
+
     /**
      * Quit IRC.
      * This method will wait for the server to close the socket.
