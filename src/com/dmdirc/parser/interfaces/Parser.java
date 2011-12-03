@@ -515,4 +515,12 @@ public interface Parser extends Runnable {
      */
     void setCompositionState(String host, CompositionState state);
 
+    /**
+     * Requests a list of all known groups from the server.
+     *
+     * @param searchTerms The search terms to pass to the server, or an empty
+     * string for no terms.
+     */
+    void requestGroupList(String searchTerms);
+
 }
