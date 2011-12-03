@@ -108,6 +108,10 @@ public class ProcessingManager {
         addProcessor(new ProcessListModes(parser, this));
         // WALLOPS
         addProcessor(new ProcessWallops(parser, this));
+        // 321
+        // 322
+        // 323
+        addProcessor(new ProcessList(parser, this));
     }
 
     /**
@@ -211,7 +215,9 @@ public class ProcessingManager {
         } catch (ProcessorNotFoundException p) {
             throw p;
         } catch (Exception e) {
-            final ParserError ei = new ParserError(ParserError.ERROR_ERROR, "Exception in Processor. [" + messageProcessor + "]: " + e.getMessage(), parser.getLastLine());
+            final ParserError ei = new ParserError(ParserError.ERROR_ERROR,
+                    "Exception in Processor. [" + messageProcessor + "]: "
+                    + e.getMessage(), parser.getLastLine());
             ei.setException(e);
             parser.callErrorInfo(ei);
         } finally {
