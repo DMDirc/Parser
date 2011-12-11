@@ -737,7 +737,7 @@ public class IRCChannelInfo implements ChannelInfo {
             return;
         }
 
-        parser.sendString("PRIVMSG " + name + " :" + message);
+        parser.sendString("PRIVMSG " + name, message);
     }
 
     /**
@@ -750,7 +750,7 @@ public class IRCChannelInfo implements ChannelInfo {
             return;
         }
 
-        parser.sendString("NOTICE " + name + " :" + sMessage);
+        parser.sendString("NOTICE " + name, sMessage);
     }
 
     /** {@inheritDoc} */

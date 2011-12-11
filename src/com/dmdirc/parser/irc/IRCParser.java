@@ -1021,6 +1021,19 @@ public class IRCParser extends BaseParser implements SecureParser,
 
     /**
      * Send a line to the server and add proper line ending.
+     * If a non-empty argument is given, it is appended as a trailing argument
+     * (i.e., separated by " :"); otherwise, the line is sent as-is.
+     *
+     * @param line Line to send
+     * @param argument Trailing argument for the command, if any
+     * @return True if line was sent, else false.
+     */
+    protected boolean sendString(final String line, final String argument) {
+        return sendString(argument.isEmpty() ? line : line + " :" + argument);
+    }
+
+    /**
+     * Send a line to the server and add proper line ending.
      *
      * @param line Line to send (\r\n termination is added automatically)
      * @param priority Priority of this line.
@@ -1583,11 +1596,8 @@ public class IRCParser extends BaseParser implements SecureParser,
         if (getChannel(channel) == null) {
             return;
         }
-        if (reason.isEmpty()) {
-            sendString("PART " + channel);
-        } else {
-            sendString("PART " + channel + " :" + reason);
-        }
+
+        sendString("PART " + channel, reason);
     }
 
     /**
@@ -1703,7 +1713,7 @@ public class IRCParser extends BaseParser implements SecureParser,
             return;
         }
 
-        sendString("PRIVMSG " + target + " :" + message);
+        sendString("PRIVMSG " + target, message);
     }
 
     /** {@inheritDoc} */
@@ -1716,7 +1726,7 @@ public class IRCParser extends BaseParser implements SecureParser,
             return;
         }
 
-        sendString("NOTICE " + target + " :" + message);
+        sendString("NOTICE " + target, message);
     }
 
     /** {@inheritDoc} */
@@ -1735,7 +1745,7 @@ public class IRCParser extends BaseParser implements SecureParser,
             return;
         }
         final char char1 = (char) 1;
-        sendString("PRIVMSG " + target + " :" + char1 + type.toUpperCase() + " " + message + char1);
+        sendString("PRIVMSG " + target, char1 + type.toUpperCase() + " " + message + char1);
     }
 
     /** {@inheritDoc} */
@@ -1748,13 +1758,13 @@ public class IRCParser extends BaseParser implements SecureParser,
             return;
         }
         final char char1 = (char) 1;
-        sendString("NOTICE " + target + " :" + char1 + type.toUpperCase() + " " + message + char1);
+        sendString("NOTICE " + target, char1 + type.toUpperCase() + " " + message + char1);
     }
 
     /** {@inheritDoc} */
     @Override
     public void requestGroupList(final String searchTerms) {
-        sendString("LIST :" + searchTerms);
+        sendString("LIST", searchTerms);
     }
 
     /**
@@ -1764,11 +1774,7 @@ public class IRCParser extends BaseParser implements SecureParser,
      * @param reason Reason for quitting.
      */
     public void quit(final String reason) {
-        if (reason.isEmpty()) {
-            sendString("QUIT");
-        } else {
-            sendString("QUIT :" + reason);
-        }
+        sendString("QUIT", reason);
     }
 
     /** {@inheritDoc} */

@@ -201,8 +201,8 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
 
     /** {@inheritDoc} */
     @Override
-    public void kick(final String sReason) {
-        myParser.sendString("KICK " + myChannel + " " + this.getNickname() + (sReason.isEmpty() ? sReason : " :" + sReason));
+    public void kick(final String message) {
+        myParser.sendString("KICK " + myChannel + " " + this.getNickname(), message);
     }
 
     /**
