@@ -40,7 +40,14 @@ import java.util.Map;
  * @since 0.6.3m2
  * @author chris
  */
-public interface Parser extends Runnable {
+public interface Parser {
+
+    /**
+     * Connect to server.
+     *
+     * @param threadName Name for any parser thread.
+     */
+    void connect();
 
     /**
      * Disconnect from server. This method will quit and automatically close the
