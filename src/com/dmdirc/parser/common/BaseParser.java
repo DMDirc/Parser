@@ -22,7 +22,6 @@
 
 package com.dmdirc.parser.common;
 
-import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.callbacks.CallbackInterface;
 
 import java.net.URI;
@@ -35,7 +34,7 @@ import java.util.Map;
  * {@link ChildImplementations} to define the implementations to use for
  * instances of {@link ClientInfo}, {@link ChannelInfo}, etc.
  */
-public abstract class BaseParser implements Parser {
+public abstract class BaseParser extends ThreadedParser {
 
     /** The URI that this parser was constructed for. */
     private final URI uri;
@@ -202,5 +201,4 @@ public abstract class BaseParser implements Parser {
     public void setBindIP(final String ip) {
         this.bindIp = ip;
     }
-
 }
