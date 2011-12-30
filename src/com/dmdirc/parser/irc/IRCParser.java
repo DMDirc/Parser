@@ -77,8 +77,7 @@ import javax.net.ssl.X509TrustManager;
     IRCChannelInfo.class,
     IRCClientInfo.class
 })
-public class IRCParser extends BaseParser implements SecureParser,
-        EncodingParser, Runnable {
+public class IRCParser extends BaseParser implements SecureParser, EncodingParser {
 
     /** Max length an outgoing line should be (NOT including \r\n). */
     public static final int MAX_LINELENGTH = 510;
@@ -630,7 +629,7 @@ public class IRCParser extends BaseParser implements SecureParser,
     //---------------------------------------------------------------------------
     // End Callbacks
     //---------------------------------------------------------------------------
-    /** Reset internal state (use before connect). */
+    /** Reset internal state (use before doConnect). */
     private void resetState() {
         // Reset General State info
         triedAlt = false;
@@ -707,7 +706,7 @@ public class IRCParser extends BaseParser implements SecureParser,
      * @throws NoSuchAlgorithmException if SSL is not available
      * @throws KeyManagementException if the trustManager is invalid
      */
-    private void connect() throws IOException, NoSuchAlgorithmException, KeyManagementException {
+    private void doConnect() throws IOException, NoSuchAlgorithmException, KeyManagementException {
         if (getURI() == null || getURI().getHost() == null) {
             throw new UnknownHostException("Unspecified host.");
         }
@@ -852,7 +851,7 @@ public class IRCParser extends BaseParser implements SecureParser,
             hasBegan = true;
         }
         try {
-            connect();
+            doConnect();
         } catch (UnknownHostException e) {
             handleConnectException(e, true);
             return;

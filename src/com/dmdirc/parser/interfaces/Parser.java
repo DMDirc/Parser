@@ -40,7 +40,26 @@ import java.util.Map;
  * @since 0.6.3m2
  * @author chris
  */
-public interface Parser extends Runnable {
+public interface Parser {
+
+    /**
+     * Connect to server. This will handle creating any required parser thread
+     * for the parser to run in.
+     */
+    void connect();
+
+    /**
+     * Connect to server, providing a name for any thread in which the parser
+     * will run.
+     *
+     * @param threadName Name for any parser thread.
+     */
+    void connect(final String threadName);
+
+    /**
+     * Attempt to interrupt the parser thread if one exists.
+     */
+    void interrupt();
 
     /**
      * Disconnect from server. This method will quit and automatically close the
