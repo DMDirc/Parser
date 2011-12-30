@@ -84,6 +84,29 @@ public class IRCReaderTest {
                 line.getTokens());
     }
 
+    /** Reads and verifies a single line with a trailing parameter. */
+    @Test
+    public void testReadLineWithMultipleSpaces() throws IOException {
+        final InputStream stream = mock(InputStream.class);
+        final Encoder encoder = mock(Encoder.class);
+
+        when(stream.read()).thenReturn((int) 'f', (int) 'o', (int) 'o',
+                (int) ' ', (int) 'b', (int) 'a', (int) 'r',
+                (int) ' ', (int) ' ', (int) 'b', (int) 'a', (int) 'z',
+                (int) ' ', (int) ' ', (int) ':', (int) 'q', (int) 'u',
+                (int) 'x', (int) ' ', (int) ' ', (int) 'b', (int) 'a', (int) 'z',
+                (int) '\r', (int) '\n');
+        when(encoder.encode((String) isNull(), (String) isNull(),
+                (byte[]) anyObject(), eq(15), eq(8)))
+                .thenReturn("qux  baz");
+
+        final IRCReader reader = new IRCReader(stream, encoder);
+        final ReadLine line = reader.readLine();
+
+        assertArrayEquals(new String[]{"foo", "bar", "baz", "qux  baz",},
+                line.getTokens());
+    }
+
     /** Verifies that a source is extracted properly. */
     @Test
     public void testGetSource() throws IOException {

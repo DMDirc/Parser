@@ -107,15 +107,14 @@ public class IRCReader implements Closeable {
      */
     private ReadLine processLine(final byte[] line, final int length, final int paramOffset) {
         final String firstPart = new String(line, 0, paramOffset == -1 ? length : paramOffset - 2);
-        final String[] firstTokens = firstPart.split(" ");
+        final String[] firstTokens = firstPart.split("[ ]+");
 
         final String[] tokens;
         if (paramOffset > -1) {
             final String source = getSource(firstTokens);
             final String destination = getDestination(firstTokens);
 
-            final String lastPart = encoder.encode(source, destination, line,
-                    paramOffset, length - paramOffset);
+            final String lastPart = encoder.encode(source, destination, line, paramOffset, length - paramOffset);
             tokens = new String[firstTokens.length + 1];
             System.arraycopy(firstTokens, 0, tokens, 0, firstTokens.length);
             tokens[firstTokens.length] = lastPart;
