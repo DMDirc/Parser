@@ -47,7 +47,12 @@ public enum ServerTypeGroup {
      * Group for ircds that put the protected users in a list under raw 388
      * rather than as a channel user mode.
      */
-    PROTECTED_388("Protected List", new ServerType[]{ServerType.SWIFTIRC, ServerType.AUSTHEX8});
+    PROTECTED_388("Protected List", new ServerType[]{ServerType.SWIFTIRC, ServerType.AUSTHEX8}),
+    /**
+     * Group for ircds that require list modes to be sent one at a time.
+     */
+    SINGLE_LISTMODE("Single List Modes", new ServerType[]{ServerType.EUIRCD, ServerType.UNREAL, ServerType.IRSEE});
+
     /** Name of the group. */
     final String name;
     /** Group Members. */

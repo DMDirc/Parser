@@ -144,7 +144,8 @@ public class IRCChannelInfo implements ChannelInfo {
         final boolean isOpped = me.getImportantModeValue() > voiceValue;
 
         int modecount = 1;
-        if (serverType != ServerType.UNREAL && serverType != ServerType.IRSEE && parser.h005Info.containsKey("MODES")) {
+
+        if (!ServerTypeGroup.SINGLE_LISTMODE.isMember(serverType) && parser.h005Info.containsKey("MODES")) {
             try {
                 modecount = Integer.parseInt(parser.h005Info.get("MODES"));
             } catch (NumberFormatException e) {
