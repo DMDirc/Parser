@@ -1141,6 +1141,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      *
      * @param line Line read from the IRC server
      */
+    @SuppressWarnings("fallthrough")
     protected void processLine(final ReadLine line) {
         callDataIn(line.getLine());
         String[] token = line.getTokens();
