@@ -22,6 +22,7 @@
 
 package com.dmdirc.parser.irc;
 
+import com.dmdirc.parser.common.MyInfo;
 import com.dmdirc.parser.interfaces.callbacks.NickInUseListener;
 
 /**
@@ -65,11 +66,13 @@ public class ProcessNickInUse extends IRCProcessor {
             if (!parser.got001) {
                 callDebugInfo(IRCParser.DEBUG_INFO, "Using inbuilt handler");
                 // If this is before 001 we will try and get a nickname, else we will leave the nick as-is
+                final MyInfo myInfo = parser.getMyInfo();
                 if (parser.triedAlt) {
-                    if (parser.getStringConverter().equalsIgnoreCase(parser.thinkNickname, parser.getMyInfo().getAltNickname())) {
-                        parser.thinkNickname = parser.getMyInfo().getNickname();
+                    final String magicAltNick = myInfo.getPrependChar() + myInfo.getNickname();
+                    if (parser.getStringConverter().equalsIgnoreCase(parser.thinkNickname, myInfo.getAltNickname()) && !myInfo.getAltNickname().equalsIgnoreCase(magicAltNick)) {
+                        parser.thinkNickname = myInfo.getNickname();
                     }
-                    parser.getLocalClient().setNickname(parser.getMyInfo().getPrependChar() + parser.thinkNickname);
+                    parser.getLocalClient().setNickname(myInfo.getPrependChar() + parser.thinkNickname);
                 } else {
                     parser.getLocalClient().setNickname(parser.getMyInfo().getAltNickname());
                     parser.triedAlt = true;
