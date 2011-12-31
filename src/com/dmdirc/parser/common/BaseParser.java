@@ -43,10 +43,10 @@ public abstract class BaseParser extends ThreadedParser {
     private IgnoreList ignoreList;
 
     /** The ping timer interval for this parser. */
-    private long pingTimerInterval;
+    private long pingTimerInterval = 10000;
 
     /** The ping timer fraction for this parser. */
-    private int pingTimerFraction;
+    private int pingTimerFraction = 6;
 
     /** The cached name of the server this parser is connected to. */
     private String serverName;
