@@ -287,6 +287,8 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         }
 
         setIgnoreList(new IgnoreList());
+        setPingTimerInterval(10000);
+        setPingTimerFraction(6);
         resetState();
     }
 
