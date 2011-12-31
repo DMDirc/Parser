@@ -1229,6 +1229,10 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
                     }
                     switch (nParam) {
                         case 1: // 001 - Welcome to IRC
+                            synchronized (serverInformationLines) {
+                                serverInformationLines.add(line.getLine());
+                            }
+                            // Fallthrough
                         case 464: // Password Required
                         case 433: // Nick In Use
                             try {
