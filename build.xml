@@ -18,6 +18,8 @@
         <fileset dir="${parsers.lib}" includes="*.jar"/>
     </path>
 
+    <taskdef name="git-describe" classname="org.mdonoughe.JGitDescribeTask" classpathref="parsers.classpath.test"/>
+
     <target name="-init-compile">
        <mkdir dir="${parsers.build.main}"/>
        <mkdir dir="${parsers.build.irc}"/>
@@ -42,38 +44,20 @@
           <arg value="HEAD"/>
           <arg value="--"/>
           <arg value="${parsers.src}/com/dmdirc/parser/common/"/>
-          <arg value="${parsers.src}/com/dmdirc/parser/interfaces/"/> 
+          <arg value="${parsers.src}/com/dmdirc/parser/interfaces/"/>
        </exec>
 
-       <exec executable="git" outputproperty="parsers.version.main">
-          <arg value="describe"/>
-          <arg value="--tags"/>
-          <arg value="--always"/>
-          <arg value="${parsers.lastcommit.main}"/>
-       </exec> 
+       <git-describe dir=".git" property="parsers.version.main" ref="${parsers.lastcommit.main}" />
 
-       <exec executable="git" outputproperty="parsers.lastcommit.irc">
-          <arg value="rev-list"/>
-          <arg value="--max-count=1"/>
-          <arg value="HEAD"/>
-          <arg value="--"/>
-          <arg value="${parsers.src}/com/dmdirc/parser/irc/"/>
-       </exec>
-
-       <exec executable="git" outputproperty="parsers.version.irc">
-          <arg value="describe"/>
-          <arg value="--tags"/>
-          <arg value="--always"/>
-          <arg value="${parsers.lastcommit.irc}"/>
-       </exec>
+       <git-describe dir=".git" property="parsers.version.irc" subdir="${parsers.src}/com/dmdirc/parser/irc/" />
     </target>
 
     <target name="compile" depends="-init-compile">
        <javac srcdir="${parsers.src}" destdir="${parsers.build.main}"
-              includeantruntime="false" excludes="com/dmdirc/parser/irc/**"/> 
+              includeantruntime="false" excludes="com/dmdirc/parser/irc/**"/>
        <javac srcdir="${parsers.src}" destdir="${parsers.build.irc}"
               includeantruntime="false" includes="com/dmdirc/parser/irc/**"
-              classpath="${parsers.build.main}"/> 
+              classpath="${parsers.build.main}"/>
     </target>
 
     <target name="compile-tests" depends="compile,-init-compile-tests">
@@ -87,7 +71,7 @@
           <classpath>
              <path refid="parsers.classpath.test"/>
              <pathelement location="${parsers.build.test}"/>
-          </classpath> 
+          </classpath>
           <batchtest todir="${parsers.reports}">
              <fileset dir="${parsers.build.test}" includes="**/*Test.class"/>
              <formatter type="xml"/>
