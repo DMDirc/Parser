@@ -38,16 +38,7 @@
     </target>
 
     <target name="-retrieve-versions">
-       <exec executable="git" outputproperty="parsers.lastcommit.main">
-          <arg value="rev-list"/>
-          <arg value="--max-count=1"/>
-          <arg value="HEAD"/>
-          <arg value="--"/>
-          <arg value="${parsers.src}/com/dmdirc/parser/common/"/>
-          <arg value="${parsers.src}/com/dmdirc/parser/interfaces/"/>
-       </exec>
-
-       <git-describe dir=".git" property="parsers.version.main" ref="${parsers.lastcommit.main}" />
+       <git-describe dir=".git" property="parsers.version.irc" subdir="${parsers.src}/com/dmdirc/parser/common/;${parsers.src}/com/dmdirc/parser/interfaces/" />
 
        <git-describe dir=".git" property="parsers.version.irc" subdir="${parsers.src}/com/dmdirc/parser/irc/" />
     </target>
