@@ -38,8 +38,7 @@
     </target>
 
     <target name="-retrieve-versions">
-       <git-describe dir=".git" property="parsers.version.irc" subdir="${parsers.src}/com/dmdirc/parser/common/;${parsers.src}/com/dmdirc/parser/interfaces/" />
-
+       <git-describe dir=".git" property="parsers.version.main" subdir="${parsers.src}/com/dmdirc/parser/common/;${parsers.src}/com/dmdirc/parser/interfaces/" />
        <git-describe dir=".git" property="parsers.version.irc" subdir="${parsers.src}/com/dmdirc/parser/irc/" />
     </target>
 
