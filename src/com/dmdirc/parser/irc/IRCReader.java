@@ -27,6 +27,11 @@ import com.dmdirc.parser.interfaces.Encoder;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CodingErrorAction;
 
 /**
  * A {@link java.io.BufferedReader}-style reader that is aware of the IRC
@@ -42,16 +47,35 @@ public class IRCReader implements Closeable {
     private final InputStream stream;
     /** The encoder to use to encode lines. */
     private final Encoder encoder;
+    /** Decoder to use for parts not handled by the encoder. */
+    private final CharsetDecoder decoder;
+
+    /**
+     * Creates a new IRCReader which will read from the specified stream.
+     * Protocol-level elements (e.g. channel and user names) will be encoded
+     * using the system default charset.
+     *
+     * @param inputStream The stream to read input from
+     * @param encoder The encoder to use to encode lines
+     */
+    public IRCReader(final InputStream inputStream, final Encoder encoder) {
+        this(inputStream, encoder, Charset.defaultCharset());
+    }
 
     /**
      * Creates a new IRCReader which will read from the specified stream.
      *
      * @param inputStream The stream to read input from
      * @param encoder The encoder to use to encode lines
+     * @param charset The charset to use for protocol-level elements
      */
-    public IRCReader(final InputStream inputStream, final Encoder encoder) {
+    public IRCReader(final InputStream inputStream, final Encoder encoder,
+            final Charset charset) {
         this.stream = inputStream;
         this.encoder = encoder;
+        this.decoder = charset.newDecoder();
+        this.decoder.onMalformedInput(CodingErrorAction.REPLACE);
+        this.decoder.onUnmappableCharacter(CodingErrorAction.REPLACE);
     }
 
     /**
@@ -106,23 +130,31 @@ public class IRCReader implements Closeable {
      * @return A corresponding {@link ReadLine} instance
      */
     private ReadLine processLine(final byte[] line, final int length, final int paramOffset) {
-        final String firstPart = new String(line, 0, paramOffset == -1 ? length : paramOffset - 2);
-        final String[] firstTokens = firstPart.split("[ ]+");
+        try {
+            final String firstPart = this.decoder.decode(ByteBuffer.wrap(line,
+                    0, paramOffset == -1 ? length : paramOffset - 2)).toString();
 
-        final String[] tokens;
-        if (paramOffset > -1) {
-            final String source = getSource(firstTokens);
-            final String destination = getDestination(firstTokens);
+            final String[] firstTokens = firstPart.split("[ ]+");
 
-            final String lastPart = encoder.encode(source, destination, line, paramOffset, length - paramOffset);
-            tokens = new String[firstTokens.length + 1];
-            System.arraycopy(firstTokens, 0, tokens, 0, firstTokens.length);
-            tokens[firstTokens.length] = lastPart;
-        } else {
-            tokens = firstTokens;
+            final String[] tokens;
+            if (paramOffset > -1) {
+                final String source = getSource(firstTokens);
+                final String destination = getDestination(firstTokens);
+
+                final String lastPart = encoder.encode(source, destination,
+                        line, paramOffset, length - paramOffset);
+                tokens = new String[firstTokens.length + 1];
+                System.arraycopy(firstTokens, 0, tokens, 0, firstTokens.length);
+                tokens[firstTokens.length] = lastPart;
+            } else {
+                tokens = firstTokens;
+            }
+
+            return new ReadLine(new String(line, 0, length), tokens);
+        } catch (CharacterCodingException ex) {
+            // Shouldn't happen, as we're replacing errors.
+            return null;
         }
-
-        return new ReadLine(new String(line, 0, length), tokens);
     }
 
     /**

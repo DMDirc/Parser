@@ -22,13 +22,16 @@
 
 package com.dmdirc.parser.irc;
 
-import com.dmdirc.parser.irc.IRCReader.ReadLine;
 import com.dmdirc.parser.interfaces.Encoder;
+import com.dmdirc.parser.irc.IRCReader.ReadLine;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 
+import org.junit.Assert;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -213,6 +216,28 @@ public class IRCReaderTest {
         new IRCReader(stream, encoder).close();
 
         verify(stream).close();
+    }
+
+    /** Verifies that the reader works with improperly coded unicode. */
+    @Test
+    public void testHandlesBadCoding() throws IOException {
+        final InputStream stream = mock(InputStream.class);
+        final Encoder encoder = mock(Encoder.class);
+
+        when(stream.read()).thenReturn((int) ':', (int) 's', (int) 'r',
+                (int) 'c', (int) ' ', (int) '1', (int) ' ', 0xF6,
+                (int) ' ', (int) 'y', (int) ' ', (int) 'z', (int) ' ',
+                (int) ':', (int) 'x', (int) '\r', (int) '\n');
+
+        when(encoder.encode(anyString(), anyString(),
+                (byte[]) any(), anyInt(), anyInt())).thenReturn("x");
+
+        final ReadLine line = new IRCReader(stream, encoder,
+                Charset.forName("UTF-8")).readLine();
+
+        Assert.assertArrayEquals(new String[] {
+            ":src", "1", "\uFFFD", "y", "z", "x"
+        }, line.getTokens());
     }
 
 }
