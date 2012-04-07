@@ -40,6 +40,8 @@ public class OutputQueue {
     private boolean queueEnabled = true;
     /** The output queue! */
     private final BlockingQueue<QueueItem> queue = new PriorityBlockingQueue<QueueItem>();
+    /** Object for synchronising access to the {@link #queueHandler}. */
+    private final Object queueHandlerLock = new Object();
     /** Thread for the sending queue. */
     private QueueHandler queueHandler;
     /** The QueueFactory for this OutputQueue. */
@@ -105,12 +107,15 @@ public class OutputQueue {
         if (out == null) {
             throw new NullPointerException("No output stream has been set.");
         }
+
         final boolean old = this.queueEnabled;
         this.queueEnabled = queueEnabled;
 
         if (old != queueEnabled && old) {
-            queueHandler.interrupt();
-            queueHandler = null;
+            synchronized (queueHandlerLock) {
+                queueHandler.interrupt();
+                queueHandler = null;
+            }
 
             while (!queue.isEmpty()) {
                 try {
@@ -127,9 +132,12 @@ public class OutputQueue {
      */
     public void clearQueue() {
         this.queueEnabled = false;
-        if (queueHandler != null) {
-            queueHandler.interrupt();
-            queueHandler = null;
+
+        synchronized (queueHandlerLock) {
+            if (queueHandler != null) {
+                queueHandler.interrupt();
+                queueHandler = null;
+            }
         }
 
         queue.clear();
@@ -167,13 +175,16 @@ public class OutputQueue {
         if (out == null) {
             throw new NullPointerException("No output stream has been set.");
         }
-        if (queueEnabled) {
-            if (queueHandler == null || !queueHandler.isAlive()) {
-                queueHandler = queueFactory.getQueueHandler(this, queue, out);
-                queueHandler.start();
-            }
 
-            queue.add(queueHandler.getQueueItem(line, priority));
+        if (queueEnabled) {
+            synchronized (queueHandlerLock) {
+                if (queueHandler == null || !queueHandler.isAlive()) {
+                    queueHandler = queueFactory.getQueueHandler(this, queue, out);
+                    queueHandler.start();
+                }
+
+                queue.add(queueHandler.getQueueItem(line, priority));
+            }
         } else {
             out.printf("%s\r\n", line);
         }
