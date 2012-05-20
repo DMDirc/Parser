@@ -1,3 +1,10 @@
-/build
+# DMDirc-utils .gitignore file
+
+/*.key
+/build/
 /dist
-/reports
+/lib/*.jar
+build-before-profiler.xml
+/nbproject/profiler-build-impl.xml
+/nbproject/genfiles.properties
+/nbproject/private

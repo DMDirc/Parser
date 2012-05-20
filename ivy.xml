@@ -1,0 +1,18 @@
+<ivy-module version="2.0">
+    <info organisation="com.dmdirc" module="utils"/>
+
+    <configurations>
+        <conf name="build" description="Everything needed to build"/>
+        <conf name="compile" description="Everything needed to compile"/>
+        <conf name="test" description="Everything needed to test"/>
+        <conf name="default" extends="build,compile,test"/>
+    </configurations>
+
+    <dependencies defaultconfmapping="*->default">
+        <dependency org="com.github.shanemcc" name="jgit-describe" rev="0.2" conf="build" />
+        <dependency org="junit" name="junit" rev="4.+" conf="test" />
+        <dependency org="org.mockito" name="mockito-all" rev="1.+" conf="test" />
+
+        <exclude org="ant" module="ant"/>
+    </dependencies>
+</ivy-module>
