@@ -1,80 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="DMDirc Parsers" default="default" basedir=".">
-    <description>Builds, packages and tests DMDirc parsers.</description>
+<project name="DMDirc-Parser" default="default" basedir=".">
+    <description>Builds, tests, and runs the project DMDirc-Parser.</description>
 
-    <property name="parsers.src" location="src"/>
-    <property name="parsers.test" location="test"/>
-    <property name="parsers.build" location="build"/>
-    <property name="parsers.build.main" location="${parsers.build}/main"/>
-    <property name="parsers.build.irc" location="${parsers.build}/irc"/>
-    <property name="parsers.build.test" location="${parsers.build}/test"/>
-    <property name="parsers.reports" location="reports"/>
-    <property name="parsers.lib" location="lib"/>
-    <property name="parsers.dist" location="dist"/>
+    <import file="nbproject/build-impl.xml"/>
+    <import file="build-ivy.xml"/>
+    <import file="build-versioning.xml"/>
 
-    <path id="parsers.classpath.test">
-        <pathelement path="${parsers.build.main}"/>
-        <pathelement path="${parsers.build.irc}"/>
-        <fileset dir="${parsers.lib}" includes="*.jar"/>
-    </path>
-
-    <taskdef name="git-describe" classname="org.mdonoughe.JGitDescribeTask" classpathref="parsers.classpath.test"/>
-
-    <target name="-init-compile">
-       <mkdir dir="${parsers.build.main}"/>
-       <mkdir dir="${parsers.build.irc}"/>
-    </target>
-
-    <target name="-init-compile-tests">
-       <mkdir dir="${parsers.build.test}"/>
-    </target>
-
-    <target name="-init-jar">
-       <mkdir dir="${parsers.dist}"/>
-    </target>
-
-    <target name="-init-test">
-       <mkdir dir="${parsers.reports}"/>
-    </target>
-
-    <target name="-retrieve-versions">
-       <git-describe dir=".git" property="parsers.version.main" subdir="${parsers.src}/com/dmdirc/parser/common/;${parsers.src}/com/dmdirc/parser/interfaces/" />
-       <git-describe dir=".git" property="parsers.version.irc" subdir="${parsers.src}/com/dmdirc/parser/irc/" />
-    </target>
-
-    <target name="compile" depends="-init-compile">
-       <javac srcdir="${parsers.src}" destdir="${parsers.build.main}"
-              includeantruntime="false" excludes="com/dmdirc/parser/irc/**"/>
-       <javac srcdir="${parsers.src}" destdir="${parsers.build.irc}"
-              includeantruntime="false" includes="com/dmdirc/parser/irc/**"
-              classpath="${parsers.build.main}"/>
-    </target>
-
-    <target name="compile-tests" depends="compile,-init-compile-tests">
-       <javac srcdir="${parsers.test}" destdir="${parsers.build.test}"
-              includeantruntime="false" classpathref="parsers.classpath.test">
-       </javac>
-    </target>
-
-    <target name="test" depends="compile-tests,-init-test">
-       <junit printsummary="true">
-          <classpath>
-             <path refid="parsers.classpath.test"/>
-             <pathelement location="${parsers.build.test}"/>
-          </classpath>
-          <batchtest todir="${parsers.reports}">
-             <fileset dir="${parsers.build.test}" includes="**/*Test.class"/>
-             <formatter type="xml"/>
-          </batchtest>
-       </junit>
-
-       <junitreport todir="${parsers.reports}">
-          <fileset dir="${parsers.reports}" includes="TEST-*.xml"/>
-       </junitreport>
-    </target>
-
-    <target name="jar" depends="compile,-init-jar,-retrieve-versions">
-       <jar destfile="${parsers.dist}/parser.common.jar" basedir="${parsers.build.main}">
+    <target name="-pre-init" depends="-init-dependencies"/>
+    <target name="-post-compile" depends="-add-version"/>
+    <target depends="init,compile,-pre-jar,-do-jar, -post-jar" description="Build JAR." name="jar"/>
+    <target name="-do-jar">
+        <jar compress="${jar.compress}" index="${jar.index}" jarfile="${dist.dir}/parser.common.jar"
+                basedir="${build.classes.dir}" excludes="com/dmdirc/parser/irc/**">
           <manifest>
              <section name="com.dmdirc.parser">
                 <attribute name="Implementation-Title" value="Common parser files"/>
@@ -82,7 +19,8 @@
              </section>
           </manifest>
        </jar>
-       <jar destfile="${parsers.dist}/parser.irc.jar" basedir="${parsers.build.irc}">
+       <jar compress="${jar.compress}" index="${jar.index}" jarfile="${dist.dir}/parser.irc.jar"
+            basedir="${build.classes.dir}" includes="com/dmdirc/parser/irc/**">
           <manifest>
              <section name="com.dmdirc.parser.irc">
                 <attribute name="Implementation-Title" value="IRC Parser"/>
@@ -91,10 +29,10 @@
           </manifest>
        </jar>
     </target>
-
-    <target name="clean">
-       <delete dir="${parsers.build}"/>
-       <delete dir="${parsers.dist}"/>
-       <delete dir="${parsers.reports}"/>
+    <target name="-post-jar">
+        <delete file="${manifest.file}"/>
+    </target>
+    <target name="-post-test-run">
+        <delete file="${manifest.file}"/>
     </target>
 </project>
