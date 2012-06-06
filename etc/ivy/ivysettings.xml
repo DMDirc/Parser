@@ -1,17 +1,10 @@
 <ivysettings>
     <settings defaultResolver="default"/>
+    <credentials host="nexus.dmdirc.com" realm="Sonatype Nexus Repository Manager" username="${username}" passwd="${password}"/>
     <resolvers>
-        <ibiblio name="default" m2compatible="true"/>
-
-        <ibiblio name="jgit" root="http://download.eclipse.org/jgit/maven" m2compatible="true"/>
-
-        <url name="jgit-describe">
-            <ivy pattern="file:///${basedir}/etc/ivy/[module]/ivy.xml"/>
-            <artifact pattern="http://shanemcc.github.com/jgit-describe/releases/jgit-describe-[revision].jar"/>
-        </url>
+        <ibiblio name="default" root="http://nexus.dmdirc.com/nexus/content/groups/public" m2compatible="true"/>
+        <ibiblio name="upload-snapshot" root="http://nexus.dmdirc.com/nexus/content/repositories/snapshots" m2compatible="true" />
+        <ibiblio name="upload-nightlies" root="http://nexus.dmdirc.com/nexus/content/repositories/nightlies" m2compatible="true" />
+        <ibiblio name="upload-release" root="http://nexus.dmdirc.com/nexus/content/repositories/releases" m2compatible="true" />
     </resolvers>
-    <modules>
-        <module organisation="com.github.shanemcc" name="jgit-describe" resolver="jgit-describe"/>
-        <module organisation="org.eclipse.jgit" name="*" resolver="jgit"/>
-    </modules>
 </ivysettings>
