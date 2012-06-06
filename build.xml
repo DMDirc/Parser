@@ -5,6 +5,9 @@
     <import file="nbproject/build-impl.xml"/>
     <import file="build-ivy.xml"/>
     <import file="build-versioning.xml"/>
+    <import file="build-publish.xml"/>
+
+    <property name="git.dir" value=".git"/>
 
     <target name="-pre-init" depends="-init-dependencies"/>
     <target name="-post-compile" depends="-add-version"/>
@@ -35,4 +38,6 @@
     <target name="-post-test-run">
         <delete file="${manifest.file}"/>
     </target>
+    <target name="publish-nightlies" depends="clean, jar, -publish-nightlies" />
+    <target name="publish-release" depends="clean, jar, -publish-release" />
 </project>
