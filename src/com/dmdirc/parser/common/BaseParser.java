@@ -24,8 +24,14 @@ package com.dmdirc.parser.common;
 
 import com.dmdirc.parser.interfaces.callbacks.CallbackInterface;
 
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.ProxySelector;
+import java.net.SocketAddress;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -92,7 +98,22 @@ public abstract class BaseParser extends ThreadedParser {
     /** {@inheritDoc} */
     @Override
     public URI getProxy() {
-        return proxy;
+        if (proxy == null && ProxySelector.getDefault() != null) {
+            final List<Proxy> proxies = ProxySelector.getDefault().select(getURI());
+            if (!proxies.isEmpty()) {
+                final SocketAddress sock = proxies.get(0).address();
+                if (sock instanceof InetSocketAddress) {
+                    final InetSocketAddress isa = (InetSocketAddress)sock;
+                    try {
+                        return new URI("proxy://", "", isa.getAddress().getHostAddress(), isa.getPort(), "", "", "");
+                    } catch (final URISyntaxException use) { /* Oh well... */ }
+                }
+            }
+        } else {
+            return proxy;
+        }
+
+        return null;
     }
 
     /** {@inheritDoc} */
