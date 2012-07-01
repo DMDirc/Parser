@@ -38,6 +38,8 @@ import com.dmdirc.parser.irc.IRCReader.ReadLine;
 import com.dmdirc.parser.irc.outputqueue.OutputQueue;
 
 import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -730,6 +732,141 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         disconnectOnFatal = newValue;
     }
 
+    private Socket newSocket(final URI target, final URI proxy) throws IOException {
+        if (target.getPort() > 65535 || target.getPort() <= 0) {
+            throw new IOException("Server port (" + target.getPort() + ") is invalid.");
+        }
+
+        Socket mySocket = null;
+        if (proxy == null) {
+            callDebugInfo(DEBUG_SOCKET, "Not using Proxy");
+            mySocket = new Socket();
+
+            if (getBindIP() != null && !getBindIP().isEmpty()) {
+                callDebugInfo(DEBUG_SOCKET, "Binding to IP: " + getBindIP());
+                try {
+                    mySocket.bind(new InetSocketAddress(InetAddress.getByName(getBindIP()), 0));
+                } catch (IOException e) {
+                    callDebugInfo(DEBUG_SOCKET, "Binding failed: " + e.getMessage());
+                }
+            }
+
+            mySocket.connect(new InetSocketAddress(target.getHost(), target.getPort()), connectTimeout);
+        } else {
+            callDebugInfo(DEBUG_SOCKET, "Using Proxy");
+
+            if (getBindIP() != null && !getBindIP().isEmpty()) {
+                callDebugInfo(DEBUG_SOCKET, "IP Binding is not possible when using a proxy.");
+            }
+
+            final String proxyHost = proxy.getHost();
+            final int proxyPort = proxy.getPort();
+
+            if (proxyPort > 65535 || proxyPort <= 0) {
+                throw new IOException("Proxy port (" + proxyPort + ") is invalid.");
+            }
+
+            final Proxy.Type proxyType = Proxy.Type.valueOf(proxy.getScheme().toUpperCase());
+            mySocket = new Socket(new Proxy(proxyType, new InetSocketAddress(proxyHost, proxyPort)));
+
+            final IRCAuthenticator ia = IRCAuthenticator.getIRCAuthenticator();
+
+            try {
+                try {
+                    ia.getSemaphore().acquire();
+                } catch (InterruptedException ex) {
+                }
+
+                ia.addAuthentication(target, proxy);
+                mySocket.connect(new InetSocketAddress(target.getHost(), target.getPort()), connectTimeout);
+            } finally {
+                ia.removeAuthentication(target, proxy);
+                ia.getSemaphore().release();
+            }
+        }
+
+        return mySocket;
+    }
+
+    /**
+     * Find a socket to connect using, this will where possible attempt IPv6
+     * first, before falling back to IPv4.
+     *
+     * This will:
+     *   - Try using v6 first before v4.
+     *   - If there are any failures at all with v6 (including, not having a
+     *     v6 address...) then fall through to v4.
+     *   - If there is no v4 address, throw the v6 exception
+     *   - Otherwise, try v4
+     *   - If there are failures with v4, throw the exception.
+     *
+     * If we have both IPv6 and IPv4, and a target host has both IPv6 and IPv4
+     * addresses, but does not listen on the requested port on either, this
+     * will cause a double-length connection timeout.
+     *
+     * @param target Target URI to connect to.
+     * @param proxy Proxy URI to use
+     * @return Socket to use in future connections.
+     * @throws IOException if there is an error.
+     */
+    private Socket findSocket(final URI target, final URI proxy) throws IOException {
+        URI target6 = null;
+        URI target4 = null;
+
+        // Get the v6 and v4 addresses if appropriate..
+        try {
+            for (InetAddress i : InetAddress.getAllByName(target.getHost())) {
+                if (target6 == null && i instanceof Inet6Address) {
+                    target6 = new URI(target.getScheme(), target.getUserInfo(), i.getHostAddress(), target.getPort(), target.getPath(), target.getQuery(), target.getFragment());
+                } else if (target4 == null && i instanceof Inet4Address) {
+                    target4 = new URI(target.getScheme(), target.getUserInfo(), i.getHostAddress(), target.getPort(), target.getPath(), target.getQuery(), target.getFragment());
+                }
+            }
+        } catch (final URISyntaxException use) { /* Won't happen. */ }
+
+        // Now try and connect.
+        // Try using v6 first before v4.
+        // If there are any failures at all with v6 (including, not having a
+        // v6 address...) then fall through to v4.
+        // If there is no v4 address, throw the v6 exception
+        // Otherwise, try v4
+        // If there are failures with v4, throw the exception.
+        //
+        // If we have both IPv6 and IPv4, and a target host has both IPv6 and
+        // IPv4 addresses, but does not listen on the requested port on either,
+        // this will cause a double-length connection timeout.
+        //
+        // In future this may want to be rewritten to perform a happy-eyeballs
+        // race rather than trying one then the other.
+        Exception v6Exception = null;
+        if (target6 != null) {
+            try {
+                return newSocket(target6, proxy);
+            } catch (final IOException ioe) {
+                if (target4 == null) {
+                    throw ioe;
+                }
+            } catch (final Exception e) {
+                v6Exception = e;
+                callDebugInfo(DEBUG_SOCKET, "Exception trying to use IPv6: " + e);
+            }
+        }
+        if (target4 != null) {
+            try {
+                return newSocket(target4, proxy);
+            } catch (final IOException e2) {
+                callDebugInfo(DEBUG_SOCKET, "Exception trying to use IPv4: " + e2);
+                throw e2;
+            }
+        } else if (v6Exception != null) {
+            throw new IOException("Error connecting to: " + target + " (IPv6 failure, with no IPv4 fallback)", v6Exception);
+        } else {
+            // We should never get here as if both target4 and target6 were null
+            // getAllByName would have thrown an exception instead.
+            throw new IOException("Error connecting to: " + target + " (General connectivity failure)");
+        }
+    }
+
     /**
      * Connect to IRC.
      *
@@ -745,58 +882,8 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         resetState();
         callDebugInfo(DEBUG_SOCKET, "Connecting to " + getURI().getHost() + ":" + getURI().getPort());
 
-        if (getURI().getPort() > 65535 || getURI().getPort() <= 0) {
-            throw new IOException("Server port (" + getURI().getPort() + ") is invalid.");
-        }
-
-        if (getProxy() == null) {
-            callDebugInfo(DEBUG_SOCKET, "Not using Proxy");
-            socket = new Socket();
-
-            if (getBindIP() != null && !getBindIP().isEmpty()) {
-                callDebugInfo(DEBUG_SOCKET, "Binding to IP: " + getBindIP());
-                try {
-                    socket.bind(new InetSocketAddress(InetAddress.getByName(getBindIP()), 0));
-                } catch (IOException e) {
-                    callDebugInfo(DEBUG_SOCKET, "Binding failed: " + e.getMessage());
-                }
-            }
-
-            currentSocketState = SocketState.OPENING;
-            socket.connect(new InetSocketAddress(getURI().getHost(), getURI().getPort()), connectTimeout);
-        } else {
-            callDebugInfo(DEBUG_SOCKET, "Using Proxy");
-
-            if (getBindIP() != null && !getBindIP().isEmpty()) {
-                callDebugInfo(DEBUG_SOCKET, "IP Binding is not possible when using a proxy.");
-            }
-
-            final String proxyHost = getProxy().getHost();
-            final int proxyPort = getProxy().getPort();
-
-            if (proxyPort > 65535 || proxyPort <= 0) {
-                throw new IOException("Proxy port (" + proxyPort + ") is invalid.");
-            }
-
-            final Proxy.Type proxyType = Proxy.Type.valueOf(getProxy().getScheme().toUpperCase());
-            socket = new Socket(new Proxy(proxyType, new InetSocketAddress(proxyHost, proxyPort)));
-            currentSocketState = SocketState.OPENING;
-
-            final IRCAuthenticator ia = IRCAuthenticator.getIRCAuthenticator();
-
-            try {
-                try {
-                    ia.getSemaphore().acquire();
-                } catch (InterruptedException ex) {
-                }
-
-                ia.addAuthentication(getURI(), getProxy());
-                socket.connect(new InetSocketAddress(getURI().getHost(), getURI().getPort()), connectTimeout);
-            } finally {
-                ia.removeAuthentication(getURI(), getProxy());
-                ia.getSemaphore().release();
-            }
-        }
+        currentSocketState = SocketState.OPENING;
+        socket = findSocket(getURI(), getProxy());
 
         rawSocket = socket;
 
