@@ -838,7 +838,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         //
         // In future this may want to be rewritten to perform a happy-eyeballs
         // race rather than trying one then the other.
-        final Exception v6Exception = null;
+        Exception v6Exception = null;
         if (target6 != null) {
             try {
                 return newSocket(target6, proxy);
