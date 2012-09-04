@@ -9,7 +9,7 @@
     </configurations>
 
     <dependencies defaultconfmapping="*->default">
-        <dependency org="com.github.shanemcc" name="jgit-describe" rev="0.2" conf="build" />
+        <dependency org="com.github.shanemcc" name="jgit-describe" rev="0.3" conf="build" />
         <dependency org="junit" name="junit" rev="4.+" conf="test" />
         <dependency org="org.mockito" name="mockito-all" rev="1.+" conf="test" />
 
