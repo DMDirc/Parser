@@ -218,20 +218,20 @@ public class CallbackManager {
      */
     public void delAllCallback(final CallbackInterface o) {
         for (CallbackObject cb : callbackHash.values()) {
-            if (cb != null) {
+            if (cb != null && cb.getType().isInstance(o)) {
                 cb.del(o);
             }
         }
     }
 
     /**
-     * Add all callbacks.
+     * Add all callbacks that this object implements.
      *
      * @param o instance of ICallbackInterface to add.
      */
     public void addAllCallback(final CallbackInterface o) {
         for (CallbackObject cb : callbackHash.values()) {
-            if (cb != null) {
+            if (cb != null && cb.getType().isInstance(o)) {
                 cb.add(o);
             }
         }
