@@ -1,0 +1,8 @@
+Automatic-Compile+1: Greg Holmes <greg@dmdirc.com>
+Code-Review+2: Greg Holmes <greg@dmdirc.com>
+Automatic-Compile-1: DMDirc Local Commits <dmdirc@googlemail.com>
+Submitted-by: Greg Holmes <greg@dmdirc.com>
+Submitted-at: Tue, 09 Feb 2010 00:16:28 +0100
+Reviewed-on: http://gerrit.dmdirc.com/872
+Project: parser
+Branch: refs/heads/master

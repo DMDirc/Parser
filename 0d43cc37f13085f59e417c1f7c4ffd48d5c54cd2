@@ -1,0 +1,9 @@
+Change-Id: I0d43cc37f13085f59e417c1f7c4ffd48d5c54cd2
+Automatic-Compile+1: Greg Holmes <greg@dmdirc.com>
+Code-Review+2: Greg Holmes <greg@dmdirc.com>
+Automatic-Compile-1: DMDirc Local Commits <dmdirc@googlemail.com>
+Submitted-by: Greg Holmes <greg@dmdirc.com>
+Submitted-at: Sun, 17 Jan 2010 20:14:03 +0100
+Reviewed-on: http://gerrit.dmdirc.com/530
+Project: parser
+Branch: refs/heads/master

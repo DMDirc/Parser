@@ -1,0 +1,8 @@
+Code-Review+2: Chris Smith <chris@dmdirc.com>
+Automatic-Compile+1: Shane Mc Cormack <shane@dmdirc.com>
+Automatic-Compile-1: DMDirc Local Commits <dmdirc@googlemail.com>
+Submitted-by: Shane Mc Cormack <shane@dmdirc.com>
+Submitted-at: Fri, 15 Jan 2010 05:08:04 +0100
+Reviewed-on: http://gerrit.dmdirc.com/472
+Project: parser
+Branch: refs/heads/master

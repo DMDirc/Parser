@@ -1,0 +1,8 @@
+Change-Id: I4a6c51789e37e0f96967344c98010ee7ff760506
+Code-Review+2: Chris Smith <chris@dmdirc.com>
+Automatic-Compile+1: DMDirc Local Commits <dmdirc@googlemail.com>
+Submitted-by: DMDirc Local Commits <dmdirc@googlemail.com>
+Submitted-at: Sat, 01 Jan 2011 00:46:25 +0100
+Reviewed-on: http://gerrit.dmdirc.com/1723
+Project: parser
+Branch: refs/heads/master
