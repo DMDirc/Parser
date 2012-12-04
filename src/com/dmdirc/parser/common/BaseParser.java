@@ -91,6 +91,12 @@ public abstract class BaseParser extends ThreadedParser {
 
     /** {@inheritDoc} */
     @Override
+    public void quit(final String reason) {
+        disconnect(reason);
+    }
+
+    /** {@inheritDoc} */
+    @Override
     public URI getURI() {
         return uri;
     }
