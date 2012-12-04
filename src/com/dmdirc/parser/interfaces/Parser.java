@@ -58,6 +58,13 @@ public interface Parser {
     void disconnect(String message);
 
     /**
+     *
+     * Disconnect from server.  This method will wait for the server to
+     * close the socket.
+     */
+    void quit(String message);
+
+    /**
      * Join a channel with no key.
      *
      * @param channel Name of channel to join
