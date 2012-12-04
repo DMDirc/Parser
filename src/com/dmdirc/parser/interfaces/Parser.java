@@ -56,6 +56,13 @@ public interface Parser {
      * @param message Reason for quitting.
      */
     void disconnect(String message);
+    
+    /**
+     *
+     * Disconnect from server.  This method will wait for the server to
+     * close the socket.
+     */
+    void quit(String message);
 
     /**
      * Join a channel with no key.
