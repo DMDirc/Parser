@@ -77,6 +77,13 @@ public interface ClientInfo {
     AwayState getAwayState();
 
     /**
+     * Get the Away Reason for this user.
+     *
+     * @return Known away reason for user.
+     */
+     String getAwayReason();
+
+    /**
      * Retrieves a {@link Map} which can be used to store arbitrary data
      * about the client.
      *
