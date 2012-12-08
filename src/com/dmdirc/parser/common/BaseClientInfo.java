@@ -137,4 +137,10 @@ public abstract class BaseClientInfo implements ClientInfo {
         return getNickname();
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String getAwayReason() {
+        return "";
+    }
+
 }

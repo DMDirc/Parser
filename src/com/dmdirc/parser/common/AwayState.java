@@ -29,10 +29,29 @@ package com.dmdirc.parser.common;
  * @since 0.6.3
  */
 public enum AwayState {
+
     /** State is unknown. */
-    UNKNOWN,
+    UNKNOWN("Unknown"),
     /** User is here. */
-    HERE,
+    HERE("Here"),
     /** User is away. */
-    AWAY;
+    AWAY("Away");
+
+    /** Friendly name for the state. */
+    private final String friendlyName;
+
+    /**
+     * Adds a friendly name to the away state.
+     * <p/>
+     * @param friendlyName Friendly name
+     */
+    AwayState(final String friendlyName) {
+        this.friendlyName = friendlyName;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String toString() {
+        return friendlyName;
+    }
 }
