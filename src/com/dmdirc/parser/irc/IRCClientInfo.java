@@ -252,11 +252,8 @@ public class IRCClientInfo implements LocalClientInfo {
         return away;
     }
 
-    /**
-     * Get the Away Reason for this user.
-     *
-     * @return Known away reason for user.
-     */
+    /** {@inheritDoc} */
+    @Override
     public String getAwayReason() {
         return awayReason;
     }
