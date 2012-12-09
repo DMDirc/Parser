@@ -49,6 +49,8 @@ public class IRCClientInfo implements LocalClientInfo {
     private long modes;
     /** Known Away Reason of client. */
     private String awayReason = "";
+    /** Known Account name of client. */
+    private String accountName = "*";
     /** Known RealName of client. */
     private String realName = "";
     /** Known away state for client. */
@@ -281,6 +283,24 @@ public class IRCClientInfo implements LocalClientInfo {
      */
     protected void setRealName(final String newValue) {
         realName = newValue;
+    }
+
+    /**
+     * Get the account name of this user.
+     *
+     * @return Account name for this user ("*" if not set)
+     */
+    public String getAccountName() {
+        return accountName;
+    }
+
+    /**
+     * Set the account name for this user.
+     *
+     * @param newValue new account name for user.
+     */
+    protected void setAccountName(final String newValue) {
+        accountName = newValue;
     }
 
     /**
