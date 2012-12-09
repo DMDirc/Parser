@@ -63,6 +63,13 @@ public interface ClientInfo {
     String getRealname();
 
     /**
+     * Retrieves the network account name of the client. (eg, Q Auth)
+     *
+     * @return This client's network account name. (null if not set)
+     */
+    String getAccountName();
+
+    /**
      * Retrieves the number of channels that this client is known to be on.
      *
      * @return The number of channels the client is known to be on

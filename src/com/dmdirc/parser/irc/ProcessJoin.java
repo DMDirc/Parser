@@ -104,7 +104,7 @@ public class ProcessJoin extends IRCProcessor {
             }
 
             if (extendedJoin) {
-                iClient.setAccountName(accountName);
+                iClient.setAccountName(accountName.equals("*") ? null : accountName);
                 iClient.setRealName(realName);
             }
 

@@ -154,6 +154,12 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
         return getChanModeStr(false);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String getAllModesPrefix() {
+        return getChanModeStr(true);
+    }
+
     /**
      * Get the value of the most important mode this client has (Prefix modes).
      * A higher value, is a more important mode, 0 = no modes.

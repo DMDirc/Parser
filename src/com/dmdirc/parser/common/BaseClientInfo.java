@@ -40,7 +40,7 @@ public abstract class BaseClientInfo implements ClientInfo {
     private final Map<Object, Object> map = new HashMap<Object, Object>();
 
     /** The user's details. */
-    private String nick, user, host, realname = null;
+    private String nick, user, host, realname, account = null;
 
     /**
      * Creates a new base client info for the specified parser with the
@@ -83,6 +83,12 @@ public abstract class BaseClientInfo implements ClientInfo {
         return realname;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String getAccountName() {
+        return account;
+    }
+
     /**
      * Sets the hostname of this user.
      *
@@ -108,6 +114,15 @@ public abstract class BaseClientInfo implements ClientInfo {
      */
     protected void setRealname(final String realname) {
         this.realname = realname;
+    }
+
+    /**
+     * Sets the account of this user.
+     *
+     * @param account The new account
+     */
+    protected void setAccountName(final String account) {
+        this.account = account;
     }
 
     /**

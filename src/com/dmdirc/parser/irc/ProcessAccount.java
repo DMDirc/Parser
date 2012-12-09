@@ -48,7 +48,7 @@ public class ProcessAccount extends IRCProcessor {
         // :nick!user@host ACCOUNT accountname
         final IRCClientInfo iClient = getClientInfo(token[0]);
         if (iClient != null) {
-            iClient.setAccountName(token[2]);
+            iClient.setAccountName(token[2].equals("*") ? null : token[2]);
         }
     }
 
