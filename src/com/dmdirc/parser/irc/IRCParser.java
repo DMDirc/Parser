@@ -244,6 +244,8 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     private KeyManager[] myKeyManagers;
     /** This is list containing 001 - 005 inclusive. */
     private final List<String> serverInformationLines = new LinkedList<String>();
+    /** Map of capabilities and their state. */
+    private final Map<String, CapabilityState> capabilities = new HashMap<String, CapabilityState>();
 
     /**
      * Default constructor, ServerInfo and MyInfo need to be added separately (using IRC.me and IRC.server).
@@ -1382,6 +1384,57 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      */
     protected void setEncoding(final IRCEncoding encoding) {
         stringConverter = new IRCStringConverter(encoding);
+    }
+
+    /**
+     * Check the state of the requested capability.
+     *
+     * @return State of the requested capability.
+     */
+    public CapabilityState getCapabilityState(final String capability) {
+        synchronized (capabilities) {
+            if (capabilities.containsKey(capability.toLowerCase())) {
+                return capabilities.get(capability.toLowerCase());
+            } else {
+                return CapabilityState.INVALID;
+            }
+        }
+    }
+
+    /**
+     * Set the state of the requested capability.
+     *
+     * @param capability Requested capability
+     * @param state State to set for capability
+     */
+    public void setCapabilityState(final String capability, final CapabilityState state) {
+        synchronized (capabilities) {
+            if (capabilities.containsKey(capability.toLowerCase())) {
+                capabilities.put(capability.toLowerCase(), state);
+            }
+        }
+    }
+
+    /**
+     * Add the given capability as a supported capability by the server.
+     *
+     * @param capability Requested capability
+     */
+    public void addCapability(final String capability) {
+        synchronized (capabilities) {
+            capabilities.put(capability.toLowerCase(), CapabilityState.DISABLED);
+        }
+    }
+
+    /**
+     * Get the server capabilities and their current state.
+     *
+     * @return Server capabilities and their current state.
+     */
+    public Map<String, CapabilityState> getCapabilities() {
+        synchronized (capabilities) {
+            return new HashMap<String, CapabilityState>(capabilities);
+        }
     }
 
     /**

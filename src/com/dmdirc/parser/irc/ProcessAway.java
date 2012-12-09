@@ -43,17 +43,30 @@ public class ProcessAway extends IRCProcessor {
     /**
      * Process an Away/Back message.
      *
-     * @param sParam Type of line to process ("305", "306")
+     * @param sParam Type of line to process ("305", "306" etc)
      * @param token IRCTokenised line to process
      */
     @Override
     public void process(final String sParam, final String[] token) {
-        if ("301".equals(sParam)) {
+        if ("AWAY".equals(sParam)) {
+            final IRCClientInfo iClient = getClientInfo(token[0]);
+            if (iClient != null) {
+                final AwayState oldState = iClient.getAwayState();
+
+                final String reason = token[token.length - 1];
+                iClient.setAwayReason(reason);
+                iClient.setAwayState(reason.isEmpty() ? AwayState.HERE : AwayState.AWAY);
+
+                if (iClient == parser.getLocalClient()) {
+                    callAwayState(oldState, iClient.getAwayState(), iClient.getAwayReason());
+                }
+            }
+        } else if ("301".equals(sParam)) { // WHO Response
             final IRCClientInfo iClient = getClientInfo(token[3]);
             if (iClient != null) {
                 iClient.setAwayReason(token[token.length - 1]);
             }
-        } else {
+        } else { // IRC HERE/BACK response
             final AwayState oldState = parser.getLocalClient().getAwayState();
             parser.getLocalClient().setAwayState("306".equals(sParam) ? AwayState.AWAY : AwayState.HERE);
             callAwayState(oldState, parser.getLocalClient().getAwayState(), parser.getLocalClient().getAwayReason());
@@ -80,6 +93,6 @@ public class ProcessAway extends IRCProcessor {
      */
     @Override
     public String[] handles() {
-        return new String[]{"301", "305", "306"};
+        return new String[]{"301", "305", "306", "AWAY"};
     }
 }
