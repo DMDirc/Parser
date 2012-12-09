@@ -132,7 +132,9 @@ public class Process004005 extends IRCProcessor {
                     parser.parsePrefixModes();
                 } else if ("CHANMODES".equals(key)) {
                     parser.parseChanModes();
-                } else if ("NAMESX".equals(key) || "UHNAMES".equals(key)) {
+                } else if ("NAMESX".equals(key) && parser.getCapabilityState("multi-prefix") != CapabilityState.ENABLED) {
+                    parser.sendString("PROTOCTL " + key);
+                } else if ("UHNAMES".equals(key) && parser.getCapabilityState("userhost-in-names") != CapabilityState.ENABLED) {
                     parser.sendString("PROTOCTL " + key);
                 } else if ("LISTMODE".equals(key)) {
                     // Support for potential future decent mode listing in the protocol
@@ -149,12 +151,9 @@ public class Process004005 extends IRCProcessor {
                         parser.getProcessingManager().addProcessor(handles, parser.getProcessingManager().getProcessor("__LISTMODE__"));
                     } catch (ProcessorNotFoundException e) {
                     }
-                } else if ("TIMESTAMPEDIRC".equals(key)) {
+                } else if ("TIMESTAMPEDIRC".equals(key) && parser.getCapabilityState("dfbnc.com/tsirc") != CapabilityState.ENABLED) {
                     // Let the server know we also understand timestamped irc.
                     // See my other proposal: http://shanemcc.co.uk/irc/#timestamping
-                    // This might not be needed if the server advertises it via
-                    // CAP, but send it anyway as we don't currently keep state
-                    // with CAP.
                     parser.sendString("TIMESTAMPEDIRC ON", QueuePriority.HIGH);
                 }
             }
