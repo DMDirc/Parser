@@ -66,11 +66,19 @@ public interface ChannelClientInfo extends Comparable<ChannelClientInfo> {
 
     /**
      * Returns a list of all modes known to be held by the client, in their
-     * textual for (e.g. o, v, etc)
+     * textual form (e.g. o, v, etc)
      *
      * @return All modes the client holds, or an empty string
      */
     String getAllModes();
+
+    /**
+     * Returns a list of all modes known to be held by the client, in their
+     * prefix form (e.g. @, +, etc)
+     *
+     * @return All modes the client holds, or an empty string
+     */
+    String getAllModesPrefix();
 
     /**
      * Retrieves a {@link Map} which can be used to store arbitrary data

@@ -83,6 +83,12 @@ public abstract class BaseClientInfo implements ClientInfo {
         return realname;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String getAccountName() {
+        return "*";
+    }
+
     /**
      * Sets the hostname of this user.
      *

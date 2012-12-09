@@ -285,13 +285,8 @@ public class IRCClientInfo implements LocalClientInfo {
         realName = newValue;
     }
 
-    /**
-     * Get the account name of this user.
-     * This is usually the network-services registered name of the client. (eg
-     * QAuth on quakenet, or registered nickname on freenode)
-     *
-     * @return Account name for this user ("*" if not set)
-     */
+    /** {@inheritDoc} */
+    @Override
     public String getAccountName() {
         return accountName;
     }
