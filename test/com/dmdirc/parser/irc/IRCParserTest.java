@@ -102,12 +102,15 @@ public class IRCParserTest {
         final TestParser parser = new TestParser(myInfo, new URI("irc://irc.testing.dmdirc:6667/"));
         parser.sendConnectionStrings();
 
-        assertEquals(2, parser.sentLines.size());
+        assertEquals(3, parser.sentLines.size());
+
+        assertTrue("Should send CAP LS line",
+                Arrays.equals(parser.getLine(0), new String[]{"CAP", "LS"}));
 
         assertTrue("Should send nickname line",
-                Arrays.equals(parser.getLine(0), new String[]{"NICK", "Nickname"}));
+                Arrays.equals(parser.getLine(1), new String[]{"NICK", "Nickname"}));
 
-        final String[] userParts = parser.getLine(1);
+        final String[] userParts = parser.getLine(2);
         assertEquals("First token should be USER", "USER", userParts[0]);
         assertEquals("USER should contain username", myInfo.getUsername().toLowerCase(),
                 userParts[1].toLowerCase());
@@ -125,10 +128,10 @@ public class IRCParserTest {
         final TestParser parser = new TestParser(myInfo, new URI("irc://password@irc.testing.dmdirc:6667/"));
         parser.sendConnectionStrings();
 
-        assertEquals(3, parser.sentLines.size());
+        assertEquals(4, parser.sentLines.size());
 
         assertTrue("Should send password line",
-                Arrays.equals(parser.getLine(0), new String[]{"PASS", "password"}));
+                Arrays.equals(parser.getLine(1), new String[]{"PASS", "password"}));
     }
 
     @Test
