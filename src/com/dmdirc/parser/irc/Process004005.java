@@ -150,9 +150,11 @@ public class Process004005 extends IRCProcessor {
                     } catch (ProcessorNotFoundException e) {
                     }
                 } else if ("TIMESTAMPEDIRC".equals(key)) {
-                    parser.timestampedIRC = true;
                     // Let the server know we also understand timestamped irc.
                     // See my other proposal: http://shanemcc.co.uk/irc/#timestamping
+                    // This might not be needed if the server advertises it via
+                    // CAP, but send it anyway as we don't currently keep state
+                    // with CAP.
                     parser.sendString("TIMESTAMPEDIRC ON", QueuePriority.HIGH);
                 }
             }

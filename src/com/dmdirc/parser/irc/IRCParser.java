@@ -194,9 +194,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     private IRCClientInfo myself = new IRCClientInfo(this, "myself").setFake(true);
     /** Hashtable storing all information gathered from 005. */
     final Map<String, String> h005Info = new HashMap<String, String>();
-    /** Does this server support timestamped IRC? */
-    boolean timestampedIRC = false;
-    /** difference in ms between our time and the servers time. */
+    /** difference in ms between our time and the servers time (used for timestampedIRC). */
     long tsdiff;
     /** Reference to the Processing Manager. */
     private final ProcessingManager myProcessingManager = new ProcessingManager(this);
@@ -923,6 +921,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      * Send server connection strings (NICK/USER/PASS).
      */
     protected void sendConnectionStrings() {
+        sendString("CAP LS");
         if (getURI().getUserInfo() != null && !getURI().getUserInfo().isEmpty()) {
             sendString("PASS " + getURI().getUserInfo());
         }
@@ -1233,7 +1232,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         callDataIn(line.getLine());
         String[] token = line.getTokens();
         Date lineTS = new Date();
-        if (!token[0].isEmpty() && timestampedIRC && token[0].charAt(0) == '@') {
+        if (!token[0].isEmpty() && token[0].charAt(0) == '@') {
             try {
                 final int tsEnd = token[0].indexOf('@', 1);
                 final long ts = Long.parseLong(token[0].substring(1, tsEnd));
@@ -1265,14 +1264,12 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
                     errorMessage.append(token[i]);
                 }
                 callServerError(errorMessage.toString());
-            } else if (timestampedIRC && token[1].equalsIgnoreCase("TSIRC") && token.length > 3) {
+            } else if (token[1].equalsIgnoreCase("TSIRC") && token.length > 3) {
                 if (token[2].equals("1")) {
                     try {
                         final long ts = Long.parseLong(token[3]);
                         tsdiff = ts - System.currentTimeMillis();
                     } catch (final NumberFormatException nfe) { /* Do nothing. */ }
-                } else {
-                    timestampedIRC = false;
                 }
             } else {
                 if (got001) {
@@ -1343,6 +1340,11 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
                             // Eat it up so that it isn't treated as a notice auth.
                             if (token[1].equalsIgnoreCase("NICK")) {
                                 break;
+                            }
+
+                            // CAP also happens here, so try that.
+                            if (token[1].equalsIgnoreCase("CAP")) {
+                                myProcessingManager.process(lineTS, sParam, token);
                             }
 
                             // Otherwise, send to Notice Auth
