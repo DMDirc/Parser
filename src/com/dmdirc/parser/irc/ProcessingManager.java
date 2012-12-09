@@ -114,6 +114,8 @@ public class ProcessingManager {
         addProcessor(new ProcessList(parser, this));
         // CAP
         addProcessor(new ProcessCap(parser, this));
+        // ACCOUNT
+        addProcessor(new ProcessAccount(parser, this));
     }
 
     /**

@@ -22,7 +22,11 @@
 
 package com.dmdirc.parser.irc;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Process CAP extension.
@@ -38,6 +42,8 @@ import java.util.Date;
 public class ProcessCap extends TimestampedIRCProcessor {
     /** Have we handled the pre-connect cap request? */
     private boolean hasCapped = false;
+    /** List of supported capabilities. */
+    private List<String> supportedCapabilities = new ArrayList<String>();
 
     /**
      * Create a new instance of the IRCProcessor Object.
@@ -47,6 +53,19 @@ public class ProcessCap extends TimestampedIRCProcessor {
      */
     protected ProcessCap(final IRCParser parser, final ProcessingManager manager) {
         super(parser, manager);
+
+        // IRCv3.1 Standard
+        supportedCapabilities.add("multi-prefix");
+        supportedCapabilities.add("userhost-in-names");
+        supportedCapabilities.add("away-notify");
+        supportedCapabilities.add("account-notify");
+        supportedCapabilities.add("extended-join");
+
+        // Freenode
+        // supportedCapabilities.add("identify-msg");
+
+        // DFBnc
+        supportedCapabilities.add("dfbnc.com/tsirc");
     }
 
     /**
@@ -64,10 +83,15 @@ public class ProcessCap extends TimestampedIRCProcessor {
         if (!hasCapped && !parser.got001 && token.length > 4 && token[3].equalsIgnoreCase("LS")) {
             final String[] caps = token[token.length - 1].split(" ");
             for (final String cap : caps) {
-                if (cap.equalsIgnoreCase("multi-prefix") || cap.equalsIgnoreCase("tsirc") || cap.equalsIgnoreCase("userhost-in-names")) {
+                if (cap.isEmpty()) { continue; }
+                final String capability = (cap.charAt(0) == '=') ? cap.substring(1).toLowerCase() : cap.toLowerCase();
+
+                parser.addCapability(capability);
+
+                if (supportedCapabilities.contains(capability)) {
                     // Send cap requests as individual lines, as some servers
                     // only appear to accept them one at a time.
-                    parser.sendRawMessage("CAP REQ :" + cap);
+                    parser.sendRawMessage("CAP REQ :" + capability);
                 }
             }
 
@@ -81,6 +105,23 @@ public class ProcessCap extends TimestampedIRCProcessor {
             if (token.length == 4 || (token.length == 5 && !token[4].equals("*"))) {
                 hasCapped = true;
                 parser.sendRawMessage("CAP END");
+            }
+        } else if (token[3].equalsIgnoreCase("ACK") || token[3].equalsIgnoreCase("CLEAR")) {
+            // Process the list.
+            final String[] caps = token[token.length - 1].split(" ");
+            for (final String cap : caps) {
+                if (cap.isEmpty()) { continue; }
+                final CapabilityState modifier = CapabilityState.fromModifier(cap.charAt(0));
+
+                final String capability = (modifier == CapabilityState.INVALID) ? cap.toLowerCase() : cap.substring(1).toLowerCase();
+                final CapabilityState state = (modifier == CapabilityState.INVALID) ? CapabilityState.ENABLED : modifier;
+
+                if (state == CapabilityState.NEED_ACK) {
+                    parser.sendRawMessage("CAP ACK :" + capability);
+                    parser.setCapabilityState(capability, CapabilityState.ENABLED);
+                } else {
+                    parser.setCapabilityState(capability, state);
+                }
             }
         }
     }
