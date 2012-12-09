@@ -76,9 +76,23 @@ public class ProcessJoin extends IRCProcessor {
             IRCClientInfo iClient;
             IRCChannelInfo iChannel;
             IRCChannelClientInfo iChannelClient;
+            final String channelName;
+            final boolean extendedJoin = parser.getCapabilityState("extended-join") == CapabilityState.ENABLED;
+            final String accountName;
+            final String realName;
 
             iClient = getClientInfo(token[0]);
-            iChannel = parser.getChannel(token[token.length - 1]);
+            if (extendedJoin) {
+                // :nick!ident@host JOIN #Channel accountName :Real Name
+                channelName = token[2];
+                accountName = (token.length > 3) ? token[3] : "*";
+                realName = (token.length > 4) ? token[token.length - 1] : "";
+            } else {
+                channelName = token[token.length - 1];
+                accountName = "*";
+                realName = "";
+            }
+            iChannel = parser.getChannel(token[2]);
 
             callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: client: %s", iClient);
             callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: channel: %s", iChannel);
@@ -88,6 +102,10 @@ public class ProcessJoin extends IRCProcessor {
                 parser.addClient(iClient);
                 callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: new client.", iClient);
             }
+
+            iClient.setAccountName(accountName);
+            iClient.setRealName(realName);
+
             // Check to see if we know the host/ident for this client to facilitate dmdirc Formatter
             if (iClient.getHostname().isEmpty()) {
                 iClient.setUserBits(token[0], false);
@@ -120,7 +138,7 @@ public class ProcessJoin extends IRCProcessor {
                 }
             }
 
-            iChannel = new IRCChannelInfo(parser, token[token.length - 1]);
+            iChannel = new IRCChannelInfo(parser, channelName);
             // Add ourself to the channel, this will be overridden by the NAMES reply
             iChannel.addClient(iClient);
             parser.addChannel(iChannel);
