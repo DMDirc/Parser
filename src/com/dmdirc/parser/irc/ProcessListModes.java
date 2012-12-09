@@ -26,6 +26,7 @@ import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.callbacks.ChannelListModeListener;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -60,7 +61,7 @@ public class ProcessListModes extends IRCProcessor {
         byte tokenStart = 4; // Where do the relevent tokens start?
         boolean isCleverMode = false;
         long time = 0;
-        char mode = 'b';
+        char mode = ' ';
         boolean isItem = true; // true if item listing, false if "end of .." item
         if (channel == null) {
             return;
@@ -84,6 +85,14 @@ public class ProcessListModes extends IRCProcessor {
             // Censored words List
             mode = 'g';
             isItem = sParam.equals("941");
+        } else if ((serverType == ServerType.INSPIRCD) && (sParam.equals("910") || sParam.equals("911"))) {
+            // Channel Access List
+            mode = 'w';
+            isItem = sParam.equals("910");
+        } else if ((serverType == ServerType.INSPIRCD) && (sParam.equals("954") || sParam.equals("953"))) {
+            // Channel exemptchanops List
+            mode = 'X';
+            isItem = sParam.equals("954");
         } else if (sParam.equals("344") || sParam.equals("345")) {
             // Reop List, or bad words list, or quiet list. god damn.
             if (serverType == ServerType.EUIRCD) {
@@ -110,6 +119,12 @@ public class ProcessListModes extends IRCProcessor {
             isItem = sParam.equals(parser.h005Info.get("LISTMODE"));
             tokenStart = 5;
             isCleverMode = true;
+        }
+
+        // Unknown mode.
+        if (mode == ' ') {
+            parser.callDebugInfo(IRCParser.DEBUG_LMQ, "Unknown mode line: " + Arrays.toString(token));
+            return;
         }
 
         final Queue<Character> listModeQueue = channel.getListModeQueue();
@@ -257,6 +272,8 @@ public class ProcessListModes extends IRCProcessor {
                     "386", "387", /* Channel Owner List (swiftirc ) */
                     "388", "389", /* Protected User List (swiftirc) */
                     "940", "941", /* Censored words list */
+                    "910", "911", /* INSPIRCD Channel Access List. */
+                    "954", "953", /* INSPIRCD exemptchanops List. */
                     "482", /* Permission Denied */
                     "__LISTMODE__" /* Sensible List Modes */};
     }
