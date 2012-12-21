@@ -281,7 +281,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      * @param uri The URI to connect to
      */
     public IRCParser(final MyInfo myDetails, final URI uri) {
-        super(fixURI(uri));
+        super(uri);
 
         out = new OutputQueue();
         if (myDetails != null) {
@@ -308,7 +308,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     public boolean compareURI(final URI uri) {
         // Get the old URI.
         final URI oldURI = getURI();
-        final URI newURI = fixURI(uri);
+        final URI newURI = uri;
 
         // Check that protocol, host and port are the same.
         // Anything else won't change the server we connect to just what we
@@ -320,30 +320,54 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     }
 
     /**
-     * Check that the given URI makes sense.
+     * From the given URI, get a URI to actually connect to.
+     * This function will check for DNS SRV records for the given URI and use
+     * those if found.
+     * If no SRV records exist, then fallback to using the URI as-is but with
+     * a default port specified if none is given.
      *
-     * @param uri Suggested URI.
-     * @return A "sensible" version of the given URI. (eg, with a default port)
+     * @param uri Requested URI.
+     * @return A connectable version of the given URI.
      */
-    private static URI fixURI(final URI checkURI) {
-        if (checkURI == null) { return null; }
-        // Starter URI
-        URI uri = checkURI;
+    private URI getConnectURI(final URI uri) {
+        if (uri == null) { return null; }
 
-        // Make changes if required.
+        final boolean isSSL = uri.getScheme().endsWith("s");
+        final int defaultPort = isSSL ? 6697 : 6667;
 
-        // Default port.
-        if (uri.getPort() == -1) {
-            try {
-                final int defaultPort = uri.getScheme().endsWith("s") ? 6697 : 6667;
-                uri = new URI(uri.getScheme(), uri.getUserInfo(), uri.getHost(), defaultPort, uri.getPath(), uri.getQuery(), uri.getFragment());
-            } catch (URISyntaxException ex) { /* Won't happen. */ }
+        // Default to what the URI has already..
+        int port = uri.getPort();
+        String host = uri.getHost();
+
+        // Now look for SRV records.
+        List<SRVRecord> recordList = new ArrayList<SRVRecord>();
+        if (isSSL) {
+            // There are a few possibilities for ssl...
+            final String[] protocols = {"_ircs._tcp.", "_irc._tls."};
+            for (final String protocol : protocols) {
+                recordList = SRVRecord.getRecords(protocol + host);
+                if (!recordList.isEmpty()) {
+                    break;
+                }
+            }
+        } else {
+            recordList = SRVRecord.getRecords("_irc._tcp." + host);
+        }
+        if (!recordList.isEmpty()) {
+            host = recordList.get(0).getHost();
+            port = recordList.get(0).getPort();
         }
 
-        // Other changes here...
+        // Fix the port if required.
+        if (port == -1) { port = defaultPort; }
 
-        // Return the sensible URI.
-        return uri;
+        // Return the URI to connect to based on the above.
+        try {
+            return new URI(uri.getScheme(), uri.getUserInfo(), host, port, uri.getPath(), uri.getQuery(), uri.getFragment());
+        } catch (URISyntaxException ex) {
+            // Shouldn't happen - but return the URI as-is if it does.
+            return uri;
+        }
     }
 
     /** {@inheritDoc} */
@@ -884,7 +908,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         callDebugInfo(DEBUG_SOCKET, "Connecting to " + getURI().getHost() + ":" + getURI().getPort());
 
         currentSocketState = SocketState.OPENING;
-        socket = findSocket(getURI(), getProxy());
+        socket = findSocket(getConnectURI(getURI()), getProxy());
 
         rawSocket = socket;
 
@@ -1944,12 +1968,8 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         sendString("LIST", searchTerms);
     }
 
-    /**
-     * Quit IRC.
-     * This method will wait for the server to close the socket.
-     *
-     * @param reason Reason for quitting.
-     */
+    /** {@inheritDoc} */
+    @Override
     public void quit(final String reason) {
         sendString("QUIT", reason);
     }
