@@ -126,12 +126,14 @@ public class SRVRecord implements Comparable<SRVRecord> {
             env.put("java.naming.provider.url", "dns:");
             final Attribute attr = new InitialDirContext(env).getAttributes(host, new String [] { "SRV" }).get("SRV");
 
-            final NamingEnumeration ne = attr.getAll();
-            while (ne.hasMore()) {
-                try {
-                    final SRVRecord record = new SRVRecord((String)ne.next());
-                    result.add(record);
-                } catch (final NamingException nex) { /* Ignore if invalid. */ }
+            if (attr != null) {
+                final NamingEnumeration ne = attr.getAll();
+                while (ne.hasMore()) {
+                    try {
+                        final SRVRecord record = new SRVRecord((String)ne.next());
+                        result.add(record);
+                    } catch (final NamingException nex) { /* Ignore if invalid. */ }
+                }
             }
         } catch (final NamingException nex) { /* Ignore errors. */ }
 
