@@ -335,7 +335,8 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         // Default port.
         if (uri.getPort() == -1) {
             try {
-                uri = new URI(uri.getScheme(), uri.getUserInfo(), uri.getHost(), 6667, uri.getPath(), uri.getQuery(), uri.getFragment());
+                final int defaultPort = uri.getScheme().endsWith("s") ? 6697 : 6667;
+                uri = new URI(uri.getScheme(), uri.getUserInfo(), uri.getHost(), defaultPort, uri.getPath(), uri.getQuery(), uri.getFragment());
             } catch (URISyntaxException ex) { /* Won't happen. */ }
         }
 
