@@ -57,6 +57,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -65,6 +66,10 @@ import java.util.Timer;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.InitialDirContext;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
@@ -281,7 +286,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      * @param uri The URI to connect to
      */
     public IRCParser(final MyInfo myDetails, final URI uri) {
-        super(fixURI(uri));
+        super(uri);
 
         out = new OutputQueue();
         if (myDetails != null) {
@@ -308,7 +313,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     public boolean compareURI(final URI uri) {
         // Get the old URI.
         final URI oldURI = getURI();
-        final URI newURI = fixURI(uri);
+        final URI newURI = uri;
 
         // Check that protocol, host and port are the same.
         // Anything else won't change the server we connect to just what we
@@ -319,31 +324,82 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
                 && newURI.getPort() == oldURI.getPort();
     }
 
+    private List<SRVRecord> getSRVRecords(final String host) {
+        final List<SRVRecord> result = new ArrayList<SRVRecord>();
+
+        try {
+            // Obsolete Collection. yeah yeah...
+            final Hashtable<String, String> env = new Hashtable<String, String>();
+            env.put("java.naming.factory.initial", "com.sun.jndi.dns.DnsContextFactory");
+            env.put("java.naming.provider.url", "dns:");
+            final Attribute attr = (new InitialDirContext(env)).getAttributes(host, new String [] { "SRV" }).get("SRV");
+
+            final NamingEnumeration ne = attr.getAll();
+            while (ne.hasMore()) {
+                try {
+                    final SRVRecord record = new SRVRecord((String)ne.next());
+                    result.add(record);
+                } catch (final NamingException nex) { /* Ignore if invalid. */ }
+            }
+        } catch (final NamingException nex) { /* Ignore errors. */ }
+
+        // Ideally we should be sorting this list so that it contains all
+        // the servers with the lowest priority randomly sorted first, then the
+        // next priority etc.
+        // However, in general, the DNS resolver will take care of the ordering
+        // for us, so we should already get it in a suitable order.
+        return result;
+    }
+
     /**
-     * Check that the given URI makes sense.
+     * From the given URI, get a URI to actually connect to.
+     * This function will check for DNS SRV records for the given URI and use
+     * those if found.
+     * If no SRV records exist, then fallback to using the URI as-is but with
+     * a default port specified if none is given.
      *
-     * @param uri Suggested URI.
-     * @return A "sensible" version of the given URI. (eg, with a default port)
+     * @param uri Requested URI.
+     * @return A connectable version of the given URI.
      */
-    private static URI fixURI(final URI checkURI) {
-        if (checkURI == null) { return null; }
-        // Starter URI
-        URI uri = checkURI;
+    private URI getConnectURI(final URI uri) {
+        if (uri == null) { return null; }
 
-        // Make changes if required.
+        final boolean isSSL = uri.getScheme().endsWith("s");
+        final int defaultPort = isSSL ? 6697 : 6667;
 
-        // Default port.
-        if (uri.getPort() == -1) {
-            try {
-                final int defaultPort = uri.getScheme().endsWith("s") ? 6697 : 6667;
-                uri = new URI(uri.getScheme(), uri.getUserInfo(), uri.getHost(), defaultPort, uri.getPath(), uri.getQuery(), uri.getFragment());
-            } catch (URISyntaxException ex) { /* Won't happen. */ }
+        // Default to what the URI has already..
+        int port = uri.getPort();
+        String host = uri.getHost();
+
+        // Now look for SRV records.
+        List<SRVRecord> recordList = new ArrayList<SRVRecord>();
+        if (isSSL) {
+            // There are a few possibilities for ssl...
+            final String[] protocols = {"_ircs._tcp.", "_irc._tls."};
+            for (final String protocol : protocols) {
+                recordList = getSRVRecords(protocol + host);
+                if (!recordList.isEmpty()) {
+                    break;
+                }
+            }
+        } else {
+            recordList = getSRVRecords("_irc._tcp." + host);
+        }
+        if (!recordList.isEmpty()) {
+            host = recordList.get(0).getHost();
+            port = recordList.get(0).getPort();
         }
 
-        // Other changes here...
+        // Fix the port if required.
+        if (port == -1) { port = defaultPort; }
 
-        // Return the sensible URI.
-        return uri;
+        // Return the URI to connect to based on the above.
+        try {
+            return new URI(uri.getScheme(), uri.getUserInfo(), host, port, uri.getPath(), uri.getQuery(), uri.getFragment());
+        } catch (URISyntaxException ex) {
+            // Shouldn't happen - but return the URI as-is if it does.
+            return uri;
+        }
     }
 
     /** {@inheritDoc} */
@@ -884,7 +940,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         callDebugInfo(DEBUG_SOCKET, "Connecting to " + getURI().getHost() + ":" + getURI().getPort());
 
         currentSocketState = SocketState.OPENING;
-        socket = findSocket(getURI(), getProxy());
+        socket = findSocket(getConnectURI(getURI()), getProxy());
 
         rawSocket = socket;
 
@@ -1944,12 +2000,8 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         sendString("LIST", searchTerms);
     }
 
-    /**
-     * Quit IRC.
-     * This method will wait for the server to close the socket.
-     *
-     * @param reason Reason for quitting.
-     */
+    /** {@inheritDoc} */
+    @Override
     public void quit(final String reason) {
         sendString("QUIT", reason);
     }
