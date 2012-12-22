@@ -340,23 +340,25 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         int port = uri.getPort();
         String host = uri.getHost();
 
-        // Now look for SRV records.
-        List<SRVRecord> recordList = new ArrayList<SRVRecord>();
-        if (isSSL) {
-            // There are a few possibilities for ssl...
-            final String[] protocols = {"_ircs._tcp.", "_irc._tls."};
-            for (final String protocol : protocols) {
-                recordList = SRVRecord.getRecords(protocol + host);
-                if (!recordList.isEmpty()) {
-                    break;
+        // Look for SRV records if no port is specified.
+        if (port == -1) {
+            List<SRVRecord> recordList = new ArrayList<SRVRecord>();
+            if (isSSL) {
+                // There are a few possibilities for ssl...
+                final String[] protocols = {"_ircs._tcp.", "_irc._tls."};
+                for (final String protocol : protocols) {
+                    recordList = SRVRecord.getRecords(protocol + host);
+                    if (!recordList.isEmpty()) {
+                        break;
+                    }
                 }
+            } else {
+                recordList = SRVRecord.getRecords("_irc._tcp." + host);
             }
-        } else {
-            recordList = SRVRecord.getRecords("_irc._tcp." + host);
-        }
-        if (!recordList.isEmpty()) {
-            host = recordList.get(0).getHost();
-            port = recordList.get(0).getPort();
+            if (!recordList.isEmpty()) {
+                host = recordList.get(0).getHost();
+                port = recordList.get(0).getPort();
+            }
         }
 
         // Fix the port if required.
