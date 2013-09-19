@@ -81,17 +81,15 @@ public class Logging {
     private Object log;
 
     /** Create a new Logging. */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private Logging() {
-        boolean classExists = false;
         try {
-            Class factory = null;
+            Class<?> factory;
             // Check for classes
             Class.forName("org.apache.commons.logging.Log");
             factory = Class.forName("org.apache.commons.logging.LogFactory");
 
-            classExists = factory != null;
-            if (classExists) {
+            if (factory != null) {
                 final Method getLog = factory.getMethod("getLog", new Class[]{Class.class});
                 log = getLog.invoke(null, this.getClass());
             }
@@ -101,7 +99,7 @@ public class Logging {
         } catch (InvocationTargetException ite) {
         }
 
-        isAvailable = classExists && log != null;
+        isAvailable = log != null;
     }
 
     /**
@@ -126,7 +124,7 @@ public class Logging {
     public boolean levelEnabled(final LogLevel level) {
         if (isAvailable) {
             try {
-                final Method check = log.getClass().getMethod(level.getCheckMethodName(), new Class[0]);
+                final Method check = log.getClass().getMethod(level.getCheckMethodName());
                 return (Boolean) check.invoke(log, new Object[0]);
             } catch (NoSuchMethodException nsme) {
             } catch (IllegalAccessException iae) {
@@ -160,10 +158,10 @@ public class Logging {
         }
         try {
             if (throwable == null) {
-                final Method method = log.getClass().getMethod(level.getMethodName(), new Class[]{String.class});
+                final Method method = log.getClass().getMethod(level.getMethodName(), String.class);
                 method.invoke(log, new Object[]{message});
             } else {
-                final Method method = log.getClass().getMethod(level.getMethodName(), new Class[]{String.class, Throwable.class});
+                final Method method = log.getClass().getMethod(level.getMethodName(), String.class, Throwable.class);
                 method.invoke(log, new Object[]{message, throwable});
             }
         } catch (NoSuchMethodException nsme) {

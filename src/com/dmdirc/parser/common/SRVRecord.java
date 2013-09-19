@@ -127,7 +127,7 @@ public class SRVRecord implements Comparable<SRVRecord> {
             final Attribute attr = new InitialDirContext(env).getAttributes(host, new String [] { "SRV" }).get("SRV");
 
             if (attr != null) {
-                final NamingEnumeration ne = attr.getAll();
+                final NamingEnumeration<?> ne = attr.getAll();
                 while (ne.hasMore()) {
                     try {
                         final SRVRecord record = new SRVRecord((String)ne.next());

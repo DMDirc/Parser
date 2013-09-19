@@ -341,7 +341,7 @@ public class CallbackManager {
      * @param callback The callback to retrieve
      * @return A proxy object which can be used to call the specified callback
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public <T extends CallbackInterface> T getCallback(final Class<T> callback) {
         return (T) Proxy.newProxyInstance(getClass().getClassLoader(),
                 new Class[]{ callback }, new CallbackHandler(callback));
