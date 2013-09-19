@@ -167,7 +167,7 @@ public class IRCChannelInfo implements ChannelInfo {
                 if (!isOpped && serverType.isOpOnly(cTemp)) {
                     // IRCD doesn't allow non-ops to ask for these modes.
                     continue;
-                } else if (serverType == serverType.STARCHAT && cTemp == 'H') {
+                } else if (serverType == ServerType.STARCHAT && cTemp == 'H') {
                     // IRCD Denies the mode exists
                     continue;
                 }
@@ -280,7 +280,7 @@ public class IRCChannelInfo implements ChannelInfo {
      * Empty the channel (Remove all known channelclients).
      */
     protected void emptyChannel() {
-        IRCClientInfo cTemp = null;
+        IRCClientInfo cTemp;
         synchronized (clients) {
             for (IRCChannelClientInfo client : clients.values()) {
                 cTemp = client.getClient();
@@ -463,8 +463,8 @@ public class IRCChannelInfo implements ChannelInfo {
     public String getModes() {
         final StringBuilder sModes = new StringBuilder("+");
         final StringBuilder sModeParams = new StringBuilder();
-        String sTemp = "";
-        long nTemp = 0;
+        String sTemp;
+        long nTemp;
         final long nChanModes = this.getMode();
         for (char cTemp : parser.chanModesBool.keySet()) {
             nTemp = parser.chanModesBool.get(cTemp);
@@ -613,8 +613,8 @@ public class IRCChannelInfo implements ChannelInfo {
     @Override
     public void alterMode(final boolean add, final Character mode, final String parameter) {
         int modecount = 1;
-        int modeint = 0;
-        String modestr = "";
+        int modeint;
+        String modestr;
         if (parser.h005Info.containsKey("MODES")) {
             try {
                 modecount = Integer.parseInt(parser.h005Info.get("MODES"));
