@@ -61,6 +61,8 @@ public interface Parser {
      *
      * Disconnect from server.  This method will wait for the server to
      * close the socket.
+     *
+     * @param message Reason for quitting.
      */
     void quit(String message);
 

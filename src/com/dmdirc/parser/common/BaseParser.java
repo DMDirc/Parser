@@ -67,7 +67,7 @@ public abstract class BaseParser extends ThreadedParser {
     private final CallbackManager callbackManager;
 
     /** A map for callers to use to store things for no sane reason. */
-    private final Map<Object, Object> map = new HashMap<Object, Object>();
+    private final Map<Object, Object> map = new HashMap<>();
 
     /**
      * Creates a new base parser for the specified URI.
@@ -77,8 +77,7 @@ public abstract class BaseParser extends ThreadedParser {
     public BaseParser(final URI uri) {
         this.uri = uri;
 
-        final Map<Class<?>, Class<?>> implementations
-                = new HashMap<Class<?>, Class<?>>();
+        final Map<Class<?>, Class<?>> implementations = new HashMap<>();
 
         for (Class<?> child : this.getClass().getAnnotation(ChildImplementations.class).value()) {
             for (Class<?> iface : child.getInterfaces()) {
