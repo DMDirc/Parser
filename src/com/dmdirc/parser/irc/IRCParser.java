@@ -102,6 +102,14 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     static final byte MODE_SET = 2;
     /** Byte used to show that a non-boolean mode is not a list, and requires a parameter to unset (k). */
     static final byte MODE_UNSET = 4;
+
+    /**
+     * Default channel prefixes if none are specified by the IRCd.
+     *
+     * <p>These are the RFC 2811 specified prefixes: '#', '&amp;', '!' and '+'.
+     */
+    private static final String DEFAULT_CHAN_PREFIX = "#&!+";
+
     /**
      * This is what the user wants settings to be.
      * Nickname here is *not* always accurate.<br><br>
@@ -186,7 +194,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /** Should the lastline (where given) be appended to the "data" part of any onErrorInfo call? */
     private boolean addLastLine = false;
     /** Channel Prefixes (ie # + etc). */
-    private final List<Character> chanPrefix = Collections.synchronizedList(new LinkedList<Character>());
+    private String chanPrefix = DEFAULT_CHAN_PREFIX;
     /** Hashtable storing all known clients based on nickname (in lowercase). */
     private final Map<String, IRCClientInfo> clientList = new HashMap<String, IRCClientInfo>();
     /** Hashtable storing all known channels based on chanel name (inc prefix - in lowercase). */
@@ -705,7 +713,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         chanModesOther.clear();
         chanModesBool.clear();
         userModes.clear();
-        chanPrefix.clear();
+        chanPrefix = DEFAULT_CHAN_PREFIX;
         // Clear output queue.
         if (out != null) {
             out.clearQueue();
@@ -1591,19 +1599,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /** {@inheritDoc} */
     @Override
     public String getChannelPrefixes() {
-        if (chanPrefix.isEmpty()) {
-            return "#&";
-        }
-
-        final StringBuilder builder = new StringBuilder(chanPrefix.size());
-
-        synchronized (chanPrefix) {
-            for (Character prefix : chanPrefix) {
-                builder.append(prefix);
-            }
-        }
-
-        return builder.toString();
+        return chanPrefix;
     }
 
     /**
@@ -1670,25 +1666,10 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      * Process CHANTYPES from 005.
      */
     protected void parseChanPrefix() {
-        final String sDefaultModes = "#&";
-        String modeStr;
-        if (h005Info.containsKey("CHANTYPES")) {
-            modeStr = h005Info.get("CHANTYPES");
+        if (h005Info.containsKey("CHANTYPES") && !h005Info.get("CHANTYPES").isEmpty()) {
+            chanPrefix = h005Info.get("CHANTYPES");
         } else {
-            modeStr = sDefaultModes;
-            h005Info.put("CHANTYPES", sDefaultModes);
-        }
-
-        // resetState
-        chanPrefix.clear();
-
-        // Boolean Mode
-        for (int i = 0; i < modeStr.length(); ++i) {
-            final Character cMode = modeStr.charAt(i);
-            callDebugInfo(DEBUG_INFO, "Found Chan Prefix: %c", cMode);
-            if (!chanPrefix.contains(cMode)) {
-                chanPrefix.add(cMode);
-            }
+            h005Info.put("CHANTYPES", DEFAULT_CHAN_PREFIX);
         }
     }
 
@@ -2028,16 +2009,10 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         if (getChannel(name) != null) {
             return true;
         }
-        // Check if we know of any valid chan prefixes
-        if (chanPrefix.isEmpty()) {
-            // We don't. Lets check against RFC2811-Specified channel types
-            final char first = name.charAt(0);
-            return first == '#' || first == '&' || first == '!' || first == '+';
-        }
         // Otherwise return true if:
         // Channel equals "0"
         // first character of the channel name is a valid channel prefix.
-        return chanPrefix.contains(name.charAt(0)) || "0".equals(name);
+        return chanPrefix.indexOf(name.charAt(0)) >= 0 || "0".equals(name);
     }
 
     /** {@inheritDoc} */
