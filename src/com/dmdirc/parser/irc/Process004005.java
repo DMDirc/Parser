@@ -52,111 +52,19 @@ public class Process004005 extends IRCProcessor {
      */
     @Override
     public void process(final String sParam, final String[] token) {
-        if ("002".equals(sParam)) {
-            final Pattern pattern = Pattern.compile("running(?: version)? (.*)$");
-            final Matcher matcher = pattern.matcher(parser.getLastLine());
-            if (matcher.find()) {
-                parser.h005Info.put("002IRCD", matcher.group(1));
-            }
-        } else if ("003".equals(sParam)) {
-            parser.h005Info.put("003IRCD", token[token.length - 1]);
-        } else if ("004".equals(sParam)) {
-            // 004
-            final boolean multiParam = token.length > 4;
-            int i = multiParam ? 4 : 1;
-            final String[] bits = multiParam ? token : token[3].split(" ");
-
-            parser.h005Info.put("004IRCD", bits[i++]);
-
-            if (bits[i].matches("^\\d+$")) {
-                // some IRCDs put a timestamp where the usermodes should be
-                // (issues 4140. 4181 and 4183) so check to see if this is
-                // numeric only, and if so, skip it.
-                i++;
-            }
-
-            parser.h005Info.put("USERMODES", bits[i++]);
-            parser.h005Info.put("USERCHANMODES", bits[i++]);
-
-            if (bits.length > i) {
-                // INSPIRCD includes an extra param
-                parser.h005Info.put("USERCHANPARAMMODES", bits[i++]);
-            }
-
-            parser.parseUserModes();
-        } else if ("005".equals(sParam)) {
-            for (int i = 3; i < token.length; i++) {
-                final String[] bits = token[i].split("=", 2);
-
-                if (bits[0].isEmpty()) {
-                    continue;
-                }
-
-                final boolean isNegation = bits[0].charAt(0) == '-';
-                final String key = (isNegation ? bits[0].substring(1) : bits[0]).toUpperCase();
-                final String value = bits.length == 2 ? bits[1] : "";
-
-                callDebugInfo(IRCParser.DEBUG_INFO, "%s => %s", key, value);
-
-                if (isNegation) {
-                    parser.h005Info.remove(key);
-                } else {
-                    parser.h005Info.put(key, value);
-                }
-
-                if ("NETWORK".equals(key) && !isNegation) {
-                    parser.networkName = value;
-                    callGotNetwork();
-                } else if ("CASEMAPPING".equals(key) && !isNegation) {
-                    IRCEncoding encoding = IRCEncoding.RFC1459;
-
-                    try {
-                        encoding = IRCEncoding.valueOf(value.toUpperCase().replace('-', '_'));
-                    } catch (IllegalArgumentException ex) {
-                        parser.callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Unknown casemapping: '" + value + "' - assuming rfc1459", parser.getLastLine()));
-                    }
-
-                    final boolean encodingChanged = parser.getStringConverter().getEncoding() != encoding;
-                    parser.setEncoding(encoding);
-
-                    if (encodingChanged && parser.knownClients() == 1) {
-                        // This means that the casemapping is not rfc1459
-                        // We have only added ourselves so far (from 001)
-                        // We can fix the hashtable easily.
-                        parser.removeClient(parser.getLocalClient());
-                        parser.addClient(parser.getLocalClient());
-                    }
-                } else if ("CHANTYPES".equals(key)) {
-                    parser.parseChanPrefix();
-                } else if ("PREFIX".equals(key)) {
-                    parser.parsePrefixModes();
-                } else if ("CHANMODES".equals(key)) {
-                    parser.parseChanModes();
-                } else if ("NAMESX".equals(key) && parser.getCapabilityState("multi-prefix") != CapabilityState.ENABLED) {
-                    parser.sendString("PROTOCTL " + key);
-                } else if ("UHNAMES".equals(key) && parser.getCapabilityState("userhost-in-names") != CapabilityState.ENABLED) {
-                    parser.sendString("PROTOCTL " + key);
-                } else if ("LISTMODE".equals(key)) {
-                    // Support for potential future decent mode listing in the protocol
-                    //
-                    // See my proposal: http://shanemcc.co.uk/irc/#listmode
-                    // Add listmode handler
-                    String[] handles = new String[2];
-                    handles[0] = value; // List mode item
-                    final String endValue = Integer.toString(Integer.parseInt(value) + 1);
-                    parser.h005Info.put("LISTMODEEND", endValue);
-                    handles[1] = endValue; // List mode end
-                    // Add listmode handlers
-                    try {
-                        parser.getProcessingManager().addProcessor(handles, parser.getProcessingManager().getProcessor("__LISTMODE__"));
-                    } catch (ProcessorNotFoundException e) {
-                    }
-                } else if ("TIMESTAMPEDIRC".equals(key) && parser.getCapabilityState("dfbnc.com/tsirc") != CapabilityState.ENABLED) {
-                    // Let the server know we also understand timestamped irc.
-                    // See my other proposal: http://shanemcc.co.uk/irc/#timestamping
-                    parser.sendString("TIMESTAMPEDIRC ON", QueuePriority.HIGH);
-                }
-            }
+        switch (sParam) {
+            case "002":
+                process002();
+                break;
+            case "003":
+                process003(token);
+                break;
+            case "004":
+                process004(token);
+                break;
+            case "005":
+                process005(token);
+                break;
         }
     }
 
@@ -174,14 +82,241 @@ public class Process004005 extends IRCProcessor {
      * Callback to all objects implementing the GotNetwork Callback.
      * This takes no params of its own, but works them out itself.
      *
-     * @see IGotNetwork
-     * @return true if a method was called, false otherwise
+     * @see NetworkDetectedListener
      */
-    protected boolean callGotNetwork() {
+    private void callGotNetwork() {
         final String networkName = parser.networkName;
         final String ircdVersion = parser.getServerSoftware();
         final String ircdType = parser.getServerSoftwareType();
 
-        return getCallbackManager().getCallbackType(NetworkDetectedListener.class).call(networkName, ircdVersion, ircdType);
+        getCallbackManager().getCallbackType(NetworkDetectedListener.class)
+                .call(networkName, ircdVersion, ircdType);
+    }
+
+    /**
+     * Processes a 002 line.
+     */
+    private void process002() {
+        final Pattern pattern = Pattern.compile("running(?: version)? (.*)$");
+        final Matcher matcher = pattern.matcher(parser.getLastLine());
+        if (matcher.find()) {
+            parser.h005Info.put("002IRCD", matcher.group(1));
+        }
+    }
+
+    /**
+     * Processes a 003 line.
+     *
+     * @param token The tokenised line.
+     */
+    private void process003(final String[] token) {
+        parser.h005Info.put("003IRCD", token[token.length - 1]);
+    }
+
+    /**
+     * Processes a 004 line.
+     *
+     * @param token The tokenised line.
+     */
+    private void process004(final String[] token) {
+        final boolean multiParam = token.length > 4;
+        int i = multiParam ? 4 : 1;
+        final String[] bits = multiParam ? token : token[3].split(" ");
+
+        parser.h005Info.put("004IRCD", bits[i++]);
+
+        if (bits[i].matches("^\\d+$")) {
+            // some IRCDs put a timestamp where the usermodes should be
+            // (issues 4140. 4181 and 4183) so check to see if this is
+            // numeric only, and if so, skip it.
+            i++;
+        }
+
+        parser.h005Info.put("USERMODES", bits[i++]);
+        parser.h005Info.put("USERCHANMODES", bits[i++]);
+
+        if (bits.length > i) {
+            // INSPIRCD includes an extra param
+            parser.h005Info.put("USERCHANPARAMMODES", bits[i++]);
+        }
+
+        parser.parseUserModes();
+    }
+
+    /**
+     * Processes a 005 line.
+     *
+     * @param token The tokenised line.
+     */
+    private void process005(final String[] token) {
+        for (int i = 3; i < token.length; i++) {
+            final String[] bits = token[i].split("=", 2);
+
+            if (bits[0].isEmpty()) {
+                continue;
+            }
+
+            final boolean isNegation = bits[0].charAt(0) == '-';
+            final String key = (isNegation ? bits[0].substring(1) : bits[0]).toUpperCase();
+            final String value = bits.length == 2 ? bits[1] : "";
+
+            callDebugInfo(IRCParser.DEBUG_INFO, "%s => %s", key, value);
+
+            if (isNegation) {
+                parser.h005Info.remove(key);
+            } else {
+                parser.h005Info.put(key, value);
+            }
+
+            switch (key) {
+                case "NETWORK":
+                    processNetworkToken(isNegation, value);
+                    break;
+                case "CASEMAPPING":
+                    processCaseMappingToken(isNegation, value);
+                    break;
+                case "CHANTYPES":
+                    processChanTypesToken();
+                    break;
+                case "PREFIX":
+                    processPrefixToken();
+                    break;
+                case "CHANMODES":
+                    processChanModesToken();
+                    break;
+                case "NAMESX":
+                    processNamesxToken(key);
+                    break;
+                case "UHNAMES":
+                    processUhnamesToken(key);
+                    break;
+                case "LISTMODE":
+                    processListmodeToken(value);
+                    break;
+                case "TIMESTAMPEDIRC":
+                    processTimestampedIrcToken();
+                    break;
+            }
+        }
+    }
+
+    /**
+     * Processes a 'NETWORK' token received in a 005.
+     *
+     * @param isNegation Whether the token was negated or not.
+     * @param value The value of the token.
+     */
+    private void processNetworkToken(final boolean isNegation, final String value) {
+        if (!isNegation) {
+            parser.networkName = value;
+            callGotNetwork();
+        }
+    }
+
+    /**
+     * Processes a 'CASEMAPPING' token received in a 005.
+     *
+     * @param isNegation Whether the token was negated or not.
+     * @param value The value of the token.
+     */
+    private void processCaseMappingToken(final boolean isNegation, final String value) {
+        if (!isNegation) {
+            IRCEncoding encoding = IRCEncoding.RFC1459;
+
+            try {
+                encoding = IRCEncoding.valueOf(value.toUpperCase().replace('-', '_'));
+            } catch (IllegalArgumentException ex) {
+                parser.callErrorInfo(new ParserError(ParserError.ERROR_WARNING,
+                        "Unknown casemapping: '" + value + "' - assuming rfc1459",
+                        parser.getLastLine()));
+            }
+
+            final boolean encodingChanged = parser.getStringConverter().getEncoding() != encoding;
+            parser.setEncoding(encoding);
+
+            if (encodingChanged && parser.knownClients() == 1) {
+                // This means that the casemapping is not rfc1459
+                // We have only added ourselves so far (from 001)
+                // We can fix the hashtable easily.
+                parser.removeClient(parser.getLocalClient());
+                parser.addClient(parser.getLocalClient());
+            }
+        }
+    }
+
+    /**
+     * Processes a 'CHANTYPES' token received in a 005.
+     */
+    private void processChanTypesToken() {
+        parser.parseChanPrefix();
+    }
+
+    /**
+     * Processes a 'PREFIX' token received in a 005.
+     */
+    private void processPrefixToken() {
+        parser.parsePrefixModes();
+    }
+
+    /**
+     * Processes a 'CHANMODES' token received in a 005.
+     */
+    private void processChanModesToken() {
+        parser.parseChanModes();
+    }
+
+    /**
+     * Processes a 'NAMEX' token received in a 005.
+     *
+     * @param key The NAMEX token that was received.
+     */
+    private void processNamesxToken(final String key) {
+        if (parser.getCapabilityState("multi-prefix") != CapabilityState.ENABLED) {
+            parser.sendString("PROTOCTL " + key);
+        }
+    }
+
+    /**
+     * Processes a 'UHNAMES' token received in a 005.
+     *
+     * @param key The UHNAMES token that was received.
+     */
+    private void processUhnamesToken(final String key) {
+        if (parser.getCapabilityState("userhost-in-names") != CapabilityState.ENABLED) {
+            parser.sendString("PROTOCTL " + key);
+        }
+    }
+
+    /**
+     * Processes a 'LISTMODE' token received in a 005. The LISTMODE token
+     * indicates support for a new way of describing list modes (such as +b).
+     * See the proposal at {@link http://shanemcc.co.uk/irc/#listmode}.
+     *
+     * @param value The value of the token.
+     */
+    private void processListmodeToken(final String value) {
+        String[] handles = new String[2];
+        handles[0] = value; // List mode item
+        final String endValue = Integer.toString(Integer.parseInt(value) + 1);
+        parser.h005Info.put("LISTMODEEND", endValue);
+        handles[1] = endValue; // List mode end
+        try {
+            parser.getProcessingManager().addProcessor(handles,
+                    parser.getProcessingManager().getProcessor("__LISTMODE__"));
+        } catch (ProcessorNotFoundException e) {
+        }
+    }
+
+    /**
+     * Processes a 'TIMESTAMPEDIRC' token received in a 005. The TIMESTAMPEDIRC
+     * protocol allows servers (or proxies) to send historical events with a
+     * corresponding timestamp, allowing the client to catch up on events that
+     * happened prior to them connecting. See the proposal at
+     * {@link http://shanemcc.co.uk/irc/#timestamping}.
+     */
+    private void processTimestampedIrcToken() {
+        if (parser.getCapabilityState("dfbnc.com/tsirc") != CapabilityState.ENABLED) {
+            parser.sendString("TIMESTAMPEDIRC ON", QueuePriority.HIGH);
+        }
     }
 }
