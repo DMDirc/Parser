@@ -123,21 +123,27 @@ public class Process004005 extends IRCProcessor {
         int i = multiParam ? 4 : 1;
         final String[] bits = multiParam ? token : token[3].split(" ");
 
-        parser.h005Info.put("004IRCD", bits[i++]);
+        if (bits.length > i) {
+            parser.h005Info.put("004IRCD", bits[i]);
+            i++;
+        }
 
-        if (bits[i].matches("^\\d+$")) {
+        if (bits.length > i && bits[i].matches("^\\d+$")) {
             // some IRCDs put a timestamp where the usermodes should be
             // (issues 4140. 4181 and 4183) so check to see if this is
             // numeric only, and if so, skip it.
             i++;
         }
 
-        parser.h005Info.put("USERMODES", bits[i++]);
-        parser.h005Info.put("USERCHANMODES", bits[i++]);
+        if (bits.length > i + 1) {
+            parser.h005Info.put("USERMODES", bits[i]);
+            parser.h005Info.put("USERCHANMODES", bits[i + 1]);
+            i += 2;
+        }
 
         if (bits.length > i) {
             // INSPIRCD includes an extra param
-            parser.h005Info.put("USERCHANPARAMMODES", bits[i++]);
+            parser.h005Info.put("USERCHANPARAMMODES", bits[i]);
         }
 
         parser.parseUserModes();
