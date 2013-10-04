@@ -156,16 +156,16 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /** Connect timeout. */
     private int connectTimeout = 5000;
     /** Hashtable storing known prefix modes (ohv). */
-    final Map<Character, Long> prefixModes = new HashMap<Character, Long>();
+    final Map<Character, Long> prefixModes = new HashMap<>();
     /**
      * Hashtable maping known prefix modes (ohv) to prefixes (@%+) - Both ways.
      * Prefix map contains 2 pairs for each mode. (eg @ => o and o => @)
      */
-    final Map<Character, Character> prefixMap = new HashMap<Character, Character>();
+    final Map<Character, Character> prefixMap = new HashMap<>();
     /** Integer representing the next avaliable integer value of a prefix mode. */
     long nextKeyPrefix = 1;
     /** Hashtable storing known user modes (owxis etc). */
-    final Map<Character, Long> userModes = new HashMap<Character, Long>();
+    final Map<Character, Long> userModes = new HashMap<>();
     /** Integer representing the next avaliable integer value of a User mode. */
     long nNextKeyUser = 1;
     /**
@@ -176,7 +176,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      * <br>
      * Channel modes discovered but not listed in 005 are stored as boolean modes automatically (and a ERROR_WARNING Error is called)
      */
-    final Map<Character, Long> chanModesBool = new HashMap<Character, Long>();
+    final Map<Character, Long> chanModesBool = new HashMap<>();
     /** Integer representing the next avaliable integer value of a Boolean mode. */
     long nextKeyCMBool = 1;
     /**
@@ -188,7 +188,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      * see MODE_SET<br>
      * see MODE_UNSET<br>
      */
-    final Map<Character, Byte> chanModesOther = new HashMap<Character, Byte>();
+    final Map<Character, Byte> chanModesOther = new HashMap<>();
     /** The last line of input received from the server */
     private ReadLine lastLine = null;
     /** Should the lastline (where given) be appended to the "data" part of any onErrorInfo call? */
@@ -196,13 +196,13 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /** Channel Prefixes (ie # + etc). */
     private String chanPrefix = DEFAULT_CHAN_PREFIX;
     /** Hashtable storing all known clients based on nickname (in lowercase). */
-    private final Map<String, IRCClientInfo> clientList = new HashMap<String, IRCClientInfo>();
+    private final Map<String, IRCClientInfo> clientList = new HashMap<>();
     /** Hashtable storing all known channels based on chanel name (inc prefix - in lowercase). */
-    private final Map<String, IRCChannelInfo> channelList = new HashMap<String, IRCChannelInfo>();
+    private final Map<String, IRCChannelInfo> channelList = new HashMap<>();
     /** Reference to the ClientInfo object that references ourself. */
     private IRCClientInfo myself = new IRCClientInfo(this, "myself").setFake(true);
     /** Hashtable storing all information gathered from 005. */
-    final Map<String, String> h005Info = new HashMap<String, String>();
+    final Map<String, String> h005Info = new HashMap<>();
     /** difference in ms between our time and the servers time (used for timestampedIRC). */
     long tsdiff;
     /** Reference to the Processing Manager. */
@@ -252,9 +252,9 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /** The KeyManagers used for client certificates for SSL sockets. */
     private KeyManager[] myKeyManagers;
     /** This is list containing 001 - 005 inclusive. */
-    private final List<String> serverInformationLines = new LinkedList<String>();
+    private final List<String> serverInformationLines = new LinkedList<>();
     /** Map of capabilities and their state. */
-    private final Map<String, CapabilityState> capabilities = new HashMap<String, CapabilityState>();
+    private final Map<String, CapabilityState> capabilities = new HashMap<>();
 
     /**
      * Default constructor, ServerInfo and MyInfo need to be added separately (using IRC.me and IRC.server).
@@ -350,7 +350,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
 
         // Look for SRV records if no port is specified.
         if (port == -1) {
-            List<SRVRecord> recordList = new ArrayList<SRVRecord>();
+            List<SRVRecord> recordList = new ArrayList<>();
             if (isSSL) {
                 // There are a few possibilities for ssl...
                 final String[] protocols = {"_ircs._tcp.", "_irc._tls."};
@@ -414,7 +414,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      * @return A corresponding collection of join request objects
      */
     protected Collection<? extends ChannelJoinRequest> extractChannels(final String channels) {
-        final List<ChannelJoinRequest> res = new ArrayList<ChannelJoinRequest>();
+        final List<ChannelJoinRequest> res = new ArrayList<>();
 
         for (String channel : channels.split(",")) {
             final String[] parts = channel.split(" ", 2);
@@ -528,7 +528,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      * @return a reference to trustAllCerts
      */
     public TrustManager[] getDefaultTrustManager() {
-        return trustAllCerts;
+        return Arrays.copyOf(trustAllCerts, trustAllCerts.length);
     }
 
     /**
@@ -537,19 +537,19 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      * @return a reference to myTrustManager;
      */
     public TrustManager[] getTrustManager() {
-        return myTrustManager;
+        return Arrays.copyOf(myTrustManager, myTrustManager.length);
     }
 
     /** {@inheritDoc} */
     @Override
     public void setTrustManagers(final TrustManager[] managers) {
-        myTrustManager = managers;
+        myTrustManager = managers == null ? null : Arrays.copyOf(managers, managers.length);
     }
 
     /** {@inheritDoc} */
     @Override
     public void setKeyManagers(final KeyManager[] managers) {
-        myKeyManagers = managers;
+        myKeyManagers = managers == null ? null : Arrays.copyOf(managers, managers.length);
     }
 
     //---------------------------------------------------------------------------
@@ -773,7 +773,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
             throw new IOException("Server port (" + target.getPort() + ") is invalid.");
         }
 
-        Socket mySocket = null;
+        Socket mySocket;
         if (proxy == null) {
             callDebugInfo(DEBUG_SOCKET, "Not using Proxy");
             mySocket = new Socket();
@@ -1078,14 +1078,13 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
 
     /**
      * Get the trailing parameter for a line.
-     * The parameter is everything after the first occurance of " :" ot the last token in the line after a space.
+     * The parameter is everything after the first occurrence of " :" to the last token in the line after a space.
      *
      * @param line Line to get parameter for
      * @return Parameter of the line
      */
     public static String getParam(final String line) {
-        String[] params = null;
-        params = line.split(" :", 2);
+        String[] params = line.split(" :", 2);
         return params[params.length - 1];
     }
 
@@ -1098,7 +1097,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      */
     public static String[] tokeniseLine(final String line) {
         if (line == null) {
-            return new String[]{""}; // Return empty string[]
+            return new String[]{""};
         }
 
         final int lastarg = line.indexOf(" :");
@@ -1219,7 +1218,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
             if (channel != null) {
                 // This makes sure we don't add the same item to the LMQ twice,
                 // even if its requested twice, as the ircd will only reply once
-                final Deque<Character> foundModes = new LinkedList<Character>();
+                final Deque<Character> foundModes = new LinkedList<>();
                 final Queue<Character> listModeQueue = channel.getListModeQueue();
                 for (int i = 0; i < newLine[2].length(); ++i) {
                     final Character mode = newLine[2].charAt(i);
@@ -1256,7 +1255,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     @Override
     public List<String> getServerInformationLines() {
         synchronized (serverInformationLines) {
-            return new LinkedList<String>(serverInformationLines);
+            return new LinkedList<>(serverInformationLines);
         }
     }
 
@@ -1425,6 +1424,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /**
      * Check the state of the requested capability.
      *
+     * @param capability The capability to check the state of.
      * @return State of the requested capability.
      */
     public CapabilityState getCapabilityState(final String capability) {
@@ -1469,7 +1469,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      */
     public Map<String, CapabilityState> getCapabilities() {
         synchronized (capabilities) {
-            return new HashMap<String, CapabilityState>(capabilities);
+            return new HashMap<>(capabilities);
         }
     }
 
@@ -1478,7 +1478,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      */
     public void parseChanModes() {
         final StringBuilder sDefaultModes = new StringBuilder("b,k,l,");
-        String[] bits = null;
+        String[] bits;
         String modeStr;
         if (h005Info.containsKey("USERCHANMODES")) {
             if (getServerType() == ServerType.DANCER) {
@@ -1571,7 +1571,8 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         final char[] modes = new char[chanModesBool.size()];
         int i = 0;
         for (char mode : chanModesBool.keySet()) {
-            modes[i++] = mode;
+            modes[i] = mode;
+            i++;
         }
         // Alphabetically sort the array
         Arrays.sort(modes);
@@ -1616,7 +1617,8 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         for (char cTemp : chanModesOther.keySet()) {
             nTemp = chanModesOther.get(cTemp);
             if (nTemp == value) {
-                modes[i++] = cTemp;
+                modes[i] = cTemp;
+                i++;
             }
         }
         // Alphabetically sort the array
@@ -1726,7 +1728,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     public void joinChannels(final ChannelJoinRequest... channels) {
         // We store a map from key->channels to allow intelligent joining of
         // channels using as few JOIN commands as needed.
-        final Map<String, StringBuffer> joinMap = new HashMap<String, StringBuffer>();
+        final Map<String, StringBuffer> joinMap = new HashMap<>();
 
         for (ChannelJoinRequest channel : channels) {
             // Make sure we have a list to put stuff in.
@@ -2033,7 +2035,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      * @return 005Info hashtable.
      */
     public Map<String, String> get005() {
-        return h005Info;
+        return Collections.unmodifiableMap(h005Info);
     }
 
     /**
