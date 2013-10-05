@@ -679,9 +679,6 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
 
         post005 = true;
 
-        if (!h005Info.containsKey("CHANTYPES")) {
-            parseChanPrefix();
-        }
         if (!h005Info.containsKey("PREFIX")) {
             parsePrefixModes();
         }
@@ -1665,14 +1662,19 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     }
 
     /**
-     * Process CHANTYPES from 005.
+     * Resets the channel prefix property to the default, RFC specified value.
      */
-    protected void parseChanPrefix() {
-        if (h005Info.containsKey("CHANTYPES") && !h005Info.get("CHANTYPES").isEmpty()) {
-            chanPrefix = h005Info.get("CHANTYPES");
-        } else {
-            h005Info.put("CHANTYPES", DEFAULT_CHAN_PREFIX);
-        }
+    protected void resetChanPrefix() {
+        chanPrefix = DEFAULT_CHAN_PREFIX;
+    }
+
+    /**
+     * Sets the set of possible channel prefixes to those in the given value.
+     *
+     * @param value The new set of channel prefixes.
+     */
+    protected void setChanPrefix(final String value) {
+        chanPrefix = value;
     }
 
     /**
@@ -1745,15 +1747,12 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
                     list.append(',');
                 }
                 if (!isValidChannelName(channel.getName())) {
-                    if (h005Info.containsKey("CHANTYPES")) {
-                        final String chantypes = h005Info.get("CHANTYPES");
-                        if (chantypes.isEmpty()) {
-                            list.append('#');
-                        } else {
-                            list.append(chantypes.charAt(0));
-                        }
-                    } else {
+                    if (chanPrefix.isEmpty()) {
+                        // TODO: This is wrong - empty chan prefix means the
+                        // IRCd supports no channels.
                         list.append('#');
+                    } else {
+                        list.append(chanPrefix.charAt(0));
                     }
                 }
                 list.append(channel.getName());
