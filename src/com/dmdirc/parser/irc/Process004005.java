@@ -182,7 +182,7 @@ public class Process004005 extends IRCProcessor {
                     processCaseMappingToken(isNegation, value);
                     break;
                 case "CHANTYPES":
-                    processChanTypesToken();
+                    processChanTypesToken(isNegation, value);
                     break;
                 case "PREFIX":
                     processPrefixToken();
@@ -252,9 +252,16 @@ public class Process004005 extends IRCProcessor {
 
     /**
      * Processes a 'CHANTYPES' token received in a 005.
+     *
+     * @param isNegation Whether the token was negated or not.
+     * @param value The value of the token.
      */
-    private void processChanTypesToken() {
-        parser.parseChanPrefix();
+    private void processChanTypesToken(final boolean isNegation, final String value) {
+        if (isNegation) {
+            parser.resetChanPrefix();
+        } else {
+            parser.setChanPrefix(value);
+        }
     }
 
     /**
