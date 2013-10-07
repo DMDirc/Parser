@@ -113,8 +113,10 @@ public class OutputQueue {
 
         if (old != queueEnabled && old) {
             synchronized (queueHandlerLock) {
-                queueHandler.interrupt();
-                queueHandler = null;
+                if (queueHandler != null) {
+                    queueHandler.interrupt();
+                    queueHandler = null;
+                }
             }
 
             while (!queue.isEmpty()) {
