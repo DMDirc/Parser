@@ -39,10 +39,10 @@ public abstract class BaseChannelInfo implements ChannelInfo {
     private final Parser parser;
 
     /** A map for random data associated with the client to be stored in. */
-    private final Map<Object, Object> map = new HashMap<Object, Object>();
+    private final Map<Object, Object> map = new HashMap<>();
 
     /** The clients in this channel. */
-    private final Map<String, ChannelClientInfo> clients = new HashMap<String, ChannelClientInfo>();
+    private final Map<String, ChannelClientInfo> clients = new HashMap<>();
 
     /** The name of this channel. */
     private final String name;

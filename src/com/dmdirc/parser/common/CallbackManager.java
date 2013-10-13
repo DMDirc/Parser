@@ -110,7 +110,7 @@ public class CallbackManager {
 
     /** Hashtable used to store the different types of callback known. */
     private final Map<Class<? extends CallbackInterface>, CallbackObject> callbackHash
-            = new HashMap<Class<? extends CallbackInterface>, CallbackObject>();
+            = new HashMap<>();
 
     /** A map of implementations to use for parser interfaces. */
     private final Map<Class<?>, Class<?>> implementationMap;

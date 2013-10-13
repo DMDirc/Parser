@@ -1020,10 +1020,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         } catch (IOException e) {
             handleConnectException(e, true);
             return;
-        } catch (NoSuchAlgorithmException e) {
-            handleConnectException(e, false);
-            return;
-        } catch (KeyManagementException e) {
+        } catch (NoSuchAlgorithmException | KeyManagementException e) {
             handleConnectException(e, false);
             return;
         }

@@ -69,20 +69,20 @@ public class IRCChannelInfo implements ChannelInfo {
     /** Hashtable containing references to ChannelClients. */
     private final Map<String, IRCChannelClientInfo> clients = Collections.synchronizedMap(new HashMap<String, IRCChannelClientInfo>());
     /** Hashtable storing values for modes set in the channel that use parameters. */
-    private final Map<Character, String> paramModes = new HashMap<Character, String>();
+    private final Map<Character, String> paramModes = new HashMap<>();
     /** Hashtable storing list modes. */
-    private final Map<Character, ArrayList<ChannelListModeItem>> listModes = new HashMap<Character, ArrayList<ChannelListModeItem>>();
+    private final Map<Character, ArrayList<ChannelListModeItem>> listModes = new HashMap<>();
     /**
      * LinkedList storing status of mode adding.
      * if an item is in this list for a mode, we are expecting new items for the list
      */
-    private final List<Character> addingModes = new LinkedList<Character>();
+    private final List<Character> addingModes = new LinkedList<>();
     /** Modes waiting to be sent to the server. */
-    private final List<String> modeQueue = new LinkedList<String>();
+    private final List<String> modeQueue = new LinkedList<>();
     /** A Map to allow applications to attach misc data to this object. */
     private final Map<Object, Object> map;
     /** Queue of requested list modes. */
-    private final Queue<Character> listModeQueue = new LinkedList<Character>();
+    private final Queue<Character> listModeQueue = new LinkedList<>();
     /** Listmode Queue Time. */
     private long listModeQueueTime = System.currentTimeMillis();
     /** Have we asked the server for the list modes for this channel yet? */
@@ -97,7 +97,7 @@ public class IRCChannelInfo implements ChannelInfo {
      * @param name Channel name.
      */
     public IRCChannelInfo(final IRCParser parser, final String name) {
-        map = new HashMap<Object, Object>();
+        map = new HashMap<>();
         this.parser = parser;
         this.name = name;
     }
@@ -113,7 +113,7 @@ public class IRCChannelInfo implements ChannelInfo {
         // Incase of breakage, if getListModeQueue() was last called greater than
         // 60 seconds ago, we reset the list.
         if (now - (30 * 1000) > listModeQueueTime) {
-            result = new LinkedList<Character>();
+            result = new LinkedList<>();
             parser.callDebugInfo(IRCParser.DEBUG_LMQ, "Resetting LMQ");
         }
         listModeQueueTime = now;

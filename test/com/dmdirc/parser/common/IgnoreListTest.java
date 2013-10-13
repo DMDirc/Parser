@@ -115,7 +115,7 @@ public class IgnoreListTest {
     @Test
     public void testGetSimpleList() throws UnsupportedOperationException {
         final IgnoreList list = new IgnoreList();
-        final List<String> items = new ArrayList<String>();
+        final List<String> items = new ArrayList<>();
         
         for (String[] test : tests) {
             items.add(test[0]);

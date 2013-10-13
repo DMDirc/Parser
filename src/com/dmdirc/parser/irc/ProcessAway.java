@@ -19,7 +19,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package com.dmdirc.parser.irc;
 
 import com.dmdirc.parser.common.AwayState;
@@ -48,28 +47,33 @@ public class ProcessAway extends IRCProcessor {
      */
     @Override
     public void process(final String sParam, final String[] token) {
-        if ("AWAY".equals(sParam)) {
-            final IRCClientInfo iClient = getClientInfo(token[0]);
-            if (iClient != null) {
-                final AwayState oldState = iClient.getAwayState();
+        final IRCClientInfo iClient = getClientInfo(token[0]);
+        switch (sParam) {
+            case "AWAY":
+                if (iClient != null) {
+                    final AwayState oldState = iClient.getAwayState();
 
-                final String reason = (token.length > 2) ? token[token.length - 1] : "";
-                iClient.setAwayReason(reason);
-                iClient.setAwayState(reason.isEmpty() ? AwayState.HERE : AwayState.AWAY);
+                    final String reason = (token.length > 2) ? token[token.length - 1] : "";
+                    iClient.setAwayReason(reason);
+                    iClient.setAwayState(reason.isEmpty() ? AwayState.HERE : AwayState.AWAY);
 
-                if (iClient == parser.getLocalClient()) {
-                    callAwayState(oldState, iClient.getAwayState(), iClient.getAwayReason());
+                    if (iClient == parser.getLocalClient()) {
+                        callAwayState(oldState, iClient.getAwayState(), iClient.getAwayReason());
+                    }
                 }
-            }
-        } else if ("301".equals(sParam)) { // WHO Response
-            final IRCClientInfo iClient = getClientInfo(token[3]);
-            if (iClient != null) {
-                iClient.setAwayReason(token[token.length - 1]);
-            }
-        } else { // IRC HERE/BACK response
-            final AwayState oldState = parser.getLocalClient().getAwayState();
-            parser.getLocalClient().setAwayState("306".equals(sParam) ? AwayState.AWAY : AwayState.HERE);
-            callAwayState(oldState, parser.getLocalClient().getAwayState(), parser.getLocalClient().getAwayReason());
+                break;
+            case "301":
+                // WHO Response
+                if (iClient != null) {
+                    iClient.setAwayReason(token[token.length - 1]);
+                }
+                break;
+            default:
+                // IRC HERE/BACK response
+                final AwayState oldState = parser.getLocalClient().getAwayState();
+                parser.getLocalClient().setAwayState("306".equals(sParam) ? AwayState.AWAY : AwayState.HERE);
+                callAwayState(oldState, parser.getLocalClient().getAwayState(), parser.getLocalClient().getAwayReason());
+                break;
         }
     }
 

@@ -62,9 +62,9 @@ public class IRCClientInfo implements LocalClientInfo {
     /** A Map to allow applications to attach misc data to this object. */
     private final Map<Object, Object> map;
     /** List of ChannelClientInfos that point to this. */
-    private final Map<String, IRCChannelClientInfo> clients = new HashMap<String, IRCChannelClientInfo>();
+    private final Map<String, IRCChannelClientInfo> clients = new HashMap<>();
     /** Modes waiting to be sent to the server. */
-    private final List<String> modeQueue = new LinkedList<String>();
+    private final List<String> modeQueue = new LinkedList<>();
 
     /**
      * Create a new client object from a hostmask.
@@ -74,7 +74,7 @@ public class IRCClientInfo implements LocalClientInfo {
      * @see IRCClientInfo#parseHost
      */
     public IRCClientInfo(final IRCParser tParser, final String sHostmask) {
-        map = new HashMap<Object, Object>();
+        map = new HashMap<>();
         setUserBits(sHostmask, true);
         parser = tParser;
     }
@@ -393,7 +393,7 @@ public class IRCClientInfo implements LocalClientInfo {
      * @return int with the count of known channels
      */
     public List<IRCChannelClientInfo> getChannelClients() {
-        return new ArrayList<IRCChannelClientInfo>(clients.values());
+        return new ArrayList<>(clients.values());
     }
 
     /** {@inheritDoc} */

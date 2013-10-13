@@ -39,7 +39,7 @@ public class CallbackObjectSpecific extends CallbackObject {
 
     /** Hashtable for storing specific information for callback. */
     protected final Map<CallbackInterface, String> specificData
-            = new HashMap<CallbackInterface, String>();
+            = new HashMap<>();
 
     /**
      * Create a new instance of the Callback Object.
@@ -147,7 +147,7 @@ public class CallbackObjectSpecific extends CallbackObject {
 
         createFakeArgs(newArgs);
 
-        for (CallbackInterface iface : new ArrayList<CallbackInterface>(callbackInfo)) {
+        for (CallbackInterface iface : new ArrayList<>(callbackInfo)) {
             if (type.isAnnotationPresent(SpecificCallback.class)
                     && ((args[0] instanceof ClientInfo
                     && !isValidUser(iface, ((ClientInfo) args[0]).getHostname()))
@@ -162,7 +162,7 @@ public class CallbackObjectSpecific extends CallbackObject {
 
             try {
                 type.getMethods()[0].invoke(iface, newArgs);
-            } catch (Exception e) {
+            } catch (ReflectiveOperationException e) {
                 final ParserError ei = new ParserError(ParserError.ERROR_ERROR,
                         "Exception in callback (" + e.getMessage() + ")",
                         myParser.getLastLine());

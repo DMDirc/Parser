@@ -46,9 +46,9 @@ public final class IRCAuthenticator extends Authenticator {
     /** Singleton instance of IRCAuthenticator. */
     private static IRCAuthenticator me;
     /** List of authentication replies. */
-    private final Map<String, PasswordAuthentication> replies = new HashMap<String, PasswordAuthentication>();
+    private final Map<String, PasswordAuthentication> replies = new HashMap<>();
     /** List of servers for each host. */
-    private final Map<String, List<URI>> owners = new HashMap<String, List<URI>>();
+    private final Map<String, List<URI>> owners = new HashMap<>();
     /** Semaphore for connection limiting. */
     private final Semaphore mySemaphore = new Semaphore(1, true);
 

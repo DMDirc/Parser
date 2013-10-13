@@ -39,7 +39,7 @@ public class OutputQueue {
     /** Is queueing enabled? */
     private boolean queueEnabled = true;
     /** The output queue! */
-    private final BlockingQueue<QueueItem> queue = new PriorityBlockingQueue<QueueItem>();
+    private final BlockingQueue<QueueItem> queue = new PriorityBlockingQueue<>();
     /** Object for synchronising access to the {@link #queueHandler}. */
     private final Object queueHandlerLock = new Object();
     /** Thread for the sending queue. */

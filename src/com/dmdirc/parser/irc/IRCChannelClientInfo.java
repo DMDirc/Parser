@@ -54,7 +54,7 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
      * @param channel Channel that owns this channelclient
      */
     public IRCChannelClientInfo(final IRCParser tParser, final IRCClientInfo client, final ChannelInfo channel) {
-        myMap = new HashMap<Object, Object>();
+        myMap = new HashMap<>();
         myParser = tParser;
         cClient = client;
         myChannel = channel;
