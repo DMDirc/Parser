@@ -167,8 +167,7 @@ public class CallbackObject {
         for (CallbackInterface iface : callbackInfo) {
             try {
                 type.getMethods()[0].invoke(iface, newArgs);
-            } catch (SecurityException | IllegalAccessException |
-                    IllegalArgumentException | InvocationTargetException e) {
+            } catch (final Exception e) {
                 if (getType().equals(ErrorInfoListener.class)) {
                     System.out.printf("Exception in onError Callback. [%s]\n", e.getMessage());
                     e.printStackTrace();

@@ -162,7 +162,7 @@ public class CallbackObjectSpecific extends CallbackObject {
 
             try {
                 type.getMethods()[0].invoke(iface, newArgs);
-            } catch (ReflectiveOperationException e) {
+            } catch (final Exception e) {
                 final ParserError ei = new ParserError(ParserError.ERROR_ERROR,
                         "Exception in callback (" + e.getMessage() + ")",
                         myParser.getLastLine());
