@@ -22,8 +22,9 @@
 package com.dmdirc.parser.common;
 
 import java.util.ArrayList;
-import java.util.Hashtable; // NOPMD - Required by InitialDirContext
+import java.util.Hashtable;
 import java.util.List;
+
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
@@ -49,7 +50,7 @@ public class SRVRecord implements Comparable<SRVRecord> {
      * Create a new SRV Record from a String.
      *
      * @param record Record as a string.
-     * @throws NamingException
+     * @throws NamingException if the record is invalid
      */
     public SRVRecord(final String record) throws NamingException {
         final String[] bits = record.split(" ", 4);
@@ -117,11 +118,11 @@ public class SRVRecord implements Comparable<SRVRecord> {
     }
 
     public static List<SRVRecord> getRecords(final String host) {
-        final List<SRVRecord> result = new ArrayList<SRVRecord>();
+        final List<SRVRecord> result = new ArrayList<>();
 
         try {
             // Obsolete Collection. yeah yeah...
-            final Hashtable<String, String> env = new Hashtable<String, String>(); // NOPMD - Required by InitialDirContext
+            final Hashtable<String, String> env = new Hashtable<>(); // NOPMD - Required by InitialDirContext
             env.put("java.naming.factory.initial", "com.sun.jndi.dns.DnsContextFactory");
             env.put("java.naming.provider.url", "dns:");
             final Attribute attr = new InitialDirContext(env).getAttributes(host, new String [] { "SRV" }).get("SRV");

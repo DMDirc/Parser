@@ -38,7 +38,8 @@ import java.util.Map;
  * Implements common base functionality for parsers.<p>
  * Implementations of this class must be annotated with
  * {@link ChildImplementations} to define the implementations to use for
- * instances of {@link ClientInfo}, {@link ChannelInfo}, etc.
+ * instances of {@link com.dmdirc.parser.interfaces.ClientInfo},
+ * {@link com.dmdirc.parser.interfaces.ChannelInfo}, etc.
  */
 public abstract class BaseParser extends ThreadedParser {
 

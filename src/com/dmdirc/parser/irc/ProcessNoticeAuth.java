@@ -53,7 +53,7 @@ public class ProcessNoticeAuth extends IRCProcessor {
     /**
      * Callback to all objects implementing the NoticeAuth Callback.
      *
-     * @see INoticeAuth
+     * @see com.dmdirc.parser.interfaces.callbacks.AuthNoticeListener
      * @param data Incomming Line.
      * @return true if a method was called, false otherwise
      */

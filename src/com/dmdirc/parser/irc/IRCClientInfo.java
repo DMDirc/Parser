@@ -71,7 +71,7 @@ public class IRCClientInfo implements LocalClientInfo {
      *
      * @param tParser Refernce to parser that owns this channelclient (used for modes)
      * @param sHostmask Hostmask parsed by parseHost to get nickname
-     * @see ClientInfo#parseHost
+     * @see IRCClientInfo#parseHost
      */
     public IRCClientInfo(final IRCParser tParser, final String sHostmask) {
         map = new HashMap<Object, Object>();
@@ -132,7 +132,8 @@ public class IRCClientInfo implements LocalClientInfo {
      * Hostmask must match (?:)nick(?!ident)(?@host)
      *
      * @param hostmask Hostname to parse
-     * @return Array containing details. (result[0] -> Nick | result[1] -> Ident | result[2] -> Host)
+     * @return Array containing details. (result[0] -&gt; Nick | result[1]
+     * -&gt; Ident | result[2] - Host)
      */
     public static String[] parseHostFull(final String hostmask) {
         String[] sTemp;

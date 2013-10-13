@@ -76,7 +76,7 @@ public class ProcessAway extends IRCProcessor {
     /**
      * Callback to all objects implementing the onAwayState Callback.
      *
-     * @see IAwayState
+     * @see com.dmdirc.parser.interfaces.callbacks.AwayStateListener
      * @param oldState Old Away State
      * @param currentState Current Away State
      * @param reason Best guess at away reason

@@ -281,7 +281,7 @@ public class ProcessListModes extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelGotListModes Callback.
      *
-     * @see IChannelGotListModes
+     * @see com.dmdirc.parser.interfaces.callbacks.ChannelListModeListener
      * @param cChannel Channel which the ListModes reply is for
      * @param mode the mode that we got list modes for.
      * @return true if a method was called, false otherwise

@@ -237,7 +237,7 @@ public class ProcessingManager {
     /**
      * Callback to all objects implementing the onNumeric Callback.
      *
-     * @see INumeric
+     * @see com.dmdirc.parser.interfaces.callbacks.NumericListener
      * @param numeric What numeric is this for
      * @param token IRC Tokenised line
      * @return true if a method was called, false otherwise

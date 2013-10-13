@@ -97,7 +97,7 @@ public class ProcessWho extends IRCProcessor {
     /**
      * Callback to all objects implementing the onAwayState Callback.
      *
-     * @see IAwayState
+     * @see com.dmdirc.parser.interfaces.callbacks.AwayStateListener
      * @param oldState Old Away State
      * @param currentState Current Away State
      * @param reason Best guess at away reason
@@ -110,7 +110,7 @@ public class ProcessWho extends IRCProcessor {
     /**
      * Callback to all objects implementing the onAwayStateOther Callback.
      *
-     * @see IAwayStateOther
+     * @see com.dmdirc.parser.interfaces.callbacks.OtherAwayStateListener
      * @param client Client this is for
      * @param oldState Old Away State
      * @param state Current Away State
@@ -123,7 +123,7 @@ public class ProcessWho extends IRCProcessor {
     /**
      * Callback to all objects implementing the onChannelAwayStateOther Callback.
      *
-     * @see IAwayStateOther
+     * @see com.dmdirc.parser.interfaces.callbacks.ChannelOtherAwayStateListener
      * @param channel Channel this is for
      * @param channelClient ChannelClient this is for
      * @param oldState Old Away State

@@ -102,7 +102,7 @@ public class ProcessPart extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelPart Callback.
      *
-     * @see IChannelPart
+     * @see com.dmdirc.parser.interfaces.callbacks.ChannelPartListener
      * @param cChannel Channel that the user parted
      * @param cChannelClient Client that parted
      * @param sReason Reason given for parting (May be "")

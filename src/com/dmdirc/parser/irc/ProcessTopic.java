@@ -93,7 +93,7 @@ public class ProcessTopic extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelTopic Callback.
      *
-     * @see IChannelTopic
+     * @see com.dmdirc.parser.interfaces.callbacks.ChannelTopicListener
      * @param cChannel Channel that topic was set on
      * @param bIsJoinTopic True when getting topic on join, false if set by user/server
      * @return true if a method was called, false otherwise

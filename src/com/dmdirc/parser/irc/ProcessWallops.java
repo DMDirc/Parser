@@ -75,7 +75,7 @@ public class ProcessWallops extends IRCProcessor {
     /**
      * Callback to all objects implementing the Wallop Callback.
      *
-     * @see IWallop
+     * @see com.dmdirc.parser.interfaces.callbacks.WallopListener
      * @param host Host of the user who sent the wallop
      * @param message The message
      * @return true if a method was called, false otherwise
@@ -87,7 +87,7 @@ public class ProcessWallops extends IRCProcessor {
     /**
      * Callback to all objects implementing the Walluser Callback.
      *
-     * @see IWalluser
+     * @see com.dmdirc.parser.interfaces.callbacks.WalluserListener
      * @param host Host of the user who sent the walluser
      * @param message The message
      * @return true if a method was called, false otherwise
@@ -99,7 +99,7 @@ public class ProcessWallops extends IRCProcessor {
     /**
      * Callback to all objects implementing the WallDesync Callback.
      *
-     * @see IWallDesync
+     * @see com.dmdirc.parser.interfaces.callbacks.WallDesyncListener
      * @param host Host of the user who sent the WallDesync
      * @param message The message
      * @return true if a method was called, false otherwise

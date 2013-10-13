@@ -34,7 +34,17 @@ import com.dmdirc.parser.common.SystemEncoder;
 import com.dmdirc.parser.interfaces.Encoder;
 import com.dmdirc.parser.interfaces.EncodingParser;
 import com.dmdirc.parser.interfaces.SecureParser;
-import com.dmdirc.parser.interfaces.callbacks.*; //NOPMD
+import com.dmdirc.parser.interfaces.callbacks.ConnectErrorListener;
+import com.dmdirc.parser.interfaces.callbacks.DataInListener;
+import com.dmdirc.parser.interfaces.callbacks.DataOutListener;
+import com.dmdirc.parser.interfaces.callbacks.DebugInfoListener;
+import com.dmdirc.parser.interfaces.callbacks.ErrorInfoListener;
+import com.dmdirc.parser.interfaces.callbacks.PingFailureListener;
+import com.dmdirc.parser.interfaces.callbacks.PingSentListener;
+import com.dmdirc.parser.interfaces.callbacks.PingSuccessListener;
+import com.dmdirc.parser.interfaces.callbacks.ServerErrorListener;
+import com.dmdirc.parser.interfaces.callbacks.ServerReadyListener;
+import com.dmdirc.parser.interfaces.callbacks.SocketCloseListener;
 import com.dmdirc.parser.irc.IRCReader.ReadLine;
 import com.dmdirc.parser.irc.outputqueue.OutputQueue;
 
@@ -559,7 +569,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /**
      * Callback to all objects implementing the ServerError Callback.
      *
-     * @see com.dmdirc.parser.irc.callbacks.interfaces.IServerError
+     * @see com.dmdirc.parser.interfaces.callbacks.ServerErrorListener
      * @param message The error message
      */
     protected void callServerError(final String message) {
@@ -569,7 +579,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /**
      * Callback to all objects implementing the DataIn Callback.
      *
-     * @see com.dmdirc.parser.irc.callbacks.interfaces.IDataIn
+     * @see com.dmdirc.parser.interfaces.callbacks.DataInListener
      * @param data Incoming Line.
      */
     protected void callDataIn(final String data) {
@@ -581,7 +591,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      *
      * @param data Outgoing Data
      * @param fromParser True if parser sent the data, false if sent using .sendLine
-     * @see com.dmdirc.parser.irc.callbacks.interfaces.IDataOut
+     * @see com.dmdirc.parser.interfaces.callbacks.DataOutListener
      */
     protected void callDataOut(final String data, final boolean fromParser) {
         getCallback(DataOutListener.class).onDataOut(null, null, data, fromParser);
@@ -590,7 +600,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /**
      * Callback to all objects implementing the DebugInfo Callback.
      *
-     * @see com.dmdirc.parser.irc.callbacks.interfaces.IDebugInfo
+     * @see com.dmdirc.parser.interfaces.callbacks.DebugInfoListener
      * @param level Debugging Level (DEBUG_INFO, DEBUG_SOCKET etc)
      * @param data Debugging Information as a format string
      * @param args Formatting String Options
@@ -602,7 +612,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /**
      * Callback to all objects implementing the DebugInfo Callback.
      *
-     * @see com.dmdirc.parser.irc.callbacks.interfaces.IDebugInfo
+     * @see com.dmdirc.parser.interfaces.callbacks.DebugInfoListener
      * @param level Debugging Level (DEBUG_INFO, DEBUG_SOCKET etc)
      * @param data Debugging Information
      */
@@ -613,7 +623,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /**
      * Callback to all objects implementing the IErrorInfo Interface.
      *
-     * @see com.dmdirc.parser.irc.callbacks.interfaces.IErrorInfo
+     * @see com.dmdirc.parser.interfaces.callbacks.ErrorInfoListener
      * @param errorInfo ParserError object representing the error.
      */
     protected void callErrorInfo(final ParserError errorInfo) {
@@ -623,7 +633,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /**
      * Callback to all objects implementing the IConnectError Interface.
      *
-     * @see com.dmdirc.parser.irc.callbacks.interfaces.IConnectError
+     * @see com.dmdirc.parser.interfaces.callbacks.ConnectErrorListener
      * @param errorInfo ParserError object representing the error.
      */
     protected void callConnectError(final ParserError errorInfo) {
@@ -633,7 +643,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /**
      * Callback to all objects implementing the SocketClosed Callback.
      *
-     * @see com.dmdirc.parser.irc.callbacks.interfaces.ISocketClosed
+     * @see com.dmdirc.parser.interfaces.callbacks.SocketCloseListener
      */
     protected void callSocketClosed() {
         getCallback(SocketCloseListener.class).onSocketClosed(null, null);
@@ -642,7 +652,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /**
      * Callback to all objects implementing the PingFailed Callback.
      *
-     * @see com.dmdirc.parser.irc.callbacks.interfaces.IPingFailed
+     * @see com.dmdirc.parser.interfaces.callbacks.PingFailureListener
      * @return True if any callback was called, false otherwise.
      */
     protected boolean callPingFailed() {
@@ -652,7 +662,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /**
      * Callback to all objects implementing the PingSent Callback.
      *
-     * @see com.dmdirc.parser.irc.callbacks.interfaces.IPingSent
+     * @see com.dmdirc.parser.interfaces.callbacks.PingSentListener
      */
     protected void callPingSent() {
         getCallback(PingSentListener.class).onPingSent(null, null);
@@ -661,7 +671,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /**
      * Callback to all objects implementing the PingSuccess Callback.
      *
-     * @see com.dmdirc.parser.irc.callbacks.interfaces.IPingSuccess
+     * @see com.dmdirc.parser.interfaces.callbacks.PingSuccessListener
      */
     protected void callPingSuccess() {
         getCallback(PingSuccessListener.class).onPingSuccess(null, null);
@@ -670,7 +680,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /**
      * Callback to all objects implementing the Post005 Callback.
      *
-     * @see IPost005
+     * @see com.dmdirc.parser.interfaces.callbacks.ServerReadyListener
      */
     protected synchronized void callPost005() {
         if (post005) {

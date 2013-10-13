@@ -110,7 +110,7 @@ public class ProcessKick extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelKick Callback.
      *
-     * @see IChannelKick
+     * @see com.dmdirc.parser.interfaces.callbacks.ChannelKickListener
      * @param cChannel Channel where the kick took place
      * @param cKickedClient ChannelClient that got kicked
      * @param cKickedByClient ChannelClient that did the kicking (may be null if server)

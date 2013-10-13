@@ -131,7 +131,7 @@ public class ProcessNames extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelTopic Callback.
      *
-     * @see IChannelTopic
+     * @see com.dmdirc.parser.interfaces.callbacks.ChannelTopicListener
      * @param cChannel Channel that topic was set on
      * @param bIsJoinTopic True when getting topic on join, false if set by user/server
      * @return true if a method was called, false otherwise
@@ -144,7 +144,7 @@ public class ProcessNames extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelGotNames Callback.
      *
-     * @see IChannelGotNames
+     * @see com.dmdirc.parser.interfaces.callbacks.ChannelNamesListener
      * @param cChannel Channel which the names reply is for
      * @return true if a method was called, false otherwise
      */

@@ -24,8 +24,6 @@ package com.dmdirc.parser.irc;
 /**
  * Capability states.
  * See: http://ircv3.atheme.org/specification/capability-negotiation-3.1
- *
- * @author Shane Mc Cormack <shanemcc@gmail.com>
  */
 public enum CapabilityState {
     /** Capability is invalid*/
@@ -41,7 +39,7 @@ public enum CapabilityState {
     ENABLED("Enabled", '+');
 
     /** Description. */
-    private String description;
+    private final String description;
 
     /**
      * Modifier.
@@ -49,7 +47,7 @@ public enum CapabilityState {
      * as "capability modifiers". We just use them to make parsing the messages
      * a bit easier.
      */
-    private Character modifier;
+    private final Character modifier;
 
     /**
      * Create a CapabilityState.
@@ -81,6 +79,8 @@ public enum CapabilityState {
 
     /**
      * Get the capability state for the given modifier, or null.
+     *
+     * @param modifier Modifier to get the capability for
      *
      * @return state for the given modifier, or null.
      */

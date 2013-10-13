@@ -63,7 +63,7 @@ public class Process464 extends IRCProcessor {
     /**
      * Callback to all objects implementing the PasswordRequired Callback.
      *
-     * @see IPasswordRequired
+     * @see com.dmdirc.parser.interfaces.callbacks.PasswordRequiredListener
      * @return true if a method was called, false otherwise
      */
     protected boolean callPasswordRequired() {

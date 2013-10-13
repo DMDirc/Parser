@@ -27,7 +27,7 @@ package com.dmdirc.parser.common;
  *
  * @author Shane Mc Cormack
  * @author Chris Smith
- * @see IRCParser
+ * @see com.dmdirc.parser.interfaces.Parser
  */
 public class MyInfo {
 

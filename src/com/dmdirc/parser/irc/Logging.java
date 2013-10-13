@@ -93,10 +93,7 @@ public class Logging {
                 final Method getLog = factory.getMethod("getLog", new Class[]{Class.class});
                 log = getLog.invoke(null, this.getClass());
             }
-        } catch (ClassNotFoundException cnfe) {
-        } catch (NoSuchMethodException nsme) {
-        } catch (IllegalAccessException iae) {
-        } catch (InvocationTargetException ite) {
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException cnfe) {
         }
 
         isAvailable = log != null;
@@ -120,15 +117,15 @@ public class Logging {
      * Check is a log level is available.
      *
      * @param level Level to check
+     *
+     * @return true if the method was invoked
      */
     public boolean levelEnabled(final LogLevel level) {
         if (isAvailable) {
             try {
                 final Method check = log.getClass().getMethod(level.getCheckMethodName());
                 return (Boolean) check.invoke(log, new Object[0]);
-            } catch (NoSuchMethodException nsme) {
-            } catch (IllegalAccessException iae) {
-            } catch (InvocationTargetException ite) {
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException nsme) {
             }
         }
 
@@ -164,9 +161,7 @@ public class Logging {
                 final Method method = log.getClass().getMethod(level.getMethodName(), String.class, Throwable.class);
                 method.invoke(log, new Object[]{message, throwable});
             }
-        } catch (NoSuchMethodException nsme) {
-        } catch (IllegalAccessException iae) {
-        } catch (InvocationTargetException ite) {
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException nsme) {
         }
     }
 }

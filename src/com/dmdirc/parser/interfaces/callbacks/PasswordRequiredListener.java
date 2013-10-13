@@ -36,7 +36,6 @@ public interface PasswordRequiredListener extends CallbackInterface {
      *
      * @param parser Reference to the parser object that made the callback.
      * @param date The date/time at which the event occured
-     * @see com.dmdirc.parser.irc.Process004005#callPasswordRequired
      */
     void onPasswordRequired(Parser parser, Date date);
 
