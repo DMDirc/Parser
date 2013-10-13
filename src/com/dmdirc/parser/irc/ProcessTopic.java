@@ -76,14 +76,17 @@ public class ProcessTopic extends IRCProcessor {
                     if (iClient != null && iClient.getHostname().isEmpty()) {
                         iClient.setUserBits(token[0], false);
                     }
-                }   iChannel = getChannel(token[2]);
-            if (iChannel == null) {
-                return;
-            }   iChannel.setTopicTime(System.currentTimeMillis() / 1000);
-            if (token[0].charAt(0) == ':') {
-                token[0] = token[0].substring(1);
-            }   iChannel.setTopicUser(token[0]);
-            iChannel.setInternalTopic(token[token.length - 1]);
+                }
+                iChannel = getChannel(token[2]);
+                if (iChannel == null) {
+                    return;
+                }
+                iChannel.setTopicTime(System.currentTimeMillis() / 1000);
+                if (token[0].charAt(0) == ':') {
+                    token[0] = token[0].substring(1);
+                }
+                iChannel.setTopicUser(token[0]);
+                iChannel.setInternalTopic(token[token.length - 1]);
                 callChannelTopic(iChannel, false);
                 break;
         }
