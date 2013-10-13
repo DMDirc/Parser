@@ -40,7 +40,7 @@ import java.util.Timer;
 })
 public class TestParser extends IRCParser implements Parser {
 
-    public final List<String> sentLines = new ArrayList<String>();
+    public final List<String> sentLines = new ArrayList<>();
 
     public String nick = "nick";
 

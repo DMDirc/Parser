@@ -69,8 +69,8 @@ public class ChannelClientInfoTest {
 
         parser.injectConnectionStrings();
         parser.injectLine(":nick JOIN #DMDirc_testing");
-        final Map<Object, Object> map1 = new HashMap<Object, Object>();
-        final Map<Object, Object> map2 = new HashMap<Object, Object>();
+        final Map<Object, Object> map1 = new HashMap<>();
+        final Map<Object, Object> map2 = new HashMap<>();
         
         final IRCChannelClientInfo cci = parser.getClient("nick").getChannelClients().get(0);
         

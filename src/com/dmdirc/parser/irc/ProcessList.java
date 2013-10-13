@@ -52,16 +52,19 @@ public class ProcessList extends IRCProcessor {
         // :port80b.se.quakenet.org 321 MD87 Channel :Users  Name
         // :port80b.se.quakenet.org 322 MD87 #DMDirc 10 :
         // :port80b.se.quakenet.org 323 MD87 :End of /LIST
-
-        if ("321".equals(sParam)) {
-            getCallbackManager().getCallback(GroupListStartListener.class)
-                    .onGroupListStart(null, null);
-        } else if ("322".equals(sParam)) {
-            getCallbackManager().getCallback(GroupListEntryListener.class)
-                    .onGroupListEntry(null, null, token[3], Integer.parseInt(token[4]), token[5]);
-        } else if ("323".equals(sParam)) {
-            getCallbackManager().getCallback(GroupListEndListener.class)
-                    .onGroupListEnd(null, null);
+        switch (sParam) {
+            case "321":
+                getCallbackManager().getCallback(GroupListStartListener.class)
+                        .onGroupListStart(null, null);
+                break;
+            case "322":
+                getCallbackManager().getCallback(GroupListEntryListener.class)
+                        .onGroupListEntry(null, null, token[3], Integer.parseInt(token[4]), token[5]);
+                break;
+            case "323":
+                getCallbackManager().getCallback(GroupListEndListener.class)
+                        .onGroupListEnd(null, null);
+                break;
         }
     }
 

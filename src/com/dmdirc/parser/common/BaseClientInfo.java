@@ -37,7 +37,7 @@ public abstract class BaseClientInfo implements ClientInfo {
     private final Parser parser;
 
     /** A map for random data associated with the client to be stored in. */
-    private final Map<Object, Object> map = new HashMap<Object, Object>();
+    private final Map<Object, Object> map = new HashMap<>();
 
     /** The user's details. */
     private String nick, user, host, realname, account = null;

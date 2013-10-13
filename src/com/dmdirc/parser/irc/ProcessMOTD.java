@@ -49,12 +49,16 @@ public class ProcessMOTD extends IRCProcessor {
      */
     @Override
     public void process(final String sParam, final String[] token) {
-        if ("375".equals(sParam)) {
-            callMOTDStart(token[token.length - 1]);
-        } else if ("372".equals(sParam)) {
-            callMOTDLine(token[token.length - 1]);
-        } else {
-            callMOTDEnd("422".equals(sParam), token[token.length - 1]);
+        switch (sParam) {
+            case "375":
+                callMOTDStart(token[token.length - 1]);
+                break;
+            case "372":
+                callMOTDLine(token[token.length - 1]);
+                break;
+            default:
+                callMOTDEnd("422".equals(sParam), token[token.length - 1]);
+                break;
         }
     }
 

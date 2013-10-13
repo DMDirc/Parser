@@ -62,17 +62,20 @@ public class ProcessMode extends IRCProcessor {
     public void process(final String sParam, final String[] token) {
         String[] sModestr;
         String sChannelName;
-        if (sParam.equals("324")) {
-            sChannelName = token[3];
-            sModestr = new String[token.length - 4];
-            System.arraycopy(token, 4, sModestr, 0, token.length - 4);
-        } else if (sParam.equals("221")) {
-            processUserMode(sParam, token, new String[]{token[token.length - 1]}, true);
-            return;
-        } else {
-            sChannelName = token[2];
-            sModestr = new String[token.length - 3];
-            System.arraycopy(token, 3, sModestr, 0, token.length - 3);
+        switch (sParam) {
+            case "324":
+                sChannelName = token[3];
+                sModestr = new String[token.length - 4];
+                System.arraycopy(token, 4, sModestr, 0, token.length - 4);
+                break;
+            case "221":
+                processUserMode(sParam, token, new String[]{token[token.length - 1]}, true);
+                return;
+            default:
+                sChannelName = token[2];
+                sModestr = new String[token.length - 3];
+                System.arraycopy(token, 3, sModestr, 0, token.length - 3);
+                break;
         }
 
         if (isValidChannelName(sChannelName)) {

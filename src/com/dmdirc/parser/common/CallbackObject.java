@@ -19,7 +19,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
 package com.dmdirc.parser.common;
 
 import com.dmdirc.parser.interfaces.FakableArgument;
@@ -47,8 +46,8 @@ public class CallbackObject {
     protected final Class<? extends CallbackInterface> type;
 
     /** Arraylist for storing callback information related to the callback. */
-    protected final List<CallbackInterface> callbackInfo =
-            new CopyOnWriteArrayList<CallbackInterface>();
+    protected final List<CallbackInterface> callbackInfo
+            = new CopyOnWriteArrayList<>();
 
     /** Reference to the Parser that owns this callback. */
     protected Parser myParser;
@@ -168,7 +167,8 @@ public class CallbackObject {
         for (CallbackInterface iface : callbackInfo) {
             try {
                 type.getMethods()[0].invoke(iface, newArgs);
-            } catch (Exception e) {
+            } catch (SecurityException | IllegalAccessException |
+                    IllegalArgumentException | InvocationTargetException e) {
                 if (getType().equals(ErrorInfoListener.class)) {
                     System.out.printf("Exception in onError Callback. [%s]\n", e.getMessage());
                     e.printStackTrace();
@@ -187,10 +187,10 @@ public class CallbackObject {
     }
 
     /**
-     * Replaces all null entries in the specified array with fake values,
-     * if the corresponding parameter of this callback's type is marked with
-     * the {@link FakableArgument} annotation. The fake classes are constructed
-     * by using parameters designated {@link FakableSource}.
+     * Replaces all null entries in the specified array with fake values, if the
+     * corresponding parameter of this callback's type is marked with the
+     * {@link FakableArgument} annotation. The fake classes are constructed by
+     * using parameters designated {@link FakableSource}.
      *
      * @param args The arguments to be faked
      */
@@ -217,15 +217,15 @@ public class CallbackObject {
      * infinite recursion in cases of cyclic dependencies. If recursion fails,
      * the constructor is skipped.
      *
-     * If the created object has a <code>setFake(boolean)</code> method, it
-     * is automatically invoked with an argument of <code>true</code>.
+     * If the created object has a <code>setFake(boolean)</code> method, it is
+     * automatically invoked with an argument of <code>true</code>.
      *
      * @param args The arguments array to use for sources
      * @param target The class that should be constructed
      * @return An instance of the target class, or null on failure
      */
     protected Object getFakeArg(final Object[] args, final Class<?> target) {
-        final Map<Class<?>, Object> sources = new HashMap<Class<?>, Object>();
+        final Map<Class<?>, Object> sources = new HashMap<>();
         int i = 0;
 
         for (Annotation[] anns : type.getMethods()[0].getParameterAnnotations()) {
@@ -285,13 +285,8 @@ public class CallbackObject {
                     }
 
                     return instance;
-                } catch (InstantiationException ex) {
-                    // Do nothing
-                } catch (IllegalAccessException ex) {
-                    // Do nothing
-                } catch (IllegalArgumentException ex) {
-                    // Do nothing
-                } catch (InvocationTargetException ex) {
+                } catch (InstantiationException | IllegalAccessException |
+                        IllegalArgumentException | InvocationTargetException ex) {
                     // Do nothing
                 }
             }
@@ -301,12 +296,12 @@ public class CallbackObject {
     }
 
     /**
-     * Returns the concrete class which should be instansiated if this
-     * callback object desires an instance of the specified type. Generally,
-     * this will translate the common interfaces to specific parser-dependent
+     * Returns the concrete class which should be instantiated if this callback
+     * object desires an instance of the specified type. Generally, this will
+     * translate the common interfaces to specific parser-dependent
      * implementations.
      *
-     * @param type The type to be instansiated
+     * @param type The type to be instantiated
      * @return A concrete implementation of that type
      */
     protected Class<?> getImplementation(final Class<?> type) {

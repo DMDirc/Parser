@@ -42,7 +42,7 @@ public class RegexStringListTest {
 
     @Test
     public void testAddAll() {
-        final List<String> tempList = new ArrayList<String>();
+        final List<String> tempList = new ArrayList<>();
         tempList.add("a!b@c");
         tempList.add("a!b@c");
         tempList.add("A!B@C");
@@ -57,7 +57,7 @@ public class RegexStringListTest {
 
     @Test
     public void testRmove() {
-        final List<String> tempList = new ArrayList<String>();
+        final List<String> tempList = new ArrayList<>();
         tempList.add("a!b@c");
         tempList.add("Data.*");
 
@@ -71,7 +71,7 @@ public class RegexStringListTest {
 
     @Test
     public void testClear() {
-        final List<String> tempList = new ArrayList<String>();
+        final List<String> tempList = new ArrayList<>();
         tempList.add("a!b@c");
         tempList.add("Data.*");
 
@@ -83,7 +83,7 @@ public class RegexStringListTest {
 
     @Test
     public void testMatches() {
-        final List<String> tempList = new ArrayList<String>();
+        final List<String> tempList = new ArrayList<>();
         tempList.add("a!b@c");
         tempList.add("Data.*");
 

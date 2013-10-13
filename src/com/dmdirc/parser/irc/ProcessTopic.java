@@ -49,44 +49,43 @@ public class ProcessTopic extends IRCProcessor {
     @Override
     public void process(final String sParam, final String[] token) {
         IRCChannelInfo iChannel;
-        if (sParam.equals("332")) {
-            iChannel = getChannel(token[3]);
-            if (iChannel == null) {
-                return;
-            }
-            iChannel.setInternalTopic(token[token.length - 1]);
-        } else if (sParam.equals("333")) {
-            if (token.length > 3) {
+        switch (sParam) {
+            case "332":
                 iChannel = getChannel(token[3]);
                 if (iChannel == null) {
                     return;
-                }
-                if (token.length > 4) {
-                    iChannel.setTopicUser(token[4]);
-                    if (token.length > 5) {
-                        iChannel.setTopicTime(Long.parseLong(token[5]));
+                }   iChannel.setInternalTopic(token[token.length - 1]);
+                break;
+            case "333":
+                if (token.length > 3) {
+                    iChannel = getChannel(token[3]);
+                    if (iChannel == null) {
+                        return;
                     }
-                }
-                callChannelTopic(iChannel, true);
-            }
-        } else {
-            if (IRCParser.ALWAYS_UPDATECLIENT) {
-                final IRCClientInfo iClient = getClientInfo(token[0]);
-                if (iClient != null && iClient.getHostname().isEmpty()) {
-                    iClient.setUserBits(token[0], false);
-                }
-            }
-            iChannel = getChannel(token[2]);
+                    if (token.length > 4) {
+                        iChannel.setTopicUser(token[4]);
+                        if (token.length > 5) {
+                            iChannel.setTopicTime(Long.parseLong(token[5]));
+                        }
+                    }
+                    callChannelTopic(iChannel, true);
+                }   break;
+            default:
+                if (IRCParser.ALWAYS_UPDATECLIENT) {
+                    final IRCClientInfo iClient = getClientInfo(token[0]);
+                    if (iClient != null && iClient.getHostname().isEmpty()) {
+                        iClient.setUserBits(token[0], false);
+                    }
+                }   iChannel = getChannel(token[2]);
             if (iChannel == null) {
                 return;
-            }
-            iChannel.setTopicTime(System.currentTimeMillis() / 1000);
+            }   iChannel.setTopicTime(System.currentTimeMillis() / 1000);
             if (token[0].charAt(0) == ':') {
                 token[0] = token[0].substring(1);
-            }
-            iChannel.setTopicUser(token[0]);
+            }   iChannel.setTopicUser(token[0]);
             iChannel.setInternalTopic(token[token.length - 1]);
-            callChannelTopic(iChannel, false);
+                callChannelTopic(iChannel, false);
+                break;
         }
     }
 

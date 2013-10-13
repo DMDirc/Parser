@@ -28,13 +28,11 @@ import java.util.regex.PatternSyntaxException;
 
 /**
  * Parser Ignore list.
- *
- * @author Shane Mc Cormack
  */
 public class IgnoreList {
 
     /** Arraylist storing ignore patterns. */
-    protected final List<String> ignoreInfo = new ArrayList<String>();
+    protected final List<String> ignoreInfo = new ArrayList<>();
 
     /**
      * Creates a new instance of RegexStringList.
@@ -193,7 +191,7 @@ public class IgnoreList {
      * @return All expressions in this ignore list
      */
     public List<String> getRegexList() {
-        return new ArrayList<String>(ignoreInfo);
+        return new ArrayList<>(ignoreInfo);
     }
 
     /**
@@ -203,7 +201,7 @@ public class IgnoreList {
      * @throws UnsupportedOperationException if an expression can't be converted
      */
     public List<String> getSimpleList() throws UnsupportedOperationException {
-        final List<String> res = new ArrayList<String>();
+        final List<String> res = new ArrayList<>();
 
         for (String regex : ignoreInfo) {
             res.add(regexToSimple(regex));
