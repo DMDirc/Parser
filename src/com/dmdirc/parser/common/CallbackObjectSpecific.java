@@ -27,6 +27,7 @@ import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.SpecificCallback;
 import com.dmdirc.parser.interfaces.callbacks.CallbackInterface;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -39,7 +40,7 @@ public class CallbackObjectSpecific extends CallbackObject {
 
     /** Hashtable for storing specific information for callback. */
     protected final Map<CallbackInterface, String> specificData
-            = new HashMap<CallbackInterface, String>();
+            = new HashMap<>();
 
     /**
      * Create a new instance of the Callback Object.
@@ -147,7 +148,7 @@ public class CallbackObjectSpecific extends CallbackObject {
 
         createFakeArgs(newArgs);
 
-        for (CallbackInterface iface : new ArrayList<CallbackInterface>(callbackInfo)) {
+        for (CallbackInterface iface : new ArrayList<>(callbackInfo)) {
             if (type.isAnnotationPresent(SpecificCallback.class)
                     && ((args[0] instanceof ClientInfo
                     && !isValidUser(iface, ((ClientInfo) args[0]).getHostname()))
@@ -162,7 +163,7 @@ public class CallbackObjectSpecific extends CallbackObject {
 
             try {
                 type.getMethods()[0].invoke(iface, newArgs);
-            } catch (Exception e) {
+            } catch (SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
                 final ParserError ei = new ParserError(ParserError.ERROR_ERROR,
                         "Exception in callback (" + e.getMessage() + ")",
                         myParser.getLastLine());

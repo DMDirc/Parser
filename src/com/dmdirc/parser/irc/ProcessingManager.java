@@ -38,7 +38,7 @@ public class ProcessingManager {
     /** Reference to the parser object that owns this ProcessingManager. */
     private final IRCParser parser;
     /** Hashtable used to store the different types of IRCProcessor known. */
-    private final Map<String, IRCProcessor> processHash = new HashMap<String, IRCProcessor>();
+    private final Map<String, IRCProcessor> processHash = new HashMap<>();
 
     /**
      * Constructor to create a ProcessingManager.

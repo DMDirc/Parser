@@ -35,7 +35,7 @@ import java.util.Map;
 public abstract class BaseChannelClientInfo implements ChannelClientInfo {
 
     /** A map for random data associated with the client to be stored in. */
-    private final Map<Object, Object> map = new HashMap<Object, Object>();
+    private final Map<Object, Object> map = new HashMap<>();
 
     /** The channel that the client is associated with. */
     private final ChannelInfo channel;

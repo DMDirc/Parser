@@ -42,7 +42,7 @@ public class ProcessCap extends TimestampedIRCProcessor {
     /** Have we handled the pre-connect cap request? */
     private boolean hasCapped = false;
     /** List of supported capabilities. */
-    private List<String> supportedCapabilities = new ArrayList<String>();
+    private List<String> supportedCapabilities = new ArrayList<>();
 
     /**
      * Create a new instance of the IRCProcessor Object.

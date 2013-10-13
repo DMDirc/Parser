@@ -48,7 +48,7 @@ public class CallbackObject {
 
     /** Arraylist for storing callback information related to the callback. */
     protected final List<CallbackInterface> callbackInfo =
-            new CopyOnWriteArrayList<CallbackInterface>();
+            new CopyOnWriteArrayList<>();
 
     /** Reference to the Parser that owns this callback. */
     protected Parser myParser;
@@ -168,7 +168,7 @@ public class CallbackObject {
         for (CallbackInterface iface : callbackInfo) {
             try {
                 type.getMethods()[0].invoke(iface, newArgs);
-            } catch (Exception e) {
+            } catch (SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
                 if (getType().equals(ErrorInfoListener.class)) {
                     System.out.printf("Exception in onError Callback. [%s]\n", e.getMessage());
                     e.printStackTrace();
@@ -225,7 +225,7 @@ public class CallbackObject {
      * @return An instance of the target class, or null on failure
      */
     protected Object getFakeArg(final Object[] args, final Class<?> target) {
-        final Map<Class<?>, Object> sources = new HashMap<Class<?>, Object>();
+        final Map<Class<?>, Object> sources = new HashMap<>();
         int i = 0;
 
         for (Annotation[] anns : type.getMethods()[0].getParameterAnnotations()) {
@@ -285,13 +285,7 @@ public class CallbackObject {
                     }
 
                     return instance;
-                } catch (InstantiationException ex) {
-                    // Do nothing
-                } catch (IllegalAccessException ex) {
-                    // Do nothing
-                } catch (IllegalArgumentException ex) {
-                    // Do nothing
-                } catch (InvocationTargetException ex) {
+                } catch (        InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
                     // Do nothing
                 }
             }
