@@ -56,7 +56,7 @@ public class ProcessInvite extends IRCProcessor {
     /**
      * Callback to all objects implementing the Invite Callback.
      *
-     * @see IInvite
+     * @see com.dmdirc.parser.interfaces.callbacks.InviteListener
      * @param userHost The hostname of the person who invited us
      * @param channel The name of the channel we were invited to
      * @return true if a method was called, false otherwise

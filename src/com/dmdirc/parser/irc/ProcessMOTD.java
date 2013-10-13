@@ -63,7 +63,7 @@ public class ProcessMOTD extends IRCProcessor {
      *
      * @param noMOTD Was this an MOTDEnd or NoMOTD
      * @param data The contents of the line (incase of language changes or so)
-     * @see IMOTDEnd
+     * @see com.dmdirc.parser.interfaces.callbacks.MotdEndListener
      * @return true if a method was called, false otherwise
      */
     protected boolean callMOTDEnd(final boolean noMOTD, final String data) {
@@ -73,7 +73,7 @@ public class ProcessMOTD extends IRCProcessor {
     /**
      * Callback to all objects implementing the MOTDLine Callback.
      *
-     * @see IMOTDLine
+     * @see com.dmdirc.parser.interfaces.callbacks.MotdLineListener
      * @param data Incomming Line.
      * @return true if a method was called, false otherwise
      */
@@ -84,7 +84,7 @@ public class ProcessMOTD extends IRCProcessor {
     /**
      * Callback to all objects implementing the MOTDStart Callback.
      *
-     * @see IMOTDStart
+     * @see com.dmdirc.parser.interfaces.callbacks.MotdStartListener
      * @param data Incomming Line.
      * @return true if a method was called, false otherwise
      */

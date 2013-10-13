@@ -39,11 +39,10 @@ public interface OtherAwayStateListener extends CallbackInterface {
      * Called when we go away, or come back.
      *
      * @param parser Reference to the parser object that made the callback.
-     * @param date The date/time at which the event occured
+     * @param date The date/time at which the event occurred
      * @param client Client this is for
      * @param oldState Old Away State
      * @param state Current Away State
-     * @see com.dmdirc.parser.irc.ProcessAway#callAwayStateOther
      */
     void onAwayStateOther(Parser parser, Date date, ClientInfo client,
             AwayState oldState, AwayState state);

@@ -35,8 +35,7 @@ public interface PingSentListener extends CallbackInterface {
      * Called when a ping was Sent.
      *
      * @param parser Reference to the parser object that made the callback.
-     * @param date The date/time at which the event occured
-     * @see IRCParser#callPingSent
+     * @param date The date/time at which the event occurred
      */
     void onPingSent(Parser parser, Date date);
 

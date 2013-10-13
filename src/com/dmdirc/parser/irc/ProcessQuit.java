@@ -111,7 +111,7 @@ public class ProcessQuit extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelQuit Callback.
      *
-     * @see IChannelQuit
+     * @see com.dmdirc.parser.interfaces.callbacks.ChannelQuitListener
      * @param cChannel Channel that user was on
      * @param cChannelClient User thats quitting
      * @param sReason Quit reason
@@ -124,7 +124,7 @@ public class ProcessQuit extends IRCProcessor {
     /**
      * Callback to all objects implementing the Quit Callback.
      *
-     * @see IQuit
+     * @see com.dmdirc.parser.interfaces.callbacks.QuitListener
      * @param cClient Client Quitting
      * @param sReason Reason for quitting (may be "")
      * @return true if a method was called, false otherwise

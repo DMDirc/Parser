@@ -153,7 +153,7 @@ public class ProcessJoin extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelJoin Callback.
      *
-     * @see IChannelJoin
+     * @see com.dmdirc.parser.interfaces.callbacks.ChannelJoinListener
      * @param cChannel Channel Object
      * @param cChannelClient ChannelClient object for new person
      * @return true if a method was called, false otherwise
@@ -165,7 +165,7 @@ public class ProcessJoin extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelSelfJoin Callback.
      *
-     * @see IChannelSelfJoin
+     * @see com.dmdirc.parser.interfaces.callbacks.ChannelSelfJoinListener
      * @param cChannel Channel Object
      * @return true if a method was called, false otherwise
      */

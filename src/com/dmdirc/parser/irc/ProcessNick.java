@@ -98,7 +98,7 @@ public class ProcessNick extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelNickChanged Callback.
      *
-     * @see IChannelNickChanged
+     * @see com.dmdirc.parser.interfaces.callbacks.ChannelNickChangeListener
      * @param cChannel One of the channels that the user is on
      * @param cChannelClient Client changing nickname
      * @param sOldNick Nickname before change
@@ -111,7 +111,7 @@ public class ProcessNick extends IRCProcessor {
     /**
      * Callback to all objects implementing the NickChanged Callback.
      *
-     * @see INickChanged
+     * @see com.dmdirc.parser.interfaces.callbacks.NickChangeListener
      * @param cClient Client changing nickname
      * @param sOldNick Nickname before change
      * @return true if a method was called, false otherwise

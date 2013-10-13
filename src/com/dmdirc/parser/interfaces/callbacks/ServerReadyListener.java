@@ -35,8 +35,7 @@ public interface ServerReadyListener extends CallbackInterface {
      * Called after 001.
      *
      * @param parser Reference to the parser object that made the callback.
-     * @param date The date/time at which the event occured
-     * @see com.dmdirc.parser.irc.Process001#callServerReady
+     * @param date The date/time at which the event occurred
      */
     void onServerReady(Parser parser, Date date);
 

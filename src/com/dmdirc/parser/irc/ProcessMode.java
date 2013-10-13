@@ -325,7 +325,7 @@ public class ProcessMode extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelModeChanged Callback.
      *
-     * @see IChannelModeChanged
+     * @see com.dmdirc.parser.interfaces.callbacks.ChannelModeChangeListener
      * @param cChannel Channel where modes were changed
      * @param cChannelClient Client chaning the modes (null if server)
      * @param sHost Host doing the mode changing (User host or server name)
@@ -339,7 +339,7 @@ public class ProcessMode extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelUserModeChanged Callback.
      *
-     * @see IChannelUserModeChanged
+     * @see com.dmdirc.parser.interfaces.callbacks.ChannelUserModeChangeListener
      * @param cChannel Channel where modes were changed
      * @param cChangedClient Client being changed
      * @param cSetByClient Client chaning the modes (null if server)
@@ -354,7 +354,7 @@ public class ProcessMode extends IRCProcessor {
     /**
      * Callback to all objects implementing the UserModeChanged Callback.
      *
-     * @see IUserModeChanged
+     * @see com.dmdirc.parser.interfaces.callbacks.UserModeChangeListener
      * @param cClient Client that had the mode changed (almost always us)
      * @param sSetby Host that set the mode (us or servername)
      * @param sModes The modes set.
@@ -367,7 +367,7 @@ public class ProcessMode extends IRCProcessor {
     /**
      * Callback to all objects implementing the UserModeDiscovered Callback.
      *
-     * @see IUserModeDiscovered
+     * @see com.dmdirc.parser.interfaces.callbacks.UserModeDiscoveryListener
      * @param cClient Client that had the mode changed (almost always us)
      * @param sModes The modes set.
      * @return true if a method was called, false otherwise

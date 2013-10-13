@@ -44,8 +44,6 @@ public interface Parser {
 
     /**
      * Connect to server.
-     *
-     * @param threadName Name for any parser thread.
      */
     void connect();
 

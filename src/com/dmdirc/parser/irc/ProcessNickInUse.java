@@ -85,7 +85,7 @@ public class ProcessNickInUse extends IRCProcessor {
      * Callback to all objects implementing the NickInUse Callback.
      *
      * @param nickname Nickname that was wanted.
-     * @see INickInUse
+     * @see com.dmdirc.parser.interfaces.callbacks.NickInUseListener
      * @return true if a method was called, false otherwise
      */
     protected boolean callNickInUse(final String nickname) {

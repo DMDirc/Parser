@@ -45,7 +45,6 @@ public interface ChannelOtherAwayStateListener extends CallbackInterface {
      * @param client Client this is for
      * @param oldState Old Away State
      * @param state Current Away State
-     * @see com.dmdirc.parser.irc.ProcessAway#callChannelAwayStateOther
      */
     void onChannelAwayStateOther(Parser parser, Date date, ChannelInfo channel,
             ChannelClientInfo client, AwayState oldState, AwayState state);

@@ -35,8 +35,7 @@ public interface PingSuccessListener extends CallbackInterface {
      * Called when a ping was a Success.
      *
      * @param parser Reference to the parser object that made the callback.
-     * @param date The date/time at which the event occured
-     * @see IRCParser#callPingSuccess
+     * @param date The date/time at which the event occurred
      */
     void onPingSuccess(Parser parser, Date date);
 

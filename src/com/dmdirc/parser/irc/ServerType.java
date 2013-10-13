@@ -227,8 +227,9 @@ public enum ServerType {
     /**
      * Check if the given mode is op-only.
      *
-     * @param mode
-     * @return
+     * @param mode Mode to check
+     *
+     * @return true if mode is op only
      */
     public boolean isOpOnly(final char mode) {
         return opOnly.indexOf(mode) != -1;

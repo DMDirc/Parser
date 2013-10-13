@@ -53,7 +53,7 @@ public abstract class IRCProcessor {
     /**
      * Callback to all objects implementing the IErrorInfo Interface.
      *
-     * @see com.dmdirc.parser.irc.callbacks.interfaces.IErrorInfo
+     * @see com.dmdirc.parser.interfaces.callbacks.ErrorInfoListener
      * @param errorInfo ParserError object representing the error.
      */
     protected final void callErrorInfo(final ParserError errorInfo) {
@@ -63,7 +63,7 @@ public abstract class IRCProcessor {
     /**
      * Callback to all objects implementing the DebugInfo Callback.
      *
-     * @see com.dmdirc.parser.irc.callbacks.interfaces.IDebugInfo
+     * @see com.dmdirc.parser.interfaces.callbacks.DebugInfoListener
      * @param level Debugging Level (DEBUG_INFO, ndSocket etc)
      * @param data Debugging Information
      * @param args Formatting String Options
@@ -75,7 +75,7 @@ public abstract class IRCProcessor {
     /**
      * Callback to all objects implementing the DebugInfo Callback.
      *
-     * @see com.dmdirc.parser.irc.callbacks.interfaces.IDebugInfo
+     * @see com.dmdirc.parser.interfaces.callbacks.DebugInfoListener
      * @param level Debugging Level (DEBUG_INFO, ndSocket etc)
      * @param data Debugging Information
      */
