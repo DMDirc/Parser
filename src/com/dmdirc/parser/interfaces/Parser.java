@@ -117,6 +117,20 @@ public interface Parser {
     void setBindIP(String ip);
 
     /**
+     * Get the IPv6 address that this parser will bind to.
+     *
+     * @return IPv6 that this parser is bound to ("" for default IP)
+     */
+    String getBindIPv6();
+
+    /**
+     * Set the IPv6 address that this parser will bind to.
+     *
+     * @param ip IPv6 IP to bind to
+     */
+    void setBindIPv6(String ip);
+
+    /**
      * Gets the proxy URI that this parser will use.
      *
      * @return A URI representing the proxy this parser is configured to use,

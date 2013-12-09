@@ -775,6 +775,15 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         disconnectOnFatal = newValue;
     }
 
+    /**
+     * Create a new Socket object for the given target, using the given proxy
+     * if appropriate.
+     *
+     * @param target Target URI to connect to.
+     * @param proxy Proxy URI to use
+     * @return Socket, with IP Binding or Proxy as appropriate,
+     * @throws IOException If there was an issue creating the socket.
+     */
     private Socket newSocket(final URI target, final URI proxy) throws IOException {
         if (target.getPort() > 65535 || target.getPort() <= 0) {
             throw new IOException("Server port (" + target.getPort() + ") is invalid.");
@@ -785,20 +794,33 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
             callDebugInfo(DEBUG_SOCKET, "Not using Proxy");
             mySocket = new Socket();
 
-            if (getBindIP() != null && !getBindIP().isEmpty()) {
-                callDebugInfo(DEBUG_SOCKET, "Binding to IP: " + getBindIP());
-                try {
-                    mySocket.bind(new InetSocketAddress(InetAddress.getByName(getBindIP()), 0));
-                } catch (IOException e) {
-                    callDebugInfo(DEBUG_SOCKET, "Binding failed: " + e.getMessage());
+            final InetSocketAddress sockAddr = new InetSocketAddress(target.getHost(), target.getPort());
+
+            if (sockAddr.getAddress() instanceof Inet6Address) {
+                if (getBindIPv6() != null && !getBindIPv6().isEmpty()) {
+                    callDebugInfo(DEBUG_SOCKET, "Binding to IPv6: " + getBindIP());
+                    try {
+                        mySocket.bind(new InetSocketAddress(InetAddress.getByName(getBindIPv6()), 0));
+                    } catch (IOException e) {
+                        callDebugInfo(DEBUG_SOCKET, "Binding failed: " + e.getMessage());
+                    }
+                }
+            } else {
+                if (getBindIP() != null && !getBindIP().isEmpty()) {
+                    callDebugInfo(DEBUG_SOCKET, "Binding to IPv4: " + getBindIP());
+                    try {
+                        mySocket.bind(new InetSocketAddress(InetAddress.getByName(getBindIP()), 0));
+                    } catch (IOException e) {
+                        callDebugInfo(DEBUG_SOCKET, "Binding failed: " + e.getMessage());
+                    }
                 }
             }
 
-            mySocket.connect(new InetSocketAddress(target.getHost(), target.getPort()), connectTimeout);
+            mySocket.connect(sockAddr, connectTimeout);
         } else {
             callDebugInfo(DEBUG_SOCKET, "Using Proxy");
 
-            if (getBindIP() != null && !getBindIP().isEmpty()) {
+            if ((getBindIP() != null && !getBindIP().isEmpty()) || (getBindIPv6() != null && !getBindIPv6().isEmpty())) {
                 callDebugInfo(DEBUG_SOCKET, "IP Binding is not possible when using a proxy.");
             }
 
