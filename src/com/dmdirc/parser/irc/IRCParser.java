@@ -875,6 +875,15 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      * @throws IOException if there is an error.
      */
     private Socket findSocket(final URI target, final URI proxy) throws IOException {
+        if (proxy != null) {
+            // If we have a proxy, let it worry about all this instead.
+            //
+            // 1) We have no idea what sort of connectivity the proxy has
+            // 2) If we do this here, then any DNS-based geo-balancing is
+            //    going to be based on our location, not the proxy.
+            return newSocket(target, proxy);
+        }
+
         URI target6 = null;
         URI target4 = null;
 
@@ -906,7 +915,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         Exception v6Exception = null;
         if (target6 != null) {
             try {
-                return newSocket(target6, proxy);
+                return newSocket(target6, null);
             } catch (final IOException ioe) {
                 if (target4 == null) {
                     throw ioe;
@@ -918,7 +927,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         }
         if (target4 != null) {
             try {
-                return newSocket(target4, proxy);
+                return newSocket(target4, null);
             } catch (final IOException e2) {
                 callDebugInfo(DEBUG_SOCKET, "Exception trying to use IPv4: " + e2);
                 throw e2;
