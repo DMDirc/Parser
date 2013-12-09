@@ -61,6 +61,9 @@ public abstract class BaseParser extends ThreadedParser {
     /** The IP that this parser should bind to. */
     private String bindIp;
 
+    /** The IPv6 IP that this parser should bind to. */
+    private String bindIpv6;
+
     /** The URI of the proxy to use when connecting, if any. */
     private URI proxy;
 
@@ -227,5 +230,17 @@ public abstract class BaseParser extends ThreadedParser {
     @Override
     public void setBindIP(final String ip) {
         this.bindIp = ip;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getBindIPv6() {
+        return bindIpv6;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void setBindIPv6(final String ip) {
+        this.bindIpv6 = ip;
     }
 }
