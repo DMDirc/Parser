@@ -1417,6 +1417,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
                             // CAP also happens here, so try that.
                             if (token[1].equalsIgnoreCase("CAP")) {
                                 myProcessingManager.process(lineTS, sParam, token);
+                                break;
                             }
 
                             // Otherwise, send to Notice Auth
