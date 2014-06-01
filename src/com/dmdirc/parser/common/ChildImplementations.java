@@ -39,6 +39,6 @@ public @interface ChildImplementations {
      *
      * @return An array of child classes
      */
-    Class[] value();
+    Class<?>[] value();
 
 }

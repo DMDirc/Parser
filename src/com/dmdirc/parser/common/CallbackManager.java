@@ -39,7 +39,7 @@ import java.util.Map;
  */
 public class CallbackManager {
 
-    private static final Class[] CLASSES = {
+    private static final Class<?>[] CLASSES = {
         AwayStateListener.class,
         OtherAwayStateListener.class,
         ChannelOtherAwayStateListener.class,
