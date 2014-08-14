@@ -110,8 +110,8 @@ public class ProcessMode extends IRCProcessor {
         String sModeParam;
         String sTemp;
         int nParam = 1;
-        long nTemp = 0, nValue = 0, nCurrent = 0;
-        boolean bPositive = true, bBooleanMode = true;
+        long nTemp, nValue, nCurrent = 0;
+        boolean bPositive = true, bBooleanMode;
         char cPositive = '+';
         IRCChannelInfo iChannel;
         IRCChannelClientInfo iChannelClientInfo;
@@ -274,7 +274,7 @@ public class ProcessMode extends IRCProcessor {
      * @param clearOldModes Clear old modes before applying these modes (used by 221)
      */
     private void processUserMode(final String sParam, final String[] token, final String[] sModestr, final boolean clearOldModes) {
-        long nCurrent = 0, nValue = 0;
+        long nCurrent, nValue;
         boolean bPositive = true;
 
         final IRCClientInfo iClient = getClientInfo(token[2]);

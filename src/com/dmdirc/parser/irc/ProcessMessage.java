@@ -82,7 +82,7 @@ public class ProcessMessage extends TimestampedIRCProcessor {
     @Override
     public void process(final Date date, final String sParam, final String[] token) {
         // Ignore people!
-        String sMessage = "";
+        String sMessage;
         if (token[0].charAt(0) == ':') {
             sMessage = token[0].substring(1);
         } else {
@@ -116,8 +116,8 @@ public class ProcessMessage extends TimestampedIRCProcessor {
         }
 
         IRCChannelClientInfo iChannelClient = null;
-        IRCChannelInfo iChannel = null;
-        IRCClientInfo iClient = null;
+        IRCChannelInfo iChannel;
+        IRCClientInfo iClient;
         // "nick!user@host PRIVMSG #Channel" should be processed as "nick!user@host PRIVMSG #Channel :"
         if (token.length < 4) {
             sMessage = "";

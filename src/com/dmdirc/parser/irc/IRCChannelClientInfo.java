@@ -127,7 +127,7 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
      */
     public String getChanModeStr(final boolean bPrefix) {
         StringBuilder sModes = new StringBuilder();
-        long nTemp = 0;
+        long nTemp;
         final long nCurrentModes = this.getChanMode();
 
         for (long i = myParser.nextKeyPrefix; i > 0; i = i / 2) {
