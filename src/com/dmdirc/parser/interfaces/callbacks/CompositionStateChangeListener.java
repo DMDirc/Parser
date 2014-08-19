@@ -42,7 +42,6 @@ public interface CompositionStateChangeListener extends CallbackInterface {
      * @param state The new composition state
      * @param host Hostname of sender (or servername)
      */
-    void onCompositionStateCanged(Parser parser, Date date,
-            CompositionState state, String host);
+    void onCompositionStateChanged(Parser parser, Date date, CompositionState state, String host);
 
 }
