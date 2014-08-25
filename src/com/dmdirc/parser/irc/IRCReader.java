@@ -194,7 +194,6 @@ public class IRCReader implements Closeable {
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void close() throws IOException {
         stream.close();

@@ -322,7 +322,6 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         return out;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean compareURI(final URI uri) {
         // Get the old URI.
@@ -390,7 +389,6 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public Collection<? extends ChannelJoinRequest> extractChannels(final URI uri) {
         if (uri == null) {
@@ -549,13 +547,11 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         return Arrays.copyOf(myTrustManager, myTrustManager.length);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setTrustManagers(final TrustManager[] managers) {
         myTrustManager = managers == null ? null : Arrays.copyOf(managers, managers.length);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setKeyManagers(final KeyManager[] managers) {
         myKeyManagers = managers == null ? null : Arrays.copyOf(managers, managers.length);
@@ -1083,7 +1079,6 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         callDebugInfo(DEBUG_INFO, "End Thread Execution");
     }
 
-    /** {@inheritDoc} */
     @Override
     public int getLocalPort() {
         if (currentSocketState == SocketState.OPENING || currentSocketState == SocketState.OPEN) {
@@ -1150,7 +1145,6 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         return tokens;
     }
 
-    /** {@inheritDoc} */
     @Override
     public IRCClientInfo getClient(final String details) {
         final String sWho = getStringConverter().toLowerCase(IRCClientInfo.parseHost(details));
@@ -1167,7 +1161,6 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         return clientList.containsKey(sWho);
     }
 
-    /** {@inheritDoc} */
     @Override
     public IRCChannelInfo getChannel(final String channel) {
         synchronized (channelList) {
@@ -1175,19 +1168,16 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void sendInvite(final String channel, final String user) {
         sendRawMessage("INVITE " + user + " " + channel);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void sendRawMessage(final String message) {
         doSendString(message, QueuePriority.NORMAL, false);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void sendRawMessage(final String message, final QueuePriority priority) {
         doSendString(message, priority, false);
@@ -1270,19 +1260,16 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         return true;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getNetworkName() {
         return networkName;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getLastLine() {
         return lastLine == null ? "" : lastLine.getLine();
     }
 
-    /** {@inheritDoc} */
     @Override
     public List<String> getServerInformationLines() {
         synchronized (serverInformationLines) {
@@ -1435,7 +1422,6 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /** The IRCStringConverter for this parser */
     private IRCStringConverter stringConverter = null;
 
-    /** {@inheritDoc} */
     @Override
     public IRCStringConverter getStringConverter() {
         if (stringConverter == null) {
@@ -1587,7 +1573,6 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getChannelUserModes() {
         if (h005Info.containsKey("PREFIXSTRING")) {
@@ -1597,7 +1582,6 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getBooleanChannelModes() {
         final char[] modes = new char[chanModesBool.size()];
@@ -1611,25 +1595,21 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         return new String(modes);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getListChannelModes() {
         return getOtherModeString(MODE_LIST);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getParameterChannelModes() {
         return getOtherModeString(MODE_SET);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getDoubleParameterChannelModes() {
         return getOtherModeString((byte) (MODE_SET + MODE_UNSET));
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getChannelPrefixes() {
         return chanPrefix;
@@ -1658,7 +1638,6 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         return new String(modes).trim();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getUserModes() {
         if (h005Info.containsKey("USERMODES")) {
@@ -1760,7 +1739,6 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         h005Info.put("PREFIXSTRING", bits[0]);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void joinChannels(final ChannelJoinRequest... channels) {
         // We store a map from key->channels to allow intelligent joining of
@@ -1839,7 +1817,6 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         thinkNickname = nickname;
     }
 
-    /** {@inheritDoc} */
     @Override
     public int getMaxLength(final String type, final String target) {
         // If my host is "nick!user@host" and we are sending "#Channel"
@@ -1872,7 +1849,6 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public int getMaxListModes(final char mode) {
         // MAXLIST=bdeI:50
@@ -1924,7 +1900,6 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         return result;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void sendMessage(final String target, final String message) {
         if (target == null || message == null) {
@@ -1937,7 +1912,6 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         sendString("PRIVMSG " + target, message);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void sendNotice(final String target, final String message) {
         if (target == null || message == null) {
@@ -1950,13 +1924,11 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         sendString("NOTICE " + target, message);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void sendAction(final String target, final String message) {
         sendCTCP(target, "ACTION", message);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void sendCTCP(final String target, final String type, final String message) {
         if (target == null || message == null) {
@@ -1969,7 +1941,6 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         sendString("PRIVMSG " + target, char1 + type.toUpperCase() + " " + message + char1);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void sendCTCPReply(final String target, final String type, final String message) {
         if (target == null || message == null) {
@@ -1982,19 +1953,16 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         sendString("NOTICE " + target, char1 + type.toUpperCase() + " " + message + char1);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void requestGroupList(final String searchTerms) {
         sendString("LIST", searchTerms);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void quit(final String reason) {
         sendString("QUIT", reason);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void disconnect(final String message) {
         super.disconnect(message);
@@ -2051,7 +2019,6 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         return chanPrefix.indexOf(name.charAt(0)) >= 0 || "0".equals(name);
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isUserSettable(final char mode) {
         String validmodes;
@@ -2081,14 +2048,12 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         return ServerType.findServerType(h005Info.get("004IRCD"), networkName, h005Info.get("003IRCD"), h005Info.get("002IRCD"));
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getServerSoftware() {
         final String version = h005Info.get("004IRCD");
         return version == null ? "" : version;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getServerSoftwareType() {
         return getServerType().getType();
@@ -2119,13 +2084,11 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setEncoder(final Encoder encoder) {
         this.encoder = encoder;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setPingTimerInterval(final long newValue) {
         super.setPingTimerInterval(newValue);
@@ -2210,7 +2173,6 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public long getServerLatency() {
         return serverLag;
@@ -2240,7 +2202,6 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public long getPingTime() {
         return getPingTime(false);
@@ -2264,7 +2225,6 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         return pingNeeded.get();
     }
 
-    /** {@inheritDoc} */
     @Override
     public IRCClientInfo getLocalClient() {
         return myself;
@@ -2395,7 +2355,6 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public Collection<IRCChannelInfo> getChannels() {
         synchronized (channelList) {
@@ -2412,13 +2371,11 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public String[] parseHostmask(final String hostmask) {
         return IRCClientInfo.parseHostFull(hostmask);
     }
 
-    /** {@inheritDoc} */
     @Override
     public int getMaxTopicLength() {
         if (h005Info.containsKey("TOPICLEN")) {
@@ -2432,13 +2389,11 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         return 0;
     }
 
-    /** {@inheritDoc} */
     @Override
     public int getMaxLength() {
         return MAX_LINELENGTH;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setCompositionState(final String host, final CompositionState state) {
         // Do nothing

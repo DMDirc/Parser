@@ -232,7 +232,6 @@ public class IRCChannelInfo implements ChannelInfo {
         hasGotListModes = newValue;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Map<Object, Object> getMap() {
         return map;
@@ -256,19 +255,16 @@ public class IRCChannelInfo implements ChannelInfo {
         return addingNames;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getName() {
         return name;
     }
 
-    /** {@inheritDoc} */
     @Override
     public int getChannelClientCount() {
         return clients.size();
     }
 
-    /** {@inheritDoc} */
     @Override
     public Collection<ChannelClientInfo> getChannelClients() {
         synchronized (clients) {
@@ -293,13 +289,11 @@ public class IRCChannelInfo implements ChannelInfo {
         clients.clear();
     }
 
-    /** {@inheritDoc} */
     @Override
     public IRCChannelClientInfo getChannelClient(final String client) {
         return getChannelClient(client, false);
     }
 
-    /** {@inheritDoc} */
     @Override
     public IRCChannelClientInfo getChannelClient(final String client, final boolean create) {
         final String who = parser.getStringConverter().toLowerCase(IRCClientInfo.parseHost(client));
@@ -313,7 +307,6 @@ public class IRCChannelInfo implements ChannelInfo {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public IRCChannelClientInfo getChannelClient(final ClientInfo client) {
         synchronized (clients) {
@@ -404,7 +397,6 @@ public class IRCChannelInfo implements ChannelInfo {
         topicTime = nNewTime;
     }
 
-    /** {@inheritDoc} */
     @Override
     public long getTopicTime() {
         return topicTime;
@@ -419,7 +411,6 @@ public class IRCChannelInfo implements ChannelInfo {
         topic = sNewTopic;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getTopic() {
         return topic;
@@ -434,7 +425,6 @@ public class IRCChannelInfo implements ChannelInfo {
         topicUser = sNewUser;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getTopicSetter() {
         return topicUser;
@@ -458,7 +448,6 @@ public class IRCChannelInfo implements ChannelInfo {
         return modes;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getModes() {
         final StringBuilder sModes = new StringBuilder("+");
@@ -499,7 +488,6 @@ public class IRCChannelInfo implements ChannelInfo {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getMode(final char mode) {
         if (paramModes.containsKey(mode)) {
@@ -557,7 +545,6 @@ public class IRCChannelInfo implements ChannelInfo {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public Collection<ChannelListModeItem> getListMode(final char mode) {
         if (!parser.chanModesOther.containsKey(mode) || parser.chanModesOther.get(mode) != IRCParser.MODE_LIST) {
@@ -609,7 +596,6 @@ public class IRCChannelInfo implements ChannelInfo {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void alterMode(final boolean add, final Character mode, final String parameter) {
         int modecount = 1;
@@ -677,7 +663,6 @@ public class IRCChannelInfo implements ChannelInfo {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void flushModes() {
         if (modeQueue.isEmpty()) {
@@ -731,7 +716,6 @@ public class IRCChannelInfo implements ChannelInfo {
         modeQueue.clear();
     }
 
-    /** {@inheritDoc} */
     @Override
     public void sendMessage(final String message) {
         if (message.isEmpty()) {
@@ -754,7 +738,6 @@ public class IRCChannelInfo implements ChannelInfo {
         parser.sendString("NOTICE " + name, sMessage);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void sendAction(final String action) {
         if (action.isEmpty()) {
@@ -809,25 +792,21 @@ public class IRCChannelInfo implements ChannelInfo {
         return name;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Parser getParser() {
         return parser;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void part(final String reason) {
         parser.partChannel(name, reason);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setTopic(final String topic) {
         parser.sendRawMessage("TOPIC " + name + " :" + topic);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void sendWho() {
         parser.sendRawMessage("WHO " + name);

@@ -40,7 +40,6 @@ public abstract class TimestampedIRCProcessor extends IRCProcessor {
         super(parser, manager);
     }
 
-    /** {@inheritDoc} */
     @Override
     public final void process(final String sParam, final String[] token) {
         process(new Date(), sParam, token);

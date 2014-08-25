@@ -364,7 +364,6 @@ public class CallbackManager {
             this.callback = callback;
         }
 
-        /** {@inheritDoc} */
         @Override
         public Object invoke(final Object proxy, final Method method, final Object[] args) {
             final Object[] modifiedArgs = new Object[args.length - 2];

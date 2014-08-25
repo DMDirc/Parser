@@ -106,7 +106,6 @@ public class QueueItem implements Comparable<QueueItem> {
         return handler.compare(this, o);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString() {
         return String.format("[%s %d] %s", priority, time, line);

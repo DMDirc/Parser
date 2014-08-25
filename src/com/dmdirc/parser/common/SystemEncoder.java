@@ -33,7 +33,6 @@ import com.dmdirc.parser.interfaces.Encoder;
  */
 public class SystemEncoder implements Encoder {
 
-    /** {@inheritDoc} */
     @Override
     public String encode(final String source, final String target,
             final byte[] message, final int offset, final int length) {

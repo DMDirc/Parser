@@ -76,7 +76,6 @@ public class IRCStringConverter implements StringConverter {
         return encoding;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toLowerCase(final String input) {
         final char[] result = input.toCharArray();
@@ -92,7 +91,6 @@ public class IRCStringConverter implements StringConverter {
         return new String(result);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toUpperCase(final String input) {
         final char[] result = input.toCharArray();
@@ -108,7 +106,6 @@ public class IRCStringConverter implements StringConverter {
         return new String(result);
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean equalsIgnoreCase(final String first, final String second) {
         if (first == null && second == null) {
