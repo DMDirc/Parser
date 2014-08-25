@@ -251,8 +251,8 @@ public class ProcessMode extends IRCProcessor {
         }
 
         // Call Callbacks
-        for (int i = 0; i < sModestr.length; ++i) {
-            sFullModeStr.append(sModestr[i]).append(" ");
+        for (String aSModestr : sModestr) {
+            sFullModeStr.append(aSModestr).append(" ");
         }
 
         iChannel.setMode(nCurrent);

@@ -145,13 +145,13 @@ public class ProcessingManager {
     public void addProcessor(final String[] handles, final IRCProcessor processor) {
         doDebug("Adding processor: " + processor.getName());
 
-        for (int i = 0; i < handles.length; ++i) {
-            if (processHash.containsKey(handles[i].toLowerCase())) {
+        for (String handle : handles) {
+            if (processHash.containsKey(handle.toLowerCase())) {
                 // New Processors take priority over old ones
-                processHash.remove(handles[i].toLowerCase());
+                processHash.remove(handle.toLowerCase());
             }
-            doDebug("\t Added handler for: " + handles[i]);
-            processHash.put(handles[i].toLowerCase(), processor);
+            doDebug("\t Added handler for: " + handle);
+            processHash.put(handle.toLowerCase(), processor);
         }
     }
 

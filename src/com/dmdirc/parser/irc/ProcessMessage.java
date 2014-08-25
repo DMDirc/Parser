@@ -125,7 +125,7 @@ public class ProcessMessage extends TimestampedIRCProcessor {
             sMessage = token[token.length - 1];
         }
         String[] bits = sMessage.split(" ", 2);
-        final Character char1 = Character.valueOf((char) 1);
+        final Character char1 = (char) 1;
         String sCTCP = "";
         boolean isAction = false;
         boolean isCTCP = false;
