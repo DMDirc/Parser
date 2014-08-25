@@ -103,13 +103,11 @@ public class SRVRecord implements Comparable<SRVRecord> {
         return host;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString() {
         return priority + " " + weight + " " + port + " " + host + ".";
     }
 
-    /** {@inheritDoc} */
     @Override
     public int compareTo(final SRVRecord o) {
         if (this.priority < o.priority) { return -1; }

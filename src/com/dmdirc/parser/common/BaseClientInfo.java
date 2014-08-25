@@ -59,31 +59,26 @@ public abstract class BaseClientInfo implements ClientInfo {
         this.host = host;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getNickname() {
         return nick;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getUsername() {
         return user;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getHostname() {
         return host;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getRealname() {
         return realname;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getAccountName() {
         return account;
@@ -134,25 +129,21 @@ public abstract class BaseClientInfo implements ClientInfo {
         this.user = user;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Map<Object, Object> getMap() {
         return map;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Parser getParser() {
         return parser;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString() {
         return getNickname();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getAwayReason() {
         return "";

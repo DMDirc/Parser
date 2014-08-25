@@ -50,7 +50,6 @@ public abstract class BaseSocketAwareParser extends BaseParser {
         super(uri);
     }
 
-    /** {@inheritDoc} */
     @Override
     public int getLocalPort() {
         if (localPort == -1 && socket != null) {
@@ -84,7 +83,6 @@ public abstract class BaseSocketAwareParser extends BaseParser {
     protected SocketFactory getSocketFactory() {
         return new SocketFactory() {
 
-            /** {@inheritDoc} */
             @Override
             public Socket createSocket(final String host, final int port) throws IOException {
                 if (getBindIP() == null) {
@@ -94,7 +92,6 @@ public abstract class BaseSocketAwareParser extends BaseParser {
                 }
             }
 
-            /** {@inheritDoc} */
             @Override
             public Socket createSocket(final InetAddress host, final int port) throws IOException {
                 if (getBindIP() == null) {
@@ -104,7 +101,6 @@ public abstract class BaseSocketAwareParser extends BaseParser {
                 }
             }
 
-            /** {@inheritDoc} */
             @Override
             public Socket createSocket(final String host, final int port,
                     final InetAddress localHost, final int localPort) throws IOException {
@@ -112,7 +108,6 @@ public abstract class BaseSocketAwareParser extends BaseParser {
                         getBindIP() == null ? localHost : InetAddress.getByName(getBindIP()), localPort));
             }
 
-            /** {@inheritDoc} */
             @Override
             public Socket createSocket(final InetAddress address,
                     final int port, final InetAddress localAddress,

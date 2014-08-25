@@ -33,7 +33,6 @@ public abstract class ThreadedParser implements Parser {
     /** Parser Control Thread. */
     protected Thread controlThread;
 
-    /** {@inheritDoc} */
     @Override
     public void connect() {
         synchronized (this) {
@@ -43,7 +42,6 @@ public abstract class ThreadedParser implements Parser {
                 throw new UnsupportedOperationException("This parser has already been running.");
             } else {
                 controlThread = new Thread(new Runnable(){
-                    /** {@inheritDoc} */
                     @Override
                     public void run() {
                         ThreadedParser.this.run();
@@ -54,7 +52,6 @@ public abstract class ThreadedParser implements Parser {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void disconnect(final String message) {
         synchronized (this) {

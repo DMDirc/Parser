@@ -92,19 +92,16 @@ public abstract class BaseParser extends ThreadedParser {
         this.callbackManager = new CallbackManager(this, implementations);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void quit(final String reason) {
         disconnect(reason);
     }
 
-    /** {@inheritDoc} */
     @Override
     public URI getURI() {
         return uri;
     }
 
-    /** {@inheritDoc} */
     @Override
     public URI getProxy() {
         if (proxy == null && ProxySelector.getDefault() != null) {
@@ -125,49 +122,41 @@ public abstract class BaseParser extends ThreadedParser {
         return null;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setProxy(final URI proxy) {
         this.proxy = proxy;
     }
 
-    /** {@inheritDoc} */
     @Override
     public IgnoreList getIgnoreList() {
         return ignoreList;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setIgnoreList(final IgnoreList ignoreList) {
         this.ignoreList = ignoreList;
     }
 
-    /** {@inheritDoc} */
     @Override
     public long getPingTimerInterval() {
         return pingTimerInterval;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setPingTimerInterval(final long newValue) {
         pingTimerInterval = newValue;
     }
 
-    /** {@inheritDoc} */
     @Override
     public int getPingTimerFraction() {
         return pingTimerFraction;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setPingTimerFraction(final int newValue) {
         pingTimerFraction = newValue;
     }
 
-    /** {@inheritDoc} */
     @Override
     public CallbackManager getCallbackManager() {
         return callbackManager;
@@ -187,25 +176,21 @@ public abstract class BaseParser extends ThreadedParser {
         return callbackManager.getCallback(callback);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Map<Object, Object> getMap() {
         return map;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void joinChannel(final String channel) {
         joinChannels(new ChannelJoinRequest(channel));
     }
 
-    /** {@inheritDoc} */
     @Override
     public void joinChannel(final String channel, final String key) {
         joinChannels(new ChannelJoinRequest(channel, key));
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getServerName() {
         return serverName;
@@ -220,25 +205,21 @@ public abstract class BaseParser extends ThreadedParser {
         this.serverName = serverName;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getBindIP() {
         return bindIp;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setBindIP(final String ip) {
         this.bindIp = ip;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getBindIPv6() {
         return bindIpv6;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setBindIPv6(final String ip) {
         this.bindIpv6 = ip;

@@ -52,49 +52,41 @@ public abstract class BaseChannelInfo implements ChannelInfo {
         this.name = name;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Map<Object, Object> getMap() {
         return map;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getName() {
         return name;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Parser getParser() {
         return parser;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void sendMessage(final String message) {
         parser.sendMessage(name, message);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void sendAction(final String action) {
         parser.sendAction(name, action);
     }
 
-    /** {@inheritDoc} */
     @Override
     public Collection<ChannelClientInfo> getChannelClients() {
         return clients.values();
     }
 
-    /** {@inheritDoc} */
     @Override
     public int getChannelClientCount() {
         return clients.size();
     }
 
-    /** {@inheritDoc} */
     @Override
     public ChannelClientInfo getChannelClient(final String client) {
         return getChannelClient(client, false);

@@ -71,19 +71,16 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
         myMap = newMap;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Map<Object, Object> getMap() {
         return myMap;
     }
 
-    /** {@inheritDoc} */
     @Override
     public IRCClientInfo getClient() {
         return cClient;
     }
 
-    /** {@inheritDoc} */
     @Override
     public ChannelInfo getChannel() {
         return myChannel;
@@ -148,13 +145,11 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
         return sModes.toString();
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getAllModes() {
         return getChanModeStr(false);
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getAllModesPrefix() {
         return getChanModeStr(true);
@@ -175,7 +170,6 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
         return 0;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getImportantMode() {
         String sModes = this.getChanModeStr(false);
@@ -185,7 +179,6 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
         return sModes;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getImportantModePrefix() {
         String sModes = this.getChanModeStr(true);
@@ -205,7 +198,6 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
         return this.getImportantModePrefix() + this.getNickname();
     }
 
-    /** {@inheritDoc} */
     @Override
     public void kick(final String message) {
         myParser.sendString("KICK " + myChannel + " " + this.getNickname(), message);
@@ -220,7 +212,6 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
         return this.getChanModeStr(true) + this.getNickname();
     }
 
-    /** {@inheritDoc} */
     @Override
     public int compareTo(final ChannelClientInfo arg0) {
         if (arg0 instanceof IRCChannelClientInfo) {

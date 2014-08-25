@@ -75,7 +75,6 @@ public class ChannelJoinRequest {
         return password;
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object obj) {
         return obj instanceof ChannelJoinRequest
@@ -84,7 +83,6 @@ public class ChannelJoinRequest {
                 ? password == null : ((ChannelJoinRequest) obj).getPassword().equals(password)));
     }
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         int hash = name != null ? name.hashCode() : 0;

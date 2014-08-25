@@ -144,7 +144,6 @@ public final class IRCAuthenticator extends Authenticator {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     protected PasswordAuthentication getPasswordAuthentication() {
         /*

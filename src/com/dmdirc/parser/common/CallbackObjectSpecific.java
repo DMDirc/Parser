@@ -135,7 +135,6 @@ public class CallbackObjectSpecific extends CallbackObject {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean call(final Date date, final Object... args) {
         boolean bResult = false;

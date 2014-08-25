@@ -69,7 +69,6 @@ public class SimpleRateLimitedQueueHandler extends QueueHandler {
     public static QueueFactory getFactory() {
         return new QueueFactory() {
 
-            /** {@inheritDoc} */
             @Override
             public QueueHandler getQueueHandler(final OutputQueue outputQueue, final BlockingQueue<QueueItem> queue, final PrintWriter out) {
                 return new SimpleRateLimitedQueueHandler(outputQueue, queue, out);
@@ -185,7 +184,6 @@ public class SimpleRateLimitedQueueHandler extends QueueHandler {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public QueueItem getQueueItem(final String line, final QueuePriority priority) {
         // Was the last line added less than limitTime ago?
@@ -219,7 +217,6 @@ public class SimpleRateLimitedQueueHandler extends QueueHandler {
         return super.getQueueItem(line, priority);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void run() {
         try {

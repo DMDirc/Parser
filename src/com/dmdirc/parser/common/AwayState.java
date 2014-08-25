@@ -49,7 +49,6 @@ public enum AwayState {
         this.friendlyName = friendlyName;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString() {
         return friendlyName;

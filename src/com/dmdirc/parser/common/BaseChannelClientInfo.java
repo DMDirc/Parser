@@ -55,25 +55,21 @@ public abstract class BaseChannelClientInfo implements ChannelClientInfo {
         this.client = client;
     }
 
-    /** {@inheritDoc} */
     @Override
     public ChannelInfo getChannel() {
         return channel;
     }
 
-    /** {@inheritDoc} */
     @Override
     public ClientInfo getClient() {
         return client;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Map<Object, Object> getMap() {
         return map;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String toString() {
         return getImportantMode() + client.toString();

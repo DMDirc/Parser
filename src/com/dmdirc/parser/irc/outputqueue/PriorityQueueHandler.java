@@ -49,7 +49,6 @@ public class PriorityQueueHandler extends QueueHandler {
     public static QueueFactory getFactory() {
         return new QueueFactory() {
 
-            /** {@inheritDoc} */
             @Override
             public QueueHandler getQueueHandler(final OutputQueue outputQueue, final BlockingQueue<QueueItem> queue, final PrintWriter out) {
                 return new PriorityQueueHandler(outputQueue, queue, out);
@@ -57,7 +56,6 @@ public class PriorityQueueHandler extends QueueHandler {
         };
     }
 
-    /** {@inheritDoc} */
     @Override
     public void run() {
         try {

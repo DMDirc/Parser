@@ -79,7 +79,6 @@ public class IRCClientInfo implements LocalClientInfo {
         parser = tParser;
     }
 
-    /** {@inheritDoc} */
     @Override
     public Map<Object, Object> getMap() {
         return map;
@@ -223,13 +222,11 @@ public class IRCClientInfo implements LocalClientInfo {
         return nickname;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getUsername() {
         return ident;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getHostname() {
         return host;
@@ -249,13 +246,11 @@ public class IRCClientInfo implements LocalClientInfo {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public AwayState getAwayState() {
         return away;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getAwayReason() {
         return awayReason;
@@ -271,7 +266,6 @@ public class IRCClientInfo implements LocalClientInfo {
         awayReason = newValue;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getRealname() {
         return realName;
@@ -286,7 +280,6 @@ public class IRCClientInfo implements LocalClientInfo {
         realName = newValue;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getAccountName() {
         return accountName;
@@ -319,7 +312,6 @@ public class IRCClientInfo implements LocalClientInfo {
         return modes;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String getModes() {
         final StringBuilder sModes = new StringBuilder("+");
@@ -381,7 +373,6 @@ public class IRCClientInfo implements LocalClientInfo {
         return !clients.isEmpty();
     }
 
-    /** {@inheritDoc} */
     @Override
     public int getChannelCount() {
         return clients.size();
@@ -396,7 +387,6 @@ public class IRCClientInfo implements LocalClientInfo {
         return new ArrayList<>(clients.values());
     }
 
-    /** {@inheritDoc} */
     @Override
     public void alterMode(final boolean add, final Character mode) {
         if (isFake() || !parser.userModes.containsKey(mode)) {
@@ -430,7 +420,6 @@ public class IRCClientInfo implements LocalClientInfo {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void flushModes() {
         if (modeQueue.isEmpty()) {
@@ -472,13 +461,11 @@ public class IRCClientInfo implements LocalClientInfo {
         modeQueue.clear();
     }
 
-    /** {@inheritDoc} */
     @Override
     public Parser getParser() {
         return parser;
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setNickname(final String name) {
         if (parser.getLocalClient().equals(this)) {
@@ -488,13 +475,11 @@ public class IRCClientInfo implements LocalClientInfo {
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setAway(final String reason) {
         parser.sendRawMessage("AWAY :" + reason);
     }
 
-    /** {@inheritDoc} */
     @Override
     public void setBack() {
         parser.sendRawMessage("AWAY");

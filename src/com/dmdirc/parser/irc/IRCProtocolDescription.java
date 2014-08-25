@@ -33,19 +33,16 @@ import java.net.URI;
  */
 public class IRCProtocolDescription implements ProtocolDescription {
 
-    /** {@inheritDoc} */
     @Override
     public int getDefaultPort() {
         return 6667;
     }
 
-    /** {@inheritDoc} */
     @Override
     public String[] parseHostmask(final String hostmask) {
         return IRCClientInfo.parseHostFull(hostmask);
     }
 
-    /** {@inheritDoc} */
     @Override
     public boolean isSecure(final URI uri) {
         return uri.getScheme().endsWith("s");
