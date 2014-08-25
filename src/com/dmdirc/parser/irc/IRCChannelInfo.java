@@ -691,8 +691,8 @@ public class IRCChannelInfo implements ChannelInfo {
         String modestr;
         String[] modeparam;
         boolean positive;
-        for (int i = 0; i < modeQueue.size(); ++i) {
-            modeparam = modeQueue.get(i).split(" ");
+        for (String aModeQueue : modeQueue) {
+            modeparam = aModeQueue.split(" ");
             modestr = modeparam[0];
             positive = modestr.charAt(0) == '+';
             if (positive) {

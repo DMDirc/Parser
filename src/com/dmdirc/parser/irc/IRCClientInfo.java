@@ -442,8 +442,8 @@ public class IRCClientInfo implements LocalClientInfo {
         final StringBuilder sendModeStr = new StringBuilder();
         String modestr;
         boolean positive;
-        for (int i = 0; i < modeQueue.size(); ++i) {
-            modestr = modeQueue.get(i);
+        for (String aModeQueue : modeQueue) {
+            modestr = aModeQueue;
             positive = modestr.charAt(0) == '+';
             if (positive) {
                 positivemode.append(modestr.charAt(1));

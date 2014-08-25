@@ -90,8 +90,8 @@ public class ProcessNames extends IRCProcessor {
             String sNameBit, sName = "";
             StringBuilder sModes = new StringBuilder();
             long nPrefix = 0;
-            for (int j = 0; j < sNames.length; ++j) {
-                sNameBit = sNames[j];
+            for (String sName1 : sNames) {
+                sNameBit = sName1;
                 // If name is empty (ie there was an extra space) ignore it.
                 if (sNameBit.isEmpty()) {
                     continue;
@@ -102,7 +102,8 @@ public class ProcessNames extends IRCProcessor {
                     // hPrefixMap contains @, o, +, v this caused issue 107
                     // hPrefixModes only contains o, v so if the mode is in hPrefixMap
                     // and not in hPrefixModes, its ok to use.
-                    if (parser.prefixMap.containsKey(cMode) && !parser.prefixModes.containsKey(cMode)) {
+                    if (parser.prefixMap.containsKey(cMode) &&
+                            !parser.prefixModes.containsKey(cMode)) {
                         sModes.append(cMode);
                         nPrefix = nPrefix + parser.prefixModes.get(parser.prefixMap.get(cMode));
                     } else {
@@ -110,7 +111,8 @@ public class ProcessNames extends IRCProcessor {
                         break;
                     }
                 }
-                callDebugInfo(IRCParser.DEBUG_INFO, "Name: %s Modes: \"%s\" [%d]", sName, sModes.toString(), nPrefix);
+                callDebugInfo(IRCParser.DEBUG_INFO, "Name: %s Modes: \"%s\" [%d]", sName,
+                        sModes.toString(), nPrefix);
 
                 iClient = getClientInfo(sName);
                 if (iClient == null) {

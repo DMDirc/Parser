@@ -147,7 +147,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      * Once it reaches 0, we send a ping, and reset it to 6, this means we ping
      * the server every minute.
      *
-     * @see setPingCountDownLength
+     * @see #setPingTimerInterval
      */
     private int pingCountDown;
 
@@ -327,15 +327,14 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     public boolean compareURI(final URI uri) {
         // Get the old URI.
         final URI oldURI = getURI();
-        final URI newURI = uri;
 
         // Check that protocol, host and port are the same.
         // Anything else won't change the server we connect to just what we
         // would do after connecting, so is not relevent.
-        return newURI.getScheme().equalsIgnoreCase(oldURI.getScheme())
-                && newURI.getHost().equalsIgnoreCase(oldURI.getHost())
-                && ((newURI.getUserInfo() == null || newURI.getUserInfo().isEmpty()) || newURI.getUserInfo().equalsIgnoreCase((oldURI.getUserInfo() == null ? "" : oldURI.getUserInfo())))
-                && newURI.getPort() == oldURI.getPort();
+        return uri.getScheme().equalsIgnoreCase(oldURI.getScheme())
+                && uri.getHost().equalsIgnoreCase(oldURI.getHost())
+                && ((uri.getUserInfo() == null || uri.getUserInfo().isEmpty()) || uri.getUserInfo().equalsIgnoreCase((oldURI.getUserInfo() == null ? "" : oldURI.getUserInfo())))
+                && uri.getPort() == oldURI.getPort();
     }
 
     /**
@@ -1045,9 +1044,6 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         }
         try {
             doConnect();
-        } catch (UnknownHostException e) {
-            handleConnectException(e, true);
-            return;
         } catch (IOException e) {
             handleConnectException(e, true);
             return;
@@ -2102,7 +2098,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      * Get the value of checkServerPing.
      *
      * @return value of checkServerPing.
-     * @see setCheckServerPing
+     * @see #setCheckServerPing
      */
     public boolean getCheckServerPing() {
         return checkServerPing;
@@ -2112,7 +2108,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      * Set the value of checkServerPing.
      *
      * @param newValue New value to use.
-     * @see setCheckServerPing
+     * @see #setCheckServerPing
      */
     public void setCheckServerPing(final boolean newValue) {
         checkServerPing = newValue;
