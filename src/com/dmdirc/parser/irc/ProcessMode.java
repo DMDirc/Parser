@@ -60,8 +60,8 @@ public class ProcessMode extends IRCProcessor {
      */
     @Override
     public void process(final String sParam, final String[] token) {
-        String[] sModestr;
-        String sChannelName;
+        final String[] sModestr;
+        final String sChannelName;
         switch (sParam) {
             case "324":
                 sChannelName = token[3];
@@ -113,9 +113,9 @@ public class ProcessMode extends IRCProcessor {
         long nTemp, nValue, nCurrent = 0;
         boolean bPositive = true, bBooleanMode;
         char cPositive = '+';
-        IRCChannelInfo iChannel;
+        final IRCChannelInfo iChannel;
         IRCChannelClientInfo iChannelClientInfo;
-        IRCChannelClientInfo setterCCI;
+        final IRCChannelClientInfo setterCCI;
 
         CallbackObject cbSingle = null;
         CallbackObject cbNonUser = null;

@@ -116,8 +116,8 @@ public class ProcessMessage extends TimestampedIRCProcessor {
         }
 
         IRCChannelClientInfo iChannelClient = null;
-        IRCChannelInfo iChannel;
-        IRCClientInfo iClient;
+        final IRCChannelInfo iChannel;
+        final IRCClientInfo iClient;
         // "nick!user@host PRIVMSG #Channel" should be processed as "nick!user@host PRIVMSG #Channel :"
         if (token.length < 4) {
             sMessage = "";

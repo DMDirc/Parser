@@ -75,7 +75,7 @@ public class ProcessJoin extends IRCProcessor {
             }
             IRCClientInfo iClient;
             IRCChannelInfo iChannel;
-            IRCChannelClientInfo iChannelClient;
+            final IRCChannelClientInfo iChannelClient;
             final String channelName;
             final boolean extendedJoin = parser.getCapabilityState("extended-join") == CapabilityState.ENABLED;
             final String accountName;

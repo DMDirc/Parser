@@ -308,7 +308,7 @@ public class Process004005 extends IRCProcessor {
      * @param value The value of the token.
      */
     private void processListmodeToken(final String value) {
-        String[] handles = new String[2];
+        final String[] handles = new String[2];
         handles[0] = value; // List mode item
         final String endValue = Integer.toString(Integer.parseInt(value) + 1);
         parser.h005Info.put("LISTMODEEND", endValue);

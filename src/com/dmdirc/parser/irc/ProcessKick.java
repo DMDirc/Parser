@@ -54,11 +54,11 @@ public class ProcessKick extends IRCProcessor {
     public void process(final String sParam, final String[] token) {
         callDebugInfo(IRCParser.DEBUG_INFO, "processKick: %s | %s", sParam, Arrays.toString(token));
 
-        IRCChannelClientInfo iChannelClient;
-        IRCChannelClientInfo iChannelKicker;
-        IRCChannelInfo iChannel;
-        IRCClientInfo iClient;
-        IRCClientInfo iKicker;
+        final IRCChannelClientInfo iChannelClient;
+        final IRCChannelClientInfo iChannelKicker;
+        final IRCChannelInfo iChannel;
+        final IRCClientInfo iClient;
+        final IRCClientInfo iKicker;
         String sReason = "";
 
         iClient = getClientInfo(token[3]);

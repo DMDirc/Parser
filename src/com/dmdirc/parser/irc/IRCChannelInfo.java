@@ -599,7 +599,7 @@ public class IRCChannelInfo implements ChannelInfo {
     @Override
     public void alterMode(final boolean add, final Character mode, final String parameter) {
         int modecount = 1;
-        int modeint;
+        final int modeint;
         String modestr;
         if (parser.h005Info.containsKey("MODES")) {
             try {

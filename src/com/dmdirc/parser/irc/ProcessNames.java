@@ -49,7 +49,7 @@ public class ProcessNames extends IRCProcessor {
      */
     @Override
     public void process(final String sParam, final String[] token) {
-        IRCChannelInfo iChannel;
+        final IRCChannelInfo iChannel;
         if ("366".equals(sParam)) {
             // End of names
             iChannel = getChannel(token[3]);

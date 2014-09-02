@@ -84,7 +84,7 @@ public class Logging {
     @SuppressWarnings({"unchecked", "rawtypes"})
     private Logging() {
         try {
-            Class<?> factory;
+            final Class<?> factory;
             // Check for classes
             Class.forName("org.apache.commons.logging.Log");
             factory = Class.forName("org.apache.commons.logging.LogFactory");
