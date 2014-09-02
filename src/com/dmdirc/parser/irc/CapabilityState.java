@@ -54,7 +54,7 @@ public enum CapabilityState {
      *
      * @param description Description of capability.
      */
-    private CapabilityState(final String description, final Character modifier) {
+    CapabilityState(final String description, final Character modifier) {
         this.description = description;
         this.modifier = modifier;
     }

@@ -31,5 +31,5 @@ public enum QueuePriority {
     /** Normal priority. */
     NORMAL,
     /** Low Priority. */
-    LOW;
+    LOW
 }

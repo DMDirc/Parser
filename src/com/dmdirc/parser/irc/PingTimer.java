@@ -43,7 +43,6 @@ public class PingTimer extends TimerTask {
      * @param timer Timer that owns this TimerTask.
      */
     public PingTimer(final IRCParser parser, final Timer timer) {
-        super();
         this.parser = parser;
         this.timer = timer;
     }

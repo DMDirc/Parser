@@ -200,7 +200,7 @@ public class SimpleRateLimitedQueueHandler extends QueueHandler {
                 // It has been longer than limitTime and we are still shown as
                 // limiting, check to see if the queue is empty or not, if it is
                 // disable limiting.
-                if (queue.size() == 0) {
+                if (queue.isEmpty()) {
                     isLimiting = false;
                 }
             } else {
@@ -228,7 +228,7 @@ public class SimpleRateLimitedQueueHandler extends QueueHandler {
                 final boolean doSleep;
                 synchronized (this) {
                     doSleep = isLimiting;
-                    if (isLimiting && queue.size() == 0) {
+                    if (isLimiting && queue.isEmpty()) {
                         isLimiting = false;
                     }
                 }

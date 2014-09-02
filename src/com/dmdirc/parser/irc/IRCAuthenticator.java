@@ -59,7 +59,6 @@ public final class IRCAuthenticator extends Authenticator {
      * Authenticator.
      */
     private IRCAuthenticator() {
-        super();
 
         Authenticator.setDefault(this);
     }

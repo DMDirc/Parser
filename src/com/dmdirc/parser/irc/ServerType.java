@@ -141,7 +141,7 @@ public enum ServerType {
         /** Match using raw 002. */
         RAW002,
         /** Never Match (Used by generic). */
-        NEVER;
+        NEVER
     }
     /** Type of for this ServerType. */
     private final String type;

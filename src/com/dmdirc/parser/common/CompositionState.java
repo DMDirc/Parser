@@ -34,6 +34,6 @@ public enum CompositionState {
     /** The user has entered text but is no longer typing. */
     ENTERED_TEXT,
     /** The user is not typing and has not entered text. */
-    IDLE;
+    IDLE
 
 }
