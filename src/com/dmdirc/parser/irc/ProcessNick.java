@@ -52,9 +52,9 @@ public class ProcessNick extends IRCProcessor {
      */
     @Override
     public void process(final String sParam, final String[] token) {
-        IRCClientInfo iClient;
+        final IRCClientInfo iClient;
         IRCChannelClientInfo iChannelClient;
-        String oldNickname;
+        final String oldNickname;
 
         iClient = getClientInfo(token[0]);
         if (iClient == null) {

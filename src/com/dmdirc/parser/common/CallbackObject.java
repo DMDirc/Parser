@@ -243,7 +243,7 @@ public class CallbackObject {
         final Class<?> actualTarget = getImplementation(target);
 
         for (Constructor<?> ctor : actualTarget.getConstructors()) {
-            Object[] params = new Object[ctor.getParameterTypes().length];
+            final Object[] params = new Object[ctor.getParameterTypes().length];
 
             i = 0;
             Object param;

@@ -87,7 +87,7 @@ public final class IRCAuthenticator extends Authenticator {
      */
     public void addAuthentication(final URI server, final URI proxy) {
         final String userInfo = proxy.getUserInfo();
-        int offset;
+        final int offset;
 
         if (userInfo == null || (offset = userInfo.indexOf(':')) == -1) {
             return;

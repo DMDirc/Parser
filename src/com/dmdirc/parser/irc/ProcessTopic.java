@@ -48,7 +48,7 @@ public class ProcessTopic extends IRCProcessor {
      */
     @Override
     public void process(final String sParam, final String[] token) {
-        IRCChannelInfo iChannel;
+        final IRCChannelInfo iChannel;
         switch (sParam) {
             case "332":
                 iChannel = getChannel(token[3]);

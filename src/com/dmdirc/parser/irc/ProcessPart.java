@@ -55,9 +55,9 @@ public class ProcessPart extends IRCProcessor {
         if (token.length < 3) {
             return;
         }
-        IRCClientInfo iClient;
-        IRCChannelInfo iChannel;
-        IRCChannelClientInfo iChannelClient;
+        final IRCClientInfo iClient;
+        final IRCChannelInfo iChannel;
+        final IRCChannelClientInfo iChannelClient;
 
         iClient = getClientInfo(token[0]);
         iChannel = getChannel(token[2]);

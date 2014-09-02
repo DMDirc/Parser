@@ -231,7 +231,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      */
     private Socket rawSocket;
     /** Used for writing to the server. */
-    private OutputQueue out;
+    private final OutputQueue out;
     /** The encoder to use to encode incoming lines. */
     private Encoder encoder = new SystemEncoder();
     /** Used for reading from the server. */
@@ -784,7 +784,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
             throw new IOException("Server port (" + target.getPort() + ") is invalid.");
         }
 
-        Socket mySocket;
+        final Socket mySocket;
         if (proxy == null) {
             callDebugInfo(DEBUG_SOCKET, "Not using Proxy");
             mySocket = new Socket();
@@ -1110,7 +1110,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      * @return Parameter of the line
      */
     public static String getParam(final String line) {
-        String[] params = line.split(" :", 2);
+        final String[] params = line.split(" :", 2);
         return params[params.length - 1];
     }
 
@@ -1285,7 +1285,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     @SuppressWarnings("fallthrough")
     protected void processLine(final ReadLine line) {
         callDataIn(line.getLine());
-        String[] token = line.getTokens();
+        final String[] token = line.getTokens();
         Date lineTS = new Date();
         if (!token[0].isEmpty() && token[0].charAt(0) == '@') {
             try {
@@ -1652,7 +1652,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      */
     protected void parseUserModes() {
         final String sDefaultModes = "nwdoi";
-        String modeStr;
+        final String modeStr;
         if (h005Info.containsKey("USERMODES")) {
             modeStr = h005Info.get("USERMODES");
         } else {
@@ -2021,7 +2021,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
 
     @Override
     public boolean isUserSettable(final char mode) {
-        String validmodes;
+        final String validmodes;
         if (h005Info.containsKey("USERCHANMODES")) {
             validmodes = h005Info.get("USERCHANMODES");
         } else {

@@ -59,7 +59,7 @@ public class ProcessQuit extends IRCProcessor {
         if (token.length < 2) {
             return;
         }
-        IRCClientInfo iClient;
+        final IRCClientInfo iClient;
         IRCChannelClientInfo iChannelClient;
 
         iClient = getClientInfo(token[0]);
