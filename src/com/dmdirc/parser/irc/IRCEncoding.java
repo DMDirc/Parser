@@ -43,7 +43,7 @@ public enum IRCEncoding {
      *
      * @param limit The limit used for this encoding.
      */
-    private IRCEncoding(final int limit) {
+    IRCEncoding(final int limit) {
         this.limit = limit;
     }
 

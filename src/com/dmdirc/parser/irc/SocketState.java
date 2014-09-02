@@ -38,5 +38,5 @@ public enum SocketState {
     /** Socket is closed. */
     CLOSED,
     /** Socket is not created yet. */
-    NULL;
+    NULL
 }

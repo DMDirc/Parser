@@ -50,7 +50,7 @@ public class Logging {
          * @param methodName Name of method in log4j to log to
          * @param checkMethodName Name of method in log4j to sue to check logging
          */
-        private LogLevel(final String methodName, final String checkMethodName) {
+        LogLevel(final String methodName, final String checkMethodName) {
             this.methodName = methodName;
             this.checkMethodName = checkMethodName;
         }
@@ -72,7 +72,8 @@ public class Logging {
         public String getCheckMethodName() {
             return checkMethodName;
         }
-    };
+    }
+
     /** Singleton Instance of Logging. */
     private static Logging me;
     /** Is log4j available. */

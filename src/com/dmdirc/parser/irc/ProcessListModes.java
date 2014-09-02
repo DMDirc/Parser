@@ -241,7 +241,8 @@ public class ProcessListModes extends IRCProcessor {
         } else {
             callDebugInfo(IRCParser.DEBUG_INFO, "List Mode Batch over");
             channel.resetAddState();
-            if (isCleverMode || listModeQueue == null || ((LinkedList<Character>) listModeQueue).size() == 0) {
+            if (isCleverMode || listModeQueue == null ||
+                    ((LinkedList<Character>) listModeQueue).isEmpty()) {
                 callDebugInfo(IRCParser.DEBUG_INFO, "Calling GotListModes");
                 channel.setHasGotListModes(true);
 
