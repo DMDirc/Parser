@@ -125,7 +125,7 @@ public class Logging {
         if (isAvailable) {
             try {
                 final Method check = log.getClass().getMethod(level.getCheckMethodName());
-                return (Boolean) check.invoke(log, new Object[0]);
+                return (Boolean) check.invoke(log);
             } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException nsme) {
             }
         }
@@ -157,10 +157,10 @@ public class Logging {
         try {
             if (throwable == null) {
                 final Method method = log.getClass().getMethod(level.getMethodName(), String.class);
-                method.invoke(log, new Object[]{message});
+                method.invoke(log, message);
             } else {
                 final Method method = log.getClass().getMethod(level.getMethodName(), String.class, Throwable.class);
-                method.invoke(log, new Object[]{message, throwable});
+                method.invoke(log, message, throwable);
             }
         } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException nsme) {
         }
