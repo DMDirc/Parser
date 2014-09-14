@@ -8,3 +8,4 @@ build-before-profiler.xml
 /nbproject/profiler-build-impl.xml
 /nbproject/genfiles.properties
 /nbproject/private
+/etc/nexus-teamcity.properties

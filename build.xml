@@ -38,6 +38,4 @@
     <target name="-post-test-run">
         <delete file="${manifest.file}"/>
     </target>
-    <target name="publish-nightlies" depends="clean, jar, -publish-nightlies" />
-    <target name="publish-release" depends="clean, jar, -publish-release" />
 </project>
