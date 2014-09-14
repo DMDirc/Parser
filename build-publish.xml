@@ -2,18 +2,16 @@
 <project name="DMDirc-Publish" basedir="." xmlns:ivy="antlib:org.apache.ivy.ant">
     <description>Publish artifacts for DMDirc</description>
 
-    <available file="${git.dir}" property="is.git" />
-
     <target name="-init-version">
         <taskdef name="git-describe" classname="org.mdonoughe.JGitDescribeTask" classpathref="lib.classpath"/>
     </target>
 
-    <target name="-get-git-version" depends="-init-version" if="is.git">
+    <target name="-get-git-version" depends="-init-version">
         <git-describe dir="${git.dir}" property="parsers.version.main" subdir="${basedir}/${src.dir}/com/dmdirc/parser/common/;${basedir}/${src.dir}/com/dmdirc/parser/interfaces/" />
         <git-describe dir="${git.dir}" property="parsers.version.irc" subdir="${basedir}/${src.dir}/com/dmdirc/parser/irc/" />
     </target>
 
-    <target name="-publish-release" depends="-get-git-version">
+    <target name="publish-release" depends="-get-git-version, -init-ivy">
         <tstamp>
             <format property="timestamp" pattern="yyyyddMM" />
         </tstamp>
@@ -47,7 +45,7 @@
             resolver="upload-release"/>
     </target>
 
-    <target name="-publish-nightlies" depends="-get-git-version">
+    <target name="publish-nightlies" depends="-get-git-version, -init-ivy">
         <tstamp>
             <format property="timestamp" pattern="yyyyddMM" />
         </tstamp>
@@ -82,7 +80,7 @@
     </target>
 
 
-    <target name="-publish-snapshot" depends="-get-git-version">
+    <target name="publish-snapshot" depends="-get-git-version, -init-ivy">
         <tstamp>
             <format property="timestamp" pattern="yyyyddMM" />
         </tstamp>
@@ -114,5 +112,17 @@
             publishivy="false"
             artifactspattern="dist/parser.irc.[ext]"
             resolver="upload-snapshot"/>
+    </target>
+
+    <target name="init-teamcity" depends="-init-ivy">
+        <echo>Downloading private files, if this fails please pass username and</echo>
+        <echo>password to ant using -Dusername=... -Dpassword=...</echo>
+
+        <get src="http://www.dmdirc.com/private/nexus-teamcity.properties" dest="etc/nexus-teamcity.properties" username="${username}" password="${password}"/>
+        <loadproperties srcFile="etc/nexus-teamcity.properties"/>
+
+        <ivy:settings>
+          <credentials host="nexus.dmdirc.com" realm="Sonatype Nexus Repository Manager" username="${nexus.user}" passwd="${nexus.pass}"/>
+        </ivy:settings>
     </target>
 </project>
