@@ -28,7 +28,6 @@ import com.dmdirc.parser.interfaces.callbacks.ChannelListModeListener;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.Queue;
 
 /**
@@ -241,8 +240,7 @@ public class ProcessListModes extends IRCProcessor {
         } else {
             callDebugInfo(IRCParser.DEBUG_INFO, "List Mode Batch over");
             channel.resetAddState();
-            if (isCleverMode || listModeQueue == null ||
-                    ((LinkedList<Character>) listModeQueue).isEmpty()) {
+            if (isCleverMode || listModeQueue == null || listModeQueue.isEmpty()) {
                 callDebugInfo(IRCParser.DEBUG_INFO, "Calling GotListModes");
                 channel.setHasGotListModes(true);
 
