@@ -27,6 +27,7 @@ import com.dmdirc.parser.interfaces.LocalClientInfo;
 import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,7 +47,7 @@ public class IRCClientInfo implements LocalClientInfo {
     /** Known host of client. */
     private String host = "";
     /** Known user modes of client. */
-    private long modes;
+    private String modes;
     /** Known Away Reason of client. */
     private String awayReason = "";
     /** Known Account name of client. */
@@ -64,7 +65,7 @@ public class IRCClientInfo implements LocalClientInfo {
     /** List of ChannelClientInfos that point to this. */
     private final Map<String, IRCChannelClientInfo> clients = new HashMap<>();
     /** Modes waiting to be sent to the server. */
-    private final List<String> modeQueue = new LinkedList<>();
+    private final Collection<String> modeQueue = new LinkedList<>();
 
     /**
      * Create a new client object from a hostmask.
@@ -136,7 +137,6 @@ public class IRCClientInfo implements LocalClientInfo {
      */
     public static String[] parseHostFull(final String hostmask) {
         String[] sTemp;
-        final String[] result = new String[3];
 
         if (!hostmask.isEmpty() && hostmask.charAt(0) == ':') {
             sTemp = hostmask.substring(1).split("@", 2);
@@ -144,6 +144,7 @@ public class IRCClientInfo implements LocalClientInfo {
             sTemp = hostmask.split("@", 2);
         }
 
+        final String[] result = new String[3];
         result[2] = sTemp.length == 1 ? "" : sTemp[1];
         sTemp = sTemp[0].split("!", 2);
         result[1] = sTemp.length == 1 ? "" : sTemp[1];
@@ -193,7 +194,7 @@ public class IRCClientInfo implements LocalClientInfo {
      */
     @Override
     public String toString() {
-        return nickname + "!" + ident + "@" + host;
+        return nickname + '!' + ident + '@' + host;
     }
 
     /**
@@ -206,7 +207,7 @@ public class IRCClientInfo implements LocalClientInfo {
     public String getNickname() {
         // If this is the localClient then do what we are supposed to do, and ask
         // the parser using parser.getNickname()
-        if (this.equals(parser.getLocalClient())) {
+        if (equals(parser.getLocalClient())) {
             return parser.getMyNickname();
         } else {
             return nickname;
@@ -295,37 +296,26 @@ public class IRCClientInfo implements LocalClientInfo {
     }
 
     /**
-     * Set the user modes (as an integer).
+     * Set the user modes.
      *
-     * @param newMode new long representing channel modes. (Boolean only)
+     * @param newMode new string containing boolean channel modes.
      */
-    public void setUserMode(final long newMode) {
+    public void setUserMode(final String newMode) {
         modes = newMode;
     }
 
     /**
-     * Get the user modes (as an integer).
+     * Get the user modes.
      *
      * @return long representing channel modes. (Boolean only)
      */
-    public long getUserMode() {
+    public String getUserMode() {
         return modes;
     }
 
     @Override
     public String getModes() {
-        final StringBuilder sModes = new StringBuilder("+");
-        final long nChanModes = this.getUserMode();
-
-        for (char cTemp : parser.userModes.keySet()) {
-            final long nTemp = parser.userModes.get(cTemp);
-
-            if ((nChanModes & nTemp) == nTemp) {
-                sModes.append(cTemp);
-            }
-        }
-
-        return sModes.toString();
+        return '+' + modes;
     }
 
     /**
@@ -336,8 +326,7 @@ public class IRCClientInfo implements LocalClientInfo {
      * @return True/False if this client appears to be an oper
      */
     public boolean isOper() {
-        final String modestr = getModes();
-        return modestr.indexOf('o') > -1 || modestr.indexOf('O') > -1;
+        return modes.indexOf('o') > -1 || modes.indexOf('O') > -1;
     }
 
     /**
@@ -389,7 +378,7 @@ public class IRCClientInfo implements LocalClientInfo {
 
     @Override
     public void alterMode(final boolean add, final Character mode) {
-        if (isFake() || !parser.userModes.containsKey(mode)) {
+        if (isFake() || !parser.userModes.isMode(mode)) {
             return;
         }
 

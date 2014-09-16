@@ -168,10 +168,8 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     private int connectTimeout = 5000;
     /** Manager used to handle prefix modes. */
     public final PrefixModeManager prefixModes = new PrefixModeManager();
-    /** Hashtable storing known user modes (owxis etc). */
-    public final Map<Character, Long> userModes = new HashMap<>();
-    /** Integer representing the next avaliable integer value of a User mode. */
-    public long nNextKeyUser = 1;
+    /** Manager used to handle user modes (owxis etc). */
+    public final ModeManager userModes = new ModeManager();
     /**
      * Hashtable storing known boolean chan modes (cntmi etc).
      * Valid Boolean Modes are stored as Hashtable.pub('m',1); where 'm' is the mode and 1 is a numeric value.<br><br>
@@ -716,7 +714,6 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         }
         // Reset the mode indexes
         nextKeyCMBool = 1;
-        nNextKeyUser = 1;
         setServerName("");
         networkName = "";
         lastLine = null;
@@ -1650,19 +1647,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
             h005Info.put("USERMODES", sDefaultModes);
         }
 
-        // resetState
-        userModes.clear();
-        nNextKeyUser = 1;
-
-        // Boolean Mode
-        for (int i = 0; i < modeStr.length(); ++i) {
-            final Character cMode = modeStr.charAt(i);
-            callDebugInfo(DEBUG_INFO, "Found User Mode: %c [%d]", cMode, nNextKeyUser);
-            if (!userModes.containsKey(cMode)) {
-                userModes.put(cMode, nNextKeyUser);
-                nNextKeyUser *= 2;
-            }
-        }
+        userModes.set(modeStr);
     }
 
     /**
