@@ -20,12 +20,14 @@
  * SOFTWARE.
  */
 
-package com.dmdirc.parser.irc;
+package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.common.AwayState;
 import com.dmdirc.harness.parser.TestParser;
 import com.dmdirc.parser.common.CallbackNotFoundException;
 import com.dmdirc.parser.interfaces.callbacks.AwayStateListener;
+import com.dmdirc.parser.irc.IRCParser;
+
 import java.util.Date;
 import org.junit.Test;
 import static org.mockito.Mockito.*;
