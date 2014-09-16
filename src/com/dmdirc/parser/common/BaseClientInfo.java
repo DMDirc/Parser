@@ -40,7 +40,11 @@ public abstract class BaseClientInfo implements ClientInfo {
     private final Map<Object, Object> map = new HashMap<>();
 
     /** The user's details. */
-    private String nick, user, host, realname, account = null;
+    private String nick;
+    private String user;
+    private String host;
+    private String realname;
+    private String account;
 
     /**
      * Creates a new base client info for the specified parser with the
@@ -130,6 +134,7 @@ public abstract class BaseClientInfo implements ClientInfo {
     }
 
     @Override
+    @SuppressWarnings("ReturnOfCollectionOrArrayField")
     public Map<Object, Object> getMap() {
         return map;
     }

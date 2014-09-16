@@ -22,6 +22,8 @@
 
 package com.dmdirc.parser.common;
 
+import com.dmdirc.parser.interfaces.ChannelInfo;
+import com.dmdirc.parser.interfaces.ClientInfo;
 import com.dmdirc.parser.interfaces.callbacks.CallbackInterface;
 
 import java.net.InetSocketAddress;
@@ -35,11 +37,10 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Implements common base functionality for parsers.<p>
- * Implementations of this class must be annotated with
- * {@link ChildImplementations} to define the implementations to use for
- * instances of {@link com.dmdirc.parser.interfaces.ClientInfo},
- * {@link com.dmdirc.parser.interfaces.ChannelInfo}, etc.
+ * Implements common base functionality for parsers.
+ * <p>
+ * Implementations of this class must be annotated with {@link ChildImplementations} to define
+ * the implementations to use for instances of {@link ClientInfo}, {@link ChannelInfo}, etc.
  */
 public abstract class BaseParser extends ThreadedParser {
 
@@ -83,7 +84,7 @@ public abstract class BaseParser extends ThreadedParser {
 
         final Map<Class<?>, Class<?>> implementations = new HashMap<>();
 
-        for (Class<?> child : this.getClass().getAnnotation(ChildImplementations.class).value()) {
+        for (Class<?> child : getClass().getAnnotation(ChildImplementations.class).value()) {
             for (Class<?> iface : child.getInterfaces()) {
                 implementations.put(iface, child);
             }
@@ -177,6 +178,7 @@ public abstract class BaseParser extends ThreadedParser {
     }
 
     @Override
+    @SuppressWarnings("ReturnOfCollectionOrArrayField")
     public Map<Object, Object> getMap() {
         return map;
     }

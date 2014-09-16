@@ -32,29 +32,31 @@ public abstract class ThreadedParser implements Parser {
 
     /** Parser Control Thread. */
     protected Thread controlThread;
+    /** Object to use to lock access to {@link #controlThread}. */
+    protected final Object controlThreadLock = new Object();
 
     @Override
     public void connect() {
-        synchronized (this) {
-            if (controlThread != null) {
-                // To ensure correct internal state, parsers must be recreated for
-                // new connections rather than being recycled.
-                throw new UnsupportedOperationException("This parser has already been running.");
-            } else {
-                controlThread = new Thread(new Runnable(){
+        synchronized (controlThreadLock) {
+            if (controlThread == null) {
+                controlThread = new Thread(new Runnable() {
                     @Override
                     public void run() {
                         ThreadedParser.this.run();
                     }
                 }, "Parser Thread");
                 controlThread.start();
+            } else {
+                // To ensure correct internal state, parsers must be recreated for
+                // new connections rather than being recycled.
+                throw new UnsupportedOperationException("This parser has already been running.");
             }
         }
     }
 
     @Override
     public void disconnect(final String message) {
-        synchronized (this) {
+        synchronized (controlThreadLock) {
             if (controlThread != null) {
                 controlThread.interrupt();
             }

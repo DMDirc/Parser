@@ -24,8 +24,6 @@ package com.dmdirc.parser.common;
 
 /**
  * IRC Parser Error.
- *
- * @author Shane Mc Cormack
  */
 public final class ParserError {
     /** Error is potentially Fatal, Desync 99% Guaranteed! */

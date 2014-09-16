@@ -24,8 +24,6 @@ package com.dmdirc.parser.common;
 
 /**
  * Possible composition states for remote users.
- *
- * @since 0.6.6
  */
 public enum CompositionState {
 

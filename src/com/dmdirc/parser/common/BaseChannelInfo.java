@@ -53,6 +53,7 @@ public abstract class BaseChannelInfo implements ChannelInfo {
     }
 
     @Override
+    @SuppressWarnings("ReturnOfCollectionOrArrayField")
     public Map<Object, Object> getMap() {
         return map;
     }

@@ -24,8 +24,6 @@ package com.dmdirc.parser.common;
 
 /**
  * IRC Parser Callback Exception.
- *
- * @author Shane Mc Cormack
  */
 public class CallbackNotFoundException extends RuntimeException {
     /**

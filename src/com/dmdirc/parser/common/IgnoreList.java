@@ -46,7 +46,7 @@ public class IgnoreList {
      *
      * @param items Items to add to this RegexStringList
      */
-    public IgnoreList(final List<String> items) {
+    public IgnoreList(final Iterable<String> items) {
         addAll(items);
     }
 
@@ -70,7 +70,7 @@ public class IgnoreList {
      *
      * @param patterns A list of patterns to be added
      */
-    public void addAll(final List<String> patterns) {
+    public void addAll(final Iterable<String> patterns) {
         for (String pattern : patterns) {
             add(pattern);
         }
@@ -82,7 +82,7 @@ public class IgnoreList {
      * @param position Position in the list to remove
      */
     public void remove(final int position) {
-        if (position < this.count()) {
+        if (position < count()) {
             ignoreInfo.remove(position);
         }
     }
@@ -102,8 +102,8 @@ public class IgnoreList {
      * @throws PatternSyntaxException if one of the items in the list is an invalid regex
      */
     public int matches(final String check) throws PatternSyntaxException {
-        for (int i = 0; i < this.count(); ++i) {
-            if (check.matches("(?i)" + this.get(i))) {
+        for (int i = 0; i < count(); i++) {
+            if (check.matches("(?i)" + get(i))) {
                 return i;
             }
         }
@@ -120,11 +120,7 @@ public class IgnoreList {
      */
     public boolean matches(final int position, final String check) throws
             PatternSyntaxException {
-        if (position < this.count()) {
-            return check.matches("(?i)" + this.get(position));
-        } else {
-            return false;
-        }
+        return position < count() && check.matches("(?i)" + get(position));
     }
 
     /**
@@ -134,7 +130,7 @@ public class IgnoreList {
      * @return String showing the pattern. ("" if position isn't valid)
      */
     public String get(final int position) {
-        if (position < this.count()) {
+        if (position < count()) {
             return ignoreInfo.get(position);
         } else {
             return "";
@@ -148,7 +144,7 @@ public class IgnoreList {
      * @param pattern New pattern
      */
     public void set(final int position, final String pattern) {
-        if (position < this.count()) {
+        if (position < count()) {
             ignoreInfo.set(position, pattern);
         }
     }
@@ -220,53 +216,79 @@ public class IgnoreList {
     protected static String regexToSimple(final String regex)
             throws UnsupportedOperationException {
         final StringBuilder res = new StringBuilder(regex.length());
-        boolean escaped = false;
-        boolean inchar = false;
+        final ConversionState state = new ConversionState();
 
         for (char part : regex.toCharArray()) {
-            if (inchar) {
-                inchar = false;
-
-                if (part == '*') {
-                    res.append(part);
-                    continue;
-                } else {
-                    res.append('?');
-                }
-            }
-
-            if (escaped) {
-                if (part == '?' || part == '*') {
-                    throw new UnsupportedOperationException("Cannot convert to"
-                            + " simple expression: ? or * is escaped.");
-                }
-
-                res.append(part);
-                escaped = false;
-            } else if (part == '\\') {
-                escaped = true;
-            } else if (part == '.') {
-                inchar = true;
-            } else if (part == '.' || part == '^' || part == '$' || part
-                    == '['
-                    || part == ']' || part == '\\' || part == '(' || part == ')'
-                    || part == '{' || part == '}' || part == '|' || part == '+'
-                    || part == '*' || part == '?') {
-                throw new UnsupportedOperationException("Cannot convert to"
-                        + " simple expression: unescaped special char: " + part);
+            if (state.getAndResetLastCharWasDot()) {
+                handleCharFollowingDot(state, res, part);
+            } else if (state.getAndResetEscaped()) {
+                handleEscapedChar(res, part);
             } else {
-                res.append(part);
+                handleNormalChar(state, res, part);
             }
         }
 
-        if (escaped) {
+        if (state.getAndResetEscaped()) {
             throw new UnsupportedOperationException("Cannot convert to "
                     + "simple expression: trailing backslash");
-        } else if (inchar) {
+        } else if (state.getAndResetLastCharWasDot()) {
             res.append('?');
         }
 
         return res.toString();
+    }
+
+    /**
+     * Handles a single char that was preceded by a '.' when converting from a regex.
+     *
+     * @param state The current state of conversion.
+     * @param builder The builder to append data to.
+     * @param character The character in question.
+     */
+    private static void handleCharFollowingDot(final ConversionState state,
+            final StringBuilder builder, final char character) {
+        if (character == '*') {
+            builder.append('*');
+        } else {
+            builder.append('?');
+            handleNormalChar(state, builder, character);
+        }
+    }
+
+    /**
+     * Handles a single char that was escaped when converting from a regex.
+     *
+     * @param builder The builder to append data to.
+     * @param character The character in question.
+     */
+    private static void handleEscapedChar(final StringBuilder builder, final char character) {
+        if (character == '?' || character == '*') {
+            throw new UnsupportedOperationException("Cannot convert to"
+                    + " simple expression: ? or * is escaped.");
+        }
+
+        builder.append(character);
+    }
+
+    /**
+     * Handles a single normal character when converting from a regex.
+     *
+     * @param state The current state of conversion.
+     * @param builder The builder to append data to.
+     * @param character The character in question.
+     */
+    private static void handleNormalChar(final ConversionState state,
+            final StringBuilder builder, final char character) {
+        if (character == '\\') {
+            state.setEscaped();
+        } else if (character == '.') {
+            state.setLastCharWasDot();
+        } else if ("^$[](){}|+*?".indexOf(character) > -1) {
+            throw new UnsupportedOperationException("Cannot convert to"
+                    + " simple expression: unescaped special char: " + character);
+        } else {
+            builder.append(character);
+        }
     }
 
     /**
@@ -275,7 +297,6 @@ public class IgnoreList {
      * @param regex The simple expression to be converted
      * @return A corresponding regular expression
      */
-    @SuppressWarnings("fallthrough")
     protected static String simpleToRegex(final String regex) {
         final StringBuilder res = new StringBuilder(regex.length());
 
@@ -293,14 +314,14 @@ public class IgnoreList {
                 case '}':
                 case '|':
                 case '+':
-                    res.append('\\');
-                    res.append(part);
+                    res.append('\\').append(part);
                     break;
                 case '?':
                     res.append('.');
                     break;
                 case '*':
-                    res.append('.');
+                    res.append(".*");
+                    break;
                 default:
                     res.append(part);
                     break;
@@ -309,4 +330,35 @@ public class IgnoreList {
 
         return res.toString();
     }
+
+    /**
+     * Utility class to represent state while converting a regex to a simple form.
+     */
+    private static final class ConversionState {
+
+        private boolean escaped;
+        private boolean lastCharWasDot;
+
+        public boolean getAndResetLastCharWasDot() {
+            final boolean oldValue = lastCharWasDot;
+            lastCharWasDot = false;
+            return oldValue;
+        }
+
+        public void setLastCharWasDot() {
+            lastCharWasDot = true;
+        }
+
+        public boolean getAndResetEscaped() {
+            final boolean oldValue = escaped;
+            escaped = false;
+            return oldValue;
+        }
+
+        public void setEscaped() {
+            escaped = true;
+        }
+
+    }
+
 }

@@ -27,9 +27,6 @@ import com.dmdirc.parser.interfaces.Encoder;
 /**
  * A basic {@link Encoder} implementation that just encodes messages using
  * the system's default charset.
- *
- * @since 0.6.5
- * @author chris
  */
 public class SystemEncoder implements Encoder {
 

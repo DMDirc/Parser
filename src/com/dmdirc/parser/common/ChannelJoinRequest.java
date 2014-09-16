@@ -24,9 +24,6 @@ package com.dmdirc.parser.common;
 
 /**
  * Describes the information needed to try and join a channel.
- *
- * @author chris
- * @since 0.6.4
  */
 public class ChannelJoinRequest {
 
