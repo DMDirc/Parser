@@ -28,7 +28,7 @@ package com.dmdirc.parser.irc;
 public class PrefixModeManager {
 
     /** All known modes, in increasing order of importance. */
-    private String modes = "";
+    private final ModeManager modes = new ModeManager();
     /** All known prefixes, in increasing order of importance. */
     private String prefixes = "";
 
@@ -46,7 +46,7 @@ public class PrefixModeManager {
      * @param prefixes The corresponding new prefixes, in increasing order of importance.
      */
     public void setModes(final String modes, final String prefixes) {
-        this.modes = modes;
+        this.modes.set(modes);
         this.prefixes = prefixes;
     }
 
@@ -57,7 +57,7 @@ public class PrefixModeManager {
      * @return True if the mode is a prefix mode, false otherwise.
      */
     public boolean isPrefixMode(final char mode) {
-        return modes.indexOf(mode) > -1;
+        return modes.isMode(mode);
     }
 
     /**
@@ -77,7 +77,7 @@ public class PrefixModeManager {
      * @return The prefix corresponding to the mode.
      */
     public char getPrefixFor(final char mode) {
-        return prefixes.charAt(modes.indexOf(mode));
+        return prefixes.charAt(modes.getModes().indexOf(mode));
     }
 
     /**
@@ -102,7 +102,7 @@ public class PrefixModeManager {
      * @return The mode corresponding to the prefix.
      */
     public char getModeFor(final char prefix) {
-        return modes.charAt(prefixes.indexOf(prefix));
+        return modes.getModes().charAt(prefixes.indexOf(prefix));
     }
 
     /**
@@ -111,7 +111,7 @@ public class PrefixModeManager {
      * @return Set of known modes, in increasing order of importance.
      */
     public String getModes() {
-        return modes;
+        return modes.getModes();
     }
 
     /**
@@ -121,7 +121,7 @@ public class PrefixModeManager {
      * @param prefix The prefix that is used to show a user has the mode (e.g. '@')
      */
     public void add(final char mode, final char prefix) {
-        modes += mode;
+        modes.add(mode);
         prefixes += prefix;
     }
 
@@ -134,11 +134,7 @@ public class PrefixModeManager {
      * modes1 is more important than modes2; zero if the two are equivalent.
      */
     public int compareImportantModes(final String modes1, final String modes2) {
-        final char mode1 = modes1.isEmpty() ? ' ' : modes1.charAt(0);
-        final char mode2 = modes2.isEmpty() ? ' ' : modes2.charAt(0);
-        final int modeValue1 = modes.indexOf(mode1);
-        final int modeValue2 = modes.indexOf(mode2);
-        return modeValue1 - modeValue2;
+        return modes.compareImportantModes(modes1, modes2);
     }
 
     /**
@@ -150,7 +146,8 @@ public class PrefixModeManager {
      * @return True if the modes indicate the client is "opped", false otherwise.
      */
     public boolean isOpped(final String modeString) {
-        return !modeString.isEmpty() && modes.indexOf(modeString.charAt(0)) > modes.indexOf('v');
+        return !modeString.isEmpty()
+                && modes.getModes().indexOf(modeString.charAt(0)) > modes.getModes().indexOf('v');
     }
 
     /**
@@ -162,28 +159,17 @@ public class PrefixModeManager {
      * @return A mode string containing all the modes.
      */
     public String insertMode(final String modeString, final char mode) {
-        if (modeString.indexOf(mode) > -1) {
-            // Don't duplicate an existing mode
-            return modeString;
-        }
-
-        final StringBuilder result = new StringBuilder(modeString.length() + 1);
-        boolean missing = true;
-        final int value = modes.indexOf(mode);
-        for (char existingMode : modeString.toCharArray()) {
-            if (modes.indexOf(existingMode) < value && missing) {
-                // Our new mode is more important, insert it first.
-                result.append(mode);
-                missing = false;
-            }
-            result.append(existingMode);
-        }
-
-        if (missing) {
-            result.append(mode);
-        }
-
-        return result.toString();
+        return modes.insertMode(modeString, mode);
     }
 
+    /**
+     * Removes the specified mode from the mode string.
+     *
+     * @param modeString The mode string to modify.
+     * @param mode The mode to be removed.
+     * @return A copy of the mode string with the mode removed.
+     */
+    public String removeMode(final String modeString, final char mode) {
+        return modes.removeMode(modeString, mode);
+    }
 }
