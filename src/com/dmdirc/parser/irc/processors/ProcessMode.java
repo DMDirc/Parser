@@ -166,14 +166,14 @@ public class ProcessMode extends IRCProcessor {
                 } else if (parser.chanModesOther.containsKey(cMode)) {
                     nValue = parser.chanModesOther.get(cMode);
                     bBooleanMode = false;
-                } else if (parser.prefixModes.containsKey(cMode)) {
+                } else if (parser.prefixModes.isPrefixMode(cMode)) {
                     // (de) OP/Voice someone
                     if (sModestr.length <= nParam) {
                         parser.callErrorInfo(new ParserError(ParserError.ERROR_FATAL + ParserError.ERROR_USER, "Broken Modes. Parameter required but not given.", parser.getLastLine()));
                         return;
                     }
                     sModeParam = sModestr[nParam++];
-                    nValue = parser.prefixModes.get(cMode);
+                    nValue = parser.prefixModes.getValueOf(cMode);
                     callDebugInfo(IRCParser.DEBUG_INFO, "User Mode: %c / %d [%s] {Positive: %b}", cMode, nValue, sModeParam, bPositive);
                     iChannelClientInfo = iChannel.getChannelClient(sModeParam);
                     if (iChannelClientInfo == null) {

@@ -138,8 +138,8 @@ public class IRCChannelInfo implements ChannelInfo {
 
         // We are considered opped if we have a mode higher than voice (or if we have any modes if voice doesn't exist)
         long voiceValue = 0;
-        if (parser.prefixModes.get('v') != null) {
-            voiceValue = parser.prefixModes.get('v');
+        if (parser.prefixModes.isPrefixMode('v')) {
+            voiceValue = parser.prefixModes.getValueOf('v');
         }
         final boolean isOpped = me.getImportantModeValue() > voiceValue;
 
@@ -628,8 +628,8 @@ public class IRCChannelInfo implements ChannelInfo {
             }
         } else {
             // May need a param
-            if (parser.prefixModes.containsKey(mode)) {
-                modestr = modestr + " " + parameter;
+            if (parser.prefixModes.isPrefixMode(mode)) {
+                modestr = modestr + ' ' + parameter;
             } else if (parser.chanModesOther.containsKey(mode)) {
                 modeint = parser.chanModesOther.get(mode);
                 if ((modeint & IRCParser.MODE_LIST) == IRCParser.MODE_LIST) {
