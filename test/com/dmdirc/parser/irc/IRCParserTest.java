@@ -49,7 +49,7 @@ import static org.mockito.Mockito.*;
 
 public class IRCParserTest {
 
-    private static interface TestCallback extends CallbackInterface { }
+    private interface TestCallback extends CallbackInterface { }
 
     @Test(expected=CallbackNotFoundException.class)
     public void testIssue42() {

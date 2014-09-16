@@ -93,7 +93,7 @@ public class ParserErrorTest {
 
     @Test
     public void testException() {
-        fatal.setException(new Exception("foo"));
+        fatal.setException(new UnsupportedOperationException("foo"));
         
         assertTrue(fatal.isException());
         assertTrue(fatal.isFatal());

@@ -53,7 +53,7 @@ public class ProcessNickTest {
         assertNotNull(parser.getClient("LUSER"));
         assertEquals(1, parser.getClient("LUSER").getChannelClients().size());
 
-        IRCChannelClientInfo cci = parser.getClient("LUSER").getChannelClients().get(0);
+        final IRCChannelClientInfo cci = parser.getClient("LUSER").getChannelClients().get(0);
         assertEquals(parser.getChannel("#DMDirc_testing"), cci.getChannel());
         assertEquals("+", cci.getChanModeStr(true));
 
@@ -75,7 +75,7 @@ public class ProcessNickTest {
         assertFalse(parser.isKnownClient("luser"));
         assertEquals(1, parser.getClient("foobar").getChannelClients().size());
 
-        IRCChannelClientInfo cci = parser.getClient("foobar").getChannelClients().get(0);
+        final IRCChannelClientInfo cci = parser.getClient("foobar").getChannelClients().get(0);
         assertEquals(parser.getChannel("#DMDirc_testing"), cci.getChannel());
         assertEquals("+", cci.getChanModeStr(true));
     }    

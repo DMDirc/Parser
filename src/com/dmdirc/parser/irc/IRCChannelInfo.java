@@ -465,7 +465,7 @@ public class IRCChannelInfo implements ChannelInfo {
             sTemp = paramModes.get(cTemp);
             if (!sTemp.isEmpty()) {
                 sModes.append(cTemp);
-                sModeParams.append(" ").append(this.getMode(cTemp));
+                sModeParams.append(' ').append(this.getMode(cTemp));
             }
         }
 
@@ -683,20 +683,20 @@ public class IRCChannelInfo implements ChannelInfo {
             if (positive) {
                 positivemode.append(modestr.charAt(1));
                 if (modeparam.length > 1) {
-                    positiveparam.append(" ").append(modeparam[1]);
+                    positiveparam.append(' ').append(modeparam[1]);
                 }
             } else {
                 negativemode.append(modestr.charAt(1));
                 if (modeparam.length > 1) {
-                    negativeparam.append(" ").append(modeparam[1]);
+                    negativeparam.append(' ').append(modeparam[1]);
                 }
             }
         }
         if (negativemode.length() > 0) {
-            sendModeStr.append("-").append(negativemode);
+            sendModeStr.append('-').append(negativemode);
         }
         if (positivemode.length() > 0) {
-            sendModeStr.append("+").append(positivemode);
+            sendModeStr.append('+').append(positivemode);
         }
         if (negativeparam.length() > 0) {
             sendModeStr.append(negativeparam);
@@ -705,7 +705,7 @@ public class IRCChannelInfo implements ChannelInfo {
             sendModeStr.append(positiveparam);
         }
         parser.callDebugInfo(IRCParser.DEBUG_INFO, "Sending mode: %s", sendModeStr.toString());
-        parser.sendRawMessage("MODE " + name + " " + sendModeStr.toString());
+        parser.sendRawMessage("MODE " + name + ' ' + sendModeStr);
         clearModeQueue();
     }
 
@@ -760,7 +760,7 @@ public class IRCChannelInfo implements ChannelInfo {
         if (sMessage.isEmpty()) {
             sendMessage(char1 + sType.toUpperCase() + sMessage + char1);
         } else {
-            sendMessage(char1 + sType.toUpperCase() + " " + sMessage + char1);
+            sendMessage(char1 + sType.toUpperCase() + ' ' + sMessage + char1);
         }
     }
 
@@ -778,7 +778,7 @@ public class IRCChannelInfo implements ChannelInfo {
         if (sMessage.isEmpty()) {
             sendNotice(char1 + sType.toUpperCase() + sMessage + char1);
         } else {
-            sendNotice(char1 + sType.toUpperCase() + " " + sMessage + char1);
+            sendNotice(char1 + sType.toUpperCase() + ' ' + sMessage + char1);
         }
     }
 

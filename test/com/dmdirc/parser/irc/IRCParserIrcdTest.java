@@ -35,7 +35,7 @@ public class IRCParserIrcdTest {
 
     private final String ircd, expected;
 
-    public IRCParserIrcdTest(String ircd, String expected) {
+    public IRCParserIrcdTest(final String ircd, final String expected) {
         this.ircd = ircd;
         this.expected = expected;
     }

@@ -25,8 +25,13 @@ package com.dmdirc.harness.parser;
 import com.dmdirc.parser.common.ChildImplementations;
 import com.dmdirc.parser.common.MyInfo;
 import com.dmdirc.parser.common.QueuePriority;
-import com.dmdirc.parser.interfaces.Parser;
-import com.dmdirc.parser.irc.*;
+import com.dmdirc.parser.irc.IRCChannelClientInfo;
+import com.dmdirc.parser.irc.IRCChannelInfo;
+import com.dmdirc.parser.irc.IRCClientInfo;
+import com.dmdirc.parser.irc.IRCParser;
+import com.dmdirc.parser.irc.IRCReader;
+import com.dmdirc.parser.irc.SocketState;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -38,7 +43,7 @@ import java.util.Timer;
     IRCChannelInfo.class,
     IRCClientInfo.class
 })
-public class TestParser extends IRCParser implements Parser {
+public class TestParser extends IRCParser {
 
     public final List<String> sentLines = new ArrayList<>();
 
@@ -53,7 +58,7 @@ public class TestParser extends IRCParser implements Parser {
         setPingTimerInterval(60000);
     }
 
-    public TestParser(MyInfo myDetails, URI address) {
+    public TestParser(final MyInfo myDetails, final URI address) {
         super(myDetails, address);
         currentSocketState = SocketState.OPEN;
         setPingTimerFraction(10);
@@ -69,28 +74,28 @@ public class TestParser extends IRCParser implements Parser {
     }
 
     @Override
-    protected boolean doSendString(String line, QueuePriority priority, boolean fromParser) {
+    protected boolean doSendString(final String line, final QueuePriority priority, final boolean fromParser) {
         sentLines.add(line);
         return true;
     }
 
-    public String[] getLine(int index) {
+    public String[] getLine(final int index) {
         return tokeniseLine(sentLines.get(index));
     }
 
-    public void injectLine(String line) {
+    public void injectLine(final String line) {
         processLine(new IRCReader.ReadLine(line, IRCParser.tokeniseLine(line)));
     }
 
     public void injectConnectionStrings() {
-        final String[] lines = new String[]{
+        final String[] lines = {
             "NOTICE AUTH :Blah, blah",
             ":server 001 " + nick + " :Welcome to the Testing IRC Network, " + nick,
             ":server 002 " + nick + " :Your host is server.net, running version foo",
             ":server 003 " + nick + " :This server was created Sun Jan 6 2008 at 17:34:54 CET",
             ":server 004 " + nick + " server.net foo dioswkgxRXInP bRIeiklmnopstvrDcCNuMT bklov",
             ":server 005 " + nick + " WHOX WALLCHOPS WALLVOICES USERIP PREFIX=(ov)@+ " +
-                    (network == null ? "" : "NETWORK=" + network + " ") +
+                    (network == null ? "" : "NETWORK=" + network + ' ') +
                     ":are supported by this server",
             ":server 005 " + nick + " MAXNICKLEN=15 TOPICLEN=250 AWAYLEN=160 MODES=6 " +
                     "CHANMODES=bIeR,k,l,imnpstrDducCNMT :are supported by this server",

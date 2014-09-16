@@ -442,15 +442,15 @@ public class IRCClientInfo implements LocalClientInfo {
         }
 
         if (negativemode.length() > 0) {
-            sendModeStr.append("-").append(negativemode);
+            sendModeStr.append('-').append(negativemode);
         }
 
         if (positivemode.length() > 0) {
-            sendModeStr.append("+").append(positivemode);
+            sendModeStr.append('+').append(positivemode);
         }
 
         parser.callDebugInfo(IRCParser.DEBUG_INFO, "Sending mode: %s", sendModeStr.toString());
-        parser.sendRawMessage("MODE " + nickname + " " + sendModeStr.toString());
+        parser.sendRawMessage("MODE " + nickname + ' ' + sendModeStr);
         clearModeQueue();
     }
 

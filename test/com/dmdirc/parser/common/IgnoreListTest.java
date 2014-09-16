@@ -73,7 +73,7 @@ public class IgnoreListTest {
             boolean except = false;
             
             try {
-                String converted = IgnoreList.regexToSimple(test);
+                IgnoreList.regexToSimple(test);
             } catch (UnsupportedOperationException ex) {
                 except = true;
             }
@@ -84,7 +84,7 @@ public class IgnoreListTest {
     
     @Test
     public void testConstructor() {
-        final List<String> items = Arrays.asList(new String[]{"abc", "def"});
+        final List<String> items = Arrays.asList("abc", "def");
         final IgnoreList list = new IgnoreList(items);
         
         assertEquals(items, list.getRegexList());
