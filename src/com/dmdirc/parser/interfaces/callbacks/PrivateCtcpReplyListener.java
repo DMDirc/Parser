@@ -24,6 +24,7 @@ package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.SpecificCallback;
+import com.dmdirc.parser.irc.processors.ProcessMessage;
 
 import java.util.Date;
 
@@ -45,7 +46,7 @@ public interface PrivateCtcpReplyListener extends CallbackInterface {
      * @param type Type of CTCPRReply (VERSION, TIME etc)
      * @param message Reply Contents
      * @param host Hostname of sender (or servername)
-     * @see com.dmdirc.parser.irc.ProcessMessage#callPrivateCTCPReply
+     * @see ProcessMessage#callPrivateCTCPReply
      */
     void onPrivateCTCPReply(Parser parser, Date date, String type, String message, String host);
 }

@@ -19,12 +19,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.dmdirc.parser.irc;
+package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.common.ChannelListModeItem;
 import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.callbacks.ChannelListModeListener;
+import com.dmdirc.parser.irc.IRCChannelInfo;
+import com.dmdirc.parser.irc.IRCParser;
+import com.dmdirc.parser.irc.ProcessingManager;
+import com.dmdirc.parser.irc.ServerType;
+import com.dmdirc.parser.irc.ServerTypeGroup;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -41,7 +46,7 @@ public class ProcessListModes extends IRCProcessor {
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected ProcessListModes(final IRCParser parser, final ProcessingManager manager) {
+    public ProcessListModes(final IRCParser parser, final ProcessingManager manager) {
         super(parser, manager);
     }
 

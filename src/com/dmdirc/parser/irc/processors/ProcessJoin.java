@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package com.dmdirc.parser.irc;
+package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.common.QueuePriority;
@@ -28,6 +28,13 @@ import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.callbacks.ChannelJoinListener;
 import com.dmdirc.parser.interfaces.callbacks.ChannelSelfJoinListener;
+import com.dmdirc.parser.irc.CapabilityState;
+import com.dmdirc.parser.irc.IRCChannelClientInfo;
+import com.dmdirc.parser.irc.IRCChannelInfo;
+import com.dmdirc.parser.irc.IRCClientInfo;
+import com.dmdirc.parser.irc.IRCParser;
+import com.dmdirc.parser.irc.ProcessingManager;
+import com.dmdirc.parser.irc.ProcessorNotFoundException;
 
 import java.util.Arrays;
 
@@ -42,7 +49,7 @@ public class ProcessJoin extends IRCProcessor {
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected ProcessJoin(final IRCParser parser, final ProcessingManager manager) {
+    public ProcessJoin(final IRCParser parser, final ProcessingManager manager) {
         super(parser, manager);
     }
 
@@ -85,8 +92,8 @@ public class ProcessJoin extends IRCProcessor {
             if (extendedJoin) {
                 // :nick!ident@host JOIN #Channel accountName :Real Name
                 channelName = token[2];
-                accountName = (token.length > 3) ? token[3] : "*";
-                realName = (token.length > 4) ? token[token.length - 1] : "";
+                accountName = token.length > 3 ? token[3] : "*";
+                realName = token.length > 4 ? token[token.length - 1] : "";
             } else {
                 channelName = token[token.length - 1];
                 accountName = "*";
@@ -104,7 +111,7 @@ public class ProcessJoin extends IRCProcessor {
             }
 
             if (extendedJoin) {
-                iClient.setAccountName(accountName.equals("*") ? null : accountName);
+                iClient.setAccountName("*".equals(accountName) ? null : accountName);
                 iClient.setRealName(realName);
             }
 

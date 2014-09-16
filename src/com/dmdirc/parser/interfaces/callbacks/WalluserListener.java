@@ -24,6 +24,7 @@ package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.SpecificCallback;
+import com.dmdirc.parser.irc.processors.ProcessWallops;
 
 import java.util.Date;
 
@@ -42,7 +43,7 @@ public interface WalluserListener extends CallbackInterface {
      * @param date The date/time at which the event occured
      * @param message Message contents
      * @param host Hostname of sender (or servername)
-     * @see com.dmdirc.parser.irc.ProcessWallops#callWalluser
+     * @see ProcessWallops#callWalluser
      */
     void onWalluser(Parser parser, Date date, String message, String host);
 }

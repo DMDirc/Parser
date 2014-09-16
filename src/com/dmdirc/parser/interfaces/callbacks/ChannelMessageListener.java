@@ -28,6 +28,7 @@ import com.dmdirc.parser.interfaces.FakableArgument;
 import com.dmdirc.parser.interfaces.FakableSource;
 import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.SpecificCallback;
+import com.dmdirc.parser.irc.processors.ProcessMessage;
 
 import java.util.Date;
 
@@ -50,7 +51,7 @@ public interface ChannelMessageListener extends CallbackInterface {
      * @param client ChannelClient who sent the message (may be null if server)
      * @param message Message contents
      * @param host Hostname of sender (or servername)
-     * @see com.dmdirc.parser.irc.ProcessMessage#callChannelMessage
+     * @see ProcessMessage#callChannelMessage
      */
     void onChannelMessage(@FakableSource Parser parser, Date date,
             @FakableSource ChannelInfo channel,

@@ -20,10 +20,12 @@
  * SOFTWARE.
  */
 
-package com.dmdirc.parser.irc;
+package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.common.ChannelJoinRequest;
 import com.dmdirc.parser.common.ParserError;
+import com.dmdirc.parser.irc.IRCParser;
+import com.dmdirc.parser.irc.ProcessingManager;
 
 /**
  * Process a 001 message.
@@ -36,7 +38,7 @@ public class Process001 extends IRCProcessor {
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected Process001(final IRCParser parser, final ProcessingManager manager) {
+    public Process001(final IRCParser parser, final ProcessingManager manager) {
         super(parser, manager);
     }
 

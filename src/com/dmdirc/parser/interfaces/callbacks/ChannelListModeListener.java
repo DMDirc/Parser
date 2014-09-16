@@ -25,6 +25,7 @@ package com.dmdirc.parser.interfaces.callbacks;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.SpecificCallback;
+import com.dmdirc.parser.irc.processors.ProcessListModes;
 
 import java.util.Date;
 
@@ -43,7 +44,7 @@ public interface ChannelListModeListener extends CallbackInterface {
      * @param date The date/time at which the event occured
      * @param channel Channel which the ListModes reply is for
      * @param mode the Mode the ListMOdes reply is for.
-     * @see com.dmdirc.parser.irc.ProcessListModes#callChannelGotListModes
+     * @see ProcessListModes#callChannelGotListModes
      */
     void onChannelGotListModes(Parser parser, Date date, ChannelInfo channel, char mode);
 

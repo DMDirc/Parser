@@ -23,6 +23,7 @@
 package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.interfaces.Parser;
+import com.dmdirc.parser.irc.processors.ProcessMessage;
 
 import java.util.Date;
 
@@ -39,7 +40,7 @@ public interface UnknownMessageListener extends CallbackInterface {
      * @param message Message contents
      * @param target Actual target of message
      * @param host Hostname of sender (or servername)
-     * @see com.dmdirc.parser.irc.ProcessMessage#callUnknownMessage
+     * @see ProcessMessage#callUnknownMessage
      */
     void onUnknownMessage(Parser parser, Date date, String message, String target, String host);
 

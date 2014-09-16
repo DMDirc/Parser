@@ -20,9 +20,11 @@
  * SOFTWARE.
  */
 
-package com.dmdirc.parser.irc;
+package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.interfaces.callbacks.PasswordRequiredListener;
+import com.dmdirc.parser.irc.IRCParser;
+import com.dmdirc.parser.irc.ProcessingManager;
 
 /**
  * Process a 464 message.
@@ -35,7 +37,7 @@ public class Process464 extends IRCProcessor {
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected Process464(final IRCParser parser, final ProcessingManager manager) {
+    public Process464(final IRCParser parser, final ProcessingManager manager) {
         super(parser, manager);
     }
 

@@ -20,13 +20,18 @@
  * SOFTWARE.
  */
 
-package com.dmdirc.parser.irc;
+package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.ClientInfo;
 import com.dmdirc.parser.interfaces.callbacks.ChannelQuitListener;
 import com.dmdirc.parser.interfaces.callbacks.QuitListener;
+import com.dmdirc.parser.irc.IRCChannelClientInfo;
+import com.dmdirc.parser.irc.IRCChannelInfo;
+import com.dmdirc.parser.irc.IRCClientInfo;
+import com.dmdirc.parser.irc.IRCParser;
+import com.dmdirc.parser.irc.ProcessingManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +47,7 @@ public class ProcessQuit extends IRCProcessor {
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected ProcessQuit(final IRCParser parser, final ProcessingManager manager) {
+    public ProcessQuit(final IRCParser parser, final ProcessingManager manager) {
         super(parser, manager);
     }
 

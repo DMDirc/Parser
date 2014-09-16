@@ -25,6 +25,7 @@ package com.dmdirc.parser.interfaces.callbacks;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.SpecificCallback;
+import com.dmdirc.parser.irc.processors.ProcessNames;
 
 import java.util.Date;
 
@@ -40,7 +41,7 @@ public interface ChannelNamesListener extends CallbackInterface {
      * @param parser Reference to the parser object that made the callback.
      * @param date The date/time at which the event occured
      * @param channel Channel which the names reply is for
-     * @see com.dmdirc.parser.irc.ProcessNames#callChannelGotNames
+     * @see ProcessNames#callChannelGotNames
      */
     void onChannelGotNames(Parser parser, Date date, ChannelInfo channel);
 

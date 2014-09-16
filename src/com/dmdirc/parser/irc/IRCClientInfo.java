@@ -238,7 +238,7 @@ public class IRCClientInfo implements LocalClientInfo {
      *
      * @param newState AwayState representing new away state.
      */
-    protected void setAwayState(final AwayState newState) {
+    public void setAwayState(final AwayState newState) {
         away = newState;
 
         if (away != AwayState.AWAY) {
@@ -262,7 +262,7 @@ public class IRCClientInfo implements LocalClientInfo {
      *
      * @param newValue new away reason for user.
      */
-    protected void setAwayReason(final String newValue) {
+    public void setAwayReason(final String newValue) {
         awayReason = newValue;
     }
 
@@ -276,7 +276,7 @@ public class IRCClientInfo implements LocalClientInfo {
      *
      * @param newValue new RealName for user.
      */
-    protected void setRealName(final String newValue) {
+    public void setRealName(final String newValue) {
         realName = newValue;
     }
 
@@ -290,7 +290,7 @@ public class IRCClientInfo implements LocalClientInfo {
      *
      * @param newValue new account name for user.
      */
-    protected void setAccountName(final String newValue) {
+    public void setAccountName(final String newValue) {
         accountName = newValue;
     }
 
@@ -299,7 +299,7 @@ public class IRCClientInfo implements LocalClientInfo {
      *
      * @param newMode new long representing channel modes. (Boolean only)
      */
-    protected void setUserMode(final long newMode) {
+    public void setUserMode(final long newMode) {
         modes = newMode;
     }
 

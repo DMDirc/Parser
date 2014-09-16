@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package com.dmdirc.parser.irc;
+package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.common.CallbackObject;
 import com.dmdirc.parser.common.ChannelListModeItem;
@@ -34,6 +34,11 @@ import com.dmdirc.parser.interfaces.callbacks.ChannelSingleModeChangeListener;
 import com.dmdirc.parser.interfaces.callbacks.ChannelUserModeChangeListener;
 import com.dmdirc.parser.interfaces.callbacks.UserModeChangeListener;
 import com.dmdirc.parser.interfaces.callbacks.UserModeDiscoveryListener;
+import com.dmdirc.parser.irc.IRCChannelClientInfo;
+import com.dmdirc.parser.irc.IRCChannelInfo;
+import com.dmdirc.parser.irc.IRCClientInfo;
+import com.dmdirc.parser.irc.IRCParser;
+import com.dmdirc.parser.irc.ProcessingManager;
 
 import java.util.Calendar;
 
@@ -48,7 +53,7 @@ public class ProcessMode extends IRCProcessor {
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected ProcessMode(final IRCParser parser, final ProcessingManager manager) {
+    public ProcessMode(final IRCParser parser, final ProcessingManager manager) {
         super(parser, manager);
     }
 

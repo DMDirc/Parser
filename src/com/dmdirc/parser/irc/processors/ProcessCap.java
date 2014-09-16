@@ -20,7 +20,12 @@
  * SOFTWARE.
  */
 
-package com.dmdirc.parser.irc;
+package com.dmdirc.parser.irc.processors;
+
+import com.dmdirc.parser.irc.CapabilityState;
+import com.dmdirc.parser.irc.IRCParser;
+import com.dmdirc.parser.irc.ProcessingManager;
+import com.dmdirc.parser.irc.TimestampedIRCProcessor;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -50,7 +55,7 @@ public class ProcessCap extends TimestampedIRCProcessor {
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected ProcessCap(final IRCParser parser, final ProcessingManager manager) {
+    public ProcessCap(final IRCParser parser, final ProcessingManager manager) {
         super(parser, manager);
 
         // IRCv3.1 Standard

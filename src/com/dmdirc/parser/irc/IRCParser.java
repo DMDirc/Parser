@@ -105,13 +105,13 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     public static final int DEBUG_LMQ = 8;
 
     /** Attempt to update user host all the time, not just on Who/Add/NickChange. */
-    static final boolean ALWAYS_UPDATECLIENT = true;
+    public static final boolean ALWAYS_UPDATECLIENT = true;
     /** Byte used to show that a non-boolean mode is a list (b). */
-    static final byte MODE_LIST = 1;
+    public static final byte MODE_LIST = 1;
     /** Byte used to show that a non-boolean mode is not a list, and requires a parameter to set (lk). */
     static final byte MODE_SET = 2;
     /** Byte used to show that a non-boolean mode is not a list, and requires a parameter to unset (k). */
-    static final byte MODE_UNSET = 4;
+    public static final byte MODE_UNSET = 4;
 
     /**
      * Default channel prefixes if none are specified by the IRCd.
@@ -152,13 +152,13 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     private int pingCountDown;
 
     /** Network name. This is "" if no network name is provided */
-    String networkName;
+    public String networkName;
     /** This is what we think the nickname should be. */
-    String thinkNickname;
+    public String thinkNickname;
     /** When using inbuilt pre-001 NickInUse handler, have we tried our AltNick. */
-    boolean triedAlt;
+    public boolean triedAlt;
     /** Have we received the 001. */
-    boolean got001;
+    public boolean got001;
     /** Have we fired post005? */
     boolean post005;
     /** Has the thread started execution yet, (Prevents run() being called multiple times). */
@@ -166,18 +166,18 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /** Connect timeout. */
     private int connectTimeout = 5000;
     /** Hashtable storing known prefix modes (ohv). */
-    final Map<Character, Long> prefixModes = new HashMap<>();
+    public final Map<Character, Long> prefixModes = new HashMap<>();
     /**
      * Hashtable maping known prefix modes (ohv) to prefixes (@%+) - Both ways.
      * Prefix map contains 2 pairs for each mode. (eg @ => o and o => @)
      */
-    final Map<Character, Character> prefixMap = new HashMap<>();
+    public final Map<Character, Character> prefixMap = new HashMap<>();
     /** Integer representing the next avaliable integer value of a prefix mode. */
     long nextKeyPrefix = 1;
     /** Hashtable storing known user modes (owxis etc). */
-    final Map<Character, Long> userModes = new HashMap<>();
+    public final Map<Character, Long> userModes = new HashMap<>();
     /** Integer representing the next avaliable integer value of a User mode. */
-    long nNextKeyUser = 1;
+    public long nNextKeyUser = 1;
     /**
      * Hashtable storing known boolean chan modes (cntmi etc).
      * Valid Boolean Modes are stored as Hashtable.pub('m',1); where 'm' is the mode and 1 is a numeric value.<br><br>
@@ -186,9 +186,9 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      * <br>
      * Channel modes discovered but not listed in 005 are stored as boolean modes automatically (and a ERROR_WARNING Error is called)
      */
-    final Map<Character, Long> chanModesBool = new HashMap<>();
+    public final Map<Character, Long> chanModesBool = new HashMap<>();
     /** Integer representing the next avaliable integer value of a Boolean mode. */
-    long nextKeyCMBool = 1;
+    public long nextKeyCMBool = 1;
     /**
      * Hashtable storing known non-boolean chan modes (klbeI etc).
      * Non Boolean Modes (for Channels) are stored together in this hashtable, the value param
@@ -198,7 +198,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      * see MODE_SET<br>
      * see MODE_UNSET<br>
      */
-    final Map<Character, Byte> chanModesOther = new HashMap<>();
+    public final Map<Character, Byte> chanModesOther = new HashMap<>();
     /** The last line of input received from the server */
     private ReadLine lastLine = null;
     /** Should the lastline (where given) be appended to the "data" part of any onErrorInfo call? */
@@ -212,7 +212,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /** Reference to the ClientInfo object that references ourself. */
     private IRCClientInfo myself = new IRCClientInfo(this, "myself").setFake(true);
     /** Hashtable storing all information gathered from 005. */
-    final Map<String, String> h005Info = new HashMap<>();
+    public final Map<String, String> h005Info = new HashMap<>();
     /** difference in ms between our time and the servers time (used for timestampedIRC). */
     long tsdiff;
     /** Reference to the Processing Manager. */
@@ -600,7 +600,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      * @param data Debugging Information as a format string
      * @param args Formatting String Options
      */
-    protected void callDebugInfo(final int level, final String data, final Object... args) {
+    public void callDebugInfo(final int level, final String data, final Object... args) {
         callDebugInfo(level, String.format(data, args));
     }
 
@@ -621,7 +621,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      * @see com.dmdirc.parser.interfaces.callbacks.ErrorInfoListener
      * @param errorInfo ParserError object representing the error.
      */
-    protected void callErrorInfo(final ParserError errorInfo) {
+    public void callErrorInfo(final ParserError errorInfo) {
         getCallback(ErrorInfoListener.class).onErrorInfo(null, null, errorInfo);
     }
 
@@ -1189,7 +1189,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      * @param line Line to send (\r\n termination is added automatically)
      * @return True if line was sent, else false.
      */
-    protected boolean sendString(final String line) {
+    public boolean sendString(final String line) {
         return doSendString(line, QueuePriority.NORMAL, true);
     }
 
@@ -1213,7 +1213,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      * @param priority Priority of this line.
      * @return True if line was sent, else false.
      */
-    protected boolean sendString(final String line, final QueuePriority priority) {
+    public boolean sendString(final String line, final QueuePriority priority) {
         return doSendString(line, priority, true);
     }
 
@@ -1435,7 +1435,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      *
      * @param encoding The encoding to use
      */
-    protected void setEncoding(final IRCEncoding encoding) {
+    public void setEncoding(final IRCEncoding encoding) {
         stringConverter = new IRCStringConverter(encoding);
     }
 
@@ -1650,7 +1650,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /**
      * Process USERMODES from 004.
      */
-    protected void parseUserModes() {
+    public void parseUserModes() {
         final String sDefaultModes = "nwdoi";
         final String modeStr;
         if (h005Info.containsKey("USERMODES")) {
@@ -1678,7 +1678,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /**
      * Resets the channel prefix property to the default, RFC specified value.
      */
-    protected void resetChanPrefix() {
+    public void resetChanPrefix() {
         chanPrefix = DEFAULT_CHAN_PREFIX;
     }
 
@@ -1687,7 +1687,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      *
      * @param value The new set of channel prefixes.
      */
-    protected void setChanPrefix(final String value) {
+    public void setChanPrefix(final String value) {
         chanPrefix = value;
     }
 
@@ -2099,7 +2099,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /**
      * Start the pingTimer.
      */
-    protected void startPingTimer() {
+    public void startPingTimer() {
         pingTimerSem.acquireUninterruptibly();
 
         try {
@@ -2183,7 +2183,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      *
      * @param serverName The discovered server name
      */
-    protected void updateServerName(final String serverName) {
+    public void updateServerName(final String serverName) {
         setServerName(serverName);
     }
 
@@ -2292,7 +2292,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      *
      * @param client Client to remove
      */
-    protected void forceRemoveClient(final IRCClientInfo client) {
+    public void forceRemoveClient(final IRCClientInfo client) {
         clientList.remove(getStringConverter().toLowerCase(client.getRealNickname()));
     }
 

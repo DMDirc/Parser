@@ -20,11 +20,16 @@
  * SOFTWARE.
  */
 
-package com.dmdirc.parser.irc;
+package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.common.QueuePriority;
 import com.dmdirc.parser.interfaces.callbacks.NetworkDetectedListener;
+import com.dmdirc.parser.irc.CapabilityState;
+import com.dmdirc.parser.irc.IRCEncoding;
+import com.dmdirc.parser.irc.IRCParser;
+import com.dmdirc.parser.irc.ProcessingManager;
+import com.dmdirc.parser.irc.ProcessorNotFoundException;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,7 +45,7 @@ public class Process004005 extends IRCProcessor {
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected Process004005(final IRCParser parser, final ProcessingManager manager) {
+    public Process004005(final IRCParser parser, final ProcessingManager manager) {
         super(parser, manager);
     }
 
@@ -303,7 +308,7 @@ public class Process004005 extends IRCProcessor {
     /**
      * Processes a 'LISTMODE' token received in a 005. The LISTMODE token
      * indicates support for a new way of describing list modes (such as +b).
-     * See the proposal at {@link http://shanemcc.co.uk/irc/#listmode}.
+     * See the proposal at http://shanemcc.co.uk/irc/#listmode.
      *
      * @param value The value of the token.
      */
@@ -325,7 +330,7 @@ public class Process004005 extends IRCProcessor {
      * protocol allows servers (or proxies) to send historical events with a
      * corresponding timestamp, allowing the client to catch up on events that
      * happened prior to them connecting. See the proposal at
-     * {@link http://shanemcc.co.uk/irc/#timestamping}.
+     * http://shanemcc.co.uk/irc/#timestamping.
      */
     private void processTimestampedIrcToken() {
         if (parser.getCapabilityState("dfbnc.com/tsirc") != CapabilityState.ENABLED) {

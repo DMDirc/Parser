@@ -228,7 +228,7 @@ public class IRCChannelInfo implements ChannelInfo {
      *
      * @param newValue new value for if OnChannelGotListModes ever been called for this channel.
      */
-    protected void setHasGotListModes(final boolean newValue) {
+    public void setHasGotListModes(final boolean newValue) {
         hasGotListModes = newValue;
     }
 
@@ -275,7 +275,7 @@ public class IRCChannelInfo implements ChannelInfo {
     /**
      * Empty the channel (Remove all known channelclients).
      */
-    protected void emptyChannel() {
+    public void emptyChannel() {
         IRCClientInfo cTemp;
         synchronized (clients) {
             for (IRCChannelClientInfo client : clients.values()) {
@@ -325,7 +325,7 @@ public class IRCChannelInfo implements ChannelInfo {
      * @param cClient Client object to be added to channel
      * @return ChannelClientInfo object added, or an existing object if already known on channel
      */
-    protected IRCChannelClientInfo addClient(final IRCClientInfo cClient) {
+    public IRCChannelClientInfo addClient(final IRCClientInfo cClient) {
         IRCChannelClientInfo cTemp = getChannelClient(cClient);
         if (cTemp == null) {
             cTemp = new IRCChannelClientInfo(parser, cClient, this);
@@ -339,7 +339,7 @@ public class IRCChannelInfo implements ChannelInfo {
      *
      * @param cClient Client object to be removed from channel
      */
-    protected void delClient(final IRCClientInfo cClient) {
+    public void delClient(final IRCClientInfo cClient) {
         final IRCChannelClientInfo cTemp = getChannelClient(cClient);
         if (cTemp != null) {
             final IRCClientInfo clTemp = cTemp.getClient();
@@ -357,7 +357,7 @@ public class IRCChannelInfo implements ChannelInfo {
      * @param oldNickname Nickname client used to be known as
      * @param cChannelClient ChannelClient object with updated client object
      */
-    protected void renameClient(final String oldNickname, final IRCChannelClientInfo cChannelClient) {
+    public void renameClient(final String oldNickname, final IRCChannelClientInfo cChannelClient) {
         if (clients.containsKey(oldNickname)) {
             final IRCChannelClientInfo cTemp = clients.get(oldNickname);
             if (cTemp == cChannelClient) {
@@ -375,7 +375,7 @@ public class IRCChannelInfo implements ChannelInfo {
      *
      * @param nNewTime New unixtimestamp time for the channel creation (Seconds since epoch, not milliseconds)
      */
-    protected void setCreateTime(final long nNewTime) {
+    public void setCreateTime(final long nNewTime) {
         creationTime = nNewTime;
     }
 
@@ -393,7 +393,7 @@ public class IRCChannelInfo implements ChannelInfo {
      *
      * @param nNewTime New unixtimestamp time for the topic (Seconds since epoch, not milliseconds)
      */
-    protected void setTopicTime(final long nNewTime) {
+    public void setTopicTime(final long nNewTime) {
         topicTime = nNewTime;
     }
 
@@ -407,7 +407,7 @@ public class IRCChannelInfo implements ChannelInfo {
      *
      * @param sNewTopic New contents of topic
      */
-    protected void setInternalTopic(final String sNewTopic) {
+    public void setInternalTopic(final String sNewTopic) {
         topic = sNewTopic;
     }
 
@@ -421,7 +421,7 @@ public class IRCChannelInfo implements ChannelInfo {
      *
      * @param sNewUser New user who set the topic (nickname if gotten on connect, full host if seen by parser)
      */
-    protected void setTopicUser(final String sNewUser) {
+    public void setTopicUser(final String sNewUser) {
         topicUser = sNewUser;
     }
 
@@ -435,7 +435,7 @@ public class IRCChannelInfo implements ChannelInfo {
      *
      * @param nNewMode new long representing channel modes. (Boolean only)
      */
-    protected void setMode(final long nNewMode) {
+    public void setMode(final long nNewMode) {
         modes = nNewMode;
     }
 
@@ -478,7 +478,7 @@ public class IRCChannelInfo implements ChannelInfo {
      * @param cMode Character representing mode
      * @param sValue String repreenting value (if "" mode is unset)
      */
-    protected void setModeParam(final Character cMode, final String sValue) {
+    public void setModeParam(final Character cMode, final String sValue) {
         if (sValue.isEmpty()) {
             if (paramModes.containsKey(cMode)) {
                 paramModes.remove(cMode);
@@ -503,7 +503,8 @@ public class IRCChannelInfo implements ChannelInfo {
      * @param givenItem ChannelListModeItem representing the item
      * @param bAdd Add or remove the value. (true for add, false for remove)
      */
-    protected void setListModeParam(final Character givenMode, final ChannelListModeItem givenItem, final boolean bAdd) {
+    public void setListModeParam(final Character givenMode, final ChannelListModeItem givenItem,
+            final boolean bAdd) {
         Character cMode = givenMode;
         ChannelListModeItem newItem = givenItem;
         if (!parser.chanModesOther.containsKey(cMode) || parser.chanModesOther.get(cMode) != IRCParser.MODE_LIST) {
@@ -575,7 +576,7 @@ public class IRCChannelInfo implements ChannelInfo {
      * @param cMode Character representing mode
      * @param newState change the value returned by getAddState
      */
-    protected void setAddState(final Character cMode, final boolean newState) {
+    public void setAddState(final Character cMode, final boolean newState) {
         synchronized (addingModes) {
             if (newState) {
                 addingModes.add(cMode);
@@ -590,7 +591,7 @@ public class IRCChannelInfo implements ChannelInfo {
     /**
      * Reset the "adding state" of *all* list modes.
      */
-    protected void resetAddState() {
+    public void resetAddState() {
         synchronized (addingModes) {
             addingModes.clear();
         }

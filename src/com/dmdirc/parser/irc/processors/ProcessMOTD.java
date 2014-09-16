@@ -20,11 +20,13 @@
  * SOFTWARE.
  */
 
-package com.dmdirc.parser.irc;
+package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.interfaces.callbacks.MotdEndListener;
 import com.dmdirc.parser.interfaces.callbacks.MotdLineListener;
 import com.dmdirc.parser.interfaces.callbacks.MotdStartListener;
+import com.dmdirc.parser.irc.IRCParser;
+import com.dmdirc.parser.irc.ProcessingManager;
 
 /**
  * Process a MOTD Related Line.
@@ -37,7 +39,7 @@ public class ProcessMOTD extends IRCProcessor {
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected ProcessMOTD(final IRCParser parser, final ProcessingManager manager) {
+    public ProcessMOTD(final IRCParser parser, final ProcessingManager manager) {
         super(parser, manager);
     }
 

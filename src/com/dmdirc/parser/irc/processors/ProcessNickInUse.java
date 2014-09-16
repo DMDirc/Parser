@@ -20,10 +20,12 @@
  * SOFTWARE.
  */
 
-package com.dmdirc.parser.irc;
+package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.common.MyInfo;
 import com.dmdirc.parser.interfaces.callbacks.NickInUseListener;
+import com.dmdirc.parser.irc.IRCParser;
+import com.dmdirc.parser.irc.ProcessingManager;
 
 /**
  * Process a NickInUse message.
@@ -42,7 +44,7 @@ public class ProcessNickInUse extends IRCProcessor {
      * @param parser IRCParser That owns this object
      * @param manager ProcessingManager that is in charge of this object
      */
-    protected ProcessNickInUse(final IRCParser parser, final ProcessingManager manager) {
+    public ProcessNickInUse(final IRCParser parser, final ProcessingManager manager) {
         super(parser, manager);
     }
 

@@ -23,6 +23,7 @@
 package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.interfaces.Parser;
+import com.dmdirc.parser.irc.processors.Process004005;
 
 import java.util.Date;
 
@@ -40,7 +41,7 @@ public interface NetworkDetectedListener extends CallbackInterface {
      * @param networkName The name of the network.
      * @param ircdVersion The version of the ircd.
      * @param ircdType The Guessed type of the ircd based on the name.
-     * @see com.dmdirc.parser.irc.Process004005#callGotNetwork
+     * @see Process004005#callGotNetwork
      */
     void onGotNetwork(Parser parser, Date date, String networkName,
             String ircdVersion, String ircdType);
