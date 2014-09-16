@@ -1569,11 +1569,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
 
     @Override
     public String getChannelUserModes() {
-        if (h005Info.containsKey("PREFIXSTRING")) {
-            return h005Info.get("PREFIXSTRING");
-        } else {
-            return "";
-        }
+        return prefixModes.getModes();
     }
 
     @Override
@@ -1690,42 +1686,35 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      */
     public void parsePrefixModes() {
         final String sDefaultModes = "(ohv)@%+";
-        String[] bits;
         String modeStr;
         if (h005Info.containsKey("PREFIX")) {
             modeStr = h005Info.get("PREFIX");
         } else {
             modeStr = sDefaultModes;
         }
-        if (modeStr.substring(0, 1).equals("(")) {
+        if ("(".equals(modeStr.substring(0, 1))) {
             modeStr = modeStr.substring(1);
         } else {
             modeStr = sDefaultModes.substring(1);
             h005Info.put("PREFIX", sDefaultModes);
         }
 
-        bits = modeStr.split("\\)", 2);
-        if (bits.length != 2 || bits[0].length() != bits[1].length()) {
-            modeStr = sDefaultModes;
-            callErrorInfo(new ParserError(ParserError.ERROR_ERROR, "PREFIX String not valid. Using default string of \"" + modeStr + "\"", getLastLine()));
-            h005Info.put("PREFIX", modeStr);
-            modeStr = modeStr.substring(1);
-            bits = modeStr.split("\\)", 2);
+        int closingIndex = modeStr.indexOf(')');
+        if (closingIndex * 2 + 1 != modeStr.length()) {
+            callErrorInfo(new ParserError(ParserError.ERROR_ERROR,
+                    "PREFIX String not valid. Using default string of \"" + modeStr +
+                    '"', getLastLine()));
+            h005Info.put("PREFIX", sDefaultModes);
+            modeStr = sDefaultModes.substring(1);
+            closingIndex = modeStr.indexOf(')');
         }
 
-        // resetState
-        prefixModes.clear();
+        // The modes passed from the server are in descending order of importance, we want to
+        // store them in ascending, so reverse them:
+        final String reversedModes = new StringBuilder(modeStr).reverse().toString();
 
-        for (int i = bits[0].length() - 1; i > -1; --i) {
-            final Character cMode = bits[0].charAt(i);
-            final Character cPrefix = bits[1].charAt(i);
-            callDebugInfo(DEBUG_INFO, "Found Prefix Mode: %c => %c", cMode, cPrefix);
-            if (!prefixModes.isPrefixMode(cMode)) {
-                prefixModes.add(cMode, cPrefix);
-            }
-        }
-
-        h005Info.put("PREFIXSTRING", bits[0]);
+        prefixModes.setModes(reversedModes.substring(closingIndex + 1),
+                reversedModes.substring(0, closingIndex));
     }
 
     @Override
