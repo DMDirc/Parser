@@ -180,6 +180,6 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
      * @param mode The mode to be removed.
      */
     public void removeMode(final char mode) {
-        modes = modes.replace(Character.toString(mode), "");
+        modes = modeManager.removeMode(modes, mode);
     }
 }
