@@ -283,51 +283,44 @@ public class ProcessMode extends IRCProcessor {
      * @param clearOldModes Clear old modes before applying these modes (used by 221)
      */
     private void processUserMode(final String sParam, final String[] token, final String[] sModestr, final boolean clearOldModes) {
-        long nCurrent, nValue;
-        boolean bPositive = true;
-
         final IRCClientInfo iClient = getClientInfo(token[2]);
 
         if (iClient == null) {
             return;
         }
 
+        String nCurrent;
         if (clearOldModes) {
-            nCurrent = 0;
+            nCurrent = "";
         } else {
             nCurrent = iClient.getUserMode();
         }
 
+        boolean bPositive = true;
         for (int i = 0; i < sModestr[0].length(); ++i) {
             final Character cMode = sModestr[0].charAt(i);
             if (cMode.equals("+".charAt(0))) {
                 bPositive = true;
             } else if (cMode.equals("-".charAt(0))) {
                 bPositive = false;
-            } else if (cMode.equals(":".charAt(0))) {
-                continue;
-            } else {
-                if (parser.userModes.containsKey(cMode)) {
-                    nValue = parser.userModes.get(cMode);
-                } else {
+            } else if (!cMode.equals(":".charAt(0))) {
+                if (!parser.userModes.isMode(cMode)) {
                     // Unknown mode
                     callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got unknown user mode " + cMode + " - Added", parser.getLastLine()));
-                    parser.userModes.put(cMode, parser.nNextKeyUser);
-                    nValue = parser.nNextKeyUser;
-                    parser.nNextKeyUser = parser.nNextKeyUser * 2;
+                    parser.userModes.add(cMode);
                 }
                 // Usermodes are always boolean
-                callDebugInfo(IRCParser.DEBUG_INFO, "User Mode: %c [%d] {Positive: %b}", cMode, nValue, bPositive);
+                callDebugInfo(IRCParser.DEBUG_INFO, "User Mode: %c {Positive: %b}", cMode, bPositive);
                 if (bPositive) {
-                    nCurrent = nCurrent | nValue;
+                    nCurrent = parser.userModes.insertMode(nCurrent, cMode);
                 } else {
-                    nCurrent = nCurrent ^ (nCurrent & nValue);
+                    nCurrent = parser.userModes.removeMode(nCurrent, cMode);
                 }
             }
         }
 
         iClient.setUserMode(nCurrent);
-        if (sParam.equals("221")) {
+        if ("221".equals(sParam)) {
             callUserModeDiscovered(iClient, sModestr[0]);
         } else {
             callUserModeChanged(iClient, token[0], sModestr[0]);
@@ -337,7 +330,7 @@ public class ProcessMode extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelModeChanged Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.ChannelModeChangeListener
+     * @see ChannelModeChangeListener
      * @param cChannel Channel where modes were changed
      * @param cChannelClient Client chaning the modes (null if server)
      * @param sHost Host doing the mode changing (User host or server name)
@@ -351,7 +344,7 @@ public class ProcessMode extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelUserModeChanged Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.ChannelUserModeChangeListener
+     * @see ChannelUserModeChangeListener
      * @param cChannel Channel where modes were changed
      * @param cChangedClient Client being changed
      * @param cSetByClient Client chaning the modes (null if server)
@@ -366,7 +359,7 @@ public class ProcessMode extends IRCProcessor {
     /**
      * Callback to all objects implementing the UserModeChanged Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.UserModeChangeListener
+     * @see UserModeChangeListener
      * @param cClient Client that had the mode changed (almost always us)
      * @param sSetby Host that set the mode (us or servername)
      * @param sModes The modes set.
@@ -379,7 +372,7 @@ public class ProcessMode extends IRCProcessor {
     /**
      * Callback to all objects implementing the UserModeDiscovered Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.UserModeDiscoveryListener
+     * @see UserModeDiscoveryListener
      * @param cClient Client that had the mode changed (almost always us)
      * @param sModes The modes set.
      * @return true if a method was called, false otherwise
