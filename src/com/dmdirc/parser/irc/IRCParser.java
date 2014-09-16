@@ -60,6 +60,7 @@ import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -165,15 +166,8 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     boolean hasBegan;
     /** Connect timeout. */
     private int connectTimeout = 5000;
-    /** Hashtable storing known prefix modes (ohv). */
-    public final Map<Character, Long> prefixModes = new HashMap<>();
-    /**
-     * Hashtable maping known prefix modes (ohv) to prefixes (@%+) - Both ways.
-     * Prefix map contains 2 pairs for each mode. (eg @ => o and o => @)
-     */
-    public final Map<Character, Character> prefixMap = new HashMap<>();
-    /** Integer representing the next avaliable integer value of a prefix mode. */
-    long nextKeyPrefix = 1;
+    /** Manager used to handle prefix modes. */
+    public final PrefixModeManager prefixModes = new PrefixModeManager();
     /** Hashtable storing known user modes (owxis etc). */
     public final Map<Character, Long> userModes = new HashMap<>();
     /** Integer representing the next avaliable integer value of a User mode. */
@@ -711,7 +705,6 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         clientList.clear();
         h005Info.clear();
         prefixModes.clear();
-        prefixMap.clear();
         chanModesOther.clear();
         chanModesBool.clear();
         userModes.clear();
@@ -721,7 +714,6 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
             out.clearQueue();
         }
         // Reset the mode indexes
-        nextKeyPrefix = 1;
         nextKeyCMBool = 1;
         nNextKeyUser = 1;
         setServerName("");
@@ -964,7 +956,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
             }
 
             final SSLContext sc = SSLContext.getInstance("SSL");
-            sc.init(myKeyManagers, myTrustManager, new java.security.SecureRandom());
+            sc.init(myKeyManagers, myTrustManager, new SecureRandom());
 
             final SSLSocketFactory socketFactory = sc.getSocketFactory();
             socket = socketFactory.createSocket(socket, getURI().getHost(), getURI().getPort(), false);
@@ -1232,9 +1224,9 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         callDataOut(line, fromParser);
         out.sendLine(line, priority);
         final String[] newLine = tokeniseLine(line);
-        if (newLine[0].equalsIgnoreCase("away") && newLine.length > 1) {
+        if ("away".equalsIgnoreCase(newLine[0]) && newLine.length > 1) {
             myself.setAwayReason(newLine[newLine.length - 1]);
-        } else if (newLine[0].equalsIgnoreCase("mode") && newLine.length == 3) {
+        } else if ("mode".equalsIgnoreCase(newLine[0]) && newLine.length == 3) {
             final IRCChannelInfo channel = getChannel(newLine[1]);
             if (channel != null) {
                 // This makes sure we don't add the same item to the LMQ twice,
@@ -1508,7 +1500,8 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
             char mode;
             for (int i = 0; i < modeStr.length(); ++i) {
                 mode = modeStr.charAt(i);
-                if (!prefixModes.containsKey(mode) && sDefaultModes.indexOf(Character.toString(mode)) < 0) {
+                if (!prefixModes.isPrefixMode(mode)
+                        && sDefaultModes.indexOf(Character.toString(mode)) < 0) {
                     sDefaultModes.append(mode);
                 }
             }
@@ -1524,7 +1517,8 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         bits = modeStr.split(",", 5);
         if (bits.length < 4) {
             modeStr = sDefaultModes.toString();
-            callErrorInfo(new ParserError(ParserError.ERROR_ERROR, "CHANMODES String not valid. Using default string of \"" + modeStr + "\"", getLastLine()));
+            callErrorInfo(new ParserError(ParserError.ERROR_ERROR, "CHANMODES String not valid. " +
+                    "Using default string of \"" + modeStr + '"', getLastLine()));
             h005Info.put("CHANMODES", modeStr);
             bits = modeStr.split(",", 5);
         }
@@ -1721,18 +1715,13 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
 
         // resetState
         prefixModes.clear();
-        prefixMap.clear();
-        nextKeyPrefix = 1;
 
         for (int i = bits[0].length() - 1; i > -1; --i) {
             final Character cMode = bits[0].charAt(i);
             final Character cPrefix = bits[1].charAt(i);
-            callDebugInfo(DEBUG_INFO, "Found Prefix Mode: %c => %c [%d]", cMode, cPrefix, nextKeyPrefix);
-            if (!prefixModes.containsKey(cMode)) {
-                prefixModes.put(cMode, nextKeyPrefix);
-                prefixMap.put(cMode, cPrefix);
-                prefixMap.put(cPrefix, cMode);
-                nextKeyPrefix *= 2;
+            callDebugInfo(DEBUG_INFO, "Found Prefix Mode: %c => %c", cMode, cPrefix);
+            if (!prefixModes.isPrefixMode(cMode)) {
+                prefixModes.add(cMode, cPrefix);
             }
         }
 

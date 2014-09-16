@@ -107,10 +107,10 @@ public class ProcessNames extends IRCProcessor {
                     // hPrefixMap contains @, o, +, v this caused issue 107
                     // hPrefixModes only contains o, v so if the mode is in hPrefixMap
                     // and not in hPrefixModes, its ok to use.
-                    if (parser.prefixMap.containsKey(cMode) &&
-                            !parser.prefixModes.containsKey(cMode)) {
+                    if (parser.prefixModes.isPrefix(cMode)) {
                         sModes.append(cMode);
-                        nPrefix = nPrefix + parser.prefixModes.get(parser.prefixMap.get(cMode));
+                        nPrefix +=
+                                parser.prefixModes.getValueOf(parser.prefixModes.getModeFor(cMode));
                     } else {
                         sName = sNameBit.substring(i);
                         break;
