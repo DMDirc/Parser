@@ -81,6 +81,21 @@ public class PrefixModeManager {
     }
 
     /**
+     * Converts a string containing prefix modes into a string containing the corresponding
+     * prefixes (e.g. 'ov' becomes '@+').
+     *
+     * @param modes The modes to retrieve prefixes for.
+     * @return The prefixes corresponding to the modes.
+     */
+    public String getPrefixesFor(final String modes) {
+        final StringBuilder builder = new StringBuilder(modes.length());
+        for (char mode : modes.toCharArray()) {
+            builder.append(getPrefixFor(mode));
+        }
+        return builder.toString();
+    }
+
+    /**
      * Returns the mode corresponding to the specified prefix (e.g. 'o' given '@').
      *
      * @param prefix The prefix to retrieve the mode for.
@@ -121,19 +136,68 @@ public class PrefixModeManager {
      * @deprecated These values are an implementation detail, and shouldn't be exposed.
      */
     @Deprecated
-    public long getValueOf(final char mode) {
+    private long getValueOf(final char mode) {
         return prefixModes.get(mode);
     }
 
     /**
-     * Gets the numerical value that will be assigned to the next mode.
+     * Compares the most important mode of the given mode lists.
      *
-     * @return The next numerical value.
-     * @deprecated These values are an implementation detail, and shouldn't be exposed.
+     * @param modes1 The first set of modes to compare. Must be ordered by importance.
+     * @param modes2 The second set of modes to compare. Must be ordered by importance.
+     * @return A negative number of modes2 is more important than modes1; a positive number if
+     * modes1 is more important than modes2; zero if the two are equivalent.
      */
-    @Deprecated
-    public long getNextValue() {
-        return nextKeyPrefix;
+    public int compareImportantModes(final String modes1, final String modes2) {
+        final char mode1 = modes1.isEmpty() ? ' ' : modes1.charAt(0);
+        final char mode2 = modes2.isEmpty() ? ' ' : modes2.charAt(0);
+        final long modeValue1 = isPrefixMode(mode1) ? getValueOf(mode1) : 0;
+        final long modeValue2 = isPrefixMode(mode2) ? getValueOf(mode2) : 0;
+        return (int) (modeValue1 - modeValue2);
     }
 
+    /**
+     * Determines if the specified mode string indicates a user is opped. An opped user is
+     * considered one who has any mode greater than 'v' (voice), or if voice doesn't exist then
+     * any mode at all.
+     *
+     * @param modes The modes to test
+     * @return True if the modes indicate the client is "opped", false otherwise.
+     */
+    public boolean isOpped(final String modes) {
+        if (modes.isEmpty()) {
+            return false;
+        }
+
+        final long voiceValue = isPrefixMode('v') ? prefixModes.get('v') : 0;
+        return getValueOf(modes.charAt(0)) > voiceValue;
+    }
+
+    /**
+     * Inserts the specified mode into the correct place in the mode string, maintaining importance
+     * order.
+     *
+     * @param modes The existing modes to add the new one to.
+     * @param mode The new mode to be added.
+     * @return A mode string containing all the modes.
+     */
+    public String insertMode(final String modes, final char mode) {
+        if (modes.indexOf(mode) > -1) {
+            // Don't duplicate an existing mode
+            return modes;
+        }
+
+        final StringBuilder result = new StringBuilder(modes.length() + 1);
+        boolean found = false;
+        final long value = getValueOf(mode);
+        for (char existingMode : modes.toCharArray()) {
+            if (getValueOf(existingMode) < value && !found) {
+                // Our new mode is more important, insert it first.
+                result.append(mode);
+                found = true;
+            }
+            result.append(existingMode);
+        }
+        return result.toString();
+    }
 }

@@ -173,8 +173,8 @@ public class ProcessMode extends IRCProcessor {
                         return;
                     }
                     sModeParam = sModestr[nParam++];
-                    nValue = parser.prefixModes.getValueOf(cMode);
-                    callDebugInfo(IRCParser.DEBUG_INFO, "User Mode: %c / %d [%s] {Positive: %b}", cMode, nValue, sModeParam, bPositive);
+                    callDebugInfo(IRCParser.DEBUG_INFO, "User Mode: %c / %s {Positive: %b}",
+                            cMode, sModeParam, bPositive);
                     iChannelClientInfo = iChannel.getChannelClient(sModeParam);
                     if (iChannelClientInfo == null) {
                         // Client not known?
@@ -182,13 +182,13 @@ public class ProcessMode extends IRCProcessor {
                                 " Ignoring (%s)", sModeParam);
                         continue;
                     }
-                    callDebugInfo(IRCParser.DEBUG_INFO, "\tOld Mode Value: %d", iChannelClientInfo.getChanMode());
+                    callDebugInfo(IRCParser.DEBUG_INFO, "\tOld Mode Value: %s",
+                            iChannelClientInfo.getAllModes());
                     if (bPositive) {
-                        iChannelClientInfo.setChanMode(iChannelClientInfo.getChanMode() | nValue);
+                        iChannelClientInfo.addMode(cMode);
                         sTemp = "+";
                     } else {
-                        iChannelClientInfo.setChanMode(iChannelClientInfo.getChanMode() ^
-                                iChannelClientInfo.getChanMode() & nValue);
+                        iChannelClientInfo.removeMode(cMode);
                         sTemp = "-";
                     }
                     sTemp += cMode;

@@ -76,9 +76,6 @@ public class ProcessNames extends IRCProcessor {
         } else {
             // Names
 
-            IRCClientInfo iClient;
-            IRCChannelClientInfo iChannelClient;
-
             iChannel = getChannel(token[4]);
 
             if (iChannel == null) {
@@ -92,45 +89,37 @@ public class ProcessNames extends IRCProcessor {
             iChannel.setAddingNames(true);
 
             final String[] sNames = token[token.length - 1].split(" ");
-            String sNameBit, sName = "";
+            String sName = "";
             StringBuilder sModes = new StringBuilder();
-            long nPrefix = 0;
             for (String sName1 : sNames) {
-                sNameBit = sName1;
                 // If name is empty (ie there was an extra space) ignore it.
-                if (sNameBit.isEmpty()) {
+                if (sName1.isEmpty()) {
                     continue;
                 }
                 // This next bit of code allows for any ircd which decides to use @+Foo in names
-                for (int i = 0; i < sNameBit.length(); ++i) {
-                    final Character cMode = sNameBit.charAt(i);
-                    // hPrefixMap contains @, o, +, v this caused issue 107
-                    // hPrefixModes only contains o, v so if the mode is in hPrefixMap
-                    // and not in hPrefixModes, its ok to use.
+                for (int i = 0; i < sName1.length(); i++) {
+                    final char cMode = sName1.charAt(i);
                     if (parser.prefixModes.isPrefix(cMode)) {
-                        sModes.append(cMode);
-                        nPrefix +=
-                                parser.prefixModes.getValueOf(parser.prefixModes.getModeFor(cMode));
+                        sModes.append(parser.prefixModes.getModeFor(cMode));
                     } else {
-                        sName = sNameBit.substring(i);
+                        sName = sName1.substring(i);
                         break;
                     }
                 }
-                callDebugInfo(IRCParser.DEBUG_INFO, "Name: %s Modes: \"%s\" [%d]", sName,
-                        sModes.toString(), nPrefix);
+                callDebugInfo(IRCParser.DEBUG_INFO, "Name: %s Modes: \"%s\"", sName,
+                        sModes.toString());
 
-                iClient = getClientInfo(sName);
+                IRCClientInfo iClient = getClientInfo(sName);
                 if (iClient == null) {
                     iClient = new IRCClientInfo(parser, sName);
                     parser.addClient(iClient);
                 }
                 iClient.setUserBits(sName, false); // Will do nothing if this isn't UHNAMES
-                iChannelClient = iChannel.addClient(iClient);
-                iChannelClient.setChanMode(nPrefix);
+                final IRCChannelClientInfo iChannelClient = iChannel.addClient(iClient);
+                iChannelClient.setChanMode(sModes.toString());
 
                 sName = "";
                 sModes = new StringBuilder();
-                nPrefix = 0;
             }
         }
     }
@@ -138,7 +127,7 @@ public class ProcessNames extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelTopic Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.ChannelTopicListener
+     * @see ChannelTopicListener
      * @param cChannel Channel that topic was set on
      * @param bIsJoinTopic True when getting topic on join, false if set by user/server
      * @return true if a method was called, false otherwise
@@ -151,7 +140,7 @@ public class ProcessNames extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelGotNames Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.ChannelNamesListener
+     * @see ChannelNamesListener
      * @param cChannel Channel which the names reply is for
      * @return true if a method was called, false otherwise
      */

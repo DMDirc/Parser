@@ -69,18 +69,19 @@ public class ProcessModeTest {
         final IRCChannelClientInfo cci = parser.getClient("luser").getChannelClients().get(0);
 
         parser.injectLine(":server MODE #DMDirc_testing +v luser");
-        assertEquals("+", cci.getChanModeStr(true));
+        assertEquals("v", cci.getAllModes());
+        assertEquals("+", cci.getAllModesPrefix());
 
         parser.injectLine(":server MODE #DMDirc_testing +o luser");
-        assertEquals("ov", cci.getChanModeStr(false));
-        assertEquals("@+", cci.getChanModeStr(true));
+        assertEquals("ov", cci.getAllModes());
+        assertEquals("@+", cci.getAllModesPrefix());
 
         parser.injectLine(":server MODE #DMDirc_testing +bov moo luser luser");
-        assertEquals("ov", cci.getChanModeStr(false));
+        assertEquals("ov", cci.getAllModes());
 
         parser.injectLine(":server MODE #DMDirc_testing -bov moo luser luser");
-        assertEquals("", cci.getChanModeStr(false));
-        assertEquals("", cci.getChanModeStr(true));
+        assertEquals("", cci.getAllModes());
+        assertEquals("", cci.getAllModesPrefix());
     }
     
     @Test

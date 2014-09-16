@@ -55,7 +55,7 @@ public class ProcessNickTest {
 
         final IRCChannelClientInfo cci = parser.getClient("LUSER").getChannelClients().get(0);
         assertEquals(parser.getChannel("#DMDirc_testing"), cci.getChannel());
-        assertEquals("+", cci.getChanModeStr(true));
+        assertEquals("+", cci.getAllModesPrefix());
 
         verify(tinc).onNickChanged(same(parser), (Date) anyObject(),
                 same(parser.getClient("LUSER")), eq("luser"));
@@ -77,7 +77,7 @@ public class ProcessNickTest {
 
         final IRCChannelClientInfo cci = parser.getClient("foobar").getChannelClients().get(0);
         assertEquals(parser.getChannel("#DMDirc_testing"), cci.getChannel());
-        assertEquals("+", cci.getChanModeStr(true));
+        assertEquals("+", cci.getAllModesPrefix());
     }    
     
     @Test

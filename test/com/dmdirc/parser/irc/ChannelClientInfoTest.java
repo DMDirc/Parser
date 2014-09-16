@@ -46,21 +46,18 @@ public class ChannelClientInfoTest {
         assertEquals("+", cci.getImportantModePrefix());
         assertEquals("+luser", cci.toString());
         assertEquals("+luser", cci.toFullString());
-        final long value = cci.getImportantModeValue();
 
         parser.injectLine(":server MODE #DMDirc_testing +o luser");
         assertEquals("o", cci.getImportantMode());
         assertEquals("@", cci.getImportantModePrefix());
         assertEquals("@luser", cci.toString());
         assertEquals("@+luser", cci.toFullString());
-        assertTrue(cci.getImportantModeValue() > value);
 
         parser.injectLine(":server MODE #DMDirc_testing -ov luser luser");
         assertEquals("", cci.getImportantMode());
         assertEquals("", cci.getImportantModePrefix());
         assertEquals("luser", cci.toString());
         assertEquals("luser", cci.toFullString());
-        assertEquals(0L, cci.getImportantModeValue());
     }
     
     @Test

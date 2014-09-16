@@ -64,15 +64,15 @@ public class ProcessNamesTest {
 
         IRCChannelClientInfo cci = parser.getClient("luser").getChannelClients().get(0);
         assertEquals(parser.getChannel("#DMDirc_testing"), cci.getChannel());
-        assertEquals("+", cci.getChanModeStr(true));
+        assertEquals("+", cci.getAllModesPrefix());
         
         cci = parser.getChannel("#DMDirc_testing").getChannelClient("nick2");
         assertNotNull(cci);
-        assertEquals("@+", cci.getChanModeStr(true));
+        assertEquals("@+", cci.getAllModesPrefix());
 
         cci = parser.getChannel("#DMDirc_testing").getChannelClient("nick3");
         assertNotNull(cci);
-        assertEquals("", cci.getChanModeStr(true));
+        assertEquals("", cci.getAllModesPrefix());
     }
 
 }
