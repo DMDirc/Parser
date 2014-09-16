@@ -115,7 +115,7 @@ public class PrefixModeManager {
     }
 
     /**
-     * Adds a new mode.
+     * Adds a new mode. Modes must be added in increasing order of importance.
      *
      * @param mode The mode that appears in mode strings (e.g. 'o').
      * @param prefix The prefix that is used to show a user has the mode (e.g. '@')
@@ -198,6 +198,11 @@ public class PrefixModeManager {
             }
             result.append(existingMode);
         }
+
+        if (!found) {
+            result.append(mode);
+        }
+
         return result.toString();
     }
 }
