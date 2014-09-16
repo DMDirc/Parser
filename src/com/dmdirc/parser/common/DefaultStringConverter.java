@@ -26,9 +26,6 @@ import com.dmdirc.parser.interfaces.StringConverter;
 
 /**
  * A {@link StringConverter} that uses the system's default charset.
- *
- * @since 0.6.3m2
- * @author chris
  */
 public class DefaultStringConverter implements StringConverter {
 

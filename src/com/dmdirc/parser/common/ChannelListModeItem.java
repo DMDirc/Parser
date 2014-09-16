@@ -22,12 +22,12 @@
 
 package com.dmdirc.parser.common;
 
+import com.dmdirc.parser.interfaces.Parser;
+
 /**
  * Contains Channel List Mode information.
  *
- * @author Shane Mc Cormack
- * @author Chris Smith
- * @see com.dmdirc.parser.interfaces.Parser
+ * @see Parser
  */
 public class ChannelListModeItem {
 

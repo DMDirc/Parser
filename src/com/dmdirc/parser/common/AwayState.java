@@ -24,9 +24,6 @@ package com.dmdirc.parser.common;
 
 /**
  * Away states.
- *
- * @author Shane
- * @since 0.6.3
  */
 public enum AwayState {
 
@@ -42,7 +39,7 @@ public enum AwayState {
 
     /**
      * Adds a friendly name to the away state.
-     * <p/>
+     *
      * @param friendlyName Friendly name
      */
     AwayState(final String friendlyName) {

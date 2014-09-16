@@ -22,12 +22,12 @@
 
 package com.dmdirc.parser.common;
 
+import com.dmdirc.parser.interfaces.Parser;
+
 /**
  * Contains User information.
  *
- * @author Shane Mc Cormack
- * @author Chris Smith
- * @see com.dmdirc.parser.interfaces.Parser
+ * @see Parser
  */
 public class MyInfo {
 
@@ -71,7 +71,7 @@ public class MyInfo {
             nickname = result;
             username = nickname;
             realname = nickname + " - DMDIrc";
-            altNickname = nickname + "-";
+            altNickname = nickname + '-';
         }
     }
 

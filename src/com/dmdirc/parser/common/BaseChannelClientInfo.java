@@ -66,13 +66,14 @@ public abstract class BaseChannelClientInfo implements ChannelClientInfo {
     }
 
     @Override
+    @SuppressWarnings("ReturnOfCollectionOrArrayField")
     public Map<Object, Object> getMap() {
         return map;
     }
 
     @Override
     public String toString() {
-        return getImportantMode() + client.toString();
+        return getImportantMode() + client;
     }
 
 }
