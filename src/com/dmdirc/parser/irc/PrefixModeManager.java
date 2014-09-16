@@ -22,32 +22,22 @@
 
 package com.dmdirc.parser.irc;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 /**
  * Handles prefix modes (those that can be applied to a user in a channel, such as +ohv).
  */
 public class PrefixModeManager {
 
-    /** Map storing known prefix modes (ohv). */
-    private final Map<Character, Long> prefixModes = new HashMap<>();
-    /**
-     * Map of known prefix modes (ohv) to prefixes (@%+) - Both ways.
-     * Prefix map contains 2 pairs for each mode. (eg @ => o and o => @)
-     */
-    private final Map<Character, Character> prefixMap = new HashMap<>();
-    /** The next available number for a prefix mode. */
-    private long nextKeyPrefix = 1;
+    /** All known modes, in increasing order of importance. */
+    private String modes = "";
+    /** All known prefixes, in increasing order of importance. */
+    private String prefixes = "";
 
     /**
      * Resets the state of this manager, clearing all known modes.
      */
     public void clear() {
-        prefixMap.clear();
-        prefixModes.clear();
-        nextKeyPrefix = 1;
+        modes = "";
+        prefixes = "";
     }
 
     /**
@@ -57,7 +47,7 @@ public class PrefixModeManager {
      * @return True if the mode is a prefix mode, false otherwise.
      */
     public boolean isPrefixMode(final char mode) {
-        return prefixModes.containsKey(mode);
+        return modes.indexOf(mode) > -1;
     }
 
     /**
@@ -67,7 +57,7 @@ public class PrefixModeManager {
      * @return True if the character is a prefix, false otherwise.
      */
     public boolean isPrefix(final char prefix) {
-        return !isPrefixMode(prefix) && prefixMap.containsKey(prefix);
+        return prefixes.indexOf(prefix) > -1;
     }
 
     /**
@@ -77,19 +67,19 @@ public class PrefixModeManager {
      * @return The prefix corresponding to the mode.
      */
     public char getPrefixFor(final char mode) {
-        return prefixMap.get(mode);
+        return prefixes.charAt(modes.indexOf(mode));
     }
 
     /**
      * Converts a string containing prefix modes into a string containing the corresponding
      * prefixes (e.g. 'ov' becomes '@+').
      *
-     * @param modes The modes to retrieve prefixes for.
+     * @param modeString The modes to retrieve prefixes for.
      * @return The prefixes corresponding to the modes.
      */
-    public String getPrefixesFor(final String modes) {
-        final StringBuilder builder = new StringBuilder(modes.length());
-        for (char mode : modes.toCharArray()) {
+    public String getPrefixesFor(final String modeString) {
+        final StringBuilder builder = new StringBuilder(modeString.length());
+        for (char mode : modeString.toCharArray()) {
             builder.append(getPrefixFor(mode));
         }
         return builder.toString();
@@ -102,16 +92,16 @@ public class PrefixModeManager {
      * @return The mode corresponding to the prefix.
      */
     public char getModeFor(final char prefix) {
-        return prefixMap.get(prefix);
+        return modes.charAt(prefixes.indexOf(prefix));
     }
 
     /**
      * Gets the set of all known prefix modes.
      *
-     * @return Set of known modes.
+     * @return Set of known modes, in increasing order of importance.
      */
-    public Set<Character> getModes() {
-        return prefixModes.keySet();
+    public CharSequence getModes() {
+        return modes;
     }
 
     /**
@@ -121,23 +111,8 @@ public class PrefixModeManager {
      * @param prefix The prefix that is used to show a user has the mode (e.g. '@')
      */
     public void add(final char mode, final char prefix) {
-        prefixModes.put(mode, nextKeyPrefix);
-        prefixMap.put(mode, prefix);
-        prefixMap.put(prefix, mode);
-        nextKeyPrefix *= 2;
-    }
-
-    /**
-     * Gets a unique numerical value for the specified mode. More important modes have higher
-     * values.
-     *
-     * @param mode The mode to return the value of.
-     * @return The value of that mode.
-     * @deprecated These values are an implementation detail, and shouldn't be exposed.
-     */
-    @Deprecated
-    private long getValueOf(final char mode) {
-        return prefixModes.get(mode);
+        modes += mode;
+        prefixes += prefix;
     }
 
     /**
@@ -151,9 +126,9 @@ public class PrefixModeManager {
     public int compareImportantModes(final String modes1, final String modes2) {
         final char mode1 = modes1.isEmpty() ? ' ' : modes1.charAt(0);
         final char mode2 = modes2.isEmpty() ? ' ' : modes2.charAt(0);
-        final long modeValue1 = isPrefixMode(mode1) ? getValueOf(mode1) : 0;
-        final long modeValue2 = isPrefixMode(mode2) ? getValueOf(mode2) : 0;
-        return (int) (modeValue1 - modeValue2);
+        final int modeValue1 = modes.indexOf(mode1);
+        final int modeValue2 = modes.indexOf(mode2);
+        return modeValue1 - modeValue2;
     }
 
     /**
@@ -161,45 +136,40 @@ public class PrefixModeManager {
      * considered one who has any mode greater than 'v' (voice), or if voice doesn't exist then
      * any mode at all.
      *
-     * @param modes The modes to test
+     * @param modeString The modes to test
      * @return True if the modes indicate the client is "opped", false otherwise.
      */
-    public boolean isOpped(final String modes) {
-        if (modes.isEmpty()) {
-            return false;
-        }
-
-        final long voiceValue = isPrefixMode('v') ? prefixModes.get('v') : 0;
-        return getValueOf(modes.charAt(0)) > voiceValue;
+    public boolean isOpped(final String modeString) {
+        return !modeString.isEmpty() && modes.indexOf(modeString.charAt(0)) > modes.indexOf('v');
     }
 
     /**
      * Inserts the specified mode into the correct place in the mode string, maintaining importance
      * order.
      *
-     * @param modes The existing modes to add the new one to.
+     * @param modeString The existing modes to add the new one to.
      * @param mode The new mode to be added.
      * @return A mode string containing all the modes.
      */
-    public String insertMode(final String modes, final char mode) {
-        if (modes.indexOf(mode) > -1) {
+    public String insertMode(final String modeString, final char mode) {
+        if (modeString.indexOf(mode) > -1) {
             // Don't duplicate an existing mode
-            return modes;
+            return modeString;
         }
 
-        final StringBuilder result = new StringBuilder(modes.length() + 1);
-        boolean found = false;
-        final long value = getValueOf(mode);
-        for (char existingMode : modes.toCharArray()) {
-            if (getValueOf(existingMode) < value && !found) {
+        final StringBuilder result = new StringBuilder(modeString.length() + 1);
+        boolean missing = true;
+        final int value = modes.indexOf(mode);
+        for (char existingMode : modeString.toCharArray()) {
+            if (modes.indexOf(existingMode) < value && missing) {
                 // Our new mode is more important, insert it first.
                 result.append(mode);
-                found = true;
+                missing = false;
             }
             result.append(existingMode);
         }
 
-        if (!found) {
+        if (missing) {
             result.append(mode);
         }
 

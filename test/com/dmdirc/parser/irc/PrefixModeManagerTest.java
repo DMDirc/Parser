@@ -78,16 +78,15 @@ public class PrefixModeManagerTest {
 
     @Test
     public void testGetModes() {
-        assertEquals(0, manager.getModes().size());
+        assertEquals(0, manager.getModes().length());
         manager.add('m', '/');
-        assertEquals(1, manager.getModes().size());
-        assertTrue(manager.getModes().contains('m'));
+        assertEquals(1, manager.getModes().length());
+        assertEquals("m", manager.getModes());
         manager.add('n', '+');
-        assertEquals(2, manager.getModes().size());
-        assertTrue(manager.getModes().contains('m'));
-        assertTrue(manager.getModes().contains('n'));
+        assertEquals(2, manager.getModes().length());
+        assertEquals("mn", manager.getModes());
         manager.clear();
-        assertEquals(0, manager.getModes().size());
+        assertEquals(0, manager.getModes().length());
     }
 
     @Test
