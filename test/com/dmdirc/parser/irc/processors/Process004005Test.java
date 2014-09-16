@@ -20,11 +20,12 @@
  * SOFTWARE.
  */
 
-package com.dmdirc.parser.irc;
+package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.harness.parser.TestParser;
 import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.interfaces.callbacks.ErrorInfoListener;
+import com.dmdirc.parser.irc.IRCEncoding;
 
 import java.util.Date;
 

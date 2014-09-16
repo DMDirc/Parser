@@ -20,10 +20,11 @@
  * SOFTWARE.
  */
 
-package com.dmdirc.parser.irc;
+package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.harness.parser.TestParser;
 import com.dmdirc.parser.common.CallbackNotFoundException;
+import com.dmdirc.parser.irc.IRCChannelClientInfo;
 
 import org.junit.Test;
 import static org.junit.Assert.*;

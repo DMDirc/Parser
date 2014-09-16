@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package com.dmdirc.parser.irc;
+package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.harness.parser.TestParser;
 import com.dmdirc.parser.common.CallbackNotFoundException;
