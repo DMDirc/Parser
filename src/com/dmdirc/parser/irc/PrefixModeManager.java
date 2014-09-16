@@ -36,8 +36,18 @@ public class PrefixModeManager {
      * Resets the state of this manager, clearing all known modes.
      */
     public void clear() {
-        modes = "";
-        prefixes = "";
+        setModes("", "");
+    }
+
+    /**
+     * Replaces all existing modes with the specified ones.
+     *
+     * @param modes The new modes, in increasing order of importance.
+     * @param prefixes The corresponding new prefixes, in increasing order of importance.
+     */
+    public void setModes(final String modes, final String prefixes) {
+        this.modes = modes;
+        this.prefixes = prefixes;
     }
 
     /**
@@ -100,7 +110,7 @@ public class PrefixModeManager {
      *
      * @return Set of known modes, in increasing order of importance.
      */
-    public CharSequence getModes() {
+    public String getModes() {
         return modes;
     }
 
@@ -175,4 +185,5 @@ public class PrefixModeManager {
 
         return result.toString();
     }
+
 }

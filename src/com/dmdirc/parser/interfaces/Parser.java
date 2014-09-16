@@ -370,7 +370,7 @@ public interface Parser {
     String getUserModes();
 
     /**
-     * Retrieves a list of channel user modes, in descending priority order.
+     * Retrieves a list of channel user modes, in ascending priority order.
      *
      * @return A string containing a list of channel user mode characters
      */
