@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
 
 public class ProcessListModeTest {
 
-    private void testListModes(String numeric1, String numeric2, char mode) {
+    private void testListModes(final String numeric1, final String numeric2, final char mode) {
         final TestParser parser = new TestParser();
         parser.injectConnectionStrings();
 
