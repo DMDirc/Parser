@@ -23,6 +23,7 @@
 package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.interfaces.Parser;
+import com.dmdirc.parser.irc.processors.ProcessMessage;
 
 import java.util.Date;
 
@@ -44,7 +45,7 @@ public interface UnknownCtcpListener extends CallbackInterface {
      * @param message Additional contents
      * @param target Actual Target of CTCP
      * @param host Hostname of sender (or servername)
-     * @see com.dmdirc.parser.irc.ProcessMessage#callUnknownCTCP
+     * @see ProcessMessage#callUnknownCTCP
      */
     void onUnknownCTCP(Parser parser, Date date, String type, String message,
             String target, String host);

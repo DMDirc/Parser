@@ -28,6 +28,7 @@ import com.dmdirc.parser.interfaces.FakableArgument;
 import com.dmdirc.parser.interfaces.FakableSource;
 import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.SpecificCallback;
+import com.dmdirc.parser.irc.processors.ProcessKick;
 
 import java.util.Date;
 
@@ -49,7 +50,7 @@ public interface ChannelKickListener extends CallbackInterface {
      * @param client ChannelClient that did the kicking (may be null if server)
      * @param reason Reason for kick (may be "")
      * @param host Hostname of Kicker (or servername)
-     * @see com.dmdirc.parser.irc.ProcessKick#callChannelKick
+     * @see ProcessKick#callChannelKick
      */
     void onChannelKick(@FakableSource Parser parser,
             Date date,

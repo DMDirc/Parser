@@ -23,6 +23,7 @@
 package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.interfaces.Parser;
+import com.dmdirc.parser.irc.ProcessingManager;
 
 import java.util.Date;
 
@@ -38,7 +39,7 @@ public interface NumericListener extends CallbackInterface {
      * @param date The date/time at which the event occured
      * @param numeric What numeric is this for
      * @param token IRC Tokenised line
-     * @see com.dmdirc.parser.irc.ProcessingManager#callNumeric
+     * @see ProcessingManager#callNumeric
      */
     void onNumeric(Parser parser, Date date, int numeric, String[] token);
 

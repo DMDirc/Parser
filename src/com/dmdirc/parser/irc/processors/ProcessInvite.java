@@ -20,12 +20,16 @@
  * SOFTWARE.
  */
 
-package com.dmdirc.parser.irc;
+package com.dmdirc.parser.irc.processors;
+
+import com.dmdirc.parser.interfaces.callbacks.InviteListener;
+import com.dmdirc.parser.irc.IRCParser;
+import com.dmdirc.parser.irc.ProcessingManager;
 
 /**
- * Process an Account message.
+ * Process an Invite Request.
  */
-public class ProcessAccount extends IRCProcessor {
+public class ProcessInvite extends IRCProcessor {
 
     /**
      * Create a new instance of the IRCProcessor Object.
@@ -33,23 +37,34 @@ public class ProcessAccount extends IRCProcessor {
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected ProcessAccount(final IRCParser parser, final ProcessingManager manager) {
+    public ProcessInvite(final IRCParser parser, final ProcessingManager manager) {
         super(parser, manager);
     }
 
     /**
-     * Process an Account message.
+     * Process an Invite Request.
      *
-     * @param sParam Type of line to process
+     * @param sParam Type of line to process ("INVITE")
      * @param token IRCTokenised line to process
      */
     @Override
     public void process(final String sParam, final String[] token) {
-        // :nick!user@host ACCOUNT accountname
-        final IRCClientInfo iClient = getClientInfo(token[0]);
-        if (iClient != null) {
-            iClient.setAccountName(token[2].equals("*") ? null : token[2]);
+        // :Tobavaj!shane@Tobavaj.users.quakenet.org INVITE Dataforce #dataforceisgod 1188846462
+        if (token.length > 2) {
+            callInvite(token[0].substring(1), token[3]);
         }
+    }
+
+    /**
+     * Callback to all objects implementing the Invite Callback.
+     *
+     * @see com.dmdirc.parser.interfaces.callbacks.InviteListener
+     * @param userHost The hostname of the person who invited us
+     * @param channel The name of the channel we were invited to
+     * @return true if a method was called, false otherwise
+     */
+    protected boolean callInvite(final String userHost, final String channel) {
+        return getCallbackManager().getCallbackType(InviteListener.class).call(userHost, channel);
     }
 
     /**
@@ -59,6 +74,6 @@ public class ProcessAccount extends IRCProcessor {
      */
     @Override
     public String[] handles() {
-        return new String[]{"ACCOUNT"};
+        return new String[]{"INVITE"};
     }
 }

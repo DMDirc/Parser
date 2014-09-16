@@ -20,9 +20,11 @@
  * SOFTWARE.
  */
 
-package com.dmdirc.parser.irc;
+package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.interfaces.callbacks.AuthNoticeListener;
+import com.dmdirc.parser.irc.IRCParser;
+import com.dmdirc.parser.irc.ProcessingManager;
 
 /**
  * Process a NoticeAuth message.
@@ -35,7 +37,7 @@ public class ProcessNoticeAuth extends IRCProcessor {
      * @param parser IRCParser That owns this object
      * @param manager ProcessingManager that is in charge of this object
      */
-    protected ProcessNoticeAuth(final IRCParser parser, final ProcessingManager manager) {
+    public ProcessNoticeAuth(final IRCParser parser, final ProcessingManager manager) {
         super(parser, manager);
     }
 

@@ -22,6 +22,8 @@
 
 package com.dmdirc.parser.irc;
 
+import com.dmdirc.parser.irc.processors.IRCProcessor;
+
 import java.util.Date;
 
 /**

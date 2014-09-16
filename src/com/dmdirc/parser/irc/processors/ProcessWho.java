@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package com.dmdirc.parser.irc;
+package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.common.AwayState;
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
@@ -29,6 +29,9 @@ import com.dmdirc.parser.interfaces.ClientInfo;
 import com.dmdirc.parser.interfaces.callbacks.AwayStateListener;
 import com.dmdirc.parser.interfaces.callbacks.ChannelOtherAwayStateListener;
 import com.dmdirc.parser.interfaces.callbacks.OtherAwayStateListener;
+import com.dmdirc.parser.irc.IRCClientInfo;
+import com.dmdirc.parser.irc.IRCParser;
+import com.dmdirc.parser.irc.ProcessingManager;
 
 /**
  * Process a /who reply.
@@ -41,7 +44,7 @@ public class ProcessWho extends IRCProcessor {
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected ProcessWho(final IRCParser parser, final ProcessingManager manager) {
+    public ProcessWho(final IRCParser parser, final ProcessingManager manager) {
         super(parser, manager);
     }
 

@@ -19,10 +19,13 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.dmdirc.parser.irc;
+package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.common.AwayState;
 import com.dmdirc.parser.interfaces.callbacks.AwayStateListener;
+import com.dmdirc.parser.irc.IRCClientInfo;
+import com.dmdirc.parser.irc.IRCParser;
+import com.dmdirc.parser.irc.ProcessingManager;
 
 /**
  * Process an Away/Back message.
@@ -35,7 +38,7 @@ public class ProcessAway extends IRCProcessor {
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected ProcessAway(final IRCParser parser, final ProcessingManager manager) {
+    public ProcessAway(final IRCParser parser, final ProcessingManager manager) {
         super(parser, manager);
     }
 
@@ -53,7 +56,7 @@ public class ProcessAway extends IRCProcessor {
                 if (iClient != null) {
                     final AwayState oldState = iClient.getAwayState();
 
-                    final String reason = (token.length > 2) ? token[token.length - 1] : "";
+                    final String reason = token.length > 2 ? token[token.length - 1] : "";
                     iClient.setAwayReason(reason);
                     iClient.setAwayState(reason.isEmpty() ? AwayState.HERE : AwayState.AWAY);
 

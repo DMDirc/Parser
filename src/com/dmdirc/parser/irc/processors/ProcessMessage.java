@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package com.dmdirc.parser.irc;
+package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
@@ -44,6 +44,13 @@ import com.dmdirc.parser.interfaces.callbacks.UnknownCtcpReplyListener;
 import com.dmdirc.parser.interfaces.callbacks.UnknownMessageListener;
 import com.dmdirc.parser.interfaces.callbacks.UnknownNoticeListener;
 import com.dmdirc.parser.interfaces.callbacks.UnknownServerNoticeListener;
+import com.dmdirc.parser.irc.IRCChannelClientInfo;
+import com.dmdirc.parser.irc.IRCChannelInfo;
+import com.dmdirc.parser.irc.IRCClientInfo;
+import com.dmdirc.parser.irc.IRCParser;
+import com.dmdirc.parser.irc.ProcessingManager;
+import com.dmdirc.parser.irc.ProcessorNotFoundException;
+import com.dmdirc.parser.irc.TimestampedIRCProcessor;
 
 import java.util.Date;
 import java.util.regex.PatternSyntaxException;
@@ -64,7 +71,7 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected ProcessMessage(final IRCParser parser, final ProcessingManager manager) {
+    public ProcessMessage(final IRCParser parser, final ProcessingManager manager) {
         super(parser, manager);
     }
 

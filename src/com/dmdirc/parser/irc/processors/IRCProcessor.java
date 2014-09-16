@@ -20,11 +20,15 @@
  * SOFTWARE.
  */
 
-package com.dmdirc.parser.irc;
+package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.common.CallbackManager;
 import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.common.QueuePriority;
+import com.dmdirc.parser.irc.IRCChannelInfo;
+import com.dmdirc.parser.irc.IRCClientInfo;
+import com.dmdirc.parser.irc.IRCParser;
+import com.dmdirc.parser.irc.ProcessingManager;
 
 /**
  * IRCProcessor.

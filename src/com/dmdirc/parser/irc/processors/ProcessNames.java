@@ -20,11 +20,16 @@
  * SOFTWARE.
  */
 
-package com.dmdirc.parser.irc;
+package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.callbacks.ChannelNamesListener;
 import com.dmdirc.parser.interfaces.callbacks.ChannelTopicListener;
+import com.dmdirc.parser.irc.IRCChannelClientInfo;
+import com.dmdirc.parser.irc.IRCChannelInfo;
+import com.dmdirc.parser.irc.IRCClientInfo;
+import com.dmdirc.parser.irc.IRCParser;
+import com.dmdirc.parser.irc.ProcessingManager;
 
 /**
  * Process a Names reply.
@@ -37,7 +42,7 @@ public class ProcessNames extends IRCProcessor {
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected ProcessNames(final IRCParser parser, final ProcessingManager manager) {
+    public ProcessNames(final IRCParser parser, final ProcessingManager manager) {
         super(parser, manager);
     }
 

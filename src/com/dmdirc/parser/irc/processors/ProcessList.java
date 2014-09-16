@@ -20,11 +20,13 @@
  * SOFTWARE.
  */
 
-package com.dmdirc.parser.irc;
+package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.interfaces.callbacks.GroupListEndListener;
 import com.dmdirc.parser.interfaces.callbacks.GroupListEntryListener;
 import com.dmdirc.parser.interfaces.callbacks.GroupListStartListener;
+import com.dmdirc.parser.irc.IRCParser;
+import com.dmdirc.parser.irc.ProcessingManager;
 
 /**
  * Process a list response.
@@ -37,7 +39,7 @@ public class ProcessList extends IRCProcessor {
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    protected ProcessList(final IRCParser parser, final ProcessingManager manager) {
+    public ProcessList(final IRCParser parser, final ProcessingManager manager) {
         super(parser, manager);
     }
 

@@ -26,6 +26,7 @@ import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.SpecificCallback;
+import com.dmdirc.parser.irc.processors.ProcessNick;
 
 import java.util.Date;
 
@@ -45,7 +46,7 @@ public interface ChannelNickChangeListener extends CallbackInterface {
      * @param channel One of the channels that the user is on
      * @param client Client changing nickname
      * @param oldNick Nickname before change
-     * @see com.dmdirc.parser.irc.ProcessNick#callChannelNickChanged
+     * @see ProcessNick#callChannelNickChanged
      */
     void onChannelNickChanged(Parser parser, Date date, ChannelInfo channel,
             ChannelClientInfo client, String oldNick);
