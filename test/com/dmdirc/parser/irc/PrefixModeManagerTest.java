@@ -144,6 +144,19 @@ public class PrefixModeManagerTest {
     }
 
     @Test
+    public void testRemoveMode() {
+        manager.add('m', '/');
+        manager.add('n', '+');
+        manager.add('o', '@');
+
+        assertEquals("", manager.removeMode("", 'm'));
+        assertEquals("", manager.removeMode("m", 'm'));
+        assertEquals("no", manager.removeMode("no", 'm'));
+        assertEquals("no", manager.removeMode("mno", 'm'));
+        assertEquals("mo", manager.removeMode("mno", 'n'));
+    }
+
+    @Test
     public void testCompareImportantModes() {
         // No modes, must be equal
         assertEquals(0, manager.compareImportantModes("", ""));
