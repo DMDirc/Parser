@@ -115,7 +115,7 @@ public class ProcessMode extends IRCProcessor {
         String sModeParam;
         String sTemp;
         int nParam = 1;
-        long nTemp, nValue, nCurrent = 0;
+        long nTemp, nValue = 0;
         boolean bPositive = true, bBooleanMode;
         char cPositive = '+';
         final IRCChannelInfo iChannel;
@@ -135,6 +135,7 @@ public class ProcessMode extends IRCProcessor {
             return;
         }
         // Get the current channel modes
+        String nCurrent = "";
         if (!"324".equals(sParam)) {
             nCurrent = iChannel.getMode();
         }
@@ -160,8 +161,7 @@ public class ProcessMode extends IRCProcessor {
                 cPositive = '-';
                 bPositive = false;
             } else {
-                if (parser.chanModesBool.containsKey(cMode)) {
-                    nValue = parser.chanModesBool.get(cMode);
+                if (parser.chanModesBool.isMode(cMode)) {
                     bBooleanMode = true;
                 } else if (parser.chanModesOther.containsKey(cMode)) {
                     nValue = parser.chanModesOther.get(cMode);
@@ -196,19 +196,17 @@ public class ProcessMode extends IRCProcessor {
                     continue;
                 } else {
                     // unknown mode - add as boolean
-                    parser.chanModesBool.put(cMode, parser.nextKeyCMBool);
-                    nValue = parser.nextKeyCMBool;
+                    parser.chanModesBool.add(cMode);
                     bBooleanMode = true;
-                    parser.nextKeyCMBool *= 2;
                 }
 
                 if (bBooleanMode) {
-                    callDebugInfo(IRCParser.DEBUG_INFO, "Boolean Mode: %c [%d] {Positive: %b}", cMode, nValue, bPositive);
+                    callDebugInfo(IRCParser.DEBUG_INFO, "Boolean Mode: %c {Positive: %b}", cMode, bPositive);
 
                     if (bPositive) {
-                        nCurrent |= nValue;
+                        nCurrent = parser.chanModesBool.insertMode(nCurrent, cMode);
                     } else {
-                        nCurrent ^= nCurrent & nValue;
+                        nCurrent = parser.chanModesBool.removeMode(nCurrent, cMode);
                     }
                 } else {
 

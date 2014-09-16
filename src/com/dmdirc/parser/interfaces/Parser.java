@@ -308,7 +308,7 @@ public interface Parser {
     int getMaxTopicLength();
 
     /**
-     * Retrieves an alphabetically-sorted list of boolean channel modes.
+     * Retrieves a list of boolean channel modes.
      * Boolean channel modes may only be set or unset, and do not take any
      * arguments.
      *
