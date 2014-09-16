@@ -37,11 +37,13 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
 
     /** Reference to ClientInfo object this represents. */
     private final IRCClientInfo cClient;
-    /** Integer representation of the channel modes assocated with this user. */
-    private long nModes;
-    /** Reference to the parser object that owns this channelclient, Used for modes. */
-    private final IRCParser myParser;
-    /** Reference to the channel object that owns this channelclient. */
+    /** The channel modes associated with this user. */
+    private String modes = "";
+    /** Manager to use when dealing with prefix modes. */
+    private final PrefixModeManager modeManager;
+    /** The parser to use to kick people. */
+    private final IRCParser parser;
+    /** Reference to the channel object that owns this channel client. */
     private final ChannelInfo myChannel;
     /** A Map to allow applications to attach misc data to this object. */
     private Map<Object, Object> myMap;
@@ -55,7 +57,8 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
      */
     public IRCChannelClientInfo(final IRCParser tParser, final IRCClientInfo client, final ChannelInfo channel) {
         myMap = new HashMap<>();
-        myParser = tParser;
+        modeManager = tParser.prefixModes;
+        parser = tParser;
         cClient = client;
         myChannel = channel;
         cClient.addChannelClientInfo(this);
@@ -98,109 +101,45 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
     /**
      * Set the modes this client has (Prefix modes).
      *
-     * @param nNewMode integer representing the modes this client has.
+     * @param modes The new modes this client has, sorted most-to-least important.
      */
-    public void setChanMode(final long nNewMode) {
-        nModes = nNewMode;
-    }
-
-    /**
-     * Get the modes this client has (Prefix modes).
-     *
-     * @return integer representing the modes this client has.
-     */
-    public long getChanMode() {
-        return nModes;
-    }
-
-    /**
-     * Get the modes this client has (Prefix modes) as a string.
-     * Returns all known modes that the client has.
-     * getChanModeStr(false).charAt(0) can be used to get the highest mode (o)
-     * getChanModeStr(true).charAt(0) can be used to get the highest prefix (@)
-     *
-     * @param bPrefix if this is true, prefixes will be returned (@+) not modes (ov)
-     * @return String representing the modes this client has.
-     */
-    public String getChanModeStr(final boolean bPrefix) {
-        final StringBuilder sModes = new StringBuilder();
-        final long nCurrentModes = this.getChanMode();
-
-        for (long i = myParser.prefixModes.getNextValue(); i > 0; i /= 2) {
-            if ((nCurrentModes & i) == i) {
-                for (char cTemp : myParser.prefixModes.getModes()) {
-                    final long nTemp = myParser.prefixModes.getValueOf(cTemp);
-                    if (nTemp == i) {
-                        if (bPrefix) {
-                            sModes.append(myParser.prefixModes.getPrefixFor(cTemp));
-                        } else {
-                            sModes.append(cTemp);
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-
-        return sModes.toString();
+    public void setChanMode(final String modes) {
+        this.modes = modes;
     }
 
     @Override
     public String getAllModes() {
-        return getChanModeStr(false);
+        return modes;
     }
 
     @Override
     public String getAllModesPrefix() {
-        return getChanModeStr(true);
-    }
-
-    /**
-     * Get the value of the most important mode this client has (Prefix modes).
-     * A higher value, is a more important mode, 0 = no modes.
-     *
-     * @return integer representing the value of the most important mode.
-     */
-    public long getImportantModeValue() {
-        for (long i = myParser.prefixModes.getNextValue(); i > 0; i /= 2) {
-            if ((nModes & i) == i) {
-                return i;
-            }
-        }
-        return 0;
+        return modeManager.getPrefixesFor(modes);
     }
 
     @Override
     public String getImportantMode() {
-        String sModes = this.getChanModeStr(false);
-        if (!sModes.isEmpty()) {
-            sModes = Character.toString(sModes.charAt(0));
-        }
-        return sModes;
+        return modes.isEmpty() ? "" : modes.substring(0, 1);
     }
 
     @Override
     public String getImportantModePrefix() {
-        String sModes = this.getChanModeStr(true);
-        if (!sModes.isEmpty()) {
-            sModes = Character.toString(sModes.charAt(0));
-        }
-        return sModes;
+        return modes.isEmpty() ? "" : getAllModesPrefix().substring(0, 1);
     }
 
     /**
-     * Get the String Value of ChannelClientInfo (ie @Nickname).
+     * Get the String Value of ChannelClientInfo (e.g. @Nickname).
      *
-     * @return String Value of user (inc prefix) (ie @Nickname)
+     * @return String Value of user (inc prefix) (e.g. @Nickname)
      */
     @Override
     public String toString() {
-        return this.getImportantModePrefix() + this.getNickname();
+        return getImportantModePrefix() + getNickname();
     }
 
     @Override
     public void kick(final String message) {
-        myParser.sendString("KICK " + myChannel + " " + this.getNickname(), message);
+        parser.sendString("KICK " + myChannel + ' ' + getNickname(), message);
     }
 
     /**
@@ -209,16 +148,38 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
      * @return String Value of user (inc prefix) (ie @+Nickname)
      */
     public String toFullString() {
-        return this.getChanModeStr(true) + this.getNickname();
+        return getAllModesPrefix() + getNickname();
     }
 
     @Override
     public int compareTo(final ChannelClientInfo arg0) {
-        if (arg0 instanceof IRCChannelClientInfo) {
-            final IRCChannelClientInfo other = (IRCChannelClientInfo) arg0;
-            return (int) (getImportantModeValue() - other.getImportantModeValue());
-        }
+        return modeManager.compareImportantModes(getAllModes(), arg0.getAllModes());
+    }
 
-        return 0;
+    /**
+     * Determines if this client is opped or not.
+     *
+     * @return True if the client is opped, false otherwise.
+     */
+    public boolean isOpped() {
+        return modeManager.isOpped(getAllModes());
+    }
+
+    /**
+     * Adds the specified mode to this client model.
+     *
+     * @param mode The mode to be added.
+     */
+    public void addMode(final char mode) {
+        modes = modeManager.insertMode(modes, mode);
+    }
+
+    /**
+     * Removes the specified mode from this client model.
+     *
+     * @param mode The mode to be removed.
+     */
+    public void removeMode(final char mode) {
+        modes = modes.replace(Character.toString(mode), "");
     }
 }

@@ -112,7 +112,7 @@ public class IRCChannelInfo implements ChannelInfo {
         final long now = System.currentTimeMillis();
         // Incase of breakage, if getListModeQueue() was last called greater than
         // 60 seconds ago, we reset the list.
-        if (now - (30 * 1000) > listModeQueueTime) {
+        if (now - 30 * 1000 > listModeQueueTime) {
             result = new LinkedList<>();
             parser.callDebugInfo(IRCParser.DEBUG_LMQ, "Resetting LMQ");
         }
@@ -136,12 +136,7 @@ public class IRCChannelInfo implements ChannelInfo {
 
         final ServerType serverType = parser.getServerType();
 
-        // We are considered opped if we have a mode higher than voice (or if we have any modes if voice doesn't exist)
-        long voiceValue = 0;
-        if (parser.prefixModes.isPrefixMode('v')) {
-            voiceValue = parser.prefixModes.getValueOf('v');
-        }
-        final boolean isOpped = me.getImportantModeValue() > voiceValue;
+        final boolean isOpped = me.isOpped();
 
         int modecount = 1;
 
