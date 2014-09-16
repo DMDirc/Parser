@@ -31,6 +31,7 @@ import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.common.QueuePriority;
 import com.dmdirc.parser.common.SRVRecord;
 import com.dmdirc.parser.common.SystemEncoder;
+import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.Encoder;
 import com.dmdirc.parser.interfaces.EncodingParser;
 import com.dmdirc.parser.interfaces.SecureParser;
@@ -130,7 +131,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /** Should PINGs be sent to the server to check if its alive? */
     private boolean checkServerPing = true;
     /** Timer for server ping. */
-    private Timer pingTimer = null;
+    private Timer pingTimer;
     /** Semaphore for access to pingTimer. */
     private final Semaphore pingTimerSem = new Semaphore(1);
     /** Is a ping needed? */
@@ -194,9 +195,9 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      */
     public final Map<Character, Byte> chanModesOther = new HashMap<>();
     /** The last line of input received from the server */
-    private ReadLine lastLine = null;
+    private ReadLine lastLine;
     /** Should the lastline (where given) be appended to the "data" part of any onErrorInfo call? */
-    private boolean addLastLine = false;
+    private boolean addLastLine;
     /** Channel Prefixes (ie # + etc). */
     private String chanPrefix = DEFAULT_CHAN_PREFIX;
     /** Hashtable storing all known clients based on nickname (in lowercase). */
@@ -326,7 +327,8 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         // would do after connecting, so is not relevent.
         return uri.getScheme().equalsIgnoreCase(oldURI.getScheme())
                 && uri.getHost().equalsIgnoreCase(oldURI.getHost())
-                && ((uri.getUserInfo() == null || uri.getUserInfo().isEmpty()) || uri.getUserInfo().equalsIgnoreCase((oldURI.getUserInfo() == null ? "" : oldURI.getUserInfo())))
+                && (uri.getUserInfo() == null || uri.getUserInfo().isEmpty()
+                || uri.getUserInfo().equalsIgnoreCase(oldURI.getUserInfo() == null ? "" : oldURI.getUserInfo()))
                 && uri.getPort() == oldURI.getPort();
     }
 
@@ -391,11 +393,11 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
 
         String channelString = uri.getPath();
         if (uri.getRawQuery() != null && !uri.getRawQuery().isEmpty()) {
-            channelString += "?" + uri.getRawQuery();
+            channelString += '?' + uri.getRawQuery();
         }
 
         if (uri.getRawFragment() != null && !uri.getRawFragment().isEmpty()) {
-            channelString += "#" + uri.getRawFragment();
+            channelString += '#' + uri.getRawFragment();
         }
 
         if (!channelString.isEmpty() && channelString.charAt(0) == '/') {
@@ -415,7 +417,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      * @return A corresponding collection of join request objects
      */
     protected Collection<? extends ChannelJoinRequest> extractChannels(final String channels) {
-        final List<ChannelJoinRequest> res = new ArrayList<>();
+        final Collection<ChannelJoinRequest> res = new ArrayList<>();
 
         for (String channel : channels.split(",")) {
             final String[] parts = channel.split(" ", 2);
@@ -558,7 +560,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /**
      * Callback to all objects implementing the ServerError Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.ServerErrorListener
+     * @see ServerErrorListener
      * @param message The error message
      */
     protected void callServerError(final String message) {
@@ -568,7 +570,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /**
      * Callback to all objects implementing the DataIn Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.DataInListener
+     * @see DataInListener
      * @param data Incoming Line.
      */
     protected void callDataIn(final String data) {
@@ -580,7 +582,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      *
      * @param data Outgoing Data
      * @param fromParser True if parser sent the data, false if sent using .sendLine
-     * @see com.dmdirc.parser.interfaces.callbacks.DataOutListener
+     * @see DataOutListener
      */
     protected void callDataOut(final String data, final boolean fromParser) {
         getCallback(DataOutListener.class).onDataOut(null, null, data, fromParser);
@@ -589,7 +591,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /**
      * Callback to all objects implementing the DebugInfo Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.DebugInfoListener
+     * @see DebugInfoListener
      * @param level Debugging Level (DEBUG_INFO, DEBUG_SOCKET etc)
      * @param data Debugging Information as a format string
      * @param args Formatting String Options
@@ -601,7 +603,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /**
      * Callback to all objects implementing the DebugInfo Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.DebugInfoListener
+     * @see DebugInfoListener
      * @param level Debugging Level (DEBUG_INFO, DEBUG_SOCKET etc)
      * @param data Debugging Information
      */
@@ -612,7 +614,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /**
      * Callback to all objects implementing the IErrorInfo Interface.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.ErrorInfoListener
+     * @see ErrorInfoListener
      * @param errorInfo ParserError object representing the error.
      */
     public void callErrorInfo(final ParserError errorInfo) {
@@ -622,7 +624,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /**
      * Callback to all objects implementing the IConnectError Interface.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.ConnectErrorListener
+     * @see ConnectErrorListener
      * @param errorInfo ParserError object representing the error.
      */
     protected void callConnectError(final ParserError errorInfo) {
@@ -632,7 +634,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /**
      * Callback to all objects implementing the SocketClosed Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.SocketCloseListener
+     * @see SocketCloseListener
      */
     protected void callSocketClosed() {
         getCallback(SocketCloseListener.class).onSocketClosed(null, null);
@@ -641,7 +643,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /**
      * Callback to all objects implementing the PingFailed Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.PingFailureListener
+     * @see PingFailureListener
      * @return True if any callback was called, false otherwise.
      */
     protected boolean callPingFailed() {
@@ -651,7 +653,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /**
      * Callback to all objects implementing the PingSent Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.PingSentListener
+     * @see PingSentListener
      */
     protected void callPingSent() {
         getCallback(PingSentListener.class).onPingSent(null, null);
@@ -660,7 +662,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /**
      * Callback to all objects implementing the PingSuccess Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.PingSuccessListener
+     * @see PingSuccessListener
      */
     protected void callPingSuccess() {
         getCallback(PingSuccessListener.class).onPingSuccess(null, null);
@@ -669,7 +671,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /**
      * Callback to all objects implementing the Post005 Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.ServerReadyListener
+     * @see ServerReadyListener
      */
     protected synchronized void callPost005() {
         if (post005) {
@@ -807,7 +809,8 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         } else {
             callDebugInfo(DEBUG_SOCKET, "Using Proxy");
 
-            if ((getBindIP() != null && !getBindIP().isEmpty()) || (getBindIPv6() != null && !getBindIPv6().isEmpty())) {
+            if (getBindIP() != null && !getBindIP().isEmpty() ||
+                    getBindIPv6() != null && !getBindIPv6().isEmpty()) {
                 callDebugInfo(DEBUG_SOCKET, "IP Binding is not possible when using a proxy.");
             }
 
@@ -941,7 +944,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         }
 
         resetState();
-        callDebugInfo(DEBUG_SOCKET, "Connecting to " + getURI().getHost() + ":" + getURI().getPort());
+        callDebugInfo(DEBUG_SOCKET, "Connecting to " + getURI().getHost() + ':' + getURI().getPort());
 
         currentSocketState = SocketState.OPENING;
         socket = findSocket(getConnectURI(getURI()), getProxy());
@@ -996,7 +999,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         } catch (UnknownHostException uhe) {
             localhost = "*";
         }
-        sendString("USER " + me.getUsername() + " " + localhost + " " + getURI().getHost() + " :" + me.getRealname());
+        sendString("USER " + me.getUsername() + ' ' + localhost + ' ' + getURI().getHost() + " :" + me.getRealname());
     }
 
     /**
@@ -1162,7 +1165,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
 
     @Override
     public void sendInvite(final String channel, final String user) {
-        sendRawMessage("INVITE " + user + " " + channel);
+        sendRawMessage("INVITE " + user + ' ' + channel);
     }
 
     @Override
@@ -1231,7 +1234,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
             if (channel != null) {
                 // This makes sure we don't add the same item to the LMQ twice,
                 // even if its requested twice, as the ircd will only reply once
-                final Deque<Character> foundModes = new LinkedList<>();
+                final Queue<Character> foundModes = new LinkedList<>();
                 final Queue<Character> listModeQueue = channel.getListModeQueue();
                 for (int i = 0; i < newLine[2].length(); ++i) {
                     final Character mode = newLine[2].charAt(i);
@@ -1288,7 +1291,6 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
             } catch (final NumberFormatException nfe) { /* Do nothing. */ }
         }
 
-        int nParam;
         setPingNeeded(false);
 
         if (token.length < 2) {
@@ -1297,32 +1299,34 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
 
         try {
             final String sParam = token[1];
-            if (token[0].equalsIgnoreCase("PING") || token[1].equalsIgnoreCase("PING")) {
+            if ("PING".equalsIgnoreCase(token[0]) || "PING".equalsIgnoreCase(token[1])) {
                 sendString("PONG :" + sParam, QueuePriority.HIGH);
-            } else if (token[0].equalsIgnoreCase("PONG") || token[1].equalsIgnoreCase("PONG")) {
+            } else if ("PONG".equalsIgnoreCase(token[0]) || "PONG".equalsIgnoreCase(token[1])) {
                 if (!lastPingValue.isEmpty() && lastPingValue.equals(token[token.length - 1])) {
                     lastPingValue = "";
                     serverLag = System.currentTimeMillis() - pingTime;
                     callPingSuccess();
                 }
-            } else if (token[0].equalsIgnoreCase("ERROR")) {
+            } else if ("ERROR".equalsIgnoreCase(token[0])) {
                 final StringBuilder errorMessage = new StringBuilder();
                 for (int i = 1; i < token.length; ++i) {
                     errorMessage.append(token[i]);
                 }
                 callServerError(errorMessage.toString());
-            } else if (token[1].equalsIgnoreCase("TSIRC") && token.length > 3) {
-                if (token[2].equals("1")) {
+            } else if ("TSIRC".equalsIgnoreCase(token[1]) && token.length > 3) {
+                if ("1".equals(token[2])) {
                     try {
                         final long ts = Long.parseLong(token[3]);
                         tsdiff = ts - System.currentTimeMillis();
                     } catch (final NumberFormatException nfe) { /* Do nothing. */ }
                 }
             } else {
+                int nParam;
                 if (got001) {
                     // Freenode sends a random notice in a stupid place, others might do aswell
                     // These shouldn't cause post005 to be fired, so handle them here.
-                    if (token[0].equalsIgnoreCase("NOTICE") || (token.length > 2 && token[2].equalsIgnoreCase("NOTICE"))) {
+                    if ("NOTICE".equalsIgnoreCase(token[0]) ||
+                            token.length > 2 && "NOTICE".equalsIgnoreCase(token[2])) {
                         try {
                             myProcessingManager.process(lineTS, "Notice Auth", token);
                         } catch (ProcessorNotFoundException e) {
@@ -1385,12 +1389,12 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
                             }
                             // Some networks may send a NICK message if you nick change before 001
                             // Eat it up so that it isn't treated as a notice auth.
-                            if (token[1].equalsIgnoreCase("NICK")) {
+                            if ("NICK".equalsIgnoreCase(token[1])) {
                                 break;
                             }
 
                             // CAP also happens here, so try that.
-                            if (token[1].equalsIgnoreCase("CAP")) {
+                            if ("CAP".equalsIgnoreCase(token[1])) {
                                 myProcessingManager.process(lineTS, sParam, token);
                                 break;
                             }
@@ -1412,7 +1416,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     }
 
     /** The IRCStringConverter for this parser */
-    private IRCStringConverter stringConverter = null;
+    private IRCStringConverter stringConverter;
 
     @Override
     public IRCStringConverter getStringConverter() {
@@ -1488,18 +1492,16 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      */
     public void parseChanModes() {
         final StringBuilder sDefaultModes = new StringBuilder("b,k,l,");
-        String[] bits;
         String modeStr;
         if (h005Info.containsKey("USERCHANMODES")) {
             if (getServerType() == ServerType.DANCER) {
                 sDefaultModes.insert(0, "dqeI");
             } else if (getServerType() == ServerType.AUSTIRC) {
-                sDefaultModes.insert(0, "e");
+                sDefaultModes.insert(0, 'e');
             }
             modeStr = h005Info.get("USERCHANMODES");
-            char mode;
             for (int i = 0; i < modeStr.length(); ++i) {
-                mode = modeStr.charAt(i);
+                final char mode = modeStr.charAt(i);
                 if (!prefixModes.isPrefixMode(mode)
                         && sDefaultModes.indexOf(Character.toString(mode)) < 0) {
                     sDefaultModes.append(mode);
@@ -1514,7 +1516,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
             modeStr = sDefaultModes.toString();
             h005Info.put("CHANMODES", modeStr);
         }
-        bits = modeStr.split(",", 5);
+        String[] bits = modeStr.split(",", 5);
         if (bits.length < 4) {
             modeStr = sDefaultModes.toString();
             callErrorInfo(new ParserError(ParserError.ERROR_ERROR, "CHANMODES String not valid. " +
@@ -1614,10 +1616,9 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      */
     protected String getOtherModeString(final byte value) {
         final char[] modes = new char[chanModesOther.size()];
-        Byte nTemp;
         int i = 0;
         for (char cTemp : chanModesOther.keySet()) {
-            nTemp = chanModesOther.get(cTemp);
+            final Byte nTemp = chanModesOther.get(cTemp);
             if (nTemp == value) {
                 modes[i] = cTemp;
                 i++;
@@ -1641,11 +1642,11 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      * Process USERMODES from 004.
      */
     public void parseUserModes() {
-        final String sDefaultModes = "nwdoi";
         final String modeStr;
         if (h005Info.containsKey("USERMODES")) {
             modeStr = h005Info.get("USERMODES");
         } else {
+            final String sDefaultModes = "nwdoi";
             modeStr = sDefaultModes;
             h005Info.put("USERMODES", sDefaultModes);
         }
@@ -1757,7 +1758,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
                 if (thisKey == null || thisKey.isEmpty()) {
                     sendString("JOIN " + channelString);
                 } else {
-                    sendString("JOIN " + channelString + " " + thisKey);
+                    sendString("JOIN " + channelString + ' ' + thisKey);
                 }
             }
         }
@@ -1832,21 +1833,23 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         // MAXLIST=bdeI:50
         // MAXLIST=b:60,e:60,I:60
         // MAXBANS=30
-        int result = -2;
         callDebugInfo(DEBUG_INFO, "Looking for maxlistmodes for: " + mode);
         // Try in MAXLIST
+        int result = -2;
         if (h005Info.get("MAXLIST") != null) {
             if (h005Info.get("MAXBANS") == null) {
                 result = 0;
             }
             final String maxlist = h005Info.get("MAXLIST");
-            callDebugInfo(DEBUG_INFO, "Found maxlist (" + maxlist + ")");
+            callDebugInfo(DEBUG_INFO, "Found maxlist (" + maxlist + ')');
             final String[] bits = maxlist.split(",");
             for (String bit : bits) {
                 final String[] parts = bit.split(":", 2);
-                callDebugInfo(DEBUG_INFO, "Bit: " + bit + " | parts.length = " + parts.length + " (" + parts[0] + " -> " + parts[0].indexOf(mode) + ")");
+                callDebugInfo(DEBUG_INFO, "Bit: " + bit + " | parts.length = " + parts.length + " ("
+                        + parts[0] + " -> " + parts[0].indexOf(mode) + ')');
                 if (parts.length == 2 && parts[0].indexOf(mode) > -1) {
-                    callDebugInfo(DEBUG_INFO, "parts[0] = '" + parts[0] + "' | parts[1] = '" + parts[1] + "'");
+                    callDebugInfo(DEBUG_INFO, "parts[0] = '" + parts[0] + "' | parts[1] = '"
+                            + parts[1] + '\'');
                     try {
                         result = Integer.parseInt(parts[1]);
                         break;
@@ -1916,7 +1919,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
             return;
         }
         final char char1 = (char) 1;
-        sendString("PRIVMSG " + target, char1 + type.toUpperCase() + " " + message + char1);
+        sendString("PRIVMSG " + target, char1 + type.toUpperCase() + ' ' + message + char1);
     }
 
     @Override
@@ -1928,7 +1931,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
             return;
         }
         final char char1 = (char) 1;
-        sendString("NOTICE " + target, char1 + type.toUpperCase() + " " + message + char1);
+        sendString("NOTICE " + target, char1 + type.toUpperCase() + ' ' + message + char1);
     }
 
     @Override
@@ -2316,7 +2319,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      *
      * @param channel Channel to remove
      */
-    public void removeChannel(final IRCChannelInfo channel) {
+    public void removeChannel(final ChannelInfo channel) {
         synchronized (channelList) {
             channelList.remove(getStringConverter().toLowerCase(channel.getName()));
         }
