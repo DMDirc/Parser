@@ -120,7 +120,7 @@ public class ProcessMode extends IRCProcessor {
         CallbackObject cbSingle = null;
         CallbackObject cbNonUser = null;
 
-        if (!sParam.equals("324")) {
+        if (!"324".equals(sParam)) {
             cbSingle = getCallbackManager().getCallbackType(ChannelSingleModeChangeListener.class);
             cbNonUser = getCallbackManager().getCallbackType(ChannelNonUserModeChangeListener.class);
         }
@@ -130,13 +130,13 @@ public class ProcessMode extends IRCProcessor {
             return;
         }
         // Get the current channel modes
-        if (!sParam.equals("324")) {
+        if (!"324".equals(sParam)) {
             nCurrent = iChannel.getMode();
         }
 
         setterCCI = iChannel.getChannelClient(token[0]);
         // Facilitate dmdirc formatter
-        if ((IRCParser.ALWAYS_UPDATECLIENT && setterCCI != null) && setterCCI.getClient().getHostname().isEmpty()) {
+        if (IRCParser.ALWAYS_UPDATECLIENT && setterCCI != null && setterCCI.getClient().getHostname().isEmpty()) {
             setterCCI.getClient().setUserBits(token[0], false);
         }
 
@@ -147,7 +147,7 @@ public class ProcessMode extends IRCProcessor {
                 continue;
             }
 
-            sNonUserModeStr = sNonUserModeStr + cMode;
+            sNonUserModeStr += cMode;
             if (cMode.equals("+".charAt(0))) {
                 cPositive = '+';
                 bPositive = true;
@@ -173,7 +173,8 @@ public class ProcessMode extends IRCProcessor {
                     iChannelClientInfo = iChannel.getChannelClient(sModeParam);
                     if (iChannelClientInfo == null) {
                         // Client not known?
-                        callDebugInfo(IRCParser.DEBUG_INFO, "User Mode for client not on channel. Ignoring (%s)", iChannelClientInfo);
+                        callDebugInfo(IRCParser.DEBUG_INFO, "User Mode for client not on channel." +
+                                " Ignoring (%s)", sModeParam);
                         continue;
                     }
                     callDebugInfo(IRCParser.DEBUG_INFO, "\tOld Mode Value: %d", iChannelClientInfo.getChanMode());
@@ -181,10 +182,11 @@ public class ProcessMode extends IRCProcessor {
                         iChannelClientInfo.setChanMode(iChannelClientInfo.getChanMode() | nValue);
                         sTemp = "+";
                     } else {
-                        iChannelClientInfo.setChanMode(iChannelClientInfo.getChanMode() ^ (iChannelClientInfo.getChanMode() & nValue));
+                        iChannelClientInfo.setChanMode(iChannelClientInfo.getChanMode() ^
+                                iChannelClientInfo.getChanMode() & nValue);
                         sTemp = "-";
                     }
-                    sTemp = sTemp + cMode;
+                    sTemp += cMode;
                     callChannelUserModeChanged(iChannel, iChannelClientInfo, setterCCI, token[0], sTemp);
                     continue;
                 } else {
@@ -192,20 +194,22 @@ public class ProcessMode extends IRCProcessor {
                     parser.chanModesBool.put(cMode, parser.nextKeyCMBool);
                     nValue = parser.nextKeyCMBool;
                     bBooleanMode = true;
-                    parser.nextKeyCMBool = parser.nextKeyCMBool * 2;
+                    parser.nextKeyCMBool *= 2;
                 }
 
                 if (bBooleanMode) {
                     callDebugInfo(IRCParser.DEBUG_INFO, "Boolean Mode: %c [%d] {Positive: %b}", cMode, nValue, bPositive);
 
                     if (bPositive) {
-                        nCurrent = nCurrent | nValue;
+                        nCurrent |= nValue;
                     } else {
-                        nCurrent = nCurrent ^ (nCurrent & nValue);
+                        nCurrent ^= nCurrent & nValue;
                     }
                 } else {
 
-                    if ((bPositive || nValue == IRCParser.MODE_LIST || ((nValue & IRCParser.MODE_UNSET) == IRCParser.MODE_UNSET)) && (sModestr.length <= nParam)) {
+                    if ((bPositive || nValue == IRCParser.MODE_LIST ||
+                            (nValue & IRCParser.MODE_UNSET) == IRCParser.MODE_UNSET) &&
+                            sModestr.length <= nParam) {
                         parser.callErrorInfo(new ParserError(ParserError.ERROR_FATAL + ParserError.ERROR_USER, "Broken Modes. Parameter required but not given.", parser.getLastLine()));
                         continue;
                     }
@@ -213,7 +217,7 @@ public class ProcessMode extends IRCProcessor {
                     if (nValue == IRCParser.MODE_LIST) {
                         // List Mode
                         sModeParam = sModestr[nParam++];
-                        sNonUserModeStrParams = sNonUserModeStrParams + " " + sModeParam;
+                        sNonUserModeStrParams = sNonUserModeStrParams + ' ' + sModeParam;
                         nTemp = Calendar.getInstance().getTimeInMillis() / 1000;
                         iChannel.setListModeParam(cMode, new ChannelListModeItem(sModeParam, token[0], nTemp), bPositive);
                         callDebugInfo(IRCParser.DEBUG_INFO, "List Mode: %c [%s] {Positive: %b}", cMode, sModeParam, bPositive);
@@ -225,7 +229,7 @@ public class ProcessMode extends IRCProcessor {
                         if (bPositive) {
                             // +Mode - always needs a parameter to set
                             sModeParam = sModestr[nParam++];
-                            sNonUserModeStrParams = sNonUserModeStrParams + " " + sModeParam;
+                            sNonUserModeStrParams = sNonUserModeStrParams + ' ' + sModeParam;
                             callDebugInfo(IRCParser.DEBUG_INFO, "Set Mode: %c [%s] {Positive: %b}", cMode, sModeParam, bPositive);
                             iChannel.setModeParam(cMode, sModeParam);
                             if (cbSingle != null) {
@@ -235,7 +239,7 @@ public class ProcessMode extends IRCProcessor {
                             // -Mode - parameter isn't always needed, we need to check
                             if ((nValue & IRCParser.MODE_UNSET) == IRCParser.MODE_UNSET) {
                                 sModeParam = sModestr[nParam++];
-                                sNonUserModeStrParams = sNonUserModeStrParams + " " + sModeParam;
+                                sNonUserModeStrParams = sNonUserModeStrParams + ' ' + sModeParam;
                             } else {
                                 sModeParam = "";
                             }
@@ -256,7 +260,7 @@ public class ProcessMode extends IRCProcessor {
         }
 
         iChannel.setMode(nCurrent);
-        if (sParam.equals("324")) {
+        if ("324".equals(sParam)) {
             callChannelModeChanged(iChannel, null, "", sFullModeStr.toString().trim());
         } else {
             callChannelModeChanged(iChannel, setterCCI, token[0], sFullModeStr.toString().trim());
