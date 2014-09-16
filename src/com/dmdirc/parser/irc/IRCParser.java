@@ -171,16 +171,11 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     /** Manager used to handle user modes (owxis etc). */
     public final ModeManager userModes = new ModeManager();
     /**
-     * Hashtable storing known boolean chan modes (cntmi etc).
-     * Valid Boolean Modes are stored as Hashtable.pub('m',1); where 'm' is the mode and 1 is a numeric value.<br><br>
-     * Numeric values are powers of 2. This allows up to 32 modes at present (expandable to 64)<br><br>
-     * ChannelInfo/ChannelClientInfo etc provide methods to view the modes in a human way.<br><br>
-     * <br>
+     * Manager used to handle channel boolean modes.
+     * <p>
      * Channel modes discovered but not listed in 005 are stored as boolean modes automatically (and a ERROR_WARNING Error is called)
      */
-    public final Map<Character, Long> chanModesBool = new HashMap<>();
-    /** Integer representing the next avaliable integer value of a Boolean mode. */
-    public long nextKeyCMBool = 1;
+    public final ModeManager chanModesBool = new ModeManager();
     /**
      * Hashtable storing known non-boolean chan modes (klbeI etc).
      * Non Boolean Modes (for Channels) are stored together in this hashtable, the value param
@@ -712,8 +707,6 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         if (out != null) {
             out.clearQueue();
         }
-        // Reset the mode indexes
-        nextKeyCMBool = 1;
         setServerName("");
         networkName = "";
         lastLine = null;
@@ -1523,8 +1516,6 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
 
         // resetState
         chanModesOther.clear();
-        chanModesBool.clear();
-        nextKeyCMBool = 1;
 
         // List modes.
         for (int i = 0; i < bits[0].length(); ++i) {
@@ -1555,14 +1546,8 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         }
 
         // Boolean Mode
-        for (int i = 0; i < bits[3].length(); ++i) {
-            final Character cMode = bits[3].charAt(i);
-            callDebugInfo(DEBUG_INFO, "Found Boolean Mode: %c [%d]", cMode, nextKeyCMBool);
-            if (!chanModesBool.containsKey(cMode)) {
-                chanModesBool.put(cMode, nextKeyCMBool);
-                nextKeyCMBool *= 2;
-            }
-        }
+        chanModesBool.set(bits[3]);
+        callDebugInfo(DEBUG_INFO, "Found boolean modes: %s", bits[3]);
     }
 
     @Override
@@ -1572,15 +1557,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
 
     @Override
     public String getBooleanChannelModes() {
-        final char[] modes = new char[chanModesBool.size()];
-        int i = 0;
-        for (char mode : chanModesBool.keySet()) {
-            modes[i] = mode;
-            i++;
-        }
-        // Alphabetically sort the array
-        Arrays.sort(modes);
-        return new String(modes);
+        return chanModesBool.getModes();
     }
 
     @Override

@@ -61,7 +61,7 @@ public class IRCChannelInfo implements ChannelInfo {
     /** Has this channel ever had a topic? */
     private boolean hadTopic;
     /** Known boolean-modes for channel. */
-    private long modes;
+    private String modes;
     /** Reference to the parser object that owns this channel, Used for modes. */
     private final IRCParser parser; // Reference to parser object that owns this channel. Used for Modes
     /** Channel Name. */
@@ -76,9 +76,9 @@ public class IRCChannelInfo implements ChannelInfo {
      * LinkedList storing status of mode adding.
      * if an item is in this list for a mode, we are expecting new items for the list
      */
-    private final List<Character> addingModes = new LinkedList<>();
+    private final Collection<Character> addingModes = new LinkedList<>();
     /** Modes waiting to be sent to the server. */
-    private final List<String> modeQueue = new LinkedList<>();
+    private final Collection<String> modeQueue = new LinkedList<>();
     /** A Map to allow applications to attach misc data to this object. */
     private final Map<Object, Object> map;
     /** Queue of requested list modes. */
@@ -426,20 +426,20 @@ public class IRCChannelInfo implements ChannelInfo {
     }
 
     /**
-     * Set the channel modes (as an integer).
+     * Set the channel modes.
      *
-     * @param nNewMode new long representing channel modes. (Boolean only)
+     * @param nNewMode new boolean channel modes
      */
-    public void setMode(final long nNewMode) {
+    public void setMode(final String nNewMode) {
         modes = nNewMode;
     }
 
     /**
-     * Get the channel modes (as an integer).
+     * Get the channel modes.
      *
-     * @return long representing channel modes. (Boolean only)
+     * @return the boolean channel modes.
      */
-    public long getMode() {
+    public String getMode() {
         return modes;
     }
 
@@ -447,17 +447,9 @@ public class IRCChannelInfo implements ChannelInfo {
     public String getModes() {
         final StringBuilder sModes = new StringBuilder("+");
         final StringBuilder sModeParams = new StringBuilder();
-        String sTemp;
-        long nTemp;
-        final long nChanModes = this.getMode();
-        for (char cTemp : parser.chanModesBool.keySet()) {
-            nTemp = parser.chanModesBool.get(cTemp);
-            if ((nChanModes & nTemp) == nTemp) {
-                sModes.append(cTemp);
-            }
-        }
+        sModes.append(modes);
         for (char cTemp : paramModes.keySet()) {
-            sTemp = paramModes.get(cTemp);
+            final String sTemp = paramModes.get(cTemp);
             if (!sTemp.isEmpty()) {
                 sModes.append(cTemp);
                 sModeParams.append(' ').append(this.getMode(cTemp));
@@ -613,7 +605,7 @@ public class IRCChannelInfo implements ChannelInfo {
         }
 
         modestr = (add ? "+" : "-") + mode;
-        if (parser.chanModesBool.containsKey(mode)) {
+        if (parser.chanModesBool.isMode(mode)) {
             final String teststr = (add ? "-" : "+") + mode;
             if (modeQueue.contains(teststr)) {
                 modeQueue.remove(teststr);
@@ -629,9 +621,9 @@ public class IRCChannelInfo implements ChannelInfo {
                 modeint = parser.chanModesOther.get(mode);
                 if ((modeint & IRCParser.MODE_LIST) == IRCParser.MODE_LIST) {
                     modestr = modestr + " " + parameter;
-                } else if (!add && ((modeint & IRCParser.MODE_UNSET) == IRCParser.MODE_UNSET)) {
+                } else if (!add && (modeint & IRCParser.MODE_UNSET) == IRCParser.MODE_UNSET) {
                     modestr = modestr + " " + parameter;
-                } else if (add && ((modeint & IRCParser.MODE_SET) == IRCParser.MODE_SET)) {
+                } else if (add && (modeint & IRCParser.MODE_SET) == IRCParser.MODE_SET) {
                     // Does mode require a param to unset aswell?
                     // We might need to queue an unset first
                     if ((modeint & IRCParser.MODE_UNSET) == IRCParser.MODE_UNSET) {
