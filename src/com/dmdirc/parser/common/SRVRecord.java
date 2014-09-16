@@ -22,13 +22,13 @@
 package com.dmdirc.parser.common;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
-import javax.naming.directory.InitialDirContext;
 
 /**
  * Class to represent an SRV Record.
@@ -61,7 +61,7 @@ public class SRVRecord implements Comparable<SRVRecord> {
             priority = Integer.parseInt(bits[0]);
             weight = Integer.parseInt(bits[1]);
             port = Integer.parseInt(bits[2]);
-            host = (bits[3].charAt(bits[3].length() - 1) == '.') ? bits[3].substring(0, bits[3].length() - 1) : bits[3];
+            host = bits[3].charAt(bits[3].length() - 1) == '.' ? bits[3].substring(0, bits[3].length() - 1) : bits[3];
         } catch (final NumberFormatException nfe) {
             throw new NamingException("Unable to parse SRV Record parameters."); // NOPMD
         }
@@ -105,25 +105,23 @@ public class SRVRecord implements Comparable<SRVRecord> {
 
     @Override
     public String toString() {
-        return priority + " " + weight + " " + port + " " + host + ".";
+        return priority + " " + weight + ' ' + port + ' ' + host + '.';
     }
 
     @Override
     public int compareTo(final SRVRecord o) {
-        if (this.priority < o.priority) { return -1; }
-        if (this.priority > o.priority) { return 1; }
+        if (priority < o.getPriority()) { return -1; }
+        if (priority > o.getPriority()) { return 1; }
         return 0;
     }
 
     public static List<SRVRecord> getRecords(final String host) {
         final List<SRVRecord> result = new ArrayList<>();
-
-        try {
-            // Obsolete Collection. yeah yeah...
-            final Hashtable<String, String> env = new Hashtable<>(); // NOPMD - Required by InitialDirContext
-            env.put("java.naming.factory.initial", "com.sun.jndi.dns.DnsContextFactory");
-            env.put("java.naming.provider.url", "dns:");
-            final Attribute attr = new InitialDirContext(env).getAttributes(host, new String [] { "SRV" }).get("SRV");
+        final HashMap<String, String> env = new HashMap<>();
+        env.put("java.naming.factory.initial", "com.sun.jndi.dns.DnsContextFactory");
+        env.put("java.naming.provider.url", "dns:");
+        try (AutoCloseableInitialDirContext dirContext = new AutoCloseableInitialDirContext(env)) {
+            final Attribute attr = dirContext.getAttributes(host, new String [] { "SRV" }).get("SRV");
 
             if (attr != null) {
                 final NamingEnumeration<?> ne = attr.getAll();
