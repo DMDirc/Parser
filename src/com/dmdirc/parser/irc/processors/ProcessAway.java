@@ -49,7 +49,7 @@ public class ProcessAway extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String[] token) {
+    public void process(final String sParam, final String... token) {
         final IRCClientInfo iClient = getClientInfo(token[0]);
         switch (sParam) {
             case "AWAY":
@@ -83,14 +83,14 @@ public class ProcessAway extends IRCProcessor {
     /**
      * Callback to all objects implementing the onAwayState Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.AwayStateListener
+     * @see AwayStateListener
      * @param oldState Old Away State
      * @param currentState Current Away State
      * @param reason Best guess at away reason
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callAwayState(final AwayState oldState, final AwayState currentState, final String reason) {
-        return getCallbackManager().getCallbackType(AwayStateListener.class).call(oldState, currentState, reason);
+    protected void callAwayState(final AwayState oldState, final AwayState currentState,
+            final String reason) {
+        getCallbackManager().getCallbackType(AwayStateListener.class).call(oldState, currentState, reason);
     }
 
     /**

@@ -34,7 +34,6 @@ import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ProcessingManager;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Process a Quit message.
@@ -58,16 +57,14 @@ public class ProcessQuit extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String[] token) {
+    public void process(final String sParam, final String... token) {
         // :nick!ident@host QUIT
         // :nick!ident@host QUIT :reason
         if (token.length < 2) {
             return;
         }
-        final IRCClientInfo iClient;
-        IRCChannelClientInfo iChannelClient;
 
-        iClient = getClientInfo(token[0]);
+        final IRCClientInfo iClient = getClientInfo(token[0]);
 
         if (iClient == null) {
             return;
@@ -81,9 +78,9 @@ public class ProcessQuit extends IRCProcessor {
             sReason = token[token.length - 1];
         }
 
-        final List<IRCChannelInfo> channelList = new ArrayList<>(parser.getChannels());
+        final Iterable<IRCChannelInfo> channelList = new ArrayList<>(parser.getChannels());
         for (IRCChannelInfo iChannel : channelList) {
-            iChannelClient = iChannel.getChannelClient(iClient);
+            final IRCChannelClientInfo iChannelClient = iChannel.getChannelClient(iClient);
             if (iChannelClient != null) {
                 if (parser.getRemoveAfterCallback()) {
                     callChannelQuit(iChannel, iChannelClient, sReason);
@@ -116,26 +113,25 @@ public class ProcessQuit extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelQuit Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.ChannelQuitListener
+     * @see ChannelQuitListener
      * @param cChannel Channel that user was on
      * @param cChannelClient User thats quitting
      * @param sReason Quit reason
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callChannelQuit(final ChannelInfo cChannel, final ChannelClientInfo cChannelClient, final String sReason) {
-        return getCallbackManager().getCallbackType(ChannelQuitListener.class).call(cChannel, cChannelClient, sReason);
+    protected void callChannelQuit(final ChannelInfo cChannel,
+            final ChannelClientInfo cChannelClient, final String sReason) {
+        getCallbackManager().getCallbackType(ChannelQuitListener.class).call(cChannel, cChannelClient, sReason);
     }
 
     /**
      * Callback to all objects implementing the Quit Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.QuitListener
+     * @see QuitListener
      * @param cClient Client Quitting
      * @param sReason Reason for quitting (may be "")
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callQuit(final ClientInfo cClient, final String sReason) {
-        return getCallbackManager().getCallbackType(QuitListener.class).call(cClient, sReason);
+    protected void callQuit(final ClientInfo cClient, final String sReason) {
+        getCallbackManager().getCallbackType(QuitListener.class).call(cClient, sReason);
     }
 
     /**

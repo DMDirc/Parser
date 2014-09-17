@@ -27,6 +27,8 @@ import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ProcessingManager;
 
+import java.util.Collection;
+
 /**
  * Process a 001 message.
  */
@@ -49,7 +51,7 @@ public class Process001 extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String[] token) {
+    public void process(final String sParam, final String... token) {
         parser.got001 = true;
         // << :demon1.uk.quakenet.org 001 Java-Test :Welcome to the QuakeNet IRC Network, Java-Test
         parser.updateServerName(token[0].substring(1, token[0].length()));
@@ -80,7 +82,9 @@ public class Process001 extends IRCProcessor {
         }
 
         parser.startPingTimer();
-        parser.joinChannels(parser.extractChannels(parser.getURI()).toArray(new ChannelJoinRequest[0]));
+        final Collection<? extends ChannelJoinRequest> requests = parser.extractChannels(
+                parser.getURI());
+        parser.joinChannels(requests.toArray(new ChannelJoinRequest[requests.size()]));
     }
 
     /**

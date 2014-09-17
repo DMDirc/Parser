@@ -48,7 +48,7 @@ public class Process464 extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String[] token) {
+    public void process(final String sParam, final String... token) {
         callPasswordRequired();
     }
 
@@ -65,10 +65,9 @@ public class Process464 extends IRCProcessor {
     /**
      * Callback to all objects implementing the PasswordRequired Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.PasswordRequiredListener
-     * @return true if a method was called, false otherwise
+     * @see PasswordRequiredListener
      */
-    protected boolean callPasswordRequired() {
-        return getCallbackManager().getCallbackType(PasswordRequiredListener.class).call();
+    protected void callPasswordRequired() {
+        getCallbackManager().getCallbackType(PasswordRequiredListener.class).call();
     }
 }

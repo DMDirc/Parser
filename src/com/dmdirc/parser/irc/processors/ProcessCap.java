@@ -28,8 +28,8 @@ import com.dmdirc.parser.irc.ProcessingManager;
 import com.dmdirc.parser.irc.TimestampedIRCProcessor;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Process CAP extension.
@@ -45,9 +45,9 @@ import java.util.List;
  */
 public class ProcessCap extends TimestampedIRCProcessor {
     /** Have we handled the pre-connect cap request? */
-    private boolean hasCapped = false;
+    private boolean hasCapped;
     /** List of supported capabilities. */
-    private final List<String> supportedCapabilities = new ArrayList<>();
+    private final Collection<String> supportedCapabilities = new ArrayList<>();
 
     /**
      * Create a new instance of the IRCProcessor Object.
@@ -79,16 +79,16 @@ public class ProcessCap extends TimestampedIRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final Date date, final String sParam, final String[] token) {
+    public void process(final Date date, final String sParam, final String... token) {
         // We will only automatically handle the first ever pre-001 CAP LS
         // response.
         // After that, the user may be sending stuff themselves so we do
         // nothing.
-        if (!hasCapped && !parser.got001 && token.length > 4 && token[3].equalsIgnoreCase("LS")) {
+        if (!hasCapped && !parser.got001 && token.length > 4 && "LS".equalsIgnoreCase(token[3])) {
             final String[] caps = token[token.length - 1].split(" ");
             for (final String cap : caps) {
                 if (cap.isEmpty()) { continue; }
-                final String capability = (cap.charAt(0) == '=') ? cap.substring(1).toLowerCase() : cap.toLowerCase();
+                final String capability = cap.charAt(0) == '=' ? cap.substring(1).toLowerCase() : cap.toLowerCase();
 
                 parser.addCapability(capability);
 
@@ -106,19 +106,19 @@ public class ProcessCap extends TimestampedIRCProcessor {
             //     :DFBnc.Server CAP Dataforce LS
             // but not:
             //     :DFBnc.Server CAP Dataforce LS *
-            if (token.length == 4 || (token.length == 5 && !token[4].equals("*"))) {
+            if (token.length == 4 || token.length == 5 && !"*".equals(token[4])) {
                 hasCapped = true;
                 parser.sendRawMessage("CAP END");
             }
-        } else if (token[3].equalsIgnoreCase("ACK") || token[3].equalsIgnoreCase("CLEAR")) {
+        } else if ("ACK".equalsIgnoreCase(token[3]) || "CLEAR".equalsIgnoreCase(token[3])) {
             // Process the list.
             final String[] caps = token[token.length - 1].split(" ");
             for (final String cap : caps) {
                 if (cap.isEmpty()) { continue; }
                 final CapabilityState modifier = CapabilityState.fromModifier(cap.charAt(0));
 
-                final String capability = (modifier == CapabilityState.INVALID) ? cap.toLowerCase() : cap.substring(1).toLowerCase();
-                final CapabilityState state = (modifier == CapabilityState.INVALID) ? CapabilityState.ENABLED : modifier;
+                final String capability = modifier == CapabilityState.INVALID ? cap.toLowerCase() : cap.substring(1).toLowerCase();
+                final CapabilityState state = modifier == CapabilityState.INVALID ? CapabilityState.ENABLED : modifier;
 
                 if (state == CapabilityState.NEED_ACK) {
                     parser.sendRawMessage("CAP ACK :" + capability);

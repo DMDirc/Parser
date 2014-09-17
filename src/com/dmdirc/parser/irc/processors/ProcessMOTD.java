@@ -50,7 +50,7 @@ public class ProcessMOTD extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String[] token) {
+    public void process(final String sParam, final String... token) {
         switch (sParam) {
             case "375":
                 callMOTDStart(token[token.length - 1]);
@@ -69,33 +69,30 @@ public class ProcessMOTD extends IRCProcessor {
      *
      * @param noMOTD Was this an MOTDEnd or NoMOTD
      * @param data The contents of the line (incase of language changes or so)
-     * @see com.dmdirc.parser.interfaces.callbacks.MotdEndListener
-     * @return true if a method was called, false otherwise
+     * @see MotdEndListener
      */
-    protected boolean callMOTDEnd(final boolean noMOTD, final String data) {
-        return getCallbackManager().getCallbackType(MotdEndListener.class).call(noMOTD, data);
+    protected void callMOTDEnd(final boolean noMOTD, final String data) {
+        getCallbackManager().getCallbackType(MotdEndListener.class).call(noMOTD, data);
     }
 
     /**
      * Callback to all objects implementing the MOTDLine Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.MotdLineListener
+     * @see MotdLineListener
      * @param data Incomming Line.
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callMOTDLine(final String data) {
-        return getCallbackManager().getCallbackType(MotdLineListener.class).call(data);
+    protected void callMOTDLine(final String data) {
+        getCallbackManager().getCallbackType(MotdLineListener.class).call(data);
     }
 
     /**
      * Callback to all objects implementing the MOTDStart Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.MotdStartListener
+     * @see MotdStartListener
      * @param data Incomming Line.
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callMOTDStart(final String data) {
-        return getCallbackManager().getCallbackType(MotdStartListener.class).call(data);
+    protected void callMOTDStart(final String data) {
+        getCallbackManager().getCallbackType(MotdStartListener.class).call(data);
     }
 
     /**

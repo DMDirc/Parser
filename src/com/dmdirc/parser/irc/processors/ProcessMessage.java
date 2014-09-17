@@ -94,7 +94,7 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final Date date, final String sParam, final String[] token) {
+    public void process(final Date date, final String sParam, final String... token) {
         // Ignore people!
         String sMessage;
         if (token[0].charAt(0) == ':') {
@@ -121,7 +121,8 @@ public class ProcessMessage extends TimestampedIRCProcessor {
         }
 
         // Is this actually a notice auth?
-        if (token[0].indexOf('!') == -1 && token[1].equalsIgnoreCase("NOTICE") && token[2].equalsIgnoreCase("AUTH")) {
+        if (token[0].indexOf('!') == -1 && "NOTICE".equalsIgnoreCase(token[1]) &&
+                "AUTH".equalsIgnoreCase(token[2])) {
             try {
                 parser.getProcessingManager().process(date, "Notice Auth", token);
             } catch (ProcessorNotFoundException e) {
@@ -129,9 +130,6 @@ public class ProcessMessage extends TimestampedIRCProcessor {
             return;
         }
 
-        IRCChannelClientInfo iChannelClient = null;
-        final IRCChannelInfo iChannel;
-        final IRCClientInfo iClient;
         // "nick!user@host PRIVMSG #Channel" should be processed as "nick!user@host PRIVMSG #Channel :"
         if (token.length < 4) {
             sMessage = "";
@@ -139,7 +137,6 @@ public class ProcessMessage extends TimestampedIRCProcessor {
             sMessage = token[token.length - 1];
         }
         String[] bits = sMessage.split(" ", 2);
-        final Character char1 = (char) 1;
         String sCTCP = "";
         boolean isAction = false;
         boolean isCTCP = false;
@@ -148,7 +145,8 @@ public class ProcessMessage extends TimestampedIRCProcessor {
             // Actions are special CTCPs
             // Bits is the message been split into 2 parts
             //         the first word and the rest
-            if (sParam.equalsIgnoreCase("PRIVMSG") && bits[0].equalsIgnoreCase(char1 + "ACTION") && Character.valueOf(sMessage.charAt(sMessage.length() - 1)).equals(char1)) {
+            final Character char1 = (char) 1;
+            if ("PRIVMSG".equalsIgnoreCase(sParam) && bits[0].equalsIgnoreCase(char1 + "ACTION") && Character.valueOf(sMessage.charAt(sMessage.length() - 1)).equals(char1)) {
                 isAction = true;
                 if (bits.length > 1) {
                     sMessage = bits[1];
@@ -183,14 +181,17 @@ public class ProcessMessage extends TimestampedIRCProcessor {
         }
 
         // Remove the leading : from the host.
+        final String firstToken;
         if (token[0].charAt(0) == ':' && token[0].length() > 1) {
-            token[0] = token[0].substring(1);
+            firstToken = token[0].substring(1);
+        } else {
+            firstToken = token[0];
         }
 
-        iClient = getClientInfo(token[0]);
+        final IRCClientInfo iClient = getClientInfo(token[0]);
         // Facilitate DMDIRC Formatter
-        if ((IRCParser.ALWAYS_UPDATECLIENT && iClient != null) && iClient.getHostname().isEmpty()) {
-            iClient.setUserBits(token[0], false);
+        if (IRCParser.ALWAYS_UPDATECLIENT && iClient != null && iClient.getHostname().isEmpty()) {
+            iClient.setUserBits(firstToken, false);
         }
 
         // Fire the appropriate callbacks.
@@ -211,77 +212,78 @@ public class ProcessMessage extends TimestampedIRCProcessor {
         final String targetName = hasModePrefix ? token[2].substring(1) : token[2];
 
         if (isValidChannelName(targetName)) {
-            iChannel = getChannel(targetName);
+            final IRCChannelInfo iChannel = getChannel(targetName);
             if (iChannel == null) {
                 // callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got message for channel ("+targetName+") that I am not on.", parser.getLastLine()));
                 return;
             }
+            IRCChannelClientInfo iChannelClient = null;
             if (iClient != null) {
                 iChannelClient = iChannel.getChannelClient(iClient);
             }
-            if (sParam.equalsIgnoreCase("PRIVMSG")) {
+            if ("PRIVMSG".equalsIgnoreCase(sParam)) {
                 if (isAction) {
-                    callChannelAction(date, iChannel, iChannelClient, sMessage, token[0]);
+                    callChannelAction(date, iChannel, iChannelClient, sMessage, firstToken);
                 } else {
                     if (isCTCP) {
-                        callChannelCTCP(date, iChannel, iChannelClient, sCTCP, sMessage, token[0]);
+                        callChannelCTCP(date, iChannel, iChannelClient, sCTCP, sMessage, firstToken);
                     } else if (hasModePrefix) {
-                        callChannelModeMessage(date, modePrefix, iChannel, iChannelClient, sMessage, token[0]);
+                        callChannelModeMessage(date, modePrefix, iChannel, iChannelClient, sMessage, firstToken);
                     } else {
-                        callChannelMessage(date, iChannel, iChannelClient, sMessage, token[0]);
+                        callChannelMessage(date, iChannel, iChannelClient, sMessage, firstToken);
                     }
                 }
-            } else if (sParam.equalsIgnoreCase("NOTICE")) {
+            } else if ("NOTICE".equalsIgnoreCase(sParam)) {
                 if (isCTCP) {
-                    callChannelCTCPReply(date, iChannel, iChannelClient, sCTCP, sMessage, token[0]);
+                    callChannelCTCPReply(date, iChannel, iChannelClient, sCTCP, sMessage, firstToken);
                 } else if (hasModePrefix) {
-                    callChannelModeNotice(date, modePrefix, iChannel, iChannelClient, sMessage, token[0]);
+                    callChannelModeNotice(date, modePrefix, iChannel, iChannelClient, sMessage, firstToken);
                 } else {
-                    callChannelNotice(date, iChannel, iChannelClient, sMessage, token[0]);
+                    callChannelNotice(date, iChannel, iChannelClient, sMessage, firstToken);
                 }
             }
         } else if (parser.getStringConverter().equalsIgnoreCase(token[2], parser.getMyNickname())) {
-            if (sParam.equalsIgnoreCase("PRIVMSG")) {
+            if ("PRIVMSG".equalsIgnoreCase(sParam)) {
                 if (isAction) {
-                    callPrivateAction(date, sMessage, token[0]);
+                    callPrivateAction(date, sMessage, firstToken);
                 } else {
                     if (isCTCP) {
-                        callPrivateCTCP(date, sCTCP, sMessage, token[0]);
+                        callPrivateCTCP(date, sCTCP, sMessage, firstToken);
                     } else {
-                        callPrivateMessage(date, sMessage, token[0]);
+                        callPrivateMessage(date, sMessage, firstToken);
                     }
                 }
-            } else if (sParam.equalsIgnoreCase("NOTICE")) {
+            } else if ("NOTICE".equalsIgnoreCase(sParam)) {
                 if (isCTCP) {
-                    callPrivateCTCPReply(date, sCTCP, sMessage, token[0]);
+                    callPrivateCTCPReply(date, sCTCP, sMessage, firstToken);
                 } else {
-                    if (token[0].indexOf('@') == -1) {
-                        callServerNotice(date, sMessage, token[0]);
+                    if (firstToken.indexOf('@') == -1) {
+                        callServerNotice(date, sMessage, firstToken);
                     } else {
-                        callPrivateNotice(date, sMessage, token[0]);
+                        callPrivateNotice(date, sMessage, firstToken);
                     }
                 }
             }
         } else {
-            callDebugInfo(IRCParser.DEBUG_INFO, "Message for Other (" + token[2] + ")");
-            if (sParam.equalsIgnoreCase("PRIVMSG")) {
+            callDebugInfo(IRCParser.DEBUG_INFO, "Message for Other (" + token[2] + ')');
+            if ("PRIVMSG".equalsIgnoreCase(sParam)) {
                 if (isAction) {
-                    callUnknownAction(date, sMessage, token[2], token[0]);
+                    callUnknownAction(date, sMessage, token[2], firstToken);
                 } else {
                     if (isCTCP) {
-                        callUnknownCTCP(date, sCTCP, sMessage, token[2], token[0]);
+                        callUnknownCTCP(date, sCTCP, sMessage, token[2], firstToken);
                     } else {
-                        callUnknownMessage(date, sMessage, token[2], token[0]);
+                        callUnknownMessage(date, sMessage, token[2], firstToken);
                     }
                 }
-            } else if (sParam.equalsIgnoreCase("NOTICE")) {
+            } else if ("NOTICE".equalsIgnoreCase(sParam)) {
                 if (isCTCP) {
-                    callUnknownCTCPReply(date, sCTCP, sMessage, token[2], token[0]);
+                    callUnknownCTCPReply(date, sCTCP, sMessage, token[2], firstToken);
                 } else {
-                    if (token[0].indexOf('@') == -1) {
-                        callUnknownServerNotice(date, sMessage, token[2], token[0]);
+                    if (firstToken.indexOf('@') == -1) {
+                        callUnknownServerNotice(date, sMessage, token[2], firstToken);
                     } else {
-                        callUnknownNotice(date, sMessage, token[2], token[0]);
+                        callUnknownNotice(date, sMessage, token[2], firstToken);
                     }
                 }
             }
@@ -291,276 +293,276 @@ public class ProcessMessage extends TimestampedIRCProcessor {
     /**
      * Callback to all objects implementing the ChannelAction Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.ChannelActionListener
+     * @see ChannelActionListener
      * @param date The date of this line
      * @param cChannel Channel where the action was sent to
      * @param cChannelClient ChannelClient who sent the action (may be null if server)
      * @param sMessage action contents
      * @param sHost Hostname of sender (or servername)
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callChannelAction(final Date date, final ChannelInfo cChannel, final ChannelClientInfo cChannelClient, final String sMessage, final String sHost) {
-        return getCallbackManager().getCallbackType(ChannelActionListener.class).call(date, cChannel, cChannelClient, sMessage, sHost);
+    protected void callChannelAction(final Date date, final ChannelInfo cChannel,
+            final ChannelClientInfo cChannelClient, final String sMessage, final String sHost) {
+        getCallbackManager().getCallbackType(ChannelActionListener.class).call(date, cChannel, cChannelClient, sMessage, sHost);
     }
 
     /**
      * Callback to all objects implementing the ChannelCTCP Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.ChannelCtcpListener
+     * @see ChannelCtcpListener
      * @param date The date of this line
      * @param cChannel Channel where CTCP was sent
      * @param cChannelClient ChannelClient who sent the message (may be null if server)
      * @param sType Type of CTCP (VERSION, TIME etc)
      * @param sMessage Additional contents
      * @param sHost Hostname of sender (or servername)
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callChannelCTCP(final Date date, final ChannelInfo cChannel, final ChannelClientInfo cChannelClient, final String sType, final String sMessage, final String sHost) {
-        return getCallbackManager().getCallbackType(ChannelCtcpListener.class).call(date, cChannel, cChannelClient, sType, sMessage, sHost);
+    protected void callChannelCTCP(final Date date, final ChannelInfo cChannel,
+            final ChannelClientInfo cChannelClient, final String sType, final String sMessage,
+            final String sHost) {
+        getCallbackManager().getCallbackType(ChannelCtcpListener.class).call(date, cChannel, cChannelClient, sType, sMessage, sHost);
     }
 
     /**
      * Callback to all objects implementing the ChannelCTCPReply Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.ChannelCtcpReplyListener
+     * @see ChannelCtcpReplyListener
      * @param date The date of this line
      * @param cChannel Channel where CTCPReply was sent
      * @param cChannelClient ChannelClient who sent the message (may be null if server)
      * @param sType Type of CTCPRReply (VERSION, TIME etc)
      * @param sMessage Reply Contents
      * @param sHost Hostname of sender (or servername)
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callChannelCTCPReply(final Date date, final ChannelInfo cChannel, final ChannelClientInfo cChannelClient, final String sType, final String sMessage, final String sHost) {
-        return getCallbackManager().getCallbackType(ChannelCtcpReplyListener.class).call(date, cChannel, cChannelClient, sType, sMessage, sHost);
+    protected void callChannelCTCPReply(final Date date, final ChannelInfo cChannel,
+            final ChannelClientInfo cChannelClient, final String sType, final String sMessage,
+            final String sHost) {
+        getCallbackManager().getCallbackType(ChannelCtcpReplyListener.class).call(date, cChannel, cChannelClient, sType, sMessage, sHost);
     }
 
     /**
      * Callback to all objects implementing the ChannelMessage Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.ChannelMessageListener
+     * @see ChannelMessageListener
      * @param date The date of this line
      * @param cChannel Channel where the message was sent to
      * @param cChannelClient ChannelClient who sent the message (may be null if server)
      * @param sMessage Message contents
      * @param sHost Hostname of sender (or servername)
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callChannelMessage(final Date date, final ChannelInfo cChannel, final ChannelClientInfo cChannelClient, final String sMessage, final String sHost) {
-        return getCallbackManager().getCallbackType(ChannelMessageListener.class).call(date, cChannel, cChannelClient, sMessage, sHost);
+    protected void callChannelMessage(final Date date, final ChannelInfo cChannel,
+            final ChannelClientInfo cChannelClient, final String sMessage, final String sHost) {
+        getCallbackManager().getCallbackType(ChannelMessageListener.class).call(date, cChannel, cChannelClient, sMessage, sHost);
     }
 
     /**
      * Callback to all objects implementing the ChannelNotice Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.ChannelNoticeListener
+     * @see ChannelNoticeListener
      * @param date The date of this line
      * @param cChannel Channel where the notice was sent to
      * @param cChannelClient ChannelClient who sent the notice (may be null if server)
      * @param sMessage notice contents
      * @param sHost Hostname of sender (or servername)
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callChannelNotice(final Date date, final ChannelInfo cChannel, final ChannelClientInfo cChannelClient, final String sMessage, final String sHost) {
-        return getCallbackManager().getCallbackType(ChannelNoticeListener.class).call(date, cChannel, cChannelClient, sMessage, sHost);
+    protected void callChannelNotice(final Date date, final ChannelInfo cChannel,
+            final ChannelClientInfo cChannelClient, final String sMessage, final String sHost) {
+        getCallbackManager().getCallbackType(ChannelNoticeListener.class).call(date, cChannel, cChannelClient, sMessage, sHost);
     }
 
     /**
      * Callback to all objects implementing the ChannelModeNotice Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.ChannelModeNoticeListener
+     * @see ChannelModeNoticeListener
      * @param date The date of this line
      * @param prefix Prefix that was used to send this notice.
      * @param cChannel Channel where the notice was sent to
      * @param cChannelClient ChannelClient who sent the notice (may be null if server)
      * @param sMessage notice contents
      * @param sHost Hostname of sender (or servername)
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callChannelModeNotice(final Date date, final char prefix, final ChannelInfo cChannel, final ChannelClientInfo cChannelClient, final String sMessage, final String sHost) {
-        return getCallbackManager().getCallbackType(ChannelModeNoticeListener.class).call(date, cChannel, prefix, cChannelClient, sMessage, sHost);
+    protected void callChannelModeNotice(final Date date, final char prefix,
+            final ChannelInfo cChannel, final ChannelClientInfo cChannelClient,
+            final String sMessage, final String sHost) {
+        getCallbackManager().getCallbackType(ChannelModeNoticeListener.class).call(date, cChannel, prefix, cChannelClient, sMessage, sHost);
     }
 
     /**
      * Callback to all objects implementing the ChannelModeMessage Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.ChannelModeMessageListener
+     * @see ChannelModeMessageListener
      * @param date The date of this line
      * @param prefix Prefix that was used to send this notice.
      * @param cChannel Channel where the notice was sent to
      * @param cChannelClient ChannelClient who sent the notice (may be null if server)
      * @param sMessage message contents
      * @param sHost Hostname of sender (or servername)
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callChannelModeMessage(final Date date, final char prefix, final ChannelInfo cChannel, final ChannelClientInfo cChannelClient, final String sMessage, final String sHost) {
-        return getCallbackManager().getCallbackType(ChannelModeMessageListener.class).call(date, cChannel, prefix, cChannelClient, sMessage, sHost);
+    protected void callChannelModeMessage(final Date date, final char prefix,
+            final ChannelInfo cChannel, final ChannelClientInfo cChannelClient,
+            final String sMessage, final String sHost) {
+        getCallbackManager().getCallbackType(ChannelModeMessageListener.class).call(date, cChannel, prefix, cChannelClient, sMessage, sHost);
     }
 
     /**
      * Callback to all objects implementing the PrivateAction Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.PrivateActionListener
+     * @see PrivateActionListener
      * @param date The date of this line
      * @param sMessage action contents
      * @param sHost Hostname of sender (or servername)
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callPrivateAction(final Date date, final String sMessage, final String sHost) {
-        return getCallbackManager().getCallbackType(PrivateActionListener.class).call(date, sMessage, sHost);
+    protected void callPrivateAction(final Date date, final String sMessage, final String sHost) {
+        getCallbackManager().getCallbackType(PrivateActionListener.class).call(date, sMessage, sHost);
     }
 
     /**
      * Callback to all objects implementing the PrivateCTCP Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.PrivateCtcpListener
+     * @see PrivateCtcpListener
      * @param date The date of this line
      * @param sType Type of CTCP (VERSION, TIME etc)
      * @param sMessage Additional contents
      * @param sHost Hostname of sender (or servername)
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callPrivateCTCP(final Date date, final String sType, final String sMessage, final String sHost) {
-        return getCallbackManager().getCallbackType(PrivateCtcpListener.class).call(date, sType, sMessage, sHost);
+    protected void callPrivateCTCP(final Date date, final String sType, final String sMessage,
+            final String sHost) {
+        getCallbackManager().getCallbackType(PrivateCtcpListener.class).call(date, sType, sMessage, sHost);
     }
 
     /**
      * Callback to all objects implementing the PrivateCTCPReply Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.PrivateCtcpReplyListener
+     * @see PrivateCtcpReplyListener
      * @param date The date of this line
      * @param sType Type of CTCPRReply (VERSION, TIME etc)
      * @param sMessage Reply Contents
      * @param sHost Hostname of sender (or servername)
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callPrivateCTCPReply(final Date date, final String sType, final String sMessage, final String sHost) {
-        return getCallbackManager().getCallbackType(PrivateCtcpReplyListener.class).call(date, sType, sMessage, sHost);
+    protected void callPrivateCTCPReply(final Date date, final String sType, final String sMessage,
+            final String sHost) {
+        getCallbackManager().getCallbackType(PrivateCtcpReplyListener.class).call(date, sType, sMessage, sHost);
     }
 
     /**
      * Callback to all objects implementing the PrivateMessage Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.PrivateMessageListener
+     * @see PrivateMessageListener
      * @param date The date of this line
      * @param sMessage Message contents
      * @param sHost Hostname of sender (or servername)
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callPrivateMessage(final Date date, final String sMessage, final String sHost) {
-        return getCallbackManager().getCallbackType(PrivateMessageListener.class).call(date, sMessage, sHost);
+    protected void callPrivateMessage(final Date date, final String sMessage, final String sHost) {
+        getCallbackManager().getCallbackType(PrivateMessageListener.class).call(date, sMessage, sHost);
     }
 
     /**
      * Callback to all objects implementing the PrivateNotice Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.PrivateNoticeListener
+     * @see PrivateNoticeListener
      * @param date The date of this line
      * @param sMessage Notice contents
      * @param sHost Hostname of sender (or servername)
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callPrivateNotice(final Date date, final String sMessage, final String sHost) {
-        return getCallbackManager().getCallbackType(PrivateNoticeListener.class).call(date, sMessage, sHost);
+    protected void callPrivateNotice(final Date date, final String sMessage, final String sHost) {
+        getCallbackManager().getCallbackType(PrivateNoticeListener.class).call(date, sMessage, sHost);
     }
 
     /**
      * Callback to all objects implementing the ServerNotice Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.ServerNoticeListener
+     * @see ServerNoticeListener
      * @param date The date of this line
      * @param sMessage Notice contents
      * @param sHost Hostname of sender (or servername)
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callServerNotice(final Date date, final String sMessage, final String sHost) {
-        return getCallbackManager().getCallbackType(ServerNoticeListener.class).call(date, sMessage, sHost);
+    protected void callServerNotice(final Date date, final String sMessage, final String sHost) {
+        getCallbackManager().getCallbackType(ServerNoticeListener.class).call(date, sMessage, sHost);
     }
 
     /**
      * Callback to all objects implementing the UnknownAction Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.UnknownActionListener
+     * @see UnknownActionListener
      * @param date The date of this line
      * @param sMessage Action contents
      * @param sTarget Actual target of action
      * @param sHost Hostname of sender (or servername)
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callUnknownAction(final Date date, final String sMessage, final String sTarget, final String sHost) {
-        return getCallbackManager().getCallbackType(UnknownActionListener.class).call(date, sMessage, sTarget, sHost);
+    protected void callUnknownAction(final Date date, final String sMessage, final String sTarget,
+            final String sHost) {
+        getCallbackManager().getCallbackType(UnknownActionListener.class).call(date, sMessage, sTarget, sHost);
     }
 
     /**
      * Callback to all objects implementing the UnknownCTCP Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.UnknownCtcpListener
+     * @see UnknownCtcpListener
      * @param date The date of this line
      * @param sType Type of CTCP (VERSION, TIME etc)
      * @param sMessage Additional contents
      * @param sTarget Actual Target of CTCP
      * @param sHost Hostname of sender (or servername)
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callUnknownCTCP(final Date date, final String sType, final String sMessage, final String sTarget, final String sHost) {
-        return getCallbackManager().getCallbackType(UnknownCtcpListener.class).call(date, sType, sMessage, sTarget, sHost);
+    protected void callUnknownCTCP(final Date date, final String sType, final String sMessage,
+            final String sTarget, final String sHost) {
+        getCallbackManager().getCallbackType(UnknownCtcpListener.class).call(date, sType, sMessage, sTarget, sHost);
     }
 
     /**
      * Callback to all objects implementing the UnknownCTCPReply Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.UnknownCtcpReplyListener
+     * @see UnknownCtcpReplyListener
      * @param date The date of this line
      * @param sType Type of CTCPRReply (VERSION, TIME etc)
      * @param sMessage Reply Contents
      * @param sTarget Actual Target of CTCPReply
      * @param sHost Hostname of sender (or servername)
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callUnknownCTCPReply(final Date date, final String sType, final String sMessage, final String sTarget, final String sHost) {
-        return getCallbackManager().getCallbackType(UnknownCtcpReplyListener.class).call(date, sType, sMessage, sTarget, sHost);
+    protected void callUnknownCTCPReply(final Date date, final String sType, final String sMessage,
+            final String sTarget, final String sHost) {
+        getCallbackManager().getCallbackType(UnknownCtcpReplyListener.class).call(date, sType, sMessage, sTarget, sHost);
     }
 
     /**
      * Callback to all objects implementing the UnknownMessage Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.UnknownMessageListener
+     * @see UnknownMessageListener
      * @param date The date of this line
      * @param sMessage Message contents
      * @param sTarget Actual target of message
      * @param sHost Hostname of sender (or servername)
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callUnknownMessage(final Date date, final String sMessage, final String sTarget, final String sHost) {
-        return getCallbackManager().getCallbackType(UnknownMessageListener.class).call(date, sMessage, sTarget, sHost);
+    protected void callUnknownMessage(final Date date, final String sMessage, final String sTarget,
+            final String sHost) {
+        getCallbackManager().getCallbackType(UnknownMessageListener.class).call(date, sMessage, sTarget, sHost);
     }
 
     /**
      * Callback to all objects implementing the UnknownNotice Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.UnknownNoticeListener
+     * @see UnknownNoticeListener
      * @param date The date of this line
      * @param sMessage Notice contents
      * @param sTarget Actual target of notice
      * @param sHost Hostname of sender (or servername)
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callUnknownNotice(final Date date, final String sMessage, final String sTarget, final String sHost) {
-        return getCallbackManager().getCallbackType(UnknownNoticeListener.class).call(date, sMessage, sTarget, sHost);
+    protected void callUnknownNotice(final Date date, final String sMessage, final String sTarget,
+            final String sHost) {
+        getCallbackManager().getCallbackType(UnknownNoticeListener.class).call(date, sMessage, sTarget, sHost);
     }
 
     /**
      * Callback to all objects implementing the UnknownNotice Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.UnknownServerNoticeListener
+     * @see UnknownServerNoticeListener
      * @param date The date of this line
      * @param sMessage Notice contents
      * @param sTarget Actual target of notice
      * @param sHost Hostname of sender (or servername)
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callUnknownServerNotice(final Date date, final String sMessage, final String sTarget, final String sHost) {
-        return getCallbackManager().getCallbackType(UnknownServerNoticeListener.class).call(date, sMessage, sTarget, sHost);
+    protected void callUnknownServerNotice(final Date date, final String sMessage,
+            final String sTarget, final String sHost) {
+        getCallbackManager().getCallbackType(UnknownServerNoticeListener.class).call(date, sMessage, sTarget, sHost);
     }
 
     /**
