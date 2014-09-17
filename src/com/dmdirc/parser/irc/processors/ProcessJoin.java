@@ -33,6 +33,7 @@ import com.dmdirc.parser.irc.IRCChannelClientInfo;
 import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
+import com.dmdirc.parser.irc.ModeManager;
 import com.dmdirc.parser.irc.PrefixModeManager;
 import com.dmdirc.parser.irc.ProcessingManager;
 import com.dmdirc.parser.irc.ProcessorNotFoundException;
@@ -46,18 +47,22 @@ public class ProcessJoin extends IRCProcessor {
 
     /** The manager to use to access prefix modes. */
     private final PrefixModeManager prefixModeManager;
+    /** Mode manager to use for user modes. */
+    private final ModeManager userModeManager;
 
     /**
      * Create a new instance of the IRCProcessor Object.
      *
      * @param parser IRCParser That owns this IRCProcessor
      * @param prefixModeManager The manager to use to access prefix modes.
+     * @param userModeManager Mode manager to use for user modes.
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
     public ProcessJoin(final IRCParser parser, final PrefixModeManager prefixModeManager,
-            final ProcessingManager manager) {
+            final ModeManager userModeManager, final ProcessingManager manager) {
         super(parser, manager);
         this.prefixModeManager = prefixModeManager;
+        this.userModeManager = userModeManager;
     }
 
     /**
@@ -112,7 +117,7 @@ public class ProcessJoin extends IRCProcessor {
             callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: channel: %s", iChannel);
 
             if (iClient == null) {
-                iClient = new IRCClientInfo(parser, token[0]);
+                iClient = new IRCClientInfo(parser, userModeManager, token[0]);
                 parser.addClient(iClient);
                 callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: new client.", iClient);
             }
@@ -154,7 +159,7 @@ public class ProcessJoin extends IRCProcessor {
                 }
             }
 
-            iChannel = new IRCChannelInfo(parser, prefixModeManager, channelName);
+            iChannel = new IRCChannelInfo(parser, prefixModeManager, userModeManager, channelName);
             // Add ourself to the channel, this will be overridden by the NAMES reply
             iChannel.addClient(iClient);
             parser.addChannel(iChannel);

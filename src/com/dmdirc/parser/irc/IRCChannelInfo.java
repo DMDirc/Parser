@@ -64,6 +64,8 @@ public class IRCChannelInfo implements ChannelInfo {
     private String modes;
     /** Reference to the parser object that owns this channel, Used for modes. */
     private final IRCParser parser;
+    /** Mode manager to use for user modes. */
+    private final ModeManager userModeManager;
     /** Mode manager to use for prefix mode information. */
     private final PrefixModeManager prefixModeManager;
     /** Channel Name. */
@@ -97,13 +99,15 @@ public class IRCChannelInfo implements ChannelInfo {
      *
      * @param parser Reference to parser that owns this channelclient (used for modes)
      * @param prefixModeManager The manager to use for prefix modes.
+     * @param userModeManager Mode manager to use for user modes.
      * @param name Channel name.
      */
     public IRCChannelInfo(final IRCParser parser, final PrefixModeManager prefixModeManager,
-            final String name) {
+            final ModeManager userModeManager, final String name) {
         map = new HashMap<>();
         this.parser = parser;
         this.prefixModeManager = prefixModeManager;
+        this.userModeManager = userModeManager;
         this.name = name;
     }
 
@@ -302,7 +306,7 @@ public class IRCChannelInfo implements ChannelInfo {
         }
         if (create) {
             return new IRCChannelClientInfo(parser, prefixModeManager,
-                    new IRCClientInfo(parser, client).setFake(true), this);
+                    new IRCClientInfo(parser, userModeManager, client).setFake(true), this);
         } else {
             return null;
         }

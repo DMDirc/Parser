@@ -40,6 +40,8 @@ import java.util.Map;
  */
 public class IRCClientInfo implements LocalClientInfo {
 
+    /** Mode manager to use for user modes. */
+    private final ModeManager userModeManager;
     /** Known nickname of client. */
     private String nickname = "";
     /** Known ident of client. */
@@ -70,14 +72,17 @@ public class IRCClientInfo implements LocalClientInfo {
     /**
      * Create a new client object from a hostmask.
      *
-     * @param tParser Refernce to parser that owns this channelclient (used for modes)
+     * @param tParser Reference to parser that owns this channelclient (used for modes)
+     * @param userModeManager Mode manager to use for user modes.
      * @param sHostmask Hostmask parsed by parseHost to get nickname
      * @see IRCClientInfo#parseHost
      */
-    public IRCClientInfo(final IRCParser tParser, final String sHostmask) {
+    public IRCClientInfo(final IRCParser tParser, final ModeManager userModeManager,
+            final String sHostmask) {
+        parser = tParser;
+        this.userModeManager = userModeManager;
         map = new HashMap<>();
         setUserBits(sHostmask, true);
-        parser = tParser;
     }
 
     @Override
@@ -378,7 +383,7 @@ public class IRCClientInfo implements LocalClientInfo {
 
     @Override
     public void alterMode(final boolean add, final Character mode) {
-        if (isFake() || !parser.userModes.isMode(mode)) {
+        if (isFake() || !userModeManager.isMode(mode)) {
             return;
         }
 

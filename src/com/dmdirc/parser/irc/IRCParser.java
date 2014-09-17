@@ -163,7 +163,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     /** Manager used to handle prefix modes. */
     private final PrefixModeManager prefixModes = new PrefixModeManager();
     /** Manager used to handle user modes (owxis etc). */
-    public final ModeManager userModes = new ModeManager();
+    private final ModeManager userModes = new ModeManager();
     /**
      * Manager used to handle channel boolean modes.
      * <p>
@@ -191,7 +191,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     /** Hashtable storing all known channels based on chanel name (inc prefix - in lowercase). */
     private final Map<String, IRCChannelInfo> channelList = new HashMap<>();
     /** Reference to the ClientInfo object that references ourself. */
-    private IRCClientInfo myself = new IRCClientInfo(this, "myself").setFake(true);
+    private IRCClientInfo myself;
     /** Hashtable storing all information gathered from 005. */
     public final Map<String, String> h005Info = new HashMap<>();
     /** difference in ms between our time and the servers time (used for timestampedIRC). */
@@ -283,7 +283,8 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     public IRCParser(final MyInfo myDetails, final URI uri) {
         super(uri);
 
-        myProcessingManager = new ProcessingManager(this, prefixModes);
+        myProcessingManager = new ProcessingManager(this, prefixModes, userModes);
+        myself = new IRCClientInfo(this, userModes, "myself").setFake(true);
 
         out = new OutputQueue();
         if (myDetails != null) {
@@ -688,7 +689,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
         setServerName("");
         networkName = "";
         lastLine = null;
-        myself = new IRCClientInfo(this, "myself").setFake(true);
+        myself = new IRCClientInfo(this, userModes, "myself").setFake(true);
 
         synchronized (serverInformationLines) {
             serverInformationLines.clear();
@@ -940,7 +941,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
         if (clientList.containsKey(sWho)) {
             return clientList.get(sWho);
         } else {
-            return new IRCClientInfo(this, details).setFake(true);
+            return new IRCClientInfo(this, userModes, details).setFake(true);
         }
     }
 
