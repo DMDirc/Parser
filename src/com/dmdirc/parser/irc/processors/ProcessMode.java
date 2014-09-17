@@ -38,6 +38,7 @@ import com.dmdirc.parser.irc.IRCChannelClientInfo;
 import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
+import com.dmdirc.parser.irc.PrefixModeManager;
 import com.dmdirc.parser.irc.ProcessingManager;
 
 import java.util.Calendar;
@@ -47,14 +48,20 @@ import java.util.Calendar;
  */
 public class ProcessMode extends IRCProcessor {
 
+    /** The manager to use to access prefix modes. */
+    private final PrefixModeManager prefixModeManager;
+
     /**
      * Create a new instance of the IRCProcessor Object.
      *
      * @param parser IRCParser That owns this IRCProcessor
+     * @param prefixModeManager The manager to use to access prefix modes.
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    public ProcessMode(final IRCParser parser, final ProcessingManager manager) {
+    public ProcessMode(final IRCParser parser, final PrefixModeManager prefixModeManager,
+            final ProcessingManager manager) {
         super(parser, manager);
+        this.prefixModeManager = prefixModeManager;
     }
 
     /**
@@ -166,7 +173,7 @@ public class ProcessMode extends IRCProcessor {
                 } else if (parser.chanModesOther.containsKey(cMode)) {
                     nValue = parser.chanModesOther.get(cMode);
                     bBooleanMode = false;
-                } else if (parser.prefixModes.isPrefixMode(cMode)) {
+                } else if (prefixModeManager.isPrefixMode(cMode)) {
                     // (de) OP/Voice someone
                     if (sModestr.length <= nParam) {
                         parser.callErrorInfo(new ParserError(ParserError.ERROR_FATAL + ParserError.ERROR_USER, "Broken Modes. Parameter required but not given.", parser.getLastLine()));

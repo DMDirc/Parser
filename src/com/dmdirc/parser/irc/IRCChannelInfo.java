@@ -63,7 +63,9 @@ public class IRCChannelInfo implements ChannelInfo {
     /** Known boolean-modes for channel. */
     private String modes;
     /** Reference to the parser object that owns this channel, Used for modes. */
-    private final IRCParser parser; // Reference to parser object that owns this channel. Used for Modes
+    private final IRCParser parser;
+    /** Mode manager to use for prefix mode information. */
+    private final PrefixModeManager prefixModeManager;
     /** Channel Name. */
     private final String name;
     /** Hashtable containing references to ChannelClients. */
@@ -94,11 +96,14 @@ public class IRCChannelInfo implements ChannelInfo {
      * Create a new channel object.
      *
      * @param parser Reference to parser that owns this channelclient (used for modes)
+     * @param prefixModeManager The manager to use for prefix modes.
      * @param name Channel name.
      */
-    public IRCChannelInfo(final IRCParser parser, final String name) {
+    public IRCChannelInfo(final IRCParser parser, final PrefixModeManager prefixModeManager,
+            final String name) {
         map = new HashMap<>();
         this.parser = parser;
+        this.prefixModeManager = prefixModeManager;
         this.name = name;
     }
 
@@ -296,7 +301,8 @@ public class IRCChannelInfo implements ChannelInfo {
             return clients.get(who);
         }
         if (create) {
-            return new IRCChannelClientInfo(parser, new IRCClientInfo(parser, client).setFake(true), this);
+            return new IRCChannelClientInfo(parser, prefixModeManager,
+                    new IRCClientInfo(parser, client).setFake(true), this);
         } else {
             return null;
         }
@@ -323,7 +329,7 @@ public class IRCChannelInfo implements ChannelInfo {
     public IRCChannelClientInfo addClient(final IRCClientInfo cClient) {
         IRCChannelClientInfo cTemp = getChannelClient(cClient);
         if (cTemp == null) {
-            cTemp = new IRCChannelClientInfo(parser, cClient, this);
+            cTemp = new IRCChannelClientInfo(parser, prefixModeManager, cClient, this);
             clients.put(parser.getStringConverter().toLowerCase(cTemp.getClient().getNickname()), cTemp);
         }
         return cTemp;
@@ -615,7 +621,7 @@ public class IRCChannelInfo implements ChannelInfo {
             }
         } else {
             // May need a param
-            if (parser.prefixModes.isPrefixMode(mode)) {
+            if (prefixModeManager.isPrefixMode(mode)) {
                 modestr = modestr + ' ' + parameter;
             } else if (parser.chanModesOther.containsKey(mode)) {
                 modeint = parser.chanModesOther.get(mode);

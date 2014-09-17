@@ -29,6 +29,7 @@ import com.dmdirc.parser.irc.IRCChannelClientInfo;
 import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
+import com.dmdirc.parser.irc.PrefixModeManager;
 import com.dmdirc.parser.irc.ProcessingManager;
 
 /**
@@ -36,14 +37,20 @@ import com.dmdirc.parser.irc.ProcessingManager;
  */
 public class ProcessNames extends IRCProcessor {
 
+    /** The manager to use to access prefix modes. */
+    private final PrefixModeManager prefixModeManager;
+
     /**
      * Create a new instance of the IRCProcessor Object.
      *
      * @param parser IRCParser That owns this IRCProcessor
+     * @param prefixModeManager The manager to use to access prefix modes.
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    public ProcessNames(final IRCParser parser, final ProcessingManager manager) {
+    public ProcessNames(final IRCParser parser, final PrefixModeManager prefixModeManager,
+            final ProcessingManager manager) {
         super(parser, manager);
+        this.prefixModeManager = prefixModeManager;
     }
 
     /**
@@ -99,8 +106,8 @@ public class ProcessNames extends IRCProcessor {
                 // This next bit of code allows for any ircd which decides to use @+Foo in names
                 for (int i = 0; i < sName1.length(); i++) {
                     final char cMode = sName1.charAt(i);
-                    if (parser.prefixModes.isPrefix(cMode)) {
-                        sModes.append(parser.prefixModes.getModeFor(cMode));
+                    if (prefixModeManager.isPrefix(cMode)) {
+                        sModes.append(prefixModeManager.getModeFor(cMode));
                     } else {
                         sName = sName1.substring(i);
                         break;

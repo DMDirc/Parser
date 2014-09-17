@@ -33,6 +33,7 @@ import com.dmdirc.parser.irc.IRCChannelClientInfo;
 import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
+import com.dmdirc.parser.irc.PrefixModeManager;
 import com.dmdirc.parser.irc.ProcessingManager;
 import com.dmdirc.parser.irc.ProcessorNotFoundException;
 
@@ -43,14 +44,20 @@ import java.util.Arrays;
  */
 public class ProcessJoin extends IRCProcessor {
 
+    /** The manager to use to access prefix modes. */
+    private final PrefixModeManager prefixModeManager;
+
     /**
      * Create a new instance of the IRCProcessor Object.
      *
      * @param parser IRCParser That owns this IRCProcessor
+     * @param prefixModeManager The manager to use to access prefix modes.
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    public ProcessJoin(final IRCParser parser, final ProcessingManager manager) {
+    public ProcessJoin(final IRCParser parser, final PrefixModeManager prefixModeManager,
+            final ProcessingManager manager) {
         super(parser, manager);
+        this.prefixModeManager = prefixModeManager;
     }
 
     /**
@@ -147,7 +154,7 @@ public class ProcessJoin extends IRCProcessor {
                 }
             }
 
-            iChannel = new IRCChannelInfo(parser, channelName);
+            iChannel = new IRCChannelInfo(parser, prefixModeManager, channelName);
             // Add ourself to the channel, this will be overridden by the NAMES reply
             iChannel.addClient(iClient);
             parser.addChannel(iChannel);

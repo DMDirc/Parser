@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
 
 public class ChannelInfoTest {
 
-    final IRCChannelInfo ci = new IRCChannelInfo(null, "name");
+    final IRCChannelInfo ci = new IRCChannelInfo(null, null, "name");
 
     @Test
     public void testGetName() {
