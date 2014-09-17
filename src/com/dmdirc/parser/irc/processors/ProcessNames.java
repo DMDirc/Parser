@@ -65,7 +65,7 @@ public class ProcessNames extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String[] token) {
+    public void process(final String sParam, final String... token) {
         final IRCChannelInfo iChannel;
         if ("366".equals(sParam)) {
             // End of names
@@ -142,11 +142,10 @@ public class ProcessNames extends IRCProcessor {
      * @see ChannelTopicListener
      * @param cChannel Channel that topic was set on
      * @param bIsJoinTopic True when getting topic on join, false if set by user/server
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callChannelTopic(final ChannelInfo cChannel, final boolean bIsJoinTopic) {
+    protected void callChannelTopic(final ChannelInfo cChannel, final boolean bIsJoinTopic) {
         ((IRCChannelInfo) cChannel).setHadTopic();
-        return getCallbackManager().getCallbackType(ChannelTopicListener.class).call(cChannel, bIsJoinTopic);
+        getCallbackManager().getCallbackType(ChannelTopicListener.class).call(cChannel, bIsJoinTopic);
     }
 
     /**
@@ -154,10 +153,9 @@ public class ProcessNames extends IRCProcessor {
      *
      * @see ChannelNamesListener
      * @param cChannel Channel which the names reply is for
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callChannelGotNames(final ChannelInfo cChannel) {
-        return getCallbackManager().getCallbackType(ChannelNamesListener.class).call(cChannel);
+    protected void callChannelGotNames(final ChannelInfo cChannel) {
+        getCallbackManager().getCallbackType(ChannelNamesListener.class).call(cChannel);
     }
 
     /**

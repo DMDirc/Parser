@@ -56,16 +56,13 @@ public class ProcessNick extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String[] token) {
-        final IRCClientInfo iClient;
-        IRCChannelClientInfo iChannelClient;
-        final String oldNickname;
+    public void process(final String sParam, final String... token) {
 
-        iClient = getClientInfo(token[0]);
+        final IRCClientInfo iClient = getClientInfo(token[0]);
         if (iClient == null) {
             return;
         }
-        oldNickname = parser.getStringConverter().toLowerCase(iClient.getNickname());
+        final String oldNickname = parser.getStringConverter().toLowerCase(iClient.getNickname());
         // Remove the client from the known clients list
         final boolean isSameNick = parser.getStringConverter().equalsIgnoreCase(oldNickname, token[token.length - 1]);
 
@@ -84,7 +81,7 @@ public class ProcessNick extends IRCProcessor {
 
             for (IRCChannelInfo iChannel : parser.getChannels()) {
                 // Find the user (using the old nickname)
-                iChannelClient = iChannel.getChannelClient(oldNickname);
+                final IRCChannelClientInfo iChannelClient = iChannel.getChannelClient(oldNickname);
                 if (iChannelClient != null) {
                     // Rename them. This uses the old nickname (the key in the hashtable)
                     // and the channelClient object has access to the new nickname (by way
@@ -103,26 +100,25 @@ public class ProcessNick extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelNickChanged Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.ChannelNickChangeListener
+     * @see ChannelNickChangeListener
      * @param cChannel One of the channels that the user is on
      * @param cChannelClient Client changing nickname
      * @param sOldNick Nickname before change
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callChannelNickChanged(final ChannelInfo cChannel, final ChannelClientInfo cChannelClient, final String sOldNick) {
-        return getCallbackManager().getCallbackType(ChannelNickChangeListener.class).call(cChannel, cChannelClient, sOldNick);
+    protected void callChannelNickChanged(final ChannelInfo cChannel,
+            final ChannelClientInfo cChannelClient, final String sOldNick) {
+        getCallbackManager().getCallbackType(ChannelNickChangeListener.class).call(cChannel, cChannelClient, sOldNick);
     }
 
     /**
      * Callback to all objects implementing the NickChanged Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.NickChangeListener
+     * @see NickChangeListener
      * @param cClient Client changing nickname
      * @param sOldNick Nickname before change
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callNickChanged(final ClientInfo cClient, final String sOldNick) {
-        return getCallbackManager().getCallbackType(NickChangeListener.class).call(cClient, sOldNick);
+    protected void callNickChanged(final ClientInfo cClient, final String sOldNick) {
+        getCallbackManager().getCallbackType(NickChangeListener.class).call(cClient, sOldNick);
     }
 
     /**

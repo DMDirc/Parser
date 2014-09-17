@@ -48,7 +48,7 @@ public class ProcessAccount extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String[] token) {
+    public void process(final String sParam, final String... token) {
         // :nick!user@host ACCOUNT accountname
         final IRCClientInfo iClient = getClientInfo(token[0]);
         if (iClient != null) {

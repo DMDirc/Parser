@@ -61,7 +61,7 @@ public class ProcessNickInUse extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String[] token) {
+    public void process(final String sParam, final String... token) {
         if (!callNickInUse(token[3])) {
             // Manually handle nick in use.
             callDebugInfo(IRCParser.DEBUG_INFO, "No Nick in use Handler.");
@@ -87,7 +87,7 @@ public class ProcessNickInUse extends IRCProcessor {
      * Callback to all objects implementing the NickInUse Callback.
      *
      * @param nickname Nickname that was wanted.
-     * @see com.dmdirc.parser.interfaces.callbacks.NickInUseListener
+     * @see NickInUseListener
      * @return true if a method was called, false otherwise
      */
     protected boolean callNickInUse(final String nickname) {

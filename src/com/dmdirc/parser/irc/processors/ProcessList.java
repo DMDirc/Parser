@@ -50,7 +50,7 @@ public class ProcessList extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String[] token) {
+    public void process(final String sParam, final String... token) {
         // :port80b.se.quakenet.org 321 MD87 Channel :Users  Name
         // :port80b.se.quakenet.org 322 MD87 #DMDirc 10 :
         // :port80b.se.quakenet.org 323 MD87 :End of /LIST
