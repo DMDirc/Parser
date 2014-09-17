@@ -1,0 +1,59 @@
+apply plugin: 'java'
+
+group = 'com.dmdirc'
+
+libsDirName = '../dist'
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src'
+        }
+    }
+    test {
+        java {
+            srcDir 'test'
+        }
+        resources {
+            srcDir 'test-res'
+        }
+    }
+    irc {
+        java {
+            srcDir 'src/com/dmdirc/parser/irc'
+        }
+    }
+}
+
+task commonJar(type: Jar) {
+    archiveName = "common.jar"
+    from(sourceSets.main.output) {  
+        exclude "com/dmdirc/parser/irc"
+    }  
+}
+
+task ircJar(type: Jar) {
+    archiveName = "irc.jar"
+    from(sourceSets.main.output) {  
+        exclude "com/dmdirc/parser/common"
+        exclude "com/dmdirc/parser/interfaces"
+    }  
+}
+
+jar.enabled = false
+jar.dependsOn commonJar
+jar.dependsOn ircJar
+
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
+repositories.mavenCentral()
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.+'
+    testCompile group: 'org.mockito', name: 'mockito-all', version: '1.+'
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.1'
+}
