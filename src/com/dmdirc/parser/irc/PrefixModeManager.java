@@ -115,6 +115,15 @@ public class PrefixModeManager {
     }
 
     /**
+     * Gets the set of all known prefixes.
+     *
+     * @return Set of known prefixes, in increasing order of importance.
+     */
+    public String getPrefixes() {
+        return prefixes;
+    }
+
+    /**
      * Adds a new mode. Modes must be added in increasing order of importance.
      *
      * @param mode The mode that appears in mode strings (e.g. 'o').
