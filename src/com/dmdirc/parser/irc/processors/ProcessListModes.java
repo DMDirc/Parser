@@ -57,20 +57,17 @@ public class ProcessListModes extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String[] token) {
+    public void process(final String sParam, final String... token) {
         final IRCChannelInfo channel = getChannel(token[3]);
         final ServerType serverType = parser.getServerType();
-        String item = "";
-        String owner = "";
-        byte tokenStart = 4; // Where do the relevent tokens start?
-        boolean isCleverMode = false;
-        long time = 0;
-        char mode = ' ';
-        boolean isItem = true; // true if item listing, false if "end of .." item
         if (channel == null) {
             return;
         }
 
+        boolean isItem = true; // true if item listing, false if "end of .." item
+        char mode = ' ';
+        boolean isCleverMode = false;
+        byte tokenStart = 4; // Where do the relevent tokens start?
         if ("367".equals(sParam) || "368".equals(sParam)) {
             // Ban List/Item.
             // (Also used for +d and +q on dancer/hyperion... -_-)
@@ -81,23 +78,25 @@ public class ProcessListModes extends IRCProcessor {
             // Except / Exempt List etc
             mode = 'e';
             isItem = "348".equals(sParam);
-        } else if (sParam.equals("346") || sParam.equals("347")) {
+        } else if ("346".equals(sParam) || "347".equals(sParam)) {
             // Invite List
             mode = 'I';
-            isItem = sParam.equals("346");
-        } else if (sParam.equals("940") || sParam.equals("941")) {
+            isItem = "346".equals(sParam);
+        } else if ("940".equals(sParam) || "941".equals(sParam)) {
             // Censored words List
             mode = 'g';
-            isItem = sParam.equals("941");
-        } else if ((serverType == ServerType.INSPIRCD) && (sParam.equals("910") || sParam.equals("911"))) {
+            isItem = "941".equals(sParam);
+        } else if (serverType == ServerType.INSPIRCD && ("910".equals(sParam) ||
+                "911".equals(sParam))) {
             // Channel Access List
             mode = 'w';
-            isItem = sParam.equals("910");
-        } else if ((serverType == ServerType.INSPIRCD) && (sParam.equals("954") || sParam.equals("953"))) {
+            isItem = "910".equals(sParam);
+        } else if (serverType == ServerType.INSPIRCD && ("954".equals(sParam) ||
+                "953".equals(sParam))) {
             // Channel exemptchanops List
             mode = 'X';
-            isItem = sParam.equals("954");
-        } else if (sParam.equals("344") || sParam.equals("345")) {
+            isItem = "954".equals(sParam);
+        } else if ("344".equals(sParam) || "345".equals(sParam)) {
             // Reop List, or bad words list, or quiet list. god damn.
             if (serverType == ServerType.EUIRCD) {
                 mode = 'w';
@@ -106,15 +105,17 @@ public class ProcessListModes extends IRCProcessor {
             } else {
                 mode = 'R';
             }
-            isItem = sParam.equals("344");
-        } else if (ServerTypeGroup.OWNER_386.isMember(serverType) && (sParam.equals("386") || sParam.equals("387"))) {
+            isItem = "344".equals(sParam);
+        } else if (ServerTypeGroup.OWNER_386.isMember(serverType) && ("386".equals(sParam) ||
+                "387".equals(sParam))) {
             // Channel Owner list
             mode = 'q';
-            isItem = sParam.equals("387");
-        } else if (ServerTypeGroup.PROTECTED_388.isMember(serverType) && (sParam.equals("388") || sParam.equals("389"))) {
+            isItem = "387".equals(sParam);
+        } else if (ServerTypeGroup.PROTECTED_388.isMember(serverType) && ("388".equals(sParam) ||
+                "389".equals(sParam))) {
             // Protected User list
             mode = 'a';
-            isItem = sParam.equals("389");
+            isItem = "389".equals(sParam);
         } else if (sParam.equals(parser.h005Info.get("LISTMODE")) || sParam.equals(parser.h005Info.get("LISTMODEEND"))) {
             // Support for potential future decent mode listing in the protocol
             //
@@ -190,7 +191,7 @@ public class ProcessListModes extends IRCProcessor {
                 final int identstart = token[tokenStart].indexOf('!');
                 final int hoststart = token[tokenStart].indexOf('@');
                 // Check that ! and @ are both in the string - as required by +b and +q
-                if ((identstart >= 0) && (identstart < hoststart)) {
+                if (identstart >= 0 && identstart < hoststart) {
                     if (serverType == ServerType.HYPERION && token[tokenStart].charAt(0) == '%') {
                         mode = 'q';
                     } else {
@@ -208,7 +209,7 @@ public class ProcessListModes extends IRCProcessor {
                     list.clear();
                     if (ServerTypeGroup.FREENODE.isMember(serverType) && (mode == 'b' || mode == 'q')) {
                         // Also clear the other list if b or q.
-                        final Character otherMode = (mode == 'b') ? 'q' : 'b';
+                        final Character otherMode = mode == 'b' ? 'q' : 'b';
 
                         if (!channel.getAddState(otherMode)) {
                             callDebugInfo(IRCParser.DEBUG_INFO, "New List Mode Batch (" + mode + "): Clearing!");
@@ -224,16 +225,19 @@ public class ProcessListModes extends IRCProcessor {
                 channel.setAddState(mode, true);
             }
 
-            if (token.length > (tokenStart + 2)) {
+            long time = 0;
+            if (token.length > tokenStart + 2) {
                 try {
                     time = Long.parseLong(token[tokenStart + 2]);
                 } catch (NumberFormatException e) {
                     time = 0;
                 }
             }
-            if (token.length > (tokenStart + 1)) {
+            String owner = "";
+            if (token.length > tokenStart + 1) {
                 owner = token[tokenStart + 1];
             }
+            String item = "";
             if (token.length > tokenStart) {
                 item = token[tokenStart];
             }
@@ -285,12 +289,11 @@ public class ProcessListModes extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelGotListModes Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.ChannelListModeListener
+     * @see ChannelListModeListener
      * @param cChannel Channel which the ListModes reply is for
      * @param mode the mode that we got list modes for.
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callChannelGotListModes(final ChannelInfo cChannel, final char mode) {
-        return getCallbackManager().getCallbackType(ChannelListModeListener.class).call(cChannel, mode);
+    protected void callChannelGotListModes(final ChannelInfo cChannel, final char mode) {
+        getCallbackManager().getCallbackType(ChannelListModeListener.class).call(cChannel, mode);
     }
 }

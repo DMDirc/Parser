@@ -48,7 +48,7 @@ public class ProcessInvite extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String[] token) {
+    public void process(final String sParam, final String... token) {
         // :Tobavaj!shane@Tobavaj.users.quakenet.org INVITE Dataforce #dataforceisgod 1188846462
         if (token.length > 2) {
             callInvite(token[0].substring(1), token[3]);
@@ -58,13 +58,12 @@ public class ProcessInvite extends IRCProcessor {
     /**
      * Callback to all objects implementing the Invite Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.InviteListener
+     * @see InviteListener
      * @param userHost The hostname of the person who invited us
      * @param channel The name of the channel we were invited to
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callInvite(final String userHost, final String channel) {
-        return getCallbackManager().getCallbackType(InviteListener.class).call(userHost, channel);
+    protected void callInvite(final String userHost, final String channel) {
+        getCallbackManager().getCallbackType(InviteListener.class).call(userHost, channel);
     }
 
     /**

@@ -56,44 +56,39 @@ public class ProcessKick extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String[] token) {
+    public void process(final String sParam, final String... token) {
         callDebugInfo(IRCParser.DEBUG_INFO, "processKick: %s | %s", sParam, Arrays.toString(token));
 
-        final IRCChannelClientInfo iChannelClient;
-        final IRCChannelClientInfo iChannelKicker;
-        final IRCChannelInfo iChannel;
-        final IRCClientInfo iClient;
-        final IRCClientInfo iKicker;
-        String sReason = "";
-
-        iClient = getClientInfo(token[3]);
-        iKicker = getClientInfo(token[0]);
-        iChannel = getChannel(token[2]);
+        final IRCClientInfo iClient = getClientInfo(token[3]);
+        final IRCClientInfo iKicker = getClientInfo(token[0]);
+        final IRCChannelInfo iChannel = getChannel(token[2]);
 
         if (iClient == null) {
             return;
         }
 
-        if ((IRCParser.ALWAYS_UPDATECLIENT && iKicker != null) && iKicker.getHostname().isEmpty()) {
+        if (IRCParser.ALWAYS_UPDATECLIENT && iKicker != null && iKicker.getHostname().isEmpty()) {
             // To facilitate dmdirc formatter, get user information
             iKicker.setUserBits(token[0], false);
         }
 
         if (iChannel == null) {
             if (iClient != parser.getLocalClient()) {
-                callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got kick for channel (" + token[2] + ") that I am not on. [User: " + token[3] + "]", parser.getLastLine()));
+                callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got kick for channel (" + token[2] + ") that I am not on. [User: " + token[3] +
+
+                        ']', parser.getLastLine()));
             }
-            return;
         } else {
+            String sReason = "";
             if (token.length > 4) {
                 sReason = token[token.length - 1];
             }
-            iChannelClient = iChannel.getChannelClient(iClient);
+            final IRCChannelClientInfo iChannelClient = iChannel.getChannelClient(iClient);
             if (iChannelClient == null) {
                 // callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got kick for channel ("+token[2]+") for a non-existant user. [User: "+token[0]+"]", parser.getLastLine()));
                 return;
             }
-            iChannelKicker = iChannel.getChannelClient(token[0]);
+            final IRCChannelClientInfo iChannelKicker = iChannel.getChannelClient(token[0]);
             if (parser.getRemoveAfterCallback()) {
                 callDebugInfo(IRCParser.DEBUG_INFO, "processKick: calling kick before. {%s | %s | %s | %s | %s}", iChannel, iChannelClient, iChannelKicker, sReason, token[0]);
                 callChannelKick(iChannel, iChannelClient, iChannelKicker, sReason, token[0]);
@@ -115,16 +110,17 @@ public class ProcessKick extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelKick Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.ChannelKickListener
+     * @see ChannelKickListener
      * @param cChannel Channel where the kick took place
      * @param cKickedClient ChannelClient that got kicked
      * @param cKickedByClient ChannelClient that did the kicking (may be null if server)
      * @param sReason Reason for kick (may be "")
      * @param sKickedByHost Hostname of Kicker (or servername)
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callChannelKick(final ChannelInfo cChannel, final ChannelClientInfo cKickedClient, final ChannelClientInfo cKickedByClient, final String sReason, final String sKickedByHost) {
-        return getCallbackManager().getCallbackType(ChannelKickListener.class).call(cChannel, cKickedClient, cKickedByClient, sReason, sKickedByHost);
+    protected void callChannelKick(final ChannelInfo cChannel,
+            final ChannelClientInfo cKickedClient, final ChannelClientInfo cKickedByClient,
+            final String sReason, final String sKickedByHost) {
+        getCallbackManager().getCallbackType(ChannelKickListener.class).call(cChannel, cKickedClient, cKickedByClient, sReason, sKickedByHost);
     }
 
     /**

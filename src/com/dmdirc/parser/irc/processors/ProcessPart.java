@@ -54,18 +54,15 @@ public class ProcessPart extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String[] token) {
+    public void process(final String sParam, final String... token) {
         // :nick!ident@host PART #Channel
         // :nick!ident@host PART #Channel :reason
         if (token.length < 3) {
             return;
         }
-        final IRCClientInfo iClient;
-        final IRCChannelInfo iChannel;
-        final IRCChannelClientInfo iChannelClient;
 
-        iClient = getClientInfo(token[0]);
-        iChannel = getChannel(token[2]);
+        final IRCClientInfo iClient = getClientInfo(token[0]);
+        final IRCChannelInfo iChannel = getChannel(token[2]);
 
         if (iClient == null) {
             return;
@@ -76,15 +73,16 @@ public class ProcessPart extends IRCProcessor {
         }
         if (iChannel == null) {
             if (iClient != parser.getLocalClient()) {
-                callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got part for channel (" + token[2] + ") that I am not on. [User: " + token[0] + "]", parser.getLastLine()));
+                callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got part for channel (" + token[2] + ") that I am not on. [User: " + token[0] +
+
+                        ']', parser.getLastLine()));
             }
-            return;
         } else {
             String sReason = "";
             if (token.length > 3) {
                 sReason = token[token.length - 1];
             }
-            iChannelClient = iChannel.getChannelClient(iClient);
+            final IRCChannelClientInfo iChannelClient = iChannel.getChannelClient(iClient);
             if (iChannelClient == null) {
                 // callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got part for channel ("+token[2]+") for a non-existant user. [User: "+token[0]+"]", parser.getLastLine()));
                 return;
@@ -107,14 +105,14 @@ public class ProcessPart extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelPart Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.ChannelPartListener
+     * @see ChannelPartListener
      * @param cChannel Channel that the user parted
      * @param cChannelClient Client that parted
      * @param sReason Reason given for parting (May be "")
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callChannelPart(final ChannelInfo cChannel, final ChannelClientInfo cChannelClient, final String sReason) {
-        return getCallbackManager().getCallbackType(ChannelPartListener.class).call(cChannel, cChannelClient, sReason);
+    protected void callChannelPart(final ChannelInfo cChannel,
+            final ChannelClientInfo cChannelClient, final String sReason) {
+        getCallbackManager().getCallbackType(ChannelPartListener.class).call(cChannel, cChannelClient, sReason);
     }
 
     /**

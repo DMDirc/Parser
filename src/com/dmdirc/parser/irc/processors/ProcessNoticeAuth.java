@@ -48,19 +48,18 @@ public class ProcessNoticeAuth extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String[] token) {
+    public void process(final String sParam, final String... token) {
         callNoticeAuth(token[token.length - 1]);
     }
 
     /**
      * Callback to all objects implementing the NoticeAuth Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.AuthNoticeListener
+     * @see AuthNoticeListener
      * @param data Incomming Line.
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callNoticeAuth(final String data) {
-        return getCallbackManager().getCallbackType(AuthNoticeListener.class).call(data);
+    protected void callNoticeAuth(final String data) {
+        getCallbackManager().getCallbackType(AuthNoticeListener.class).call(data);
     }
 
     /**

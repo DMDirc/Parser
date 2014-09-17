@@ -56,7 +56,7 @@ public class Process004005 extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String[] token) {
+    public void process(final String sParam, final String... token) {
         switch (sParam) {
             case "002":
                 process002();
@@ -114,7 +114,7 @@ public class Process004005 extends IRCProcessor {
      *
      * @param token The tokenised line.
      */
-    private void process003(final String[] token) {
+    private void process003(final String... token) {
         parser.h005Info.put("003IRCD", token[token.length - 1]);
     }
 
@@ -123,7 +123,7 @@ public class Process004005 extends IRCProcessor {
      *
      * @param token The tokenised line.
      */
-    private void process004(final String[] token) {
+    private void process004(final String... token) {
         final boolean multiParam = token.length > 4;
         int i = multiParam ? 4 : 1;
         final String[] bits = multiParam ? token : token[3].split(" ");
@@ -159,7 +159,7 @@ public class Process004005 extends IRCProcessor {
      *
      * @param token The tokenised line.
      */
-    private void process005(final String[] token) {
+    private void process005(final String... token) {
         for (int i = 3; i < token.length; i++) {
             final String[] bits = token[i].split("=", 2);
 

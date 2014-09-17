@@ -77,7 +77,7 @@ public class ProcessJoin extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String[] token) {
+    public void process(final String sParam, final String... token) {
         callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: %s | %s", sParam, Arrays.toString(token));
 
         if ("329".equals(sParam)) {
@@ -97,15 +97,13 @@ public class ProcessJoin extends IRCProcessor {
             if (token.length < 3) {
                 return;
             }
-            IRCClientInfo iClient;
-            IRCChannelInfo iChannel;
-            final IRCChannelClientInfo iChannelClient;
-            final String channelName;
             final boolean extendedJoin = parser.getCapabilityState("extended-join") == CapabilityState.ENABLED;
-            final String accountName;
-            final String realName;
 
-            iClient = getClientInfo(token[0]);
+
+            IRCClientInfo iClient = getClientInfo(token[0]);
+            final String realName;
+            final String accountName;
+            final String channelName;
             if (extendedJoin) {
                 // :nick!ident@host JOIN #Channel accountName :Real Name
                 channelName = token[2];
@@ -116,7 +114,7 @@ public class ProcessJoin extends IRCProcessor {
                 accountName = "*";
                 realName = "";
             }
-            iChannel = parser.getChannel(token[2]);
+            IRCChannelInfo iChannel = parser.getChannel(token[2]);
 
             callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: client: %s", iClient);
             callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: channel: %s", iChannel);
@@ -153,7 +151,7 @@ public class ProcessJoin extends IRCProcessor {
                     // This is only done if we are already the channel, and it isn't us that
                     // joined.
                     callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Adding client to channel.");
-                    iChannelClient = iChannel.addClient(iClient);
+                    final IRCChannelClientInfo iChannelClient = iChannel.addClient(iClient);
                     callChannelJoin(iChannel, iChannelClient);
                     callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Added client to channel.");
                     return;
@@ -178,24 +176,23 @@ public class ProcessJoin extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelJoin Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.ChannelJoinListener
+     * @see ChannelJoinListener
      * @param cChannel Channel Object
      * @param cChannelClient ChannelClient object for new person
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callChannelJoin(final ChannelInfo cChannel, final ChannelClientInfo cChannelClient) {
-        return getCallbackManager().getCallbackType(ChannelJoinListener.class).call(cChannel, cChannelClient);
+    protected void callChannelJoin(final ChannelInfo cChannel,
+            final ChannelClientInfo cChannelClient) {
+        getCallbackManager().getCallbackType(ChannelJoinListener.class).call(cChannel, cChannelClient);
     }
 
     /**
      * Callback to all objects implementing the ChannelSelfJoin Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.ChannelSelfJoinListener
+     * @see ChannelSelfJoinListener
      * @param cChannel Channel Object
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callChannelSelfJoin(final ChannelInfo cChannel) {
-        return getCallbackManager().getCallbackType(ChannelSelfJoinListener.class).call(cChannel);
+    protected void callChannelSelfJoin(final ChannelInfo cChannel) {
+        getCallbackManager().getCallbackType(ChannelSelfJoinListener.class).call(cChannel);
     }
 
     /**

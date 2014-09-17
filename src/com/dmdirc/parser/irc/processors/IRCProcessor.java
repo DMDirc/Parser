@@ -25,6 +25,8 @@ package com.dmdirc.parser.irc.processors;
 import com.dmdirc.parser.common.CallbackManager;
 import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.common.QueuePriority;
+import com.dmdirc.parser.interfaces.callbacks.DebugInfoListener;
+import com.dmdirc.parser.interfaces.callbacks.ErrorInfoListener;
 import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
@@ -57,7 +59,7 @@ public abstract class IRCProcessor {
     /**
      * Callback to all objects implementing the IErrorInfo Interface.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.ErrorInfoListener
+     * @see ErrorInfoListener
      * @param errorInfo ParserError object representing the error.
      */
     protected final void callErrorInfo(final ParserError errorInfo) {
@@ -67,7 +69,7 @@ public abstract class IRCProcessor {
     /**
      * Callback to all objects implementing the DebugInfo Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.DebugInfoListener
+     * @see DebugInfoListener
      * @param level Debugging Level (DEBUG_INFO, ndSocket etc)
      * @param data Debugging Information
      * @param args Formatting String Options
@@ -79,7 +81,7 @@ public abstract class IRCProcessor {
     /**
      * Callback to all objects implementing the DebugInfo Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.DebugInfoListener
+     * @see DebugInfoListener
      * @param level Debugging Level (DEBUG_INFO, ndSocket etc)
      * @param data Debugging Information
      */
@@ -151,7 +153,7 @@ public abstract class IRCProcessor {
      * @param sParam Type of line to process ("005", "PRIVMSG" etc)
      * @param token IRCTokenised line to process
      */
-    public abstract void process(final String sParam, final String[] token);
+    public abstract void process(final String sParam, final String... token);
 
     /**
      * What does this IRCProcessor handle.
@@ -165,12 +167,12 @@ public abstract class IRCProcessor {
      * @return the name of this processor
      */
     public final String getName() {
-        final Package thisPackage = this.getClass().getPackage();
+        final Package thisPackage = getClass().getPackage();
         int packageLength = 0;
         if (thisPackage != null) {
             packageLength = thisPackage.getName().length() + 1;
         }
-        return this.getClass().getName().substring(packageLength);
+        return getClass().getName().substring(packageLength);
     }
 
     /**
@@ -178,7 +180,7 @@ public abstract class IRCProcessor {
      * @return lower case name of this processor
      */
     public final String getLowerName() {
-        return this.getName().toLowerCase();
+        return getName().toLowerCase();
     }
 
     /**
@@ -187,6 +189,6 @@ public abstract class IRCProcessor {
      */
     @Override
     public final String toString() {
-        return this.getName();
+        return getName();
     }
 }

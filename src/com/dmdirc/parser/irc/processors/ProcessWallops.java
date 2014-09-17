@@ -50,7 +50,7 @@ public class ProcessWallops extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String[] token) {
+    public void process(final String sParam, final String... token) {
         if (token.length < 3) {
             return;
         }
@@ -77,37 +77,34 @@ public class ProcessWallops extends IRCProcessor {
     /**
      * Callback to all objects implementing the Wallop Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.WallopListener
-     * @param host Host of the user who sent the wallop
+     * @see WallopListener
      * @param message The message
-     * @return true if a method was called, false otherwise
+     * @param host Host of the user who sent the wallop
      */
-    protected boolean callWallop(final String message, final String host) {
-        return getCallbackManager().getCallbackType(WallopListener.class).call(message, host);
+    protected void callWallop(final String message, final String host) {
+        getCallbackManager().getCallbackType(WallopListener.class).call(message, host);
     }
 
     /**
      * Callback to all objects implementing the Walluser Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.WalluserListener
-     * @param host Host of the user who sent the walluser
+     * @see WalluserListener
      * @param message The message
-     * @return true if a method was called, false otherwise
+     * @param host Host of the user who sent the walluser
      */
-    protected boolean callWalluser(final String message, final String host) {
-        return getCallbackManager().getCallbackType(WalluserListener.class).call(message, host);
+    protected void callWalluser(final String message, final String host) {
+        getCallbackManager().getCallbackType(WalluserListener.class).call(message, host);
     }
 
     /**
      * Callback to all objects implementing the WallDesync Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.WallDesyncListener
-     * @param host Host of the user who sent the WallDesync
+     * @see WallDesyncListener
      * @param message The message
-     * @return true if a method was called, false otherwise
+     * @param host Host of the user who sent the WallDesync
      */
-    protected boolean callWallDesync(final String message, final String host) {
-        return getCallbackManager().getCallbackType(WallDesyncListener.class).call(message, host);
+    protected void callWallDesync(final String message, final String host) {
+        getCallbackManager().getCallbackType(WallDesyncListener.class).call(message, host);
     }
 
     /**

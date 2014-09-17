@@ -51,7 +51,7 @@ public class ProcessTopic extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String[] token) {
+    public void process(final String sParam, final String... token) {
         final IRCChannelInfo iChannel;
         switch (sParam) {
             case "332":
@@ -99,14 +99,13 @@ public class ProcessTopic extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelTopic Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.ChannelTopicListener
+     * @see ChannelTopicListener
      * @param cChannel Channel that topic was set on
      * @param bIsJoinTopic True when getting topic on join, false if set by user/server
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callChannelTopic(final ChannelInfo cChannel, final boolean bIsJoinTopic) {
+    protected void callChannelTopic(final ChannelInfo cChannel, final boolean bIsJoinTopic) {
         ((IRCChannelInfo) cChannel).setHadTopic();
-        return getCallbackManager().getCallbackType(ChannelTopicListener.class).call(cChannel, bIsJoinTopic);
+        getCallbackManager().getCallbackType(ChannelTopicListener.class).call(cChannel, bIsJoinTopic);
     }
 
     /**
