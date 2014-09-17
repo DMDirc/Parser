@@ -22,10 +22,16 @@
 
 package com.dmdirc.parser.common;
 
+import com.dmdirc.parser.irc.IRCAuthenticator;
+
 import java.io.IOException;
+import java.net.Inet6Address;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.net.Socket;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.net.SocketFactory;
 
@@ -40,6 +46,9 @@ public abstract class BaseSocketAwareParser extends BaseParser {
 
     /** The local port that this parser's *most recently created* socket bound to. */
     private int localPort = -1;
+
+    /** The connection timeout, in milliseconds. */
+    private int connectTimeout = 5000;
 
     /**
      * Creates a new base parser for the specified URI.
@@ -62,17 +71,21 @@ public abstract class BaseSocketAwareParser extends BaseParser {
     }
 
     /**
-     * Convenience method to record the local port of the specified socket.
+     * Gets the current connection timeout.
      *
-     * @param socket The socket whose port is being recorded
-     * @return The socket reference passed in, for convenience
+     * @return The connection timeout, in milliseconds.
      */
-    private Socket handleSocket(final Socket socket) {
-        // Store the socket as it might not have been bound yet
-        this.socket = socket;
-        this.localPort = socket.getLocalPort();
+    public int getConnectTimeout() {
+        return connectTimeout;
+    }
 
-        return socket;
+    /**
+     * Sets the connection timeout.
+     *
+     * @param connectTimeout The connection timeout, in milliseconds.
+     */
+    public void setConnectTimeout(final int connectTimeout) {
+        this.connectTimeout = connectTimeout;
     }
 
     /**
@@ -81,41 +94,132 @@ public abstract class BaseSocketAwareParser extends BaseParser {
      * @return An appropriately configured socket factory
      */
     protected SocketFactory getSocketFactory() {
-        return new SocketFactory() {
+        return new BindingSocketFactory();
+    }
 
-            @Override
-            public Socket createSocket(final String host, final int port) throws IOException {
-                if (getBindIP() == null) {
-                    return handleSocket(new Socket(host, port));
-                } else {
-                    return handleSocket(new Socket(host, port, InetAddress.getByName(getBindIP()), 0));
+    /**
+     * Stores a reference to a recently created socket.
+     *
+     * @param socket The newly created socket.
+     */
+    private void setSocket(final Socket socket) {
+        this.socket = socket;
+        this.localPort = socket.getLocalPort();
+    }
+
+    /**
+     * Allows subclasses to handle socket-related debug messages.
+     *
+     * @param message The debug message.
+     */
+    protected void handleSocketDebug(final String message) {
+        // Do nothing by default
+    }
+
+    private class BindingSocketFactory extends SocketFactory {
+
+        @Override
+        public Socket createSocket(final String host, final int port) throws IOException {
+            return createSocket(InetAddress.getByName(host), port);
+        }
+
+        @Override
+        @SuppressWarnings("resource")
+        public Socket createSocket(final InetAddress host, final int port) throws IOException {
+            checkPort(port, "server");
+            return getProxy() == null ? boundSocket(host, port) : proxiedSocket(host, port);
+        }
+
+        /**
+         * Creates and binds a new socket to the IP address specified by the parser. If the target
+         * address is an IPv6 address, the parser's {@link #getBindIPv6()} value will be used;
+         * otherwise, the standard {@link #getBindIP()} will be used.
+         *
+         * @param host The host to connect to.
+         * @param port The port to connect on.
+         * @return A new socket bound appropriately and connected.
+         */
+        @SuppressWarnings({"resource", "SocketOpenedButNotSafelyClosed"})
+        private Socket boundSocket(final InetAddress host, final int port) throws IOException {
+            final Socket socket = new Socket();
+            final String bindIp = host instanceof Inet6Address ? getBindIPv6() : getBindIP();
+
+            if (bindIp != null && !bindIp.isEmpty()) {
+                try {
+                    socket.bind(new InetSocketAddress(InetAddress.getByName(bindIp), 0));
+                } catch (IOException ex) {
+                    // Bind failed; continue trying to connect anyway.
+                    handleSocketDebug("Binding failed: " + ex.getMessage());
                 }
             }
+            setSocket(socket);
+            socket.connect(new InetSocketAddress(host, port), connectTimeout);
+            return socket;
+        }
 
-            @Override
-            public Socket createSocket(final InetAddress host, final int port) throws IOException {
-                if (getBindIP() == null) {
-                    return handleSocket(new Socket(host, port));
-                } else {
-                    return handleSocket(new Socket(host, port, InetAddress.getByName(getBindIP()), 0));
+        /**
+         * Creates a new socket via a proxy.
+         *
+         * @param host The host to connect to.
+         * @param port The port to connect on.
+         * @return A new proxy-using socket.
+         */
+        @SuppressWarnings({"resource", "SocketOpenedButNotSafelyClosed"})
+        private Socket proxiedSocket(final InetAddress host, final int port) throws IOException {
+            final URI proxy = getProxy();
+            final Proxy.Type proxyType = Proxy.Type.valueOf(proxy.getScheme().toUpperCase());
+            final String proxyHost = proxy.getHost();
+            final int proxyPort = checkPort(proxy.getPort(), "Proxy");
+
+            final Socket socket = new Socket(
+                    new Proxy(proxyType, new InetSocketAddress(proxyHost, proxyPort)));
+
+            try {
+                final IRCAuthenticator ia = IRCAuthenticator.getIRCAuthenticator();
+                final URI serverUri = new URI(null, null, host.getHostName(), port,
+                        null, null, null);
+                try {
+                    ia.getSemaphore().acquireUninterruptibly();
+                    ia.addAuthentication(serverUri, proxy);
+                    socket.connect(new InetSocketAddress(host, port), connectTimeout);
+                } finally {
+                    ia.removeAuthentication(serverUri, proxy);
+                    ia.getSemaphore().release();
                 }
+            } catch (URISyntaxException ex) {
+                // Won't happen.
             }
 
-            @Override
-            public Socket createSocket(final String host, final int port,
-                    final InetAddress localHost, final int localPort) throws IOException {
-                return handleSocket(new Socket(host, port,
-                        getBindIP() == null ? localHost : InetAddress.getByName(getBindIP()), localPort));
-            }
+            return socket;
+        }
 
-            @Override
-            public Socket createSocket(final InetAddress address,
-                    final int port, final InetAddress localAddress,
-                    final int localPort) throws IOException {
-                return handleSocket(new Socket(address, port,
-                        getBindIP() == null ? localAddress : InetAddress.getByName(getBindIP()), localPort));
+        /**
+         * Utility method to ensure a port is in the correct range. This stops networking classes
+         * throwing obscure exceptions.
+         *
+         * @param port The port to test.
+         * @param description Description of the port for error messages.
+         * @return The given port.
+         * @throws IOException If the port is out of range.
+         */
+        private int checkPort(final int port, final String description) throws IOException {
+            if (port > 65535 || port <= 0) {
+                throw new IOException(description + " port (" + port + ") is invalid.");
             }
+            return port;
+        }
 
-        };
+        @Override
+        public Socket createSocket(final String host, final int port,
+                final InetAddress localHost, final int localPort) throws IOException {
+            return createSocket(host, port);
+        }
+
+        @Override
+        public Socket createSocket(final InetAddress address, final int port,
+                final InetAddress localAddress, final int localPort) throws IOException {
+            return createSocket(address, port);
+        }
+
     }
 }
