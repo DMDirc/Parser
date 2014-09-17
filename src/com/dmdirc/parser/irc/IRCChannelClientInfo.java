@@ -52,12 +52,14 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
      * Create a ChannelClient instance of a CLient.
      *
      * @param tParser Refernce to parser that owns this channelclient (used for modes)
+     * @param prefixModeManager Manager to use to access prefix mode information.
      * @param client Client that this channelclient represents
      * @param channel Channel that owns this channelclient
      */
-    public IRCChannelClientInfo(final IRCParser tParser, final IRCClientInfo client, final ChannelInfo channel) {
+    public IRCChannelClientInfo(final IRCParser tParser, final PrefixModeManager prefixModeManager,
+            final IRCClientInfo client, final ChannelInfo channel) {
         myMap = new HashMap<>();
-        modeManager = tParser.prefixModes;
+        modeManager = prefixModeManager;
         parser = tParser;
         cClient = client;
         myChannel = channel;

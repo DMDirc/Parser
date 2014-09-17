@@ -68,8 +68,9 @@ public class ProcessingManager {
      * Constructor to create a ProcessingManager.
      *
      * @param parser IRCParser that owns this Processing Manager
+     * @param prefixModeManager The manager to use to access prefix modes.
      */
-    public ProcessingManager(final IRCParser parser) {
+    public ProcessingManager(final IRCParser parser, final PrefixModeManager prefixModeManager) {
         this.parser = parser;
         //------------------------------------------------
         // Add processors
@@ -92,15 +93,15 @@ public class ProcessingManager {
         // INVITE
         addProcessor(new ProcessInvite(parser, this));
         // JOIN
-        addProcessor(new ProcessJoin(parser, this));
+        addProcessor(new ProcessJoin(parser, prefixModeManager, this));
         // KICK
         addProcessor(new ProcessKick(parser, this));
         // PRIVMSG
         // NOTICE
-        addProcessor(new ProcessMessage(parser, this));
+        addProcessor(new ProcessMessage(parser, prefixModeManager, this));
         // MODE
         // 324
-        addProcessor(new ProcessMode(parser, this));
+        addProcessor(new ProcessMode(parser, prefixModeManager, this));
         // 372
         // 375
         // 376
@@ -108,7 +109,7 @@ public class ProcessingManager {
         addProcessor(new ProcessMOTD(parser, this));
         // 353
         // 366
-        addProcessor(new ProcessNames(parser, this));
+        addProcessor(new ProcessNames(parser, prefixModeManager, this));
         // 433
         addProcessor(new ProcessNickInUse(parser, this));
         // NICK

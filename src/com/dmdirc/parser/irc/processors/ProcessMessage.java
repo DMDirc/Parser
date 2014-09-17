@@ -48,6 +48,7 @@ import com.dmdirc.parser.irc.IRCChannelClientInfo;
 import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
+import com.dmdirc.parser.irc.PrefixModeManager;
 import com.dmdirc.parser.irc.ProcessingManager;
 import com.dmdirc.parser.irc.ProcessorNotFoundException;
 import com.dmdirc.parser.irc.TimestampedIRCProcessor;
@@ -65,14 +66,20 @@ import java.util.regex.PatternSyntaxException;
  */
 public class ProcessMessage extends TimestampedIRCProcessor {
 
+    /** The manager to use to access prefix modes. */
+    private final PrefixModeManager prefixModeManager;
+
     /**
      * Create a new instance of the IRCProcessor Object.
      *
      * @param parser IRCParser That owns this IRCProcessor
+     * @param prefixModeManager The manager to use to access prefix modes.
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    public ProcessMessage(final IRCParser parser, final ProcessingManager manager) {
+    public ProcessMessage(final IRCParser parser, final PrefixModeManager prefixModeManager,
+            final ProcessingManager manager) {
         super(parser, manager);
+        this.prefixModeManager = prefixModeManager;
     }
 
     /**
@@ -200,7 +207,7 @@ public class ProcessMessage extends TimestampedIRCProcessor {
         // handled as if the prefix wasn't used. This can be changed in the future
         // if desired.
         final char modePrefix = token[2].charAt(0);
-        final boolean hasModePrefix = parser.prefixModes.isPrefix(modePrefix);
+        final boolean hasModePrefix = prefixModeManager.isPrefix(modePrefix);
         final String targetName = hasModePrefix ? token[2].substring(1) : token[2];
 
         if (isValidChannelName(targetName)) {

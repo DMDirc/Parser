@@ -161,7 +161,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     /** Has the thread started execution yet, (Prevents run() being called multiple times). */
     boolean hasBegan;
     /** Manager used to handle prefix modes. */
-    public final PrefixModeManager prefixModes = new PrefixModeManager();
+    private final PrefixModeManager prefixModes = new PrefixModeManager();
     /** Manager used to handle user modes (owxis etc). */
     public final ModeManager userModes = new ModeManager();
     /**
@@ -197,7 +197,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     /** difference in ms between our time and the servers time (used for timestampedIRC). */
     long tsdiff;
     /** Reference to the Processing Manager. */
-    private final ProcessingManager myProcessingManager = new ProcessingManager(this);
+    private final ProcessingManager myProcessingManager;
     /** Should we automatically disconnect on fatal errors?. */
     private boolean disconnectOnFatal = true;
     /** Current Socket State. */
@@ -282,6 +282,8 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      */
     public IRCParser(final MyInfo myDetails, final URI uri) {
         super(uri);
+
+        myProcessingManager = new ProcessingManager(this, prefixModes);
 
         out = new OutputQueue();
         if (myDetails != null) {
