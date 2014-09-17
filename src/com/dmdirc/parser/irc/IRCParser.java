@@ -776,7 +776,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
 
             if (sockAddr.getAddress() instanceof Inet6Address) {
                 if (getBindIPv6() != null && !getBindIPv6().isEmpty()) {
-                    callDebugInfo(DEBUG_SOCKET, "Binding to IPv6: " + getBindIP());
+                    callDebugInfo(DEBUG_SOCKET, "Binding to IPv6: " + getBindIPv6());
                     try {
                         mySocket.bind(new InetSocketAddress(InetAddress.getByName(getBindIPv6()), 0));
                     } catch (IOException e) {
