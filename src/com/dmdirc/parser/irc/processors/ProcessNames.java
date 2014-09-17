@@ -29,6 +29,7 @@ import com.dmdirc.parser.irc.IRCChannelClientInfo;
 import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
+import com.dmdirc.parser.irc.ModeManager;
 import com.dmdirc.parser.irc.PrefixModeManager;
 import com.dmdirc.parser.irc.ProcessingManager;
 
@@ -39,18 +40,22 @@ public class ProcessNames extends IRCProcessor {
 
     /** The manager to use to access prefix modes. */
     private final PrefixModeManager prefixModeManager;
+    /** Mode manager to use for user modes. */
+    private final ModeManager userModeManager;
 
     /**
      * Create a new instance of the IRCProcessor Object.
      *
      * @param parser IRCParser That owns this IRCProcessor
      * @param prefixModeManager The manager to use to access prefix modes.
+     * @param userModeManager Mode manager to use for user modes.
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
     public ProcessNames(final IRCParser parser, final PrefixModeManager prefixModeManager,
-            final ProcessingManager manager) {
+            final ModeManager userModeManager, final ProcessingManager manager) {
         super(parser, manager);
         this.prefixModeManager = prefixModeManager;
+        this.userModeManager = userModeManager;
     }
 
     /**
@@ -118,7 +123,7 @@ public class ProcessNames extends IRCProcessor {
 
                 IRCClientInfo iClient = getClientInfo(sName);
                 if (iClient == null) {
-                    iClient = new IRCClientInfo(parser, sName);
+                    iClient = new IRCClientInfo(parser, userModeManager, sName);
                     parser.addClient(iClient);
                 }
                 iClient.setUserBits(sName, false); // Will do nothing if this isn't UHNAMES

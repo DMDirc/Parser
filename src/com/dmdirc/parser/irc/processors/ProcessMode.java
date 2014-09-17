@@ -38,6 +38,7 @@ import com.dmdirc.parser.irc.IRCChannelClientInfo;
 import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
+import com.dmdirc.parser.irc.ModeManager;
 import com.dmdirc.parser.irc.PrefixModeManager;
 import com.dmdirc.parser.irc.ProcessingManager;
 
@@ -50,18 +51,22 @@ public class ProcessMode extends IRCProcessor {
 
     /** The manager to use to access prefix modes. */
     private final PrefixModeManager prefixModeManager;
+    /** Mode manager to use for user modes. */
+    private final ModeManager userModeManager;
 
     /**
      * Create a new instance of the IRCProcessor Object.
      *
      * @param parser IRCParser That owns this IRCProcessor
      * @param prefixModeManager The manager to use to access prefix modes.
+     * @param userModeManager Mode manager to use for user modes.
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
     public ProcessMode(final IRCParser parser, final PrefixModeManager prefixModeManager,
-            final ProcessingManager manager) {
+            final ModeManager userModeManager, final ProcessingManager manager) {
         super(parser, manager);
         this.prefixModeManager = prefixModeManager;
+        this.userModeManager = userModeManager;
     }
 
     /**
@@ -309,17 +314,17 @@ public class ProcessMode extends IRCProcessor {
             } else if (cMode.equals("-".charAt(0))) {
                 bPositive = false;
             } else if (!cMode.equals(":".charAt(0))) {
-                if (!parser.userModes.isMode(cMode)) {
+                if (!userModeManager.isMode(cMode)) {
                     // Unknown mode
                     callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got unknown user mode " + cMode + " - Added", parser.getLastLine()));
-                    parser.userModes.add(cMode);
+                    userModeManager.add(cMode);
                 }
                 // Usermodes are always boolean
                 callDebugInfo(IRCParser.DEBUG_INFO, "User Mode: %c {Positive: %b}", cMode, bPositive);
                 if (bPositive) {
-                    nCurrent = parser.userModes.insertMode(nCurrent, cMode);
+                    nCurrent = userModeManager.insertMode(nCurrent, cMode);
                 } else {
-                    nCurrent = parser.userModes.removeMode(nCurrent, cMode);
+                    nCurrent = userModeManager.removeMode(nCurrent, cMode);
                 }
             }
         }
