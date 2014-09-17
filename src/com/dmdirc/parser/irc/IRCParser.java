@@ -169,7 +169,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * <p>
      * Channel modes discovered but not listed in 005 are stored as boolean modes automatically (and a ERROR_WARNING Error is called)
      */
-    public final ModeManager chanModesBool = new ModeManager();
+    private final ModeManager chanModesBool = new ModeManager();
     /**
      * Hashtable storing known non-boolean chan modes (klbeI etc).
      * Non Boolean Modes (for Channels) are stored together in this hashtable, the value param
@@ -283,7 +283,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     public IRCParser(final MyInfo myDetails, final URI uri) {
         super(uri);
 
-        myProcessingManager = new ProcessingManager(this, prefixModes, userModes);
+        myProcessingManager = new ProcessingManager(this, prefixModes, userModes, chanModesBool);
         myself = new IRCClientInfo(this, userModes, "myself").setFake(true);
 
         out = new OutputQueue();

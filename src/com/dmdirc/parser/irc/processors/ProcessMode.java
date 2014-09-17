@@ -53,6 +53,8 @@ public class ProcessMode extends IRCProcessor {
     private final PrefixModeManager prefixModeManager;
     /** Mode manager to use for user modes. */
     private final ModeManager userModeManager;
+    /** Mode manager to use for channel modes. */
+    private final ModeManager chanModeManager;
 
     /**
      * Create a new instance of the IRCProcessor Object.
@@ -60,13 +62,16 @@ public class ProcessMode extends IRCProcessor {
      * @param parser IRCParser That owns this IRCProcessor
      * @param prefixModeManager The manager to use to access prefix modes.
      * @param userModeManager Mode manager to use for user modes.
+     * @param chanModeManager Mode manager to use for channel modes.
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
     public ProcessMode(final IRCParser parser, final PrefixModeManager prefixModeManager,
-            final ModeManager userModeManager, final ProcessingManager manager) {
+            final ModeManager userModeManager, final ModeManager chanModeManager,
+            final ProcessingManager manager) {
         super(parser, manager);
         this.prefixModeManager = prefixModeManager;
         this.userModeManager = userModeManager;
+        this.chanModeManager = chanModeManager;
     }
 
     /**
@@ -173,7 +178,7 @@ public class ProcessMode extends IRCProcessor {
                 cPositive = '-';
                 bPositive = false;
             } else {
-                if (parser.chanModesBool.isMode(cMode)) {
+                if (chanModeManager.isMode(cMode)) {
                     bBooleanMode = true;
                 } else if (parser.chanModesOther.containsKey(cMode)) {
                     nValue = parser.chanModesOther.get(cMode);
@@ -208,7 +213,7 @@ public class ProcessMode extends IRCProcessor {
                     continue;
                 } else {
                     // unknown mode - add as boolean
-                    parser.chanModesBool.add(cMode);
+                    chanModeManager.add(cMode);
                     bBooleanMode = true;
                 }
 
@@ -216,9 +221,9 @@ public class ProcessMode extends IRCProcessor {
                     callDebugInfo(IRCParser.DEBUG_INFO, "Boolean Mode: %c {Positive: %b}", cMode, bPositive);
 
                     if (bPositive) {
-                        nCurrent = parser.chanModesBool.insertMode(nCurrent, cMode);
+                        nCurrent = chanModeManager.insertMode(nCurrent, cMode);
                     } else {
-                        nCurrent = parser.chanModesBool.removeMode(nCurrent, cMode);
+                        nCurrent = chanModeManager.removeMode(nCurrent, cMode);
                     }
                 } else {
 

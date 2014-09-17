@@ -49,6 +49,8 @@ public class ProcessJoin extends IRCProcessor {
     private final PrefixModeManager prefixModeManager;
     /** Mode manager to use for user modes. */
     private final ModeManager userModeManager;
+    /** Mode manager to use for channel modes. */
+    private final ModeManager chanModeManager;
 
     /**
      * Create a new instance of the IRCProcessor Object.
@@ -56,13 +58,16 @@ public class ProcessJoin extends IRCProcessor {
      * @param parser IRCParser That owns this IRCProcessor
      * @param prefixModeManager The manager to use to access prefix modes.
      * @param userModeManager Mode manager to use for user modes.
+     * @param chanModeManager Mode manager to use for channel modes.
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
     public ProcessJoin(final IRCParser parser, final PrefixModeManager prefixModeManager,
-            final ModeManager userModeManager, final ProcessingManager manager) {
+            final ModeManager userModeManager, final ModeManager chanModeManager,
+            final ProcessingManager manager) {
         super(parser, manager);
         this.prefixModeManager = prefixModeManager;
         this.userModeManager = userModeManager;
+        this.chanModeManager = chanModeManager;
     }
 
     /**
@@ -159,7 +164,8 @@ public class ProcessJoin extends IRCProcessor {
                 }
             }
 
-            iChannel = new IRCChannelInfo(parser, prefixModeManager, userModeManager, channelName);
+            iChannel = new IRCChannelInfo(parser, prefixModeManager, userModeManager,
+                    chanModeManager, channelName);
             // Add ourself to the channel, this will be overridden by the NAMES reply
             iChannel.addClient(iClient);
             parser.addChannel(iChannel);
