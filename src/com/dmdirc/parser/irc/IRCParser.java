@@ -1357,7 +1357,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
 
     @Override
     public String getChannelUserModes() {
-        return prefixModes.getModes();
+        return prefixModes.getPrefixes();
     }
 
     @Override
