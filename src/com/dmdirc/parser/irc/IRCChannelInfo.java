@@ -66,6 +66,8 @@ public class IRCChannelInfo implements ChannelInfo {
     private final IRCParser parser;
     /** Mode manager to use for user modes. */
     private final ModeManager userModeManager;
+    /** Mode manager to use for channel modes. */
+    private final ModeManager chanModeManager;
     /** Mode manager to use for prefix mode information. */
     private final PrefixModeManager prefixModeManager;
     /** Channel Name. */
@@ -100,14 +102,17 @@ public class IRCChannelInfo implements ChannelInfo {
      * @param parser Reference to parser that owns this channelclient (used for modes)
      * @param prefixModeManager The manager to use for prefix modes.
      * @param userModeManager Mode manager to use for user modes.
+     * @param chanModeManager Mode manager to use for channel modes.
      * @param name Channel name.
      */
     public IRCChannelInfo(final IRCParser parser, final PrefixModeManager prefixModeManager,
-            final ModeManager userModeManager, final String name) {
+            final ModeManager userModeManager, final ModeManager chanModeManager,
+            final String name) {
         map = new HashMap<>();
         this.parser = parser;
         this.prefixModeManager = prefixModeManager;
         this.userModeManager = userModeManager;
+        this.chanModeManager = chanModeManager;
         this.name = name;
     }
 
@@ -615,7 +620,7 @@ public class IRCChannelInfo implements ChannelInfo {
         }
 
         modestr = (add ? "+" : "-") + mode;
-        if (parser.chanModesBool.isMode(mode)) {
+        if (chanModeManager.isMode(mode)) {
             final String teststr = (add ? "-" : "+") + mode;
             if (modeQueue.contains(teststr)) {
                 modeQueue.remove(teststr);

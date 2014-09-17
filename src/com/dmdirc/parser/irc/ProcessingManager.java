@@ -70,9 +70,10 @@ public class ProcessingManager {
      * @param parser IRCParser that owns this Processing Manager
      * @param prefixModeManager The manager to use to access prefix modes.
      * @param userModeManager Mode manager to use for user modes.
+     * @param chanModeManager Mode manager to use for channel modes.
      */
     public ProcessingManager(final IRCParser parser, final PrefixModeManager prefixModeManager,
-            final ModeManager userModeManager) {
+            final ModeManager userModeManager, final ModeManager chanModeManager) {
         this.parser = parser;
         //------------------------------------------------
         // Add processors
@@ -95,7 +96,8 @@ public class ProcessingManager {
         // INVITE
         addProcessor(new ProcessInvite(parser, this));
         // JOIN
-        addProcessor(new ProcessJoin(parser, prefixModeManager, userModeManager, this));
+        addProcessor(new ProcessJoin(parser, prefixModeManager, userModeManager, chanModeManager,
+                this));
         // KICK
         addProcessor(new ProcessKick(parser, this));
         // PRIVMSG
@@ -103,7 +105,8 @@ public class ProcessingManager {
         addProcessor(new ProcessMessage(parser, prefixModeManager, this));
         // MODE
         // 324
-        addProcessor(new ProcessMode(parser, prefixModeManager, userModeManager, this));
+        addProcessor(new ProcessMode(parser, prefixModeManager, userModeManager, chanModeManager,
+                this));
         // 372
         // 375
         // 376
