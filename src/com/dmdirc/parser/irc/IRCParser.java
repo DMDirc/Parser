@@ -335,7 +335,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
         if (uri == null) { return null; }
 
         final boolean isSSL = uri.getScheme().endsWith("s");
-        final int defaultPort = isSSL ? 6697 : 6667;
+        final int defaultPort = isSSL ? IrcConstants.DEFAULT_SSL_PORT : IrcConstants.DEFAULT_PORT;
 
         // Default to what the URI has already..
         int port = uri.getPort();
@@ -651,13 +651,13 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
 
         post005 = true;
 
-        if (!h005Info.containsKey("PREFIX")) {
+        if (!h005Info.containsKey(IrcConstants.ISUPPORT_CHANNEL_USER_PREFIXES)) {
             parsePrefixModes();
         }
-        if (!h005Info.containsKey("USERMODES")) {
+        if (!h005Info.containsKey(IrcConstants.ISUPPORT_USER_MODES)) {
             parseUserModes();
         }
-        if (!h005Info.containsKey("CHANMODES")) {
+        if (!h005Info.containsKey(IrcConstants.ISUPPORT_CHANNEL_MODES)) {
             parseChanModes();
         }
 
@@ -1165,8 +1165,8 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
                                 serverInformationLines.add(line.getLine());
                             }
                             // Fallthrough
-                        case 464: // Password Required
-                        case 433: // Nick In Use
+                        case IrcConstants.NUMERIC_ERROR_PASSWORD_MISMATCH:
+                        case IrcConstants.NUMERIC_ERROR_NICKNAME_IN_USE:
                             try {
                                 myProcessingManager.process(sParam, token);
                             } catch (ProcessorNotFoundException e) {
@@ -1287,13 +1287,13 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     public void parseChanModes() {
         final StringBuilder sDefaultModes = new StringBuilder("b,k,l,");
         String modeStr;
-        if (h005Info.containsKey("USERCHANMODES")) {
+        if (h005Info.containsKey(IrcConstants.ISUPPORT_USER_CHANNEL_MODES)) {
             if (getServerType() == ServerType.DANCER) {
                 sDefaultModes.insert(0, "dqeI");
             } else if (getServerType() == ServerType.AUSTIRC) {
                 sDefaultModes.insert(0, 'e');
             }
-            modeStr = h005Info.get("USERCHANMODES");
+            modeStr = h005Info.get(IrcConstants.ISUPPORT_USER_CHANNEL_MODES);
             for (int i = 0; i < modeStr.length(); ++i) {
                 final char mode = modeStr.charAt(i);
                 if (!prefixModes.isPrefixMode(mode)
@@ -1304,18 +1304,18 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
         } else {
             sDefaultModes.append("imnpstrc");
         }
-        if (h005Info.containsKey("CHANMODES")) {
-            modeStr = h005Info.get("CHANMODES");
+        if (h005Info.containsKey(IrcConstants.ISUPPORT_CHANNEL_MODES)) {
+            modeStr = h005Info.get(IrcConstants.ISUPPORT_CHANNEL_MODES);
         } else {
             modeStr = sDefaultModes.toString();
-            h005Info.put("CHANMODES", modeStr);
+            h005Info.put(IrcConstants.ISUPPORT_CHANNEL_MODES, modeStr);
         }
         String[] bits = modeStr.split(",", 5);
         if (bits.length < 4) {
             modeStr = sDefaultModes.toString();
             callErrorInfo(new ParserError(ParserError.ERROR_ERROR, "CHANMODES String not valid. " +
                     "Using default string of \"" + modeStr + '"', getLastLine()));
-            h005Info.put("CHANMODES", modeStr);
+            h005Info.put(IrcConstants.ISUPPORT_CHANNEL_MODES, modeStr);
             bits = modeStr.split(",", 5);
         }
 
@@ -1409,8 +1409,8 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
 
     @Override
     public String getUserModes() {
-        if (h005Info.containsKey("USERMODES")) {
-            return h005Info.get("USERMODES");
+        if (h005Info.containsKey(IrcConstants.ISUPPORT_USER_MODES)) {
+            return h005Info.get(IrcConstants.ISUPPORT_USER_MODES);
         } else {
             return "";
         }
@@ -1421,12 +1421,12 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      */
     public void parseUserModes() {
         final String modeStr;
-        if (h005Info.containsKey("USERMODES")) {
-            modeStr = h005Info.get("USERMODES");
+        if (h005Info.containsKey(IrcConstants.ISUPPORT_USER_MODES)) {
+            modeStr = h005Info.get(IrcConstants.ISUPPORT_USER_MODES);
         } else {
             final String sDefaultModes = "nwdoi";
             modeStr = sDefaultModes;
-            h005Info.put("USERMODES", sDefaultModes);
+            h005Info.put(IrcConstants.ISUPPORT_USER_MODES, sDefaultModes);
         }
 
         userModes.set(modeStr);
@@ -1454,8 +1454,8 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     public void parsePrefixModes() {
         final String sDefaultModes = "(ohv)@%+";
         String modeStr;
-        if (h005Info.containsKey("PREFIX")) {
-            modeStr = h005Info.get("PREFIX");
+        if (h005Info.containsKey(IrcConstants.ISUPPORT_CHANNEL_USER_PREFIXES)) {
+            modeStr = h005Info.get(IrcConstants.ISUPPORT_CHANNEL_USER_PREFIXES);
         } else {
             modeStr = sDefaultModes;
         }
@@ -1463,7 +1463,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
             modeStr = modeStr.substring(1);
         } else {
             modeStr = sDefaultModes.substring(1);
-            h005Info.put("PREFIX", sDefaultModes);
+            h005Info.put(IrcConstants.ISUPPORT_CHANNEL_USER_PREFIXES, sDefaultModes);
         }
 
         int closingIndex = modeStr.indexOf(')');
@@ -1471,7 +1471,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
             callErrorInfo(new ParserError(ParserError.ERROR_ERROR,
                     "PREFIX String not valid. Using default string of \"" + modeStr +
                     '"', getLastLine()));
-            h005Info.put("PREFIX", sDefaultModes);
+            h005Info.put(IrcConstants.ISUPPORT_CHANNEL_USER_PREFIXES, sDefaultModes);
             modeStr = sDefaultModes.substring(1);
             closingIndex = modeStr.indexOf(')');
         }
@@ -1602,11 +1602,11 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
         callDebugInfo(DEBUG_INFO, "Looking for maxlistmodes for: " + mode);
         // Try in MAXLIST
         int result = -2;
-        if (h005Info.get("MAXLIST") != null) {
-            if (h005Info.get("MAXBANS") == null) {
+        if (h005Info.get(IrcConstants.ISUPPORT_MAXIMUM_LIST_MODES) != null) {
+            if (h005Info.get(IrcConstants.ISUPPORT_MAXIMUM_BANS) == null) {
                 result = 0;
             }
-            final String maxlist = h005Info.get("MAXLIST");
+            final String maxlist = h005Info.get(IrcConstants.ISUPPORT_MAXIMUM_LIST_MODES);
             callDebugInfo(DEBUG_INFO, "Found maxlist (" + maxlist + ')');
             final String[] bits = maxlist.split(",");
             for (String bit : bits) {
@@ -1627,10 +1627,10 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
         }
 
         // If not in max list, try MAXBANS
-        if (result == -2 && h005Info.get("MAXBANS") != null) {
+        if (result == -2 && h005Info.get(IrcConstants.ISUPPORT_MAXIMUM_BANS) != null) {
             callDebugInfo(DEBUG_INFO, "Trying max bans");
             try {
-                result = Integer.parseInt(h005Info.get("MAXBANS"));
+                result = Integer.parseInt(h005Info.get(IrcConstants.ISUPPORT_MAXIMUM_BANS));
             } catch (NumberFormatException nfe) {
                 result = -1;
             }
@@ -1769,8 +1769,8 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     @Override
     public boolean isUserSettable(final char mode) {
         final String validmodes;
-        if (h005Info.containsKey("USERCHANMODES")) {
-            validmodes = h005Info.get("USERCHANMODES");
+        if (h005Info.containsKey(IrcConstants.ISUPPORT_USER_CHANNEL_MODES)) {
+            validmodes = h005Info.get(IrcConstants.ISUPPORT_USER_CHANNEL_MODES);
         } else {
             validmodes = "bklimnpstrc";
         }
@@ -2125,9 +2125,9 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
 
     @Override
     public int getMaxTopicLength() {
-        if (h005Info.containsKey("TOPICLEN")) {
+        if (h005Info.containsKey(IrcConstants.ISUPPORT_TOPIC_LENGTH)) {
             try {
-                return Integer.parseInt(h005Info.get("TOPICLEN"));
+                return Integer.parseInt(h005Info.get(IrcConstants.ISUPPORT_TOPIC_LENGTH));
             } catch (NumberFormatException ex) {
                 // Do nothing
             }
