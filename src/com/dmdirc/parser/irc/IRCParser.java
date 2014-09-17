@@ -50,8 +50,6 @@ import com.dmdirc.parser.irc.IRCReader.ReadLine;
 import com.dmdirc.parser.irc.outputqueue.OutputQueue;
 
 import java.io.IOException;
-import java.net.Inet4Address;
-import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URI;
@@ -732,93 +730,6 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     }
 
     /**
-     * Find a socket to connect using, this will where possible attempt IPv6
-     * first, before falling back to IPv4.
-     *
-     * This will:
-     *   - Try using v6 first before v4.
-     *   - If there are any failures at all with v6 (including, not having a
-     *     v6 address...) then fall through to v4.
-     *   - If there is no v4 address, throw the v6 exception
-     *   - Otherwise, try v4
-     *   - If there are failures with v4, throw the exception.
-     *
-     * If we have both IPv6 and IPv4, and a target host has both IPv6 and IPv4
-     * addresses, but does not listen on the requested port on either, this
-     * will cause a double-length connection timeout.
-     *
-     * @param target Target URI to connect to.
-     * @return Socket to use in future connections.
-     * @throws IOException if there is an error.
-     */
-    private Socket findSocket(final URI target) throws IOException {
-        if (getProxy() != null) {
-            // If we have a proxy, let it worry about all this instead.
-            //
-            // 1) We have no idea what sort of connectivity the proxy has
-            // 2) If we do this here, then any DNS-based geo-balancing is
-            //    going to be based on our location, not the proxy.
-            return getSocketFactory().createSocket(target.getHost(), target.getPort());
-        }
-
-        URI target6 = null;
-        URI target4 = null;
-
-        // Get the v6 and v4 addresses if appropriate..
-        try {
-            for (InetAddress i : InetAddress.getAllByName(target.getHost())) {
-                if (target6 == null && i instanceof Inet6Address) {
-                    target6 = new URI(target.getScheme(), target.getUserInfo(), i.getHostAddress(), target.getPort(), target.getPath(), target.getQuery(), target.getFragment());
-                } else if (target4 == null && i instanceof Inet4Address) {
-                    target4 = new URI(target.getScheme(), target.getUserInfo(), i.getHostAddress(), target.getPort(), target.getPath(), target.getQuery(), target.getFragment());
-                }
-            }
-        } catch (final URISyntaxException use) { /* Won't happen. */ }
-
-        // Now try and connect.
-        // Try using v6 first before v4.
-        // If there are any failures at all with v6 (including, not having a
-        // v6 address...) then fall through to v4.
-        // If there is no v4 address, throw the v6 exception
-        // Otherwise, try v4
-        // If there are failures with v4, throw the exception.
-        //
-        // If we have both IPv6 and IPv4, and a target host has both IPv6 and
-        // IPv4 addresses, but does not listen on the requested port on either,
-        // this will cause a double-length connection timeout.
-        //
-        // In future this may want to be rewritten to perform a happy-eyeballs
-        // race rather than trying one then the other.
-        Exception v6Exception = null;
-        if (target6 != null) {
-            try {
-                return getSocketFactory().createSocket(target6.getHost(), target6.getPort());
-            } catch (final IOException ioe) {
-                if (target4 == null) {
-                    throw ioe;
-                }
-            } catch (final Exception e) {
-                v6Exception = e;
-                callDebugInfo(DEBUG_SOCKET, "Exception trying to use IPv6: " + e);
-            }
-        }
-        if (target4 != null) {
-            try {
-                return getSocketFactory().createSocket(target4.getHost(), target4.getPort());
-            } catch (final IOException e2) {
-                callDebugInfo(DEBUG_SOCKET, "Exception trying to use IPv4: " + e2);
-                throw e2;
-            }
-        } else if (v6Exception != null) {
-            throw new IOException("Error connecting to: " + target + " (IPv6 failure, with no IPv4 fallback)", v6Exception);
-        } else {
-            // We should never get here as if both target4 and target6 were null
-            // getAllByName would have thrown an exception instead.
-            throw new IOException("Error connecting to: " + target + " (General connectivity failure)");
-        }
-    }
-
-    /**
      * Connect to IRC.
      *
      * @throws IOException if the socket can not be connected
@@ -834,7 +745,9 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
         callDebugInfo(DEBUG_SOCKET, "Connecting to " + getURI().getHost() + ':' + getURI().getPort());
 
         currentSocketState = SocketState.OPENING;
-        socket = findSocket(getConnectURI(getURI()));
+
+        final URI connectUri = getConnectURI(getURI());
+        socket = getSocketFactory().createSocket(connectUri.getHost(), connectUri.getPort());
 
         rawSocket = socket;
 
