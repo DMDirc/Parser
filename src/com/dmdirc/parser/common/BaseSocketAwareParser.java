@@ -22,8 +22,6 @@
 
 package com.dmdirc.parser.common;
 
-import com.dmdirc.parser.irc.IRCAuthenticator;
-
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
@@ -162,7 +160,7 @@ public abstract class BaseSocketAwareParser extends BaseParser {
                 new Proxy(proxyType, new InetSocketAddress(proxyHost, proxyPort)));
 
         try {
-            final IRCAuthenticator ia = IRCAuthenticator.getIRCAuthenticator();
+            final ProxyAuthenticator ia = ProxyAuthenticator.getProxyAuthenticator();
             final URI serverUri = new URI(null, null, host.getHostName(), port,
                     null, null, null);
             try {

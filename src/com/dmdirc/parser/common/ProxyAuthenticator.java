@@ -19,7 +19,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-package com.dmdirc.parser.irc;
+package com.dmdirc.parser.common;
 
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
@@ -31,11 +31,9 @@ import java.util.Map;
 import java.util.concurrent.Semaphore;
 
 /**
- * Handles proxy authentication for the parser.
- *
- * @see IRCParser
+ * Handles proxy authentication for a {@link BaseSocketAwareParser} to a proxy.
  */
-public final class IRCAuthenticator extends Authenticator {
+public final class ProxyAuthenticator extends Authenticator {
 
     /**
      * A version number for this class. It should be changed whenever the class
@@ -44,7 +42,7 @@ public final class IRCAuthenticator extends Authenticator {
      */
     private static final long serialVersionUID = 1;
     /** Singleton instance of IRCAuthenticator. */
-    private static IRCAuthenticator me;
+    private static ProxyAuthenticator me;
     /** List of authentication replies. */
     private final Map<String, PasswordAuthentication> replies = new HashMap<>();
     /** List of servers for each host. */
@@ -58,7 +56,7 @@ public final class IRCAuthenticator extends Authenticator {
      * This creates an IRCAuthenticator and registers it as the default
      * Authenticator.
      */
-    private IRCAuthenticator() {
+    private ProxyAuthenticator() {
 
         Authenticator.setDefault(this);
     }
@@ -68,9 +66,9 @@ public final class IRCAuthenticator extends Authenticator {
      *
      * @return The IRCAuthenticator instance.
      */
-    public static synchronized IRCAuthenticator getIRCAuthenticator() {
+    public static synchronized ProxyAuthenticator getProxyAuthenticator() {
         if (me == null) {
-            me = new IRCAuthenticator();
+            me = new ProxyAuthenticator();
         } else {
             // Make ourself the default authenticator again just incase.
             Authenticator.setDefault(me);
@@ -98,7 +96,7 @@ public final class IRCAuthenticator extends Authenticator {
         final String host = proxy.getHost();
         final int port = proxy.getPort();
         final PasswordAuthentication pass = new PasswordAuthentication(username, password.toCharArray());
-        final String fullhost = host.toLowerCase() + ":" + port;
+        final String fullhost = host.toLowerCase() + ':' + port;
 
         // Delete old username/password if one exists and then add the new one
         replies.remove(fullhost);
@@ -130,7 +128,7 @@ public final class IRCAuthenticator extends Authenticator {
         final String host = proxy.getHost();
         final int port = proxy.getPort();
 
-        final String fullhost = host.toLowerCase() + ":" + port;
+        final String fullhost = host.toLowerCase() + ':' + port;
 
         // See if any other servers are associated with this proxy.
         final List<URI> servers = owners.containsKey(fullhost) ? owners.get(fullhost) : new ArrayList<URI>();
@@ -156,7 +154,7 @@ public final class IRCAuthenticator extends Authenticator {
          * getRequestorType: SERVER
          */
 
-        final String fullhost = getRequestingHost().toLowerCase() + ":" + getRequestingPort();
+        final String fullhost = getRequestingHost().toLowerCase() + ':' + getRequestingPort();
         return replies.get(fullhost);
     }
 }
