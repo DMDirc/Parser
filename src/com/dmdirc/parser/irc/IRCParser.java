@@ -21,7 +21,7 @@
  */
 package com.dmdirc.parser.irc;
 
-import com.dmdirc.parser.common.BaseParser;
+import com.dmdirc.parser.common.BaseSocketAwareParser;
 import com.dmdirc.parser.common.ChannelJoinRequest;
 import com.dmdirc.parser.common.ChildImplementations;
 import com.dmdirc.parser.common.CompositionState;
@@ -53,8 +53,6 @@ import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.Inet6Address;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
 import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -92,7 +90,7 @@ import javax.net.ssl.X509TrustManager;
     IRCChannelInfo.class,
     IRCClientInfo.class
 })
-public class IRCParser extends BaseParser implements SecureParser, EncodingParser {
+public class IRCParser extends BaseSocketAwareParser implements SecureParser, EncodingParser {
 
     /** Max length an outgoing line should be (NOT including \r\n). */
     public static final int MAX_LINELENGTH = 510;
@@ -164,8 +162,6 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     boolean post005;
     /** Has the thread started execution yet, (Prevents run() being called multiple times). */
     boolean hasBegan;
-    /** Connect timeout. */
-    private int connectTimeout = 5000;
     /** Manager used to handle prefix modes. */
     public final PrefixModeManager prefixModes = new PrefixModeManager();
     /** Manager used to handle user modes (owxis etc). */
@@ -481,24 +477,6 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     }
 
     /**
-     * Get the current Value of connectTimeout.
-     *
-     * @return The value of getConnectTimeout.
-     */
-    public int getConnectTimeout() {
-        return connectTimeout;
-    }
-
-    /**
-     * Set the Value of connectTimeout.
-     *
-     * @param newValue new value for value of getConnectTimeout.
-     */
-    public void setConnectTimeout(final int newValue) {
-        connectTimeout = newValue;
-    }
-
-    /**
      * Get the current socket State.
      *
      * @since 0.6.3m1
@@ -754,85 +732,6 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     }
 
     /**
-     * Create a new Socket object for the given target, using the given proxy
-     * if appropriate.
-     *
-     * @param target Target URI to connect to.
-     * @param proxy Proxy URI to use
-     * @return Socket, with IP Binding or Proxy as appropriate,
-     * @throws IOException If there was an issue creating the socket.
-     */
-    private Socket newSocket(final URI target, final URI proxy) throws IOException {
-        if (target.getPort() > 65535 || target.getPort() <= 0) {
-            throw new IOException("Server port (" + target.getPort() + ") is invalid.");
-        }
-
-        final Socket mySocket;
-        if (proxy == null) {
-            callDebugInfo(DEBUG_SOCKET, "Not using Proxy");
-            mySocket = new Socket();
-
-            final InetSocketAddress sockAddr = new InetSocketAddress(target.getHost(), target.getPort());
-
-            if (sockAddr.getAddress() instanceof Inet6Address) {
-                if (getBindIPv6() != null && !getBindIPv6().isEmpty()) {
-                    callDebugInfo(DEBUG_SOCKET, "Binding to IPv6: " + getBindIPv6());
-                    try {
-                        mySocket.bind(new InetSocketAddress(InetAddress.getByName(getBindIPv6()), 0));
-                    } catch (IOException e) {
-                        callDebugInfo(DEBUG_SOCKET, "Binding failed: " + e.getMessage());
-                    }
-                }
-            } else {
-                if (getBindIP() != null && !getBindIP().isEmpty()) {
-                    callDebugInfo(DEBUG_SOCKET, "Binding to IPv4: " + getBindIP());
-                    try {
-                        mySocket.bind(new InetSocketAddress(InetAddress.getByName(getBindIP()), 0));
-                    } catch (IOException e) {
-                        callDebugInfo(DEBUG_SOCKET, "Binding failed: " + e.getMessage());
-                    }
-                }
-            }
-
-            mySocket.connect(sockAddr, connectTimeout);
-        } else {
-            callDebugInfo(DEBUG_SOCKET, "Using Proxy");
-
-            if (getBindIP() != null && !getBindIP().isEmpty() ||
-                    getBindIPv6() != null && !getBindIPv6().isEmpty()) {
-                callDebugInfo(DEBUG_SOCKET, "IP Binding is not possible when using a proxy.");
-            }
-
-            final String proxyHost = proxy.getHost();
-            final int proxyPort = proxy.getPort();
-
-            if (proxyPort > 65535 || proxyPort <= 0) {
-                throw new IOException("Proxy port (" + proxyPort + ") is invalid.");
-            }
-
-            final Proxy.Type proxyType = Proxy.Type.valueOf(proxy.getScheme().toUpperCase());
-            mySocket = new Socket(new Proxy(proxyType, new InetSocketAddress(proxyHost, proxyPort)));
-
-            final IRCAuthenticator ia = IRCAuthenticator.getIRCAuthenticator();
-
-            try {
-                try {
-                    ia.getSemaphore().acquire();
-                } catch (InterruptedException ex) {
-                }
-
-                ia.addAuthentication(target, proxy);
-                mySocket.connect(new InetSocketAddress(target.getHost(), target.getPort()), connectTimeout);
-            } finally {
-                ia.removeAuthentication(target, proxy);
-                ia.getSemaphore().release();
-            }
-        }
-
-        return mySocket;
-    }
-
-    /**
      * Find a socket to connect using, this will where possible attempt IPv6
      * first, before falling back to IPv4.
      *
@@ -849,18 +748,17 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
      * will cause a double-length connection timeout.
      *
      * @param target Target URI to connect to.
-     * @param proxy Proxy URI to use
      * @return Socket to use in future connections.
      * @throws IOException if there is an error.
      */
-    private Socket findSocket(final URI target, final URI proxy) throws IOException {
-        if (proxy != null) {
+    private Socket findSocket(final URI target) throws IOException {
+        if (getProxy() != null) {
             // If we have a proxy, let it worry about all this instead.
             //
             // 1) We have no idea what sort of connectivity the proxy has
             // 2) If we do this here, then any DNS-based geo-balancing is
             //    going to be based on our location, not the proxy.
-            return newSocket(target, proxy);
+            return getSocketFactory().createSocket(target.getHost(), target.getPort());
         }
 
         URI target6 = null;
@@ -894,7 +792,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         Exception v6Exception = null;
         if (target6 != null) {
             try {
-                return newSocket(target6, null);
+                return getSocketFactory().createSocket(target6.getHost(), target6.getPort());
             } catch (final IOException ioe) {
                 if (target4 == null) {
                     throw ioe;
@@ -906,7 +804,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         }
         if (target4 != null) {
             try {
-                return newSocket(target4, null);
+                return getSocketFactory().createSocket(target4.getHost(), target4.getPort());
             } catch (final IOException e2) {
                 callDebugInfo(DEBUG_SOCKET, "Exception trying to use IPv4: " + e2);
                 throw e2;
@@ -936,7 +834,7 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
         callDebugInfo(DEBUG_SOCKET, "Connecting to " + getURI().getHost() + ':' + getURI().getPort());
 
         currentSocketState = SocketState.OPENING;
-        socket = findSocket(getConnectURI(getURI()), getProxy());
+        socket = findSocket(getConnectURI(getURI()));
 
         rawSocket = socket;
 
@@ -1061,15 +959,6 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
             }
         }
         callDebugInfo(DEBUG_INFO, "End Thread Execution");
-    }
-
-    @Override
-    public int getLocalPort() {
-        if (currentSocketState == SocketState.OPENING || currentSocketState == SocketState.OPEN) {
-            return socket.getLocalPort();
-        } else {
-            return 0;
-        }
     }
 
     /** Close socket on destroy. */
@@ -2339,5 +2228,11 @@ public class IRCParser extends BaseParser implements SecureParser, EncodingParse
     @Override
     public void setCompositionState(final String host, final CompositionState state) {
         // Do nothing
+    }
+
+    @Override
+    protected void handleSocketDebug(final String message) {
+        super.handleSocketDebug(message);
+        callDebugInfo(DEBUG_SOCKET, message);
     }
 }
