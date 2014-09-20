@@ -1,54 +1,82 @@
-apply plugin: 'java'
+subprojects {
+    apply plugin: 'java'
 
-group = 'com.dmdirc'
+    group = 'com.dmdirc.parser'
 
-libsDirName = '../dist'
-
-sourceSets {
-    main {
-        java {
-            srcDir 'src'
+    sourceSets {
+        main {
+            java {
+                srcDir '../src'
+            }
+        }
+        test {
+            java {
+                srcDir '../test'
+            }
         }
     }
-    test {
-        java {
-            srcDir 'test'
+
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+
+    repositories.mavenCentral()
+
+    dependencies {
+        testCompile group: 'junit', name: 'junit', version: '4.+'
+        testCompile group: 'org.mockito', name: 'mockito-all', version: '1.+'
+    }
+
+}
+
+project("irc") {
+    sourceSets {
+        main {
+            java {
+                exclude 'com/dmdirc/parser/common/**'
+                exclude 'com/dmdirc/parser/interfaces/**'
+            }
         }
-        resources {
-            srcDir 'test-res'
+        test {
+            java {
+                exclude 'com/dmdirc/parser/common/**'
+                exclude 'com/dmdirc/parser/interfaces/**'
+            }
         }
+    }
+
+    dependencies {
+        compile find("common")
     }
 }
 
-task commonJar(type: Jar) {
-    archiveName = "parser.common.jar"
-    from(sourceSets.main.output) {
-        exclude "com/dmdirc/parser/irc"
+project("common") {
+    sourceSets {
+        main {
+            java {
+                exclude 'com/dmdirc/parser/irc/**'
+            }
+        }
+        test {
+            java {
+                exclude 'com/dmdirc/harness/**'
+                exclude 'com/dmdirc/parser/irc/**'
+            }
+        }
     }
-}
-
-task ircJar(type: Jar) {
-    archiveName = "parser.irc.jar"
-    from(sourceSets.main.output) {
-        exclude "com/dmdirc/parser/common"
-        exclude "com/dmdirc/parser/interfaces"
-    }
-}
-
-jar.enabled = false
-jar.dependsOn commonJar
-jar.dependsOn ircJar
-
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
-
-repositories.mavenCentral()
-
-dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.+'
-    testCompile group: 'org.mockito', name: 'mockito-all', version: '1.+'
 }
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.1'
+}
+
+def find(name) {
+    if (allprojects.find { it.name == name }) {
+        project(name)
+    } else if (allprojects.find { it.name == 'plugins:' + name }) {
+        project('parser:' + name)
+    } else if (allprojects.find { it.name == 'modules:plugins:' + name }) {
+        project('modules:parser:' + name)
+    } else {
+        println "Couldn't find project $name"
+    }
 }
