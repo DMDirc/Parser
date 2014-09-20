@@ -23,7 +23,6 @@
 package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.interfaces.Parser;
-import com.dmdirc.parser.irc.processors.ProcessInvite;
 
 import java.util.Date;
 
@@ -39,7 +38,6 @@ public interface InviteListener extends CallbackInterface {
      * @param date The date/time at which the event occured
      * @param userHost Hostname of user who invited us
      * @param channel Channel we were invited to
-     * @see ProcessInvite#callInvite
      */
     void onInvite(Parser parser, Date date, String userHost, String channel);
 

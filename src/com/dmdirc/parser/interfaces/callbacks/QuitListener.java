@@ -24,7 +24,6 @@ package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.interfaces.ClientInfo;
 import com.dmdirc.parser.interfaces.Parser;
-import com.dmdirc.parser.irc.processors.ProcessQuit;
 
 import java.util.Date;
 
@@ -42,7 +41,6 @@ public interface QuitListener extends CallbackInterface {
      * @param date The date/time at which the event occured
      * @param client Client Quitting
      * @param reason Reason for quitting (may be "")
-     * @see ProcessQuit#callQuit
      */
     void onQuit(Parser parser, Date date, ClientInfo client, String reason);
 

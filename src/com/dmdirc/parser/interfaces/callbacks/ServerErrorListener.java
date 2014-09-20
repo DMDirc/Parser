@@ -37,7 +37,6 @@ public interface ServerErrorListener extends CallbackInterface {
      * @param parser Reference to the parser object that made the callback.
      * @param date The date/time at which the event occured
      * @param message Error Information
-     * @see com.dmdirc.parser.irc.IRCParser#callServerError
      */
     void onServerError(Parser parser, Date date, String message);
 

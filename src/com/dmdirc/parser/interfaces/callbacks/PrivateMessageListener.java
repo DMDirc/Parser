@@ -24,7 +24,6 @@ package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.SpecificCallback;
-import com.dmdirc.parser.irc.processors.ProcessMessage;
 
 import java.util.Date;
 
@@ -45,7 +44,6 @@ public interface PrivateMessageListener extends CallbackInterface {
      * @param date The date/time at which the event occured
      * @param message Message contents
      * @param host Hostname of sender (or servername)
-     * @see ProcessMessage#callPrivateMessage
      */
     void onPrivateMessage(Parser parser, Date date, String message, String host);
 

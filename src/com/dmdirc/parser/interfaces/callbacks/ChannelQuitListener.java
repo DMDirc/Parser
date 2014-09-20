@@ -26,7 +26,6 @@ import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.SpecificCallback;
-import com.dmdirc.parser.irc.processors.ProcessQuit;
 
 import java.util.Date;
 
@@ -46,7 +45,6 @@ public interface ChannelQuitListener extends CallbackInterface {
      * @param channel Channel that user was on
      * @param client User thats quitting
      * @param reason Quit reason
-     * @see ProcessQuit#callChannelQuit
      */
     void onChannelQuit(Parser parser, Date date, ChannelInfo channel,
             ChannelClientInfo client, String reason);
