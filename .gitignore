@@ -9,3 +9,6 @@ build-before-profiler.xml
 /nbproject/genfiles.properties
 /nbproject/private
 /etc/nexus-teamcity.properties
+/.gradle
+/irc
+/common
