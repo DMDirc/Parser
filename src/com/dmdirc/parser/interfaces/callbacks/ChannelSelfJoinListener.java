@@ -24,7 +24,6 @@ package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.Parser;
-import com.dmdirc.parser.irc.processors.ProcessJoin;
 
 import java.util.Date;
 
@@ -41,7 +40,6 @@ public interface ChannelSelfJoinListener extends CallbackInterface {
      * @param parser Reference to the parser object that made the callback.
      * @param date The date/time at which the event occured
      * @param channel Channel Object
-     * @see ProcessJoin#callChannelSelfJoin
      */
     void onChannelSelfJoin(Parser parser, Date date, ChannelInfo channel);
 

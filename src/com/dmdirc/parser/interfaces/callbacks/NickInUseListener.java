@@ -23,7 +23,6 @@
 package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.interfaces.Parser;
-import com.dmdirc.parser.irc.processors.ProcessNickInUse;
 
 import java.util.Date;
 
@@ -38,7 +37,6 @@ public interface NickInUseListener extends CallbackInterface {
      * @param nickname Nickname that was wanted.
      * @param date The date/time at which the event occured
      * @param parser Reference to the parser object that made the callback.
-     * @see ProcessNickInUse#callNickInUse
      */
     void onNickInUse(Parser parser, Date date, String nickname);
 

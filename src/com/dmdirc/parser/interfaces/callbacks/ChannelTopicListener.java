@@ -25,7 +25,6 @@ package com.dmdirc.parser.interfaces.callbacks;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.SpecificCallback;
-import com.dmdirc.parser.irc.processors.ProcessTopic;
 
 import java.util.Date;
 
@@ -43,7 +42,6 @@ public interface ChannelTopicListener extends CallbackInterface {
      * @param date The date/time at which the event occured
      * @param channel Channel that topic was set on
      * @param isJoinTopic True when getting topic on join, false if set by user/server
-     * @see ProcessTopic#callChannelTopic
      */
     void onChannelTopic(Parser parser, Date date, ChannelInfo channel, boolean isJoinTopic);
 

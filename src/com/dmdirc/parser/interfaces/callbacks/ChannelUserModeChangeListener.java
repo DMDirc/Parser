@@ -28,7 +28,6 @@ import com.dmdirc.parser.interfaces.FakableArgument;
 import com.dmdirc.parser.interfaces.FakableSource;
 import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.SpecificCallback;
-import com.dmdirc.parser.irc.processors.ProcessMode;
 
 import java.util.Date;
 
@@ -50,7 +49,6 @@ public interface ChannelUserModeChangeListener extends CallbackInterface {
      * @param client Client chaning the modes (null if server)
      * @param host Host doing the mode changing (User host or server name)
      * @param mode String representing mode change (ie +o)
-     * @see ProcessMode#callChannelUserModeChanged
      */
     void onChannelUserModeChanged(@FakableSource Parser parser,
             Date date,

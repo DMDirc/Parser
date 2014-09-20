@@ -38,7 +38,6 @@ public interface DebugInfoListener extends CallbackInterface {
      * @param date The date/time at which the event occured
      * @param level Debugging Level (ndInfo, ndSocket etc)
      * @param data Debugging Information
-     * @see com.dmdirc.parser.irc.IRCParser#callDebugInfo
      */
     void onDebugInfo(Parser parser, Date date, int level, String data);
 

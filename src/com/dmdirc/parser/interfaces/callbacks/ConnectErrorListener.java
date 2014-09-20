@@ -38,7 +38,6 @@ public interface ConnectErrorListener extends CallbackInterface {
      * @param parser Reference to the parser object that made the callback.
      * @param date The date/time at which the event occured
      * @param errorInfo ParserError object representing the error.
-     * @see com.dmdirc.parser.irc.IRCParser#callConnectError
      */
     void onConnectError(Parser parser, Date date, ParserError errorInfo);
 

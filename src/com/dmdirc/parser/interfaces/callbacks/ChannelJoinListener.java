@@ -26,7 +26,6 @@ import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.SpecificCallback;
-import com.dmdirc.parser.irc.processors.ProcessJoin;
 
 import java.util.Date;
 
@@ -45,7 +44,6 @@ public interface ChannelJoinListener extends CallbackInterface {
      * @param date The date/time at which the event occured
      * @param channel Channel Object
      * @param client ChannelClient object for new person
-     * @see ProcessJoin#callChannelJoin
      */
     void onChannelJoin(Parser parser, Date date, ChannelInfo channel, ChannelClientInfo client);
 

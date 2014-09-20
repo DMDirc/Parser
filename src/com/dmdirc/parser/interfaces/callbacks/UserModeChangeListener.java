@@ -24,7 +24,6 @@ package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.interfaces.ClientInfo;
 import com.dmdirc.parser.interfaces.Parser;
-import com.dmdirc.parser.irc.processors.ProcessMode;
 
 import java.util.Date;
 
@@ -45,7 +44,6 @@ public interface UserModeChangeListener extends CallbackInterface {
      * @param client Client that had the mode changed (almost always us)
      * @param host Host that set the mode (us or servername)
      * @param modes The modes set.
-     * @see ProcessMode#callUserModeChanged
      */
     void onUserModeChanged(Parser parser, Date date, ClientInfo client,
             String host, String modes);

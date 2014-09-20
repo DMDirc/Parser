@@ -23,7 +23,6 @@
 package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.interfaces.Parser;
-import com.dmdirc.parser.irc.processors.ProcessMessage;
 
 import java.util.Date;
 
@@ -40,7 +39,6 @@ public interface UnknownServerNoticeListener extends CallbackInterface {
      * @param message Notice contents
      * @param target Actual target of notice
      * @param host Hostname of sender
-     * @see ProcessMessage#callUnknownServerNotice
      */
     void onUnknownServerNotice(Parser parser, Date date, String message,
             String target, String host);

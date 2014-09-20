@@ -26,7 +26,6 @@ import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.SpecificCallback;
-import com.dmdirc.parser.irc.processors.ProcessPart;
 
 import java.util.Date;
 
@@ -46,7 +45,6 @@ public interface ChannelPartListener extends CallbackInterface {
      * @param channel Channel that the user parted
      * @param client Client that parted
      * @param reason Reason given for parting (May be "")
-     * @see ProcessPart#callChannelPart
      */
     void onChannelPart(Parser parser, Date date, ChannelInfo channel,
             ChannelClientInfo client, String reason);

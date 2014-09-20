@@ -24,7 +24,6 @@ package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.common.AwayState;
 import com.dmdirc.parser.interfaces.Parser;
-import com.dmdirc.parser.irc.processors.ProcessAway;
 
 import java.util.Date;
 
@@ -41,7 +40,6 @@ public interface AwayStateListener extends CallbackInterface {
      * @param oldState Old Away State
      * @param currentState Current Away State
      * @param reason Best guess at away reason
-     * @see ProcessAway#callAwayState
      */
     void onAwayState(Parser parser, Date date, AwayState oldState,
             AwayState currentState, String reason);

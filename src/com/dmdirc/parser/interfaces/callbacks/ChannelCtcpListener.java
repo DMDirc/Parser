@@ -28,7 +28,6 @@ import com.dmdirc.parser.interfaces.FakableArgument;
 import com.dmdirc.parser.interfaces.FakableSource;
 import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.SpecificCallback;
-import com.dmdirc.parser.irc.processors.ProcessMessage;
 
 import java.util.Date;
 
@@ -52,7 +51,6 @@ public interface ChannelCtcpListener extends CallbackInterface {
      * @param type Type of CTCP (VERSION, TIME etc)
      * @param message Additional contents
      * @param host Hostname of sender (or servername)
-     * @see ProcessMessage#callChannelCTCP
      */
     void onChannelCTCP(@FakableSource Parser parser,
             Date date,

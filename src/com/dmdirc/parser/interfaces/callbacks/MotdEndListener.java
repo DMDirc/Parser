@@ -23,7 +23,6 @@
 package com.dmdirc.parser.interfaces.callbacks;
 
 import com.dmdirc.parser.interfaces.Parser;
-import com.dmdirc.parser.irc.processors.ProcessMOTD;
 
 import java.util.Date;
 
@@ -39,7 +38,6 @@ public interface MotdEndListener extends CallbackInterface {
      * @param date The date/time at which the event occured
      * @param noMOTD Set to true if this was a "No MOTD Found" message rather than an "End of MOTD"
      * @param data The contents of the line (incase of language changes or so)
-     * @see ProcessMOTD#callMOTDEnd
      */
     void onMOTDEnd(Parser parser, Date date, boolean noMOTD, String data);
 

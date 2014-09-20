@@ -38,7 +38,6 @@ public interface DataOutListener extends CallbackInterface {
      * @param date The date/time at which the event occured
      * @param data Outgoing Data
      * @param fromParser True if parser sent the data, false if sent using .sendLine
-     * @see com.dmdirc.parser.irc.IRCParser#callDataOut
      */
     void onDataOut(Parser parser, Date date, String data, boolean fromParser);
 
