@@ -6,12 +6,12 @@ subprojects {
     sourceSets {
         main {
             java {
-                srcDir '../src'
+                srcDir 'src'
             }
         }
         test {
             java {
-                srcDir '../test'
+                srcDir 'test'
             }
         }
     }
@@ -29,39 +29,8 @@ subprojects {
 }
 
 project("irc") {
-    sourceSets {
-        main {
-            java {
-                exclude 'com/dmdirc/parser/common/**'
-                exclude 'com/dmdirc/parser/interfaces/**'
-            }
-        }
-        test {
-            java {
-                exclude 'com/dmdirc/parser/common/**'
-                exclude 'com/dmdirc/parser/interfaces/**'
-            }
-        }
-    }
-
     dependencies {
         compile find("common")
-    }
-}
-
-project("common") {
-    sourceSets {
-        main {
-            java {
-                exclude 'com/dmdirc/parser/irc/**'
-            }
-        }
-        test {
-            java {
-                exclude 'com/dmdirc/harness/**'
-                exclude 'com/dmdirc/parser/irc/**'
-            }
-        }
     }
 }
 
