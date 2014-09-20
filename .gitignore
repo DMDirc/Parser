@@ -10,5 +10,4 @@ build-before-profiler.xml
 /nbproject/private
 /etc/nexus-teamcity.properties
 /.gradle
-/irc
-/common
+/*/build
