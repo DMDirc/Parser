@@ -41,9 +41,9 @@ task wrapper(type: Wrapper) {
 def find(name) {
     if (allprojects.find { it.name == name }) {
         project(name)
-    } else if (allprojects.find { it.name == 'plugins:' + name }) {
+    } else if (allprojects.find { it.name == 'parser:' + name }) {
         project('parser:' + name)
-    } else if (allprojects.find { it.name == 'modules:plugins:' + name }) {
+    } else if (allprojects.find { it.name == 'modules:parser:' + name }) {
         project('modules:parser:' + name)
     } else {
         println "Couldn't find project $name"
