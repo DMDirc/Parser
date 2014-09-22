@@ -6,4 +6,4 @@ dependencies:
 
 test:
   override:
-    - ./gradlew check -x findbugsMain -x findbugsTest
+    - ./gradlew check
