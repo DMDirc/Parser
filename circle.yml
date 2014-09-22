@@ -1,0 +1,7 @@
+---
+
+dependencies:
+  - ./gradlew dependencies
+
+test:
+  - ./gradlew check -x findbugsMain -x findbugsTest
