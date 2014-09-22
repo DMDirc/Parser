@@ -1,7 +1,13 @@
 subprojects {
-    apply plugin: 'java'
+    def jgit = new org.mdonoughe.JGitDescribeTask()
+    jgit.dir = new File(projectDir, '../.git')
+    jgit.subdir = project.name
+    project.version = jgit.getDescription() + '-SNAPSHOT'
 
     group = 'com.dmdirc.parser'
+
+    apply plugin: 'maven-publish'
+    apply plugin: 'java'
 
     sourceSets {
         main {
@@ -16,6 +22,20 @@ subprojects {
         }
     }
 
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                artifact jar
+            }
+        }
+        repositories {
+            maven {
+                name 'snapshots'
+                url 'http://nexus.dmdirc.com/nexus/content/repositories/snapshots/'
+            }
+        }
+    }
+
     sourceCompatibility = 1.7
     targetCompatibility = 1.7
 
@@ -26,6 +46,23 @@ subprojects {
         testCompile group: 'org.mockito', name: 'mockito-all', version: '1.+'
     }
 
+    task getCredentials << {
+        def target = file('../nexus-teamcity.gradle')
+        if (!target.exists()) {
+            new URL('http://www.dmdirc.com/private/nexus-teamcity.gradle').withInputStream{
+                 i -> target.withOutputStream { it << i }
+            }
+        }
+
+        apply from: '../nexus-teamcity.gradle'
+        project.publishing.repositories[0].credentials {
+            username "$nexusUser"
+            password "$nexusPass"
+        }
+    }
+
+    task publishSnapshot(dependsOn: ['getCredentials', 'publishMavenJavaPublicationToSnapshotsRepository']) << {
+    }
 }
 
 task wrapper(type: Wrapper) {
@@ -41,5 +78,19 @@ def find(name) {
         project('modules:parser:' + name)
     } else {
         println "Couldn't find project $name"
+    }
+}
+
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url 'http://nexus.dmdirc.com/nexus/content/repositories/thirdparty/'
+        }
+    }
+
+    dependencies {
+        classpath group: 'com.github.shanemcc', name: 'jgit-describe', version: '0.5'
+        classpath group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '2.3.1.+'
     }
 }
