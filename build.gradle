@@ -28,12 +28,6 @@ subprojects {
 
 }
 
-project("irc") {
-    dependencies {
-        compile find("common")
-    }
-}
-
 task wrapper(type: Wrapper) {
     gradleVersion = '2.1'
 }
