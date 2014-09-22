@@ -1,7 +1,9 @@
 ---
 
 dependencies:
-  - ./gradlew dependencies
+  override:
+    - ./gradlew dependencies
 
 test:
-  - ./gradlew check -x findbugsMain -x findbugsTest
+  override:
+    - ./gradlew check -x findbugsMain -x findbugsTest
