@@ -32,6 +32,12 @@ import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A {@link java.io.BufferedReader}-style reader that is aware of the IRC
@@ -42,7 +48,7 @@ import java.nio.charset.CodingErrorAction;
 public class IRCReader implements Closeable {
 
     /** Maximum length for an IRC line in bytes. */
-    private static final int LINE_LENGTH = 512;
+    private static final int LINE_LENGTH = 1024;
     /** The input stream to read input from. */
     private final InputStream stream;
     /** The encoder to use to encode lines. */
@@ -93,7 +99,12 @@ public class IRCReader implements Closeable {
         int paramOffset = -1;
         int chr = 0, lastChr = 0;
 
-        while (offset < 512 && (chr = stream.read()) > -1) {
+        boolean hasTags = false;
+        boolean endOfTags = false;
+        boolean hasV3Tags = false;
+        boolean foundFirstSpace = false;
+
+        while (offset < LINE_LENGTH && (chr = stream.read()) > -1) {
             if (chr == '\r') {
                 continue;
             } else if (chr == '\n') {
@@ -101,11 +112,32 @@ public class IRCReader implements Closeable {
                 break;
             }
 
+            if (hasTags && !endOfTags) {
+                // Tags end either at the first @ for non-v3 tags or space for v3
+                if (offset > 0 && ((chr == '@' && !hasV3Tags) || chr == ' ')) {
+                    endOfTags = true;
+                    hasV3Tags = (chr == ' ');
+                }
+                // If we are still possibly looking at tags, and we find a non-numeric
+                // character, then we probably have v3Tags
+                if (!endOfTags && (chr < '0' || chr > '9')) {
+                    hasV3Tags = true;
+                }
+            } else if (offset == 0 && chr == '@') {
+                hasTags = true;
+            } else if (offset == 0) {
+                endOfTags = true;
+            }
+
             line[offset++] = (byte) chr;
 
             if (lastChr == ' ' && chr == ':' && paramOffset == -1) {
                 // We've found the last param
-                paramOffset = offset;
+                if (!hasV3Tags || foundFirstSpace) {
+                    paramOffset = offset;
+                } else if (hasV3Tags) {
+                    foundFirstSpace = true;
+                }
             }
 
             lastChr = chr;
@@ -209,16 +241,47 @@ public class IRCReader implements Closeable {
         private final String line;
         /** The tokens found in the line, individually encoded as appropriate. */
         private final String[] tokens;
+        /** The tags (if any) found in the line, individually encoded as appropriate. */
+        private final Map<String,String> tags = new HashMap<>();
 
         /**
          * Creates a new instance of {@link ReadLine} with the specified line
          * and tokens.
          *
          * @param line A string representation of the line
-         * @param tokens The tokens which make up the line
+         * @param lineTokens The tokens which make up the line
          */
-        public ReadLine(final String line, final String[] tokens) {
+        public ReadLine(final String line, final String[] lineTokens) {
             this.line = line;
+
+            String[] tokens = lineTokens;
+            if (!tokens[0].isEmpty() && tokens[0].charAt(0) == '@') {
+                // Look for old-style TSIRC timestamp first.
+                final int tsEnd = tokens[0].indexOf('@', 1);
+                boolean hasTSIRCDate = false;
+                if (tsEnd > -1) {
+                    try {
+                        final long ts = Long.parseLong(tokens[0].substring(1, tsEnd));
+                        tags.put("tsirc date", tokens[0].substring(1, tsEnd));
+                        hasTSIRCDate = true;
+                        tokens[0] = tokens[0].substring(tsEnd + 1);
+                    } catch (final NumberFormatException nfe) { /* Not a timestamp. */ }
+                }
+
+                if (!hasTSIRCDate) {
+                    final String[] lineTags = tokens[0].substring(1).split(";");
+                    for (final String keyVal : lineTags) {
+                        if (!keyVal.isEmpty()) {
+                            final String[] keyValue = keyVal.split("=", 2);
+                            tags.put(keyValue[0], keyValue.length > 1 ? keyValue[1] : "");
+                        }
+                    }
+
+                    tokens = new String[lineTokens.length - 1];
+                    System.arraycopy(lineTokens, 1, tokens, 0, lineTokens.length - 1);
+                }
+            }
+
             this.tokens = tokens;
         }
 
@@ -242,6 +305,15 @@ public class IRCReader implements Closeable {
          */
         public String[] getTokens() {
             return tokens;
+        }
+
+        /**
+         * Retrieves a map of tags extracted from the specified line.
+         *
+         * @return The line's tags
+         */
+        public Map<String,String> getTags() {
+            return tags;
         }
     }
 }

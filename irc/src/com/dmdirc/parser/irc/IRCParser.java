@@ -59,6 +59,8 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
+import java.text.SimpleDateFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -915,8 +917,27 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
             return new String[]{""};
         }
 
-        final int lastarg = line.indexOf(" :");
+        int lastarg = line.indexOf(" :");
         String[] tokens;
+
+        // Check for IRC Tags.
+        if (line.charAt(0) == '@') {
+            // We have tags.
+            tokens = line.split(" ", 2);
+            final int tsEnd = tokens[0].indexOf('@', 1);
+            boolean hasTSIRCDate = false;
+            if (tsEnd > -1) {
+                try {
+                    final long ts = Long.parseLong(tokens[0].substring(1, tsEnd));
+                    hasTSIRCDate = true;
+                } catch (final NumberFormatException nfe) { /* Not a timestamp. */ }
+            }
+
+            if (!hasTSIRCDate) {
+                // IRCv3 Tags, last arg is actually the second " :"
+                lastarg = line.indexOf(" :", lastarg+1);
+            }
+        }
 
         if (lastarg > -1) {
             final String[] temp = line.substring(0, lastarg).split(" ");
@@ -1076,13 +1097,17 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
         callDataIn(line.getLine());
         final String[] token = line.getTokens();
         Date lineTS = new Date();
-        if (!token[0].isEmpty() && token[0].charAt(0) == '@') {
+
+        if (line.getTags().containsKey("tsirc date")) {
             try {
-                final int tsEnd = token[0].indexOf('@', 1);
-                final long ts = Long.parseLong(token[0].substring(1, tsEnd));
-                token[0] = token[0].substring(tsEnd + 1);
+                final long ts = Long.parseLong(line.getTags().get("tsirc date"));
                 lineTS = new Date(ts - tsdiff);
             } catch (final NumberFormatException nfe) { /* Do nothing. */ }
+        } else if (line.getTags().containsKey("time")) {
+            final SimpleDateFormat servertime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            try {
+                lineTS = servertime.parse(line.getTags().get("time"));
+            } catch (final ParseException pe) { /* Do nothing. */ }
         }
 
         setPingNeeded(false);
