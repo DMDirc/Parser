@@ -913,7 +913,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @return Array of tokens
      */
     public static String[] tokeniseLine(final String line) {
-        if (line == null) {
+        if (line == null || line.isEmpty()) {
             return new String[]{""};
         }
 
