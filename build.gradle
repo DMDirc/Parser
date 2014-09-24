@@ -8,6 +8,7 @@ subprojects {
 
     apply plugin: 'maven-publish'
     apply plugin: 'java'
+    apply plugin: 'signing'
 
     sourceSets {
         main {
@@ -88,6 +89,10 @@ subprojects {
                 url 'http://nexus.dmdirc.com/nexus/content/repositories/snapshots/'
             }
         }
+    }
+
+    signing {
+        sign configurations.archives
     }
 
     sourceCompatibility = 1.7
