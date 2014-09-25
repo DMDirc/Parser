@@ -1,8 +1,5 @@
 subprojects {
-    def jgit = new org.mdonoughe.JGitDescribeTask()
-    jgit.dir = new File(projectDir, '../.git')
-    jgit.subdir = project.name
-    project.version = jgit.getDescription() + '-SNAPSHOT'
+    apply plugin: GitVersion
 
     group = 'com.dmdirc.parser'
 
@@ -166,4 +163,44 @@ buildscript {
         classpath group: 'com.github.shanemcc', name: 'jgit-describe', version: '0.5'
         classpath group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '2.3.1.+'
     }
+}
+
+class GitVersion implements Plugin<Project> {
+    void apply(Project project) {
+        def jgit = new org.mdonoughe.JGitDescribeTask()
+        jgit.dir = getGitDirectory(project)
+
+        def subdir = getRelativeSubdir(project, jgit.dir)
+        if (!subdir.isEmpty()) {
+            jgit.subdir = subdir
+        }
+
+        def version = jgit.description
+        project.version = getProjectVersion(version)
+    }
+
+    File getGitDirectory(Project project) {
+        def target = project.projectDir
+        def gitDir = new File(target, '.git')
+        while (!gitDir.exists() && target.parentFile != null) {
+            target = target.parentFile
+            gitDir = new File(target, '.git')
+        }
+        return gitDir
+    }
+
+    String getRelativeSubdir(Project project, File gitDir) {
+        def parent = gitDir.parentFile.absolutePath
+        def target = project.projectDir.absolutePath
+        return target.substring(parent.length())
+    }
+
+    String getProjectVersion(String gitVersion) {
+        if (gitVersion.matches('.*-[0-9]+-[0-9a-f]+$')) {
+            return gitVersion + '-SNAPSHOT'
+        } else {
+            return gitVersion
+        }
+    }
+
 }
