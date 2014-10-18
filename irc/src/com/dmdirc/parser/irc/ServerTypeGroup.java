@@ -33,25 +33,25 @@ public enum ServerTypeGroup {
     /**
      * Freenode Group.
      */
-    FREENODE("Freenode IRCDs", new ServerType[]{ServerType.HYPERION, ServerType.DANCER}),
+    FREENODE("Freenode IRCDs", ServerType.HYPERION, ServerType.DANCER),
     /**
      * Charybdis Group.
      */
-    CHARYBDIS("Charybdis-esque IRCDs", new ServerType[]{ServerType.IRCD_SEVEN, ServerType.CHARYBDIS}),
+    CHARYBDIS("Charybdis-esque IRCDs", ServerType.IRCD_SEVEN, ServerType.CHARYBDIS),
     /**
      * Group for ircds that put the channel owners in a list under raw 386
      * rather than as a channel user mode.
      */
-    OWNER_386("Owner List", new ServerType[]{ServerType.SWIFTIRC, ServerType.AUSTHEX8}),
+    OWNER_386("Owner List", ServerType.SWIFTIRC, ServerType.AUSTHEX8),
     /**
      * Group for ircds that put the protected users in a list under raw 388
      * rather than as a channel user mode.
      */
-    PROTECTED_388("Protected List", new ServerType[]{ServerType.SWIFTIRC, ServerType.AUSTHEX8}),
+    PROTECTED_388("Protected List", ServerType.SWIFTIRC, ServerType.AUSTHEX8),
     /**
      * Group for ircds that require list modes to be sent one at a time.
      */
-    SINGLE_LISTMODE("Single List Modes", new ServerType[]{ServerType.EUIRCD, ServerType.UNREAL, ServerType.IRSEE});
+    SINGLE_LISTMODE("Single List Modes", ServerType.EUIRCD, ServerType.UNREAL, ServerType.IRSEE);
 
     /** Name of the group. */
     final String name;
@@ -64,7 +64,7 @@ public enum ServerTypeGroup {
      * @param name Name of this group.
      * @param members Members of this group.
      */
-    ServerTypeGroup(final String name, final ServerType[] members) {
+    ServerTypeGroup(final String name, final ServerType... members) {
         this.name = name;
         this.members = Arrays.asList(members);
     }

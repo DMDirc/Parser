@@ -43,7 +43,7 @@ public abstract class TimestampedIRCProcessor extends IRCProcessor {
     }
 
     @Override
-    public final void process(final String sParam, final String[] token) {
+    public final void process(final String sParam, final String... token) {
         process(new Date(), sParam, token);
     }
 
@@ -54,7 +54,7 @@ public abstract class TimestampedIRCProcessor extends IRCProcessor {
      * @param sParam Type of line to process ("005", "PRIVMSG" etc)
      * @param token IRCTokenised line to process
      */
-    public abstract void process(final Date date, final String sParam, final String[] token);
+    public abstract void process(final Date date, final String sParam, final String... token);
 
 
 }

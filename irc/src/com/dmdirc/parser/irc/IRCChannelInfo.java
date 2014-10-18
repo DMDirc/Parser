@@ -73,7 +73,7 @@ public class IRCChannelInfo implements ChannelInfo {
     /** Channel Name. */
     private final String name;
     /** Hashtable containing references to ChannelClients. */
-    private final Map<String, IRCChannelClientInfo> clients = Collections.synchronizedMap(new HashMap<String, IRCChannelClientInfo>());
+    private final Map<String, IRCChannelClientInfo> clients = Collections.synchronizedMap(new HashMap<>());
     /** Hashtable storing values for modes set in the channel that use parameters. */
     private final Map<Character, String> paramModes = new HashMap<>();
     /** Hashtable storing list modes. */
@@ -277,7 +277,7 @@ public class IRCChannelInfo implements ChannelInfo {
     @Override
     public Collection<ChannelClientInfo> getChannelClients() {
         synchronized (clients) {
-            return new ArrayList<ChannelClientInfo>(clients.values());
+            return new ArrayList<>(clients.values());
         }
     }
 
@@ -529,7 +529,7 @@ public class IRCChannelInfo implements ChannelInfo {
         }
 
         if (!listModes.containsKey(cMode)) {
-            listModes.put(cMode, new ArrayList<ChannelListModeItem>());
+            listModes.put(cMode, new ArrayList<>());
         }
 
         final List<ChannelListModeItem> lModes = listModes.get(cMode);
@@ -555,7 +555,7 @@ public class IRCChannelInfo implements ChannelInfo {
         }
 
         if (!listModes.containsKey(mode)) {
-            listModes.put(mode, new ArrayList<ChannelListModeItem>());
+            listModes.put(mode, new ArrayList<>());
         }
         return listModes.get(mode);
     }
