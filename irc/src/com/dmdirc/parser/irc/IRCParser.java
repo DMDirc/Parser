@@ -517,12 +517,12 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     }
 
     @Override
-    public void setTrustManagers(final TrustManager[] managers) {
+    public void setTrustManagers(final TrustManager... managers) {
         myTrustManager = managers == null ? null : Arrays.copyOf(managers, managers.length);
     }
 
     @Override
-    public void setKeyManagers(final KeyManager[] managers) {
+    public void setKeyManagers(final KeyManager... managers) {
         myKeyManagers = managers == null ? null : Arrays.copyOf(managers, managers.length);
     }
 

@@ -254,11 +254,11 @@ public class ProcessListModes extends IRCProcessor {
                 channel.setHasGotListModes(true);
 
                 if (isCleverMode) {
-                    for (Character thisMode : parser.chanModesOther.keySet()) {
-                        if (parser.chanModesOther.get(thisMode) == IRCParser.MODE_LIST) {
-                            callChannelGotListModes(channel, thisMode);
-                        }
-                    }
+                    parser.chanModesOther.keySet()
+                            .stream()
+                            .filter(thisMode -> parser.chanModesOther
+                                    .get(thisMode) == IRCParser.MODE_LIST)
+                            .forEach(thisMode -> callChannelGotListModes(channel, thisMode));
                 } else {
                     callChannelGotListModes(channel, mode);
                 }

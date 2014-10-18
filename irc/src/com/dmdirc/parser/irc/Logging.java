@@ -91,7 +91,7 @@ public class Logging {
             factory = Class.forName("org.apache.commons.logging.LogFactory");
 
             if (factory != null) {
-                final Method getLog = factory.getMethod("getLog", new Class[]{Class.class});
+                final Method getLog = factory.getMethod("getLog", Class.class);
                 log = getLog.invoke(null, this.getClass());
             }
         } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException cnfe) {

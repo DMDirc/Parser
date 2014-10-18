@@ -47,13 +47,7 @@ public class PriorityQueueHandler extends QueueHandler {
      * @return a QueueFactory that produces PrirortyQueueHandlers.
      */
     public static QueueFactory getFactory() {
-        return new QueueFactory() {
-
-            @Override
-            public QueueHandler getQueueHandler(final OutputQueue outputQueue, final BlockingQueue<QueueItem> queue, final PrintWriter out) {
-                return new PriorityQueueHandler(outputQueue, queue, out);
-            }
-        };
+        return PriorityQueueHandler::new;
     }
 
     @Override

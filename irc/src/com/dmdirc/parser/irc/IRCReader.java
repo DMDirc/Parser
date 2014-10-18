@@ -32,10 +32,6 @@ import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -197,7 +193,7 @@ public class IRCReader implements Closeable {
      * @param tokens The tokens to extract a source from
      * @return The relevant source or null if none specified
      */
-    private String getSource(final String[] tokens) {
+    private String getSource(final String... tokens) {
         if (tokens.length > 0 && tokens[0].length() > 1 && tokens[0].charAt(0) == ':') {
             return tokens[0].substring(1);
         }
@@ -214,7 +210,7 @@ public class IRCReader implements Closeable {
      * @param tokens The tokens to extract a destination from
      * @return The relevant destination or null if none specified
      */
-    private String getDestination(final String[] tokens) {
+    private String getDestination(final String... tokens) {
         if (tokens.length > 0 && tokens[0].length() >= 3 && tokens[0].charAt(0) == ':') {
             final int target = tokens[1].matches("^[0-9]+$") ? 3 : 2;
 
@@ -251,7 +247,7 @@ public class IRCReader implements Closeable {
          * @param line A string representation of the line
          * @param lineTokens The tokens which make up the line
          */
-        public ReadLine(final String line, final String[] lineTokens) {
+        public ReadLine(final String line, final String... lineTokens) {
             this.line = line;
 
             String[] tokens = lineTokens;

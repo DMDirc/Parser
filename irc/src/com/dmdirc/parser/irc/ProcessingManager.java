@@ -225,7 +225,7 @@ public class ProcessingManager {
      * @param token IRCTokenised line to process
      * @throws ProcessorNotFoundException exception if no processors exists to handle the line
      */
-    public void process(final String sParam, final String[] token) throws ProcessorNotFoundException {
+    public void process(final String sParam, final String... token) throws ProcessorNotFoundException {
         process(new Date(), sParam, token);
     }
 
@@ -237,7 +237,7 @@ public class ProcessingManager {
      * @param token IRCTokenised line to process
      * @throws ProcessorNotFoundException exception if no processors exists to handle the line
      */
-    public void process(final Date date, final String sParam, final String[] token) throws ProcessorNotFoundException {
+    public void process(final Date date, final String sParam, final String... token) throws ProcessorNotFoundException {
         IRCProcessor messageProcessor = null;
         try {
             messageProcessor = getProcessor(sParam);
@@ -272,7 +272,7 @@ public class ProcessingManager {
      * @param token IRC Tokenised line
      * @return true if a method was called, false otherwise
      */
-    protected boolean callNumeric(final int numeric, final String[] token) {
+    protected boolean callNumeric(final int numeric, final String... token) {
         return parser.getCallbackManager().getCallbackType(NumericListener.class).call(numeric, token);
     }
 }
