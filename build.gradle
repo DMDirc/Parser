@@ -74,7 +74,7 @@ subprojects {
         repositories {
             maven {
                 name 'snapshots'
-                url 'http://nexus.dmdirc.com/nexus/content/repositories/snapshots/'
+                url 'http://artifactory.dmdirc.com/artifactory/repo'
             }
         }
     }
@@ -142,7 +142,7 @@ buildscript {
     repositories {
         mavenCentral()
         maven {
-            url 'http://nexus.dmdirc.com/nexus/content/repositories/thirdparty/'
+            url 'http://artifactory.dmdirc.com/artifactory/repo'
         }
     }
 
