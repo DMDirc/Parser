@@ -103,7 +103,7 @@ public final class ProxyAuthenticator extends Authenticator {
         replies.put(fullhost, pass);
 
         // Store which servers are associated with which proxy
-        final List<URI> servers = owners.containsKey(fullhost) ? owners.get(fullhost) : new ArrayList<URI>();
+        final List<URI> servers = owners.containsKey(fullhost) ? owners.get(fullhost) : new ArrayList<>();
         owners.remove(fullhost);
         servers.add(server);
         owners.put(fullhost, servers);
@@ -131,7 +131,7 @@ public final class ProxyAuthenticator extends Authenticator {
         final String fullhost = host.toLowerCase() + ':' + port;
 
         // See if any other servers are associated with this proxy.
-        final List<URI> servers = owners.containsKey(fullhost) ? owners.get(fullhost) : new ArrayList<URI>();
+        final List<URI> servers = owners.containsKey(fullhost) ? owners.get(fullhost) : new ArrayList<>();
         servers.remove(server);
 
         if (servers.isEmpty()) {
