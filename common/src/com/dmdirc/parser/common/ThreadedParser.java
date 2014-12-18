@@ -39,12 +39,7 @@ public abstract class ThreadedParser implements Parser {
     public void connect() {
         synchronized (controlThreadLock) {
             if (controlThread == null) {
-                controlThread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        ThreadedParser.this.run();
-                    }
-                }, "Parser Thread");
+                controlThread = new Thread(this::run, "Parser Thread");
                 controlThread.start();
             } else {
                 // To ensure correct internal state, parsers must be recreated for
