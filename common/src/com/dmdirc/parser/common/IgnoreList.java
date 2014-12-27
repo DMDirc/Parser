@@ -25,6 +25,7 @@ package com.dmdirc.parser.common;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
 
 /**
  * Parser Ignore list.
@@ -197,13 +198,7 @@ public class IgnoreList {
      * @throws UnsupportedOperationException if an expression can't be converted
      */
     public List<String> getSimpleList() throws UnsupportedOperationException {
-        final List<String> res = new ArrayList<>();
-
-        for (String regex : ignoreInfo) {
-            res.add(regexToSimple(regex));
-        }
-
-        return res;
+        return ignoreInfo.stream().map(IgnoreList::regexToSimple).collect(Collectors.toList());
     }
 
     /**
