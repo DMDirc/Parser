@@ -217,11 +217,9 @@ public class CallbackManager {
      * @param o instance of ICallbackInterface to remove.
      */
     public void delAllCallback(final CallbackInterface o) {
-        for (CallbackObject cb : callbackHash.values()) {
-            if (cb != null && cb.getType().isInstance(o)) {
-                cb.del(o);
-            }
-        }
+        callbackHash.values().stream()
+                .filter(cb -> cb != null && cb.getType().isInstance(o))
+                .forEach(cb -> cb.del(o));
     }
 
     /**
@@ -230,11 +228,9 @@ public class CallbackManager {
      * @param o instance of ICallbackInterface to add.
      */
     public void addAllCallback(final CallbackInterface o) {
-        for (CallbackObject cb : callbackHash.values()) {
-            if (cb != null && cb.getType().isInstance(o)) {
-                cb.add(o);
-            }
-        }
+        callbackHash.values().stream()
+                .filter(cb -> cb != null && cb.getType().isInstance(o))
+                .forEach(cb -> cb.add(o));
     }
 
     /**
