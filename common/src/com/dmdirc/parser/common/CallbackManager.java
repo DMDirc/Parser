@@ -200,7 +200,7 @@ public class CallbackManager {
      * @param callback Name of type of callback object.
      * @return CallbackObject returns the callback object for this type
      */
-    public CallbackObject getCallbackType(final Class<? extends CallbackInterface> callback) {
+    private CallbackObject getCallbackType(final Class<? extends CallbackInterface> callback) {
         if (!callbackHash.containsKey(callback)) {
             throw new CallbackNotFoundException("Callback not found: " + callback.getName()
                     + "\n\nMy class: " + getClass().getName()

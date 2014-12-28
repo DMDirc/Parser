@@ -120,7 +120,9 @@ public class ProcessKick extends IRCProcessor {
     protected void callChannelKick(final ChannelInfo cChannel,
             final ChannelClientInfo cKickedClient, final ChannelClientInfo cKickedByClient,
             final String sReason, final String sKickedByHost) {
-        getCallbackManager().getCallbackType(ChannelKickListener.class).call(cChannel, cKickedClient, cKickedByClient, sReason, sKickedByHost);
+        getCallbackManager().getCallback(ChannelKickListener.class)
+                .onChannelKick(null, null, cChannel, cKickedClient, cKickedByClient, sReason,
+                        sKickedByHost);
     }
 
     /**

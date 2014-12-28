@@ -302,7 +302,8 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      */
     protected void callChannelAction(final Date date, final ChannelInfo cChannel,
             final ChannelClientInfo cChannelClient, final String sMessage, final String sHost) {
-        getCallbackManager().getCallbackType(ChannelActionListener.class).call(date, cChannel, cChannelClient, sMessage, sHost);
+        getCallbackManager().getCallback(ChannelActionListener.class)
+                .onChannelAction(null, date, cChannel, cChannelClient, sMessage, sHost);
     }
 
     /**
@@ -319,7 +320,8 @@ public class ProcessMessage extends TimestampedIRCProcessor {
     protected void callChannelCTCP(final Date date, final ChannelInfo cChannel,
             final ChannelClientInfo cChannelClient, final String sType, final String sMessage,
             final String sHost) {
-        getCallbackManager().getCallbackType(ChannelCtcpListener.class).call(date, cChannel, cChannelClient, sType, sMessage, sHost);
+        getCallbackManager().getCallback(ChannelCtcpListener.class)
+                .onChannelCTCP(null, date, cChannel, cChannelClient, sType, sMessage, sHost);
     }
 
     /**
@@ -336,7 +338,8 @@ public class ProcessMessage extends TimestampedIRCProcessor {
     protected void callChannelCTCPReply(final Date date, final ChannelInfo cChannel,
             final ChannelClientInfo cChannelClient, final String sType, final String sMessage,
             final String sHost) {
-        getCallbackManager().getCallbackType(ChannelCtcpReplyListener.class).call(date, cChannel, cChannelClient, sType, sMessage, sHost);
+        getCallbackManager().getCallback(ChannelCtcpReplyListener.class)
+                .onChannelCTCPReply(null, date, cChannel, cChannelClient, sType, sMessage, sHost);
     }
 
     /**
@@ -351,7 +354,8 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      */
     protected void callChannelMessage(final Date date, final ChannelInfo cChannel,
             final ChannelClientInfo cChannelClient, final String sMessage, final String sHost) {
-        getCallbackManager().getCallbackType(ChannelMessageListener.class).call(date, cChannel, cChannelClient, sMessage, sHost);
+        getCallbackManager().getCallback(ChannelMessageListener.class)
+                .onChannelMessage(null, date, cChannel, cChannelClient, sMessage, sHost);
     }
 
     /**
@@ -366,7 +370,8 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      */
     protected void callChannelNotice(final Date date, final ChannelInfo cChannel,
             final ChannelClientInfo cChannelClient, final String sMessage, final String sHost) {
-        getCallbackManager().getCallbackType(ChannelNoticeListener.class).call(date, cChannel, cChannelClient, sMessage, sHost);
+        getCallbackManager().getCallback(ChannelNoticeListener.class)
+                .onChannelNotice(null, date, cChannel, cChannelClient, sMessage, sHost);
     }
 
     /**
@@ -383,7 +388,8 @@ public class ProcessMessage extends TimestampedIRCProcessor {
     protected void callChannelModeNotice(final Date date, final char prefix,
             final ChannelInfo cChannel, final ChannelClientInfo cChannelClient,
             final String sMessage, final String sHost) {
-        getCallbackManager().getCallbackType(ChannelModeNoticeListener.class).call(date, cChannel, prefix, cChannelClient, sMessage, sHost);
+        getCallbackManager().getCallback(ChannelModeNoticeListener.class)
+                .onChannelModeNotice(null, date, cChannel, prefix, cChannelClient, sMessage, sHost);
     }
 
     /**
@@ -400,7 +406,9 @@ public class ProcessMessage extends TimestampedIRCProcessor {
     protected void callChannelModeMessage(final Date date, final char prefix,
             final ChannelInfo cChannel, final ChannelClientInfo cChannelClient,
             final String sMessage, final String sHost) {
-        getCallbackManager().getCallbackType(ChannelModeMessageListener.class).call(date, cChannel, prefix, cChannelClient, sMessage, sHost);
+        getCallbackManager().getCallback(ChannelModeMessageListener.class)
+                .onChannelModeMessage(null, date, cChannel, prefix, cChannelClient, sMessage,
+                        sHost);
     }
 
     /**
@@ -412,7 +420,8 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      * @param sHost Hostname of sender (or servername)
      */
     protected void callPrivateAction(final Date date, final String sMessage, final String sHost) {
-        getCallbackManager().getCallbackType(PrivateActionListener.class).call(date, sMessage, sHost);
+        getCallbackManager().getCallback(PrivateActionListener.class)
+                .onPrivateAction(null, date, sMessage, sHost);
     }
 
     /**
@@ -426,7 +435,8 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      */
     protected void callPrivateCTCP(final Date date, final String sType, final String sMessage,
             final String sHost) {
-        getCallbackManager().getCallbackType(PrivateCtcpListener.class).call(date, sType, sMessage, sHost);
+        getCallbackManager().getCallback(PrivateCtcpListener.class)
+                .onPrivateCTCP(null, date, sType, sMessage, sHost);
     }
 
     /**
@@ -440,7 +450,8 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      */
     protected void callPrivateCTCPReply(final Date date, final String sType, final String sMessage,
             final String sHost) {
-        getCallbackManager().getCallbackType(PrivateCtcpReplyListener.class).call(date, sType, sMessage, sHost);
+        getCallbackManager().getCallback(PrivateCtcpReplyListener.class)
+                .onPrivateCTCPReply(null, date, sType, sMessage, sHost);
     }
 
     /**
@@ -452,7 +463,8 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      * @param sHost Hostname of sender (or servername)
      */
     protected void callPrivateMessage(final Date date, final String sMessage, final String sHost) {
-        getCallbackManager().getCallbackType(PrivateMessageListener.class).call(date, sMessage, sHost);
+        getCallbackManager().getCallback(PrivateMessageListener.class)
+                .onPrivateMessage(null, date, sMessage, sHost);
     }
 
     /**
@@ -464,7 +476,8 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      * @param sHost Hostname of sender (or servername)
      */
     protected void callPrivateNotice(final Date date, final String sMessage, final String sHost) {
-        getCallbackManager().getCallbackType(PrivateNoticeListener.class).call(date, sMessage, sHost);
+        getCallbackManager().getCallback(PrivateNoticeListener.class)
+                .onPrivateNotice(null, date, sMessage, sHost);
     }
 
     /**
@@ -476,7 +489,8 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      * @param sHost Hostname of sender (or servername)
      */
     protected void callServerNotice(final Date date, final String sMessage, final String sHost) {
-        getCallbackManager().getCallbackType(ServerNoticeListener.class).call(date, sMessage, sHost);
+        getCallbackManager().getCallback(ServerNoticeListener.class)
+                .onServerNotice(null, date, sMessage, sHost);
     }
 
     /**
@@ -490,7 +504,8 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      */
     protected void callUnknownAction(final Date date, final String sMessage, final String sTarget,
             final String sHost) {
-        getCallbackManager().getCallbackType(UnknownActionListener.class).call(date, sMessage, sTarget, sHost);
+        getCallbackManager().getCallback(UnknownActionListener.class)
+                .onUnknownAction(null, date, sMessage, sTarget, sHost);
     }
 
     /**
@@ -505,7 +520,8 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      */
     protected void callUnknownCTCP(final Date date, final String sType, final String sMessage,
             final String sTarget, final String sHost) {
-        getCallbackManager().getCallbackType(UnknownCtcpListener.class).call(date, sType, sMessage, sTarget, sHost);
+        getCallbackManager().getCallback(UnknownCtcpListener.class)
+                .onUnknownCTCP(null, date, sType, sMessage, sTarget, sHost);
     }
 
     /**
@@ -520,7 +536,8 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      */
     protected void callUnknownCTCPReply(final Date date, final String sType, final String sMessage,
             final String sTarget, final String sHost) {
-        getCallbackManager().getCallbackType(UnknownCtcpReplyListener.class).call(date, sType, sMessage, sTarget, sHost);
+        getCallbackManager().getCallback(UnknownCtcpReplyListener.class)
+                .onUnknownCTCPReply(null, date, sType, sMessage, sTarget, sHost);
     }
 
     /**
@@ -534,7 +551,8 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      */
     protected void callUnknownMessage(final Date date, final String sMessage, final String sTarget,
             final String sHost) {
-        getCallbackManager().getCallbackType(UnknownMessageListener.class).call(date, sMessage, sTarget, sHost);
+        getCallbackManager().getCallback(UnknownMessageListener.class)
+                .onUnknownMessage(null, date, sMessage, sTarget, sHost);
     }
 
     /**
@@ -548,7 +566,8 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      */
     protected void callUnknownNotice(final Date date, final String sMessage, final String sTarget,
             final String sHost) {
-        getCallbackManager().getCallbackType(UnknownNoticeListener.class).call(date, sMessage, sTarget, sHost);
+        getCallbackManager().getCallback(UnknownNoticeListener.class)
+                .onUnknownNotice(null, date, sMessage, sTarget, sHost);
     }
 
     /**
@@ -562,7 +581,8 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      */
     protected void callUnknownServerNotice(final Date date, final String sMessage,
             final String sTarget, final String sHost) {
-        getCallbackManager().getCallbackType(UnknownServerNoticeListener.class).call(date, sMessage, sTarget, sHost);
+        getCallbackManager().getCallback(UnknownServerNoticeListener.class)
+                .onUnknownServerNotice(null, date, sMessage, sTarget, sHost);
     }
 
     /**

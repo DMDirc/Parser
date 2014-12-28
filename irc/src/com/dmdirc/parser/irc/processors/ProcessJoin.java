@@ -182,7 +182,8 @@ public class ProcessJoin extends IRCProcessor {
      */
     protected void callChannelJoin(final ChannelInfo cChannel,
             final ChannelClientInfo cChannelClient) {
-        getCallbackManager().getCallbackType(ChannelJoinListener.class).call(cChannel, cChannelClient);
+        getCallbackManager().getCallback(ChannelJoinListener.class)
+                .onChannelJoin(null, null, cChannel, cChannelClient);
     }
 
     /**
@@ -192,7 +193,8 @@ public class ProcessJoin extends IRCProcessor {
      * @param cChannel Channel Object
      */
     protected void callChannelSelfJoin(final ChannelInfo cChannel) {
-        getCallbackManager().getCallbackType(ChannelSelfJoinListener.class).call(cChannel);
+        getCallbackManager().getCallback(ChannelSelfJoinListener.class)
+                .onChannelSelfJoin(null, null, cChannel);
     }
 
     /**

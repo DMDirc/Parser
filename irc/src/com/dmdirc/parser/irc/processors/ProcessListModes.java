@@ -294,6 +294,7 @@ public class ProcessListModes extends IRCProcessor {
      * @param mode the mode that we got list modes for.
      */
     protected void callChannelGotListModes(final ChannelInfo cChannel, final char mode) {
-        getCallbackManager().getCallbackType(ChannelListModeListener.class).call(cChannel, mode);
+        getCallbackManager().getCallback(ChannelListModeListener.class)
+                .onChannelGotListModes(null, null, cChannel, mode);
     }
 }

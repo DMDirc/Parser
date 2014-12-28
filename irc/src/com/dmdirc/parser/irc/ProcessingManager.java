@@ -267,12 +267,12 @@ public class ProcessingManager {
     /**
      * Callback to all objects implementing the onNumeric Callback.
      *
-     * @see com.dmdirc.parser.interfaces.callbacks.NumericListener
+     * @see NumericListener
      * @param numeric What numeric is this for
      * @param token IRC Tokenised line
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callNumeric(final int numeric, final String... token) {
-        return parser.getCallbackManager().getCallbackType(NumericListener.class).call(numeric, token);
+    protected void callNumeric(final int numeric, final String... token) {
+        parser.getCallbackManager().getCallback(NumericListener.class)
+                .onNumeric(null, null, numeric, token);
     }
 }

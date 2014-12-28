@@ -22,7 +22,6 @@
 
 package com.dmdirc.parser.irc.processors;
 
-import com.dmdirc.parser.common.CallbackObject;
 import com.dmdirc.parser.common.ChannelListModeItem;
 import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
@@ -128,14 +127,6 @@ public class ProcessMode extends IRCProcessor {
     public void processChanMode(final String sParam, final String[] token, final String[] sModestr, final String sChannelName) {
         final StringBuilder sFullModeStr = new StringBuilder();
 
-        CallbackObject cbSingle = null;
-        CallbackObject cbNonUser = null;
-
-        if (!"324".equals(sParam)) {
-            cbSingle = getCallbackManager().getCallbackType(ChannelSingleModeChangeListener.class);
-            cbNonUser = getCallbackManager().getCallbackType(ChannelNonUserModeChangeListener.class);
-        }
-
         final IRCChannelInfo iChannel = getChannel(sChannelName);
         if (iChannel == null) {
             return;
@@ -236,8 +227,10 @@ public class ProcessMode extends IRCProcessor {
                         final long nTemp = Calendar.getInstance().getTimeInMillis() / 1000;
                         iChannel.setListModeParam(cMode, new ChannelListModeItem(sModeParam, token[0], nTemp), bPositive);
                         callDebugInfo(IRCParser.DEBUG_INFO, "List Mode: %c [%s] {Positive: %b}", cMode, sModeParam, bPositive);
-                        if (cbSingle != null) {
-                            cbSingle.call(iChannel, setterCCI, token[0], cPositive + cMode + " " + sModeParam);
+                        if (!"324".equals(sParam)) {
+                            getCallbackManager().getCallback(ChannelSingleModeChangeListener.class)
+                                    .onChannelSingleModeChanged(null, null, iChannel, setterCCI,
+                                            token[0], cPositive + cMode + " " + sModeParam);
                         }
                     } else {
                         // Mode with a parameter
@@ -247,8 +240,10 @@ public class ProcessMode extends IRCProcessor {
                             sNonUserModeStrParams.append(' ').append(sModeParam);
                             callDebugInfo(IRCParser.DEBUG_INFO, "Set Mode: %c [%s] {Positive: %b}", cMode, sModeParam, bPositive);
                             iChannel.setModeParam(cMode, sModeParam);
-                            if (cbSingle != null) {
-                                cbSingle.call(iChannel, setterCCI, token[0], cPositive + cMode + " " + sModeParam);
+                            if (!"324".equals(sParam)) {
+                                getCallbackManager().getCallback(ChannelSingleModeChangeListener.class)
+                                        .onChannelSingleModeChanged(null, null, iChannel, setterCCI,
+                                            token[0], cPositive + cMode + " " + sModeParam);
                             }
                         } else {
                             // -Mode - parameter isn't always needed, we need to check
@@ -260,8 +255,10 @@ public class ProcessMode extends IRCProcessor {
                             }
                             callDebugInfo(IRCParser.DEBUG_INFO, "Unset Mode: %c [%s] {Positive: %b}", cMode, sModeParam, bPositive);
                             iChannel.setModeParam(cMode, "");
-                            if (cbSingle != null) {
-                                cbSingle.call(iChannel, setterCCI, token[0], trim(cPositive + cMode + " " + sModeParam));
+                            if (!"324".equals(sParam)) {
+                                getCallbackManager().getCallback(ChannelSingleModeChangeListener.class)
+                                        .onChannelSingleModeChanged(null, null, iChannel, setterCCI,
+                                            token[0], trim(cPositive + cMode + " " + sModeParam));
                             }
                         }
                     }
@@ -279,10 +276,9 @@ public class ProcessMode extends IRCProcessor {
             callChannelModeChanged(iChannel, null, "", sFullModeStr.toString().trim());
         } else {
             callChannelModeChanged(iChannel, setterCCI, token[0], sFullModeStr.toString().trim());
-        }
-        if (cbNonUser != null) {
-            cbNonUser.call(iChannel, setterCCI, token[0],
-                    trim(sNonUserModeStr.toString() + sNonUserModeStrParams));
+            getCallbackManager().getCallback(ChannelNonUserModeChangeListener.class)
+                    .onChannelNonUserModeChanged(null, null, iChannel, setterCCI, token[0],
+                            trim(sNonUserModeStr.toString() + sNonUserModeStrParams));
         }
     }
 
@@ -349,7 +345,8 @@ public class ProcessMode extends IRCProcessor {
      */
     protected void callChannelModeChanged(final ChannelInfo cChannel,
             final ChannelClientInfo cChannelClient, final String sHost, final String sModes) {
-        getCallbackManager().getCallbackType(ChannelModeChangeListener.class).call(cChannel, cChannelClient, sHost, sModes);
+        getCallbackManager().getCallback(ChannelModeChangeListener.class)
+                .onChannelModeChanged(null, null, cChannel, cChannelClient, sHost, sModes);
     }
 
     /**
@@ -365,7 +362,9 @@ public class ProcessMode extends IRCProcessor {
     protected void callChannelUserModeChanged(final ChannelInfo cChannel,
             final ChannelClientInfo cChangedClient, final ChannelClientInfo cSetByClient,
             final String sHost, final String sMode) {
-        getCallbackManager().getCallbackType(ChannelUserModeChangeListener.class).call(cChannel, cChangedClient, cSetByClient, sHost, sMode);
+        getCallbackManager().getCallback(ChannelUserModeChangeListener.class)
+                .onChannelUserModeChanged(null, null, cChannel, cChangedClient, cSetByClient,
+                        sHost, sMode);
     }
 
     /**
@@ -378,7 +377,8 @@ public class ProcessMode extends IRCProcessor {
      */
     protected void callUserModeChanged(final ClientInfo cClient, final String sSetby,
             final String sModes) {
-        getCallbackManager().getCallbackType(UserModeChangeListener.class).call(cClient, sSetby, sModes);
+        getCallbackManager().getCallback(UserModeChangeListener.class)
+                .onUserModeChanged(null, null, cClient, sSetby, sModes);
     }
 
     /**
@@ -389,7 +389,8 @@ public class ProcessMode extends IRCProcessor {
      * @param sModes The modes set.
      */
     protected void callUserModeDiscovered(final ClientInfo cClient, final String sModes) {
-        getCallbackManager().getCallbackType(UserModeDiscoveryListener.class).call(cClient, sModes);
+        getCallbackManager().getCallback(UserModeDiscoveryListener.class)
+                .onUserModeDiscovered(null, null, cClient, sModes);
     }
 
     /**

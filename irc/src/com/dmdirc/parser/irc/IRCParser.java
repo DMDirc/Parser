@@ -617,10 +617,9 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * Callback to all objects implementing the PingFailed Callback.
      *
      * @see PingFailureListener
-     * @return True if any callback was called, false otherwise.
      */
-    protected boolean callPingFailed() {
-        return getCallbackManager().getCallbackType(PingFailureListener.class).call();
+    protected void callPingFailed() {
+        getCallbackManager().getCallback(PingFailureListener.class).onPingFailed(null, null);
     }
 
     /**
@@ -1920,17 +1919,9 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
 
             return;
         }
+
         if (getPingNeeded()) {
-            if (!callPingFailed()) {
-                pingTimerSem.acquireUninterruptibly();
-
-                if (pingTimer != null && pingTimer.equals(timer)) {
-                    pingTimer.cancel();
-                }
-                pingTimerSem.release();
-
-                disconnect("Server not responding.");
-            }
+            callPingFailed();
         } else {
             --pingCountDown;
             if (pingCountDown < 1) {
