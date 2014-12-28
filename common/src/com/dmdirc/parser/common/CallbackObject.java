@@ -101,10 +101,9 @@ public class CallbackObject {
      * Call the OnErrorInfo callback.
      *
      * @param errorInfo ParserError object to pass as error.
-     * @return true if error call succeeded, false otherwise
      */
-    protected final boolean callErrorInfo(final ParserError errorInfo) {
-        return myManager.getCallbackType(ErrorInfoListener.class).call(errorInfo);
+    protected final void callErrorInfo(final ParserError errorInfo) {
+        myManager.getCallback(ErrorInfoListener.class).onErrorInfo(null, null, errorInfo);
     }
 
     /**

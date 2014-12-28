@@ -31,20 +31,8 @@ import com.dmdirc.parser.interfaces.Parser;
  */
 public class MyInfo {
 
-    /** Character to prepend to nickname if in use (Default "_"). */
-    private char prependChar = '_';
-
     /** Nickname to attempt to use on IRC. */
     private String nickname;
-
-    /**
-     * Alternative nickname to attempt to use on IRC. If the first nickname is
-     * in use, and a NickInUse message is recieved before 001, we will attempt
-     * to use this nickname instead.<br>
-     * If this also fails, we will start prepending the prependChar character
-     * (_) to the main nickname
-     */
-    private String altNickname;
 
     /** Realname string to use. */
     private String realname;
@@ -66,12 +54,10 @@ public class MyInfo {
             nickname = "IRCParser";
             username = "IRCParser";
             realname = "DMDIrc IRCParser";
-            altNickname = "IRC-Parser";
         } else {
             nickname = result;
             username = nickname;
             realname = nickname + " - DMDIrc";
-            altNickname = nickname + '-';
         }
     }
 
@@ -93,26 +79,6 @@ public class MyInfo {
      */
     public String getNickname() {
         return nickname;
-    }
-
-    /**
-     * Set the Alternative Nickname.
-     *
-     * @param newValue Value to set to.
-     */
-    public void setAltNickname(final String newValue) {
-        if (newValue != null && !newValue.isEmpty()) {
-            altNickname = newValue;
-        }
-    }
-
-    /**
-     * Get the Alternative Nickname.
-     *
-     * @return Current Nickname
-     */
-    public String getAltNickname() {
-        return altNickname;
     }
 
     /**
@@ -153,24 +119,6 @@ public class MyInfo {
      */
     public String getUsername() {
         return username;
-    }
-
-    /**
-     * Set the Prepend Character.
-     *
-     * @param newValue Value to set to.
-     */
-    public void setPrependChar(final char newValue) {
-        prependChar = newValue;
-    }
-
-    /**
-     * Get the Prepend Character.
-     *
-     * @return Current Prepend Character
-     */
-    public char getPrependChar() {
-        return prependChar;
     }
 
 }

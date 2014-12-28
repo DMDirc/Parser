@@ -90,7 +90,8 @@ public class ProcessAway extends IRCProcessor {
      */
     protected void callAwayState(final AwayState oldState, final AwayState currentState,
             final String reason) {
-        getCallbackManager().getCallbackType(AwayStateListener.class).call(oldState, currentState, reason);
+        getCallbackManager().getCallback(AwayStateListener.class)
+                .onAwayState(null, null, oldState, currentState, reason);
     }
 
     /**

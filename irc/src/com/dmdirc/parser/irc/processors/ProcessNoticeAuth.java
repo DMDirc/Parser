@@ -59,7 +59,8 @@ public class ProcessNoticeAuth extends IRCProcessor {
      * @param data Incomming Line.
      */
     protected void callNoticeAuth(final String data) {
-        getCallbackManager().getCallbackType(AuthNoticeListener.class).call(data);
+        getCallbackManager().getCallback(AuthNoticeListener.class)
+                .onNoticeAuth(null, null, data);
     }
 
     /**

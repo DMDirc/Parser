@@ -22,7 +22,6 @@
 
 package com.dmdirc.parser.irc.processors;
 
-import com.dmdirc.parser.common.MyInfo;
 import com.dmdirc.parser.interfaces.callbacks.NickInUseListener;
 import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ProcessingManager;
@@ -62,25 +61,7 @@ public class ProcessNickInUse extends IRCProcessor {
      */
     @Override
     public void process(final String sParam, final String... token) {
-        if (!callNickInUse(token[3])) {
-            // Manually handle nick in use.
-            callDebugInfo(IRCParser.DEBUG_INFO, "No Nick in use Handler.");
-            if (!parser.got001) {
-                callDebugInfo(IRCParser.DEBUG_INFO, "Using inbuilt handler");
-                // If this is before 001 we will try and get a nickname, else we will leave the nick as-is
-                final MyInfo myInfo = parser.getMyInfo();
-                if (parser.triedAlt) {
-                    final String magicAltNick = myInfo.getPrependChar() + myInfo.getNickname();
-                    if (parser.getStringConverter().equalsIgnoreCase(parser.thinkNickname, myInfo.getAltNickname()) && !myInfo.getAltNickname().equalsIgnoreCase(magicAltNick)) {
-                        parser.thinkNickname = myInfo.getNickname();
-                    }
-                    parser.getLocalClient().setNickname(myInfo.getPrependChar() + parser.thinkNickname);
-                } else {
-                    parser.getLocalClient().setNickname(parser.getMyInfo().getAltNickname());
-                    parser.triedAlt = true;
-                }
-            }
-        }
+        callNickInUse(token[3]);
     }
 
     /**
@@ -88,10 +69,10 @@ public class ProcessNickInUse extends IRCProcessor {
      *
      * @param nickname Nickname that was wanted.
      * @see NickInUseListener
-     * @return true if a method was called, false otherwise
      */
-    protected boolean callNickInUse(final String nickname) {
-        return getCallbackManager().getCallbackType(NickInUseListener.class).call(nickname);
+    protected void callNickInUse(final String nickname) {
+        getCallbackManager().getCallback(NickInUseListener.class)
+                .onNickInUse(null, null, nickname);
     }
 
     /**

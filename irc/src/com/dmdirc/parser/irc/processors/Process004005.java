@@ -94,8 +94,8 @@ public class Process004005 extends IRCProcessor {
         final String ircdVersion = parser.getServerSoftware();
         final String ircdType = parser.getServerSoftwareType();
 
-        getCallbackManager().getCallbackType(NetworkDetectedListener.class)
-                .call(networkName, ircdVersion, ircdType);
+        getCallbackManager().getCallback(NetworkDetectedListener.class)
+                .onGotNetwork(null, null, networkName, ircdVersion, ircdType);
     }
 
     /**
