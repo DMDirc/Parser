@@ -31,6 +31,7 @@ import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ProcessingManager;
 import com.dmdirc.parser.irc.ProcessorNotFoundException;
 
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -95,7 +96,7 @@ public class Process004005 extends IRCProcessor {
         final String ircdType = parser.getServerSoftwareType();
 
         getCallback(NetworkDetectedListener.class)
-                .onGotNetwork(null, null, networkName, ircdVersion, ircdType);
+                .onGotNetwork(parser, new Date(), networkName, ircdVersion, ircdType);
     }
 
     /**

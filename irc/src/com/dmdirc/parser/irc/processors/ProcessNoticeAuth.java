@@ -26,6 +26,8 @@ import com.dmdirc.parser.interfaces.callbacks.AuthNoticeListener;
 import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ProcessingManager;
 
+import java.util.Date;
+
 /**
  * Process a NoticeAuth message.
  */
@@ -59,7 +61,7 @@ public class ProcessNoticeAuth extends IRCProcessor {
      * @param data Incomming Line.
      */
     protected void callNoticeAuth(final String data) {
-        getCallback(AuthNoticeListener.class).onNoticeAuth(null, null, data);
+        getCallback(AuthNoticeListener.class).onNoticeAuth(parser, new Date(), data);
     }
 
     /**

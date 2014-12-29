@@ -33,6 +33,8 @@ import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ProcessingManager;
 
+import java.util.Date;
+
 /**
  * Process a /who reply.
  */
@@ -107,7 +109,7 @@ public class ProcessWho extends IRCProcessor {
     protected void callAwayState(final AwayState oldState, final AwayState currentState,
             final String reason) {
         getCallback(AwayStateListener.class)
-                .onAwayState(null, null, oldState, currentState, reason);
+                .onAwayState(parser, new Date(), oldState, currentState, reason);
     }
 
     /**
@@ -121,7 +123,7 @@ public class ProcessWho extends IRCProcessor {
     protected void callAwayStateOther(final ClientInfo client, final AwayState oldState,
             final AwayState state) {
         getCallback(OtherAwayStateListener.class)
-                .onAwayStateOther(null, null, client, oldState, state);
+                .onAwayStateOther(parser, new Date(), client, oldState, state);
     }
 
     /**
@@ -136,7 +138,8 @@ public class ProcessWho extends IRCProcessor {
     protected void callChannelAwayStateOther(final ChannelInfo channel,
             final ChannelClientInfo channelClient, final AwayState oldState, final AwayState state) {
         getCallback(ChannelOtherAwayStateListener.class)
-                .onChannelAwayStateOther(null, null, channel, channelClient, oldState, state);
+                .onChannelAwayStateOther(parser, new Date(), channel, channelClient, oldState,
+                        state);
     }
 
     /**

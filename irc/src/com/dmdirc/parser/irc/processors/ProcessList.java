@@ -28,6 +28,8 @@ import com.dmdirc.parser.interfaces.callbacks.GroupListStartListener;
 import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ProcessingManager;
 
+import java.util.Date;
+
 /**
  * Process a list response.
  */
@@ -56,15 +58,15 @@ public class ProcessList extends IRCProcessor {
         // :port80b.se.quakenet.org 323 MD87 :End of /LIST
         switch (sParam) {
             case "321":
-                getCallback(GroupListStartListener.class).onGroupListStart(null, null);
+                getCallback(GroupListStartListener.class).onGroupListStart(parser, new Date());
                 break;
             case "322":
                 getCallback(GroupListEntryListener.class)
-                        .onGroupListEntry(null, null, token[3], Integer.parseInt(token[4]),
+                        .onGroupListEntry(parser, new Date(), token[3], Integer.parseInt(token[4]),
                                 token[5]);
                 break;
             case "323":
-                getCallback(GroupListEndListener.class).onGroupListEnd(null, null);
+                getCallback(GroupListEndListener.class).onGroupListEnd(parser, new Date());
                 break;
         }
     }

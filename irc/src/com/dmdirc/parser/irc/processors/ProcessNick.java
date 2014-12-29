@@ -34,6 +34,8 @@ import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ProcessingManager;
 
+import java.util.Date;
+
 /**
  * Process a Nick change.
  */
@@ -108,7 +110,7 @@ public class ProcessNick extends IRCProcessor {
     protected void callChannelNickChanged(final ChannelInfo cChannel,
             final ChannelClientInfo cChannelClient, final String sOldNick) {
         getCallback(ChannelNickChangeListener.class)
-                .onChannelNickChanged(null, null, cChannel, cChannelClient, sOldNick);
+                .onChannelNickChanged(parser, new Date(), cChannel, cChannelClient, sOldNick);
     }
 
     /**
@@ -120,7 +122,7 @@ public class ProcessNick extends IRCProcessor {
      */
     protected void callNickChanged(final ClientInfo cClient, final String sOldNick) {
         getCallback(NickChangeListener.class)
-                .onNickChanged(null, null, cClient, sOldNick);
+                .onNickChanged(parser, new Date(), cClient, sOldNick);
     }
 
     /**

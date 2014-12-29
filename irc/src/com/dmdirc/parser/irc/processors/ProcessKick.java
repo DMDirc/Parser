@@ -33,6 +33,7 @@ import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ProcessingManager;
 
 import java.util.Arrays;
+import java.util.Date;
 
 /**
  * Process a channel kick.
@@ -121,8 +122,8 @@ public class ProcessKick extends IRCProcessor {
             final ChannelClientInfo cKickedClient, final ChannelClientInfo cKickedByClient,
             final String sReason, final String sKickedByHost) {
         getCallback(ChannelKickListener.class)
-                .onChannelKick(null, null, cChannel, cKickedClient, cKickedByClient, sReason,
-                        sKickedByHost);
+                .onChannelKick(parser, new Date(), cChannel, cKickedClient, cKickedByClient,
+                        sReason, sKickedByHost);
     }
 
     /**

@@ -39,6 +39,7 @@ import com.dmdirc.parser.irc.ProcessingManager;
 import com.dmdirc.parser.irc.ProcessorNotFoundException;
 
 import java.util.Arrays;
+import java.util.Date;
 
 /**
  * Process a channel join.
@@ -182,7 +183,8 @@ public class ProcessJoin extends IRCProcessor {
      */
     protected void callChannelJoin(final ChannelInfo cChannel,
             final ChannelClientInfo cChannelClient) {
-        getCallback(ChannelJoinListener.class).onChannelJoin(null, null, cChannel, cChannelClient);
+        getCallback(ChannelJoinListener.class).onChannelJoin(parser, new Date(), cChannel,
+                cChannelClient);
     }
 
     /**
@@ -192,7 +194,7 @@ public class ProcessJoin extends IRCProcessor {
      * @param cChannel Channel Object
      */
     protected void callChannelSelfJoin(final ChannelInfo cChannel) {
-        getCallback(ChannelSelfJoinListener.class).onChannelSelfJoin(null, null, cChannel);
+        getCallback(ChannelSelfJoinListener.class).onChannelSelfJoin(parser, new Date(), cChannel);
     }
 
     /**
