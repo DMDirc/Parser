@@ -169,30 +169,11 @@ public class CallbackManager {
      * Add new callback type.
      *
      * @param callback CallbackObject subclass for the callback.
-     * @return if adding succeeded or not.
      */
-    public boolean addCallbackType(final CallbackObject callback) {
+    private void addCallbackType(final CallbackObject callback) {
         if (!callbackHash.containsKey(callback.getType())) {
             callbackHash.put(callback.getType(), callback);
-            return true;
         }
-
-        return false;
-    }
-
-    /**
-     * Remove a callback type.
-     *
-     * @param callback CallbackObject subclass to remove.
-     * @return if removal succeeded or not.
-     */
-    public boolean delCallbackType(final CallbackObject callback) {
-        if (callbackHash.containsKey(callback.getType())) {
-            callbackHash.remove(callback.getType());
-            return true;
-        }
-
-        return false;
     }
 
     /**
@@ -273,45 +254,6 @@ public class CallbackManager {
         }
 
         ((CallbackObjectSpecific) getCallbackType(callback)).add(o, target);
-    }
-
-    /**
-     * Add a callback without an exception.
-     * This should be used if a callback is not essential for execution (ie the DebugOut callback)
-     *
-     * @param <S> The type of callback object
-     * @param callback Type of callback object.
-     * @param o instance of ICallbackInterface to add.
-     * @return true/false if the callback was added or not.
-     */
-    public <S extends CallbackInterface> boolean addNonCriticalCallback(
-            final Class<S> callback, final S o) {
-        try {
-            addCallback(callback, o);
-            return true;
-        } catch (CallbackNotFoundException e) {
-            return false;
-        }
-    }
-
-    /**
-     * Add a callback with a specific target.
-     * This should be used if a callback is not essential for execution
-     *
-     * @param <S> The type of callback
-     * @param callback Type of callback object.
-     * @param o instance of ICallbackInterface to add.
-     * @param target Parameter to specify that a callback should only fire for specific things
-     * @return true/false if the callback was added or not.
-     */
-    public <S extends CallbackInterface> boolean addNonCriticalCallback(
-            final Class<S> callback, final S o, final String target) {
-        try {
-            addCallback(callback, o, target);
-            return true;
-        } catch (CallbackNotFoundException e) {
-            return false;
-        }
     }
 
     /**
