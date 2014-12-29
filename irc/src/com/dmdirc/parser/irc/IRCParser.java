@@ -537,7 +537,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @param message The error message
      */
     protected void callServerError(final String message) {
-        getCallback(ServerErrorListener.class).onServerError(null, null, message);
+        getCallback(ServerErrorListener.class).onServerError(this, new Date(), message);
     }
 
     /**
@@ -547,7 +547,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @param data Incoming Line.
      */
     protected void callDataIn(final String data) {
-        getCallback(DataInListener.class).onDataIn(null, null, data);
+        getCallback(DataInListener.class).onDataIn(this, new Date(), data);
     }
 
     /**
@@ -558,7 +558,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @see DataOutListener
      */
     protected void callDataOut(final String data, final boolean fromParser) {
-        getCallback(DataOutListener.class).onDataOut(null, null, data, fromParser);
+        getCallback(DataOutListener.class).onDataOut(this, new Date(), data, fromParser);
     }
 
     /**
@@ -581,7 +581,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @param data Debugging Information
      */
     protected void callDebugInfo(final int level, final String data) {
-        getCallback(DebugInfoListener.class).onDebugInfo(null, null, level, data);
+        getCallback(DebugInfoListener.class).onDebugInfo(this, new Date(), level, data);
     }
 
     /**
@@ -591,7 +591,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @param errorInfo ParserError object representing the error.
      */
     public void callErrorInfo(final ParserError errorInfo) {
-        getCallback(ErrorInfoListener.class).onErrorInfo(null, null, errorInfo);
+        getCallback(ErrorInfoListener.class).onErrorInfo(this, new Date(), errorInfo);
     }
 
     /**
@@ -601,7 +601,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @param errorInfo ParserError object representing the error.
      */
     protected void callConnectError(final ParserError errorInfo) {
-        getCallback(ConnectErrorListener.class).onConnectError(null, null, errorInfo);
+        getCallback(ConnectErrorListener.class).onConnectError(this, new Date(), errorInfo);
     }
 
     /**
@@ -610,7 +610,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @see SocketCloseListener
      */
     protected void callSocketClosed() {
-        getCallback(SocketCloseListener.class).onSocketClosed(null, null);
+        getCallback(SocketCloseListener.class).onSocketClosed(this, new Date());
     }
 
     /**
@@ -619,7 +619,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @see PingFailureListener
      */
     protected void callPingFailed() {
-        getCallbackManager().getCallback(PingFailureListener.class).onPingFailed(null, null);
+        getCallbackManager().getCallback(PingFailureListener.class).onPingFailed(this, new Date());
     }
 
     /**
@@ -628,7 +628,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @see PingSentListener
      */
     protected void callPingSent() {
-        getCallback(PingSentListener.class).onPingSent(null, null);
+        getCallback(PingSentListener.class).onPingSent(this, new Date());
     }
 
     /**
@@ -637,7 +637,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @see PingSuccessListener
      */
     protected void callPingSuccess() {
-        getCallback(PingSuccessListener.class).onPingSuccess(null, null);
+        getCallback(PingSuccessListener.class).onPingSuccess(this, new Date());
     }
 
     /**
@@ -662,7 +662,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
             parseChanModes();
         }
 
-        getCallback(ServerReadyListener.class).onServerReady(null, null);
+        getCallback(ServerReadyListener.class).onServerReady(this, new Date());
     }
 
     //---------------------------------------------------------------------------
