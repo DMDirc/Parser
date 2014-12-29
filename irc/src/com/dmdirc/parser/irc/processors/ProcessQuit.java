@@ -34,6 +34,7 @@ import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ProcessingManager;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * Process a Quit message.
@@ -121,7 +122,7 @@ public class ProcessQuit extends IRCProcessor {
     protected void callChannelQuit(final ChannelInfo cChannel,
             final ChannelClientInfo cChannelClient, final String sReason) {
         getCallback(ChannelQuitListener.class)
-                .onChannelQuit(null, null, cChannel, cChannelClient, sReason);
+                .onChannelQuit(parser, new Date(), cChannel, cChannelClient, sReason);
     }
 
     /**
@@ -133,7 +134,7 @@ public class ProcessQuit extends IRCProcessor {
      */
     protected void callQuit(final ClientInfo cClient, final String sReason) {
         getCallback(QuitListener.class)
-                .onQuit(null, null, cClient, sReason);
+                .onQuit(parser, new Date(), cClient, sReason);
     }
 
     /**

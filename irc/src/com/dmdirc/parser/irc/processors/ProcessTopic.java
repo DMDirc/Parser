@@ -29,6 +29,8 @@ import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ProcessingManager;
 
+import java.util.Date;
+
 /**
  * Process a topic change.
  */
@@ -103,7 +105,7 @@ public class ProcessTopic extends IRCProcessor {
     protected void callChannelTopic(final ChannelInfo cChannel, final boolean bIsJoinTopic) {
         ((IRCChannelInfo) cChannel).setHadTopic();
         getCallback(ChannelTopicListener.class)
-                .onChannelTopic(null, null, cChannel, bIsJoinTopic);
+                .onChannelTopic(parser, new Date(), cChannel, bIsJoinTopic);
     }
 
     /**

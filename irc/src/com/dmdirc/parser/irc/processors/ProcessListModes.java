@@ -33,6 +33,7 @@ import com.dmdirc.parser.irc.ServerTypeGroup;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Queue;
 
 /**
@@ -295,6 +296,6 @@ public class ProcessListModes extends IRCProcessor {
      */
     protected void callChannelGotListModes(final ChannelInfo cChannel, final char mode) {
         getCallback(ChannelListModeListener.class)
-                .onChannelGotListModes(null, null, cChannel, mode);
+                .onChannelGotListModes(parser, new Date(), cChannel, mode);
     }
 }

@@ -27,6 +27,8 @@ import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ProcessingManager;
 
+import java.util.Date;
+
 /**
  * Process an Away/Back message.
  */
@@ -91,7 +93,7 @@ public class ProcessAway extends IRCProcessor {
     protected void callAwayState(final AwayState oldState, final AwayState currentState,
             final String reason) {
         getCallback(AwayStateListener.class)
-                .onAwayState(null, null, oldState, currentState, reason);
+                .onAwayState(parser, new Date(), oldState, currentState, reason);
     }
 
     /**

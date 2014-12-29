@@ -28,6 +28,8 @@ import com.dmdirc.parser.interfaces.callbacks.WalluserListener;
 import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ProcessingManager;
 
+import java.util.Date;
+
 /**
  * Process a WALLOPS Message.
  */
@@ -82,7 +84,7 @@ public class ProcessWallops extends IRCProcessor {
      * @param host Host of the user who sent the wallop
      */
     protected void callWallop(final String message, final String host) {
-        getCallback(WallopListener.class).onWallop(null, null, message, host);
+        getCallback(WallopListener.class).onWallop(parser, new Date(), message, host);
     }
 
     /**
@@ -94,7 +96,7 @@ public class ProcessWallops extends IRCProcessor {
      */
     protected void callWalluser(final String message, final String host) {
         getCallback(WalluserListener.class)
-                .onWalluser(null, null, message, host);
+                .onWalluser(parser, new Date(), message, host);
     }
 
     /**
@@ -106,7 +108,7 @@ public class ProcessWallops extends IRCProcessor {
      */
     protected void callWallDesync(final String message, final String host) {
         getCallback(WallDesyncListener.class)
-                .onWallDesync(null, null, message, host);
+                .onWallDesync(parser, new Date(), message, host);
     }
 
     /**

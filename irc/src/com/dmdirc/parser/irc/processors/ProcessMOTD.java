@@ -28,6 +28,8 @@ import com.dmdirc.parser.interfaces.callbacks.MotdStartListener;
 import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ProcessingManager;
 
+import java.util.Date;
+
 /**
  * Process a MOTD Related Line.
  */
@@ -72,7 +74,7 @@ public class ProcessMOTD extends IRCProcessor {
      * @see MotdEndListener
      */
     protected void callMOTDEnd(final boolean noMOTD, final String data) {
-        getCallback(MotdEndListener.class).onMOTDEnd(null, null, noMOTD, data);
+        getCallback(MotdEndListener.class).onMOTDEnd(parser, new Date(), noMOTD, data);
     }
 
     /**
@@ -82,7 +84,7 @@ public class ProcessMOTD extends IRCProcessor {
      * @param data Incomming Line.
      */
     protected void callMOTDLine(final String data) {
-        getCallback(MotdLineListener.class).onMOTDLine(null, null, data);
+        getCallback(MotdLineListener.class).onMOTDLine(parser, new Date(), data);
     }
 
     /**
@@ -92,7 +94,7 @@ public class ProcessMOTD extends IRCProcessor {
      * @param data Incomming Line.
      */
     protected void callMOTDStart(final String data) {
-        getCallback(MotdStartListener.class).onMOTDStart(null, null, data);
+        getCallback(MotdStartListener.class).onMOTDStart(parser, new Date(), data);
     }
 
     /**

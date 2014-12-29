@@ -26,6 +26,8 @@ import com.dmdirc.parser.interfaces.callbacks.NickInUseListener;
 import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ProcessingManager;
 
+import java.util.Date;
+
 /**
  * Process a NickInUse message.
  * Parser implements handling of this if Pre-001 and no other handler found,
@@ -72,7 +74,7 @@ public class ProcessNickInUse extends IRCProcessor {
      */
     protected void callNickInUse(final String nickname) {
         getCallback(NickInUseListener.class)
-                .onNickInUse(null, null, nickname);
+                .onNickInUse(parser, new Date(), nickname);
     }
 
     /**

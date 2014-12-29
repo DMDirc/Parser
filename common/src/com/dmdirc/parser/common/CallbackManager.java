@@ -24,13 +24,78 @@ package com.dmdirc.parser.common;
 
 import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.interfaces.SpecificCallback;
-import com.dmdirc.parser.interfaces.callbacks.*; //NOPMD
+import com.dmdirc.parser.interfaces.callbacks.AuthNoticeListener;
+import com.dmdirc.parser.interfaces.callbacks.AwayStateListener;
+import com.dmdirc.parser.interfaces.callbacks.CallbackInterface;
+import com.dmdirc.parser.interfaces.callbacks.ChannelActionListener;
+import com.dmdirc.parser.interfaces.callbacks.ChannelCtcpListener;
+import com.dmdirc.parser.interfaces.callbacks.ChannelCtcpReplyListener;
+import com.dmdirc.parser.interfaces.callbacks.ChannelJoinListener;
+import com.dmdirc.parser.interfaces.callbacks.ChannelKickListener;
+import com.dmdirc.parser.interfaces.callbacks.ChannelListModeListener;
+import com.dmdirc.parser.interfaces.callbacks.ChannelMessageListener;
+import com.dmdirc.parser.interfaces.callbacks.ChannelModeChangeListener;
+import com.dmdirc.parser.interfaces.callbacks.ChannelModeMessageListener;
+import com.dmdirc.parser.interfaces.callbacks.ChannelModeNoticeListener;
+import com.dmdirc.parser.interfaces.callbacks.ChannelNamesListener;
+import com.dmdirc.parser.interfaces.callbacks.ChannelNickChangeListener;
+import com.dmdirc.parser.interfaces.callbacks.ChannelNonUserModeChangeListener;
+import com.dmdirc.parser.interfaces.callbacks.ChannelNoticeListener;
+import com.dmdirc.parser.interfaces.callbacks.ChannelOtherAwayStateListener;
+import com.dmdirc.parser.interfaces.callbacks.ChannelPartListener;
+import com.dmdirc.parser.interfaces.callbacks.ChannelQuitListener;
+import com.dmdirc.parser.interfaces.callbacks.ChannelSelfJoinListener;
+import com.dmdirc.parser.interfaces.callbacks.ChannelSingleModeChangeListener;
+import com.dmdirc.parser.interfaces.callbacks.ChannelTopicListener;
+import com.dmdirc.parser.interfaces.callbacks.ChannelUserModeChangeListener;
+import com.dmdirc.parser.interfaces.callbacks.CompositionStateChangeListener;
+import com.dmdirc.parser.interfaces.callbacks.ConnectErrorListener;
+import com.dmdirc.parser.interfaces.callbacks.DataInListener;
+import com.dmdirc.parser.interfaces.callbacks.DataOutListener;
+import com.dmdirc.parser.interfaces.callbacks.DebugInfoListener;
+import com.dmdirc.parser.interfaces.callbacks.ErrorInfoListener;
+import com.dmdirc.parser.interfaces.callbacks.GroupListEndListener;
+import com.dmdirc.parser.interfaces.callbacks.GroupListEntryListener;
+import com.dmdirc.parser.interfaces.callbacks.GroupListStartListener;
+import com.dmdirc.parser.interfaces.callbacks.InviteListener;
+import com.dmdirc.parser.interfaces.callbacks.MotdEndListener;
+import com.dmdirc.parser.interfaces.callbacks.MotdLineListener;
+import com.dmdirc.parser.interfaces.callbacks.MotdStartListener;
+import com.dmdirc.parser.interfaces.callbacks.NetworkDetectedListener;
+import com.dmdirc.parser.interfaces.callbacks.NickChangeListener;
+import com.dmdirc.parser.interfaces.callbacks.NickInUseListener;
+import com.dmdirc.parser.interfaces.callbacks.NumericListener;
+import com.dmdirc.parser.interfaces.callbacks.OtherAwayStateListener;
+import com.dmdirc.parser.interfaces.callbacks.PasswordRequiredListener;
+import com.dmdirc.parser.interfaces.callbacks.PingFailureListener;
+import com.dmdirc.parser.interfaces.callbacks.PingSentListener;
+import com.dmdirc.parser.interfaces.callbacks.PingSuccessListener;
+import com.dmdirc.parser.interfaces.callbacks.PrivateActionListener;
+import com.dmdirc.parser.interfaces.callbacks.PrivateCtcpListener;
+import com.dmdirc.parser.interfaces.callbacks.PrivateCtcpReplyListener;
+import com.dmdirc.parser.interfaces.callbacks.PrivateMessageListener;
+import com.dmdirc.parser.interfaces.callbacks.PrivateNoticeListener;
+import com.dmdirc.parser.interfaces.callbacks.QuitListener;
+import com.dmdirc.parser.interfaces.callbacks.ServerErrorListener;
+import com.dmdirc.parser.interfaces.callbacks.ServerNoticeListener;
+import com.dmdirc.parser.interfaces.callbacks.ServerReadyListener;
+import com.dmdirc.parser.interfaces.callbacks.SocketCloseListener;
+import com.dmdirc.parser.interfaces.callbacks.UnknownActionListener;
+import com.dmdirc.parser.interfaces.callbacks.UnknownCtcpListener;
+import com.dmdirc.parser.interfaces.callbacks.UnknownCtcpReplyListener;
+import com.dmdirc.parser.interfaces.callbacks.UnknownMessageListener;
+import com.dmdirc.parser.interfaces.callbacks.UnknownNoticeListener;
+import com.dmdirc.parser.interfaces.callbacks.UnknownServerNoticeListener;
+import com.dmdirc.parser.interfaces.callbacks.UserModeChangeListener;
+import com.dmdirc.parser.interfaces.callbacks.UserModeDiscoveryListener;
+import com.dmdirc.parser.interfaces.callbacks.WallDesyncListener;
+import com.dmdirc.parser.interfaces.callbacks.WallopListener;
+import com.dmdirc.parser.interfaces.callbacks.WalluserListener;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -302,15 +367,7 @@ public class CallbackManager {
 
         @Override
         public Object invoke(final Object proxy, final Method method, final Object[] args) {
-            final Object[] modifiedArgs = new Object[args.length - 2];
-            System.arraycopy(args, 2, modifiedArgs, 0, args.length - 2);
-
-            if (args[1] == null) {
-                getCallbackType(callback).call(modifiedArgs);
-            } else {
-                getCallbackType(callback).call((Date) args[1], modifiedArgs);
-            }
-
+            getCallbackType(callback).call(args);
             return null;
         }
 

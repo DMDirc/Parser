@@ -22,12 +22,10 @@
 
 package com.dmdirc.parser.irc;
 
-import com.dmdirc.parser.common.MyInfo;
-import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.harness.parser.TestParser;
-import com.dmdirc.parser.interfaces.Parser;
-import com.dmdirc.parser.interfaces.callbacks.AuthNoticeListener;
 import com.dmdirc.parser.common.CallbackNotFoundException;
+import com.dmdirc.parser.common.MyInfo;
+import com.dmdirc.parser.interfaces.callbacks.AuthNoticeListener;
 import com.dmdirc.parser.interfaces.callbacks.CallbackInterface;
 import com.dmdirc.parser.interfaces.callbacks.ChannelKickListener;
 import com.dmdirc.parser.interfaces.callbacks.ConnectErrorListener;
@@ -39,13 +37,21 @@ import com.dmdirc.parser.interfaces.callbacks.ServerReadyListener;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.Date;
 
 import javax.net.ssl.TrustManager;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.anyObject;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.same;
+import static org.mockito.Mockito.verify;
 
 public class IRCParserTest {
 
@@ -70,8 +76,7 @@ public class IRCParserTest {
         myParser.injectConnectionStrings();
         myParser.injectLine(":nick2!ident@host NICK :nick");
 
-        verify(error, never()).onErrorInfo(same(myParser), (Date) anyObject(),
-                (ParserError) anyObject());
+        verify(error, never()).onErrorInfo(same(myParser), anyObject(), anyObject());
     }
 
     @Test
@@ -152,7 +157,7 @@ public class IRCParserTest {
         parser.getCallbackManager().addCallback(ServerErrorListener.class, test);
         parser.injectLine("ERROR :You smell of cheese");
 
-        verify(test).onServerError(same(parser), (Date) anyObject(), eq("You smell of cheese"));
+        verify(test).onServerError(same(parser), anyObject(), eq("You smell of cheese"));
     }
 
     @Test
@@ -163,7 +168,7 @@ public class IRCParserTest {
         parser.sendConnectionStrings();
 
         parser.injectLine("NOTICE AUTH :Random auth notice?");
-        verify(test).onNoticeAuth(same(parser), (Date) anyObject(), eq("Random auth notice?"));
+        verify(test).onNoticeAuth(same(parser), anyObject(), eq("Random auth notice?"));
     }
 
     @Test
@@ -174,7 +179,7 @@ public class IRCParserTest {
         parser.sendConnectionStrings();
 
         parser.injectLine(":us.ircnet.org 020 * :Stupid notice");
-        verify(test).onNoticeAuth(same(parser), (Date) anyObject(), eq("Stupid notice"));
+        verify(test).onNoticeAuth(same(parser), anyObject(), eq("Stupid notice"));
     }
 
     @Test
@@ -185,7 +190,7 @@ public class IRCParserTest {
         parser.sendConnectionStrings();
         parser.injectLine(":chris!@ NICK :user2");
 
-        verify(test, never()).onNoticeAuth((Parser) anyObject(), (Date) anyObject(), anyString());
+        verify(test, never()).onNoticeAuth(anyObject(), anyObject(), anyString());
     }
 
     @Test
@@ -196,7 +201,7 @@ public class IRCParserTest {
 
         parser.injectLine(":server 001 nick :Hi there, nick");
 
-        verify(test).onNumeric(same(parser), (Date) anyObject(), eq(1),
+        verify(test).onNumeric(same(parser), anyObject(), eq(1),
                 eq(new String[]{":server", "001", "nick", "Hi there, nick"}));
     }
 
@@ -221,11 +226,11 @@ public class IRCParserTest {
         };
 
         for (String string : strings) {
-            verify(test, never()).onServerReady((Parser) anyObject(), (Date) anyObject());
+            verify(test, never()).onServerReady(anyObject(), anyObject());
             parser.injectLine(string);
         }
 
-        verify(test).onServerReady(same(parser), (Date) anyObject());
+        verify(test).onServerReady(same(parser), anyObject());
     }
 
     @Test
@@ -333,8 +338,7 @@ public class IRCParserTest {
         parser.getCallbackManager().addCallback(ChannelKickListener.class, ick, "#D");
         parser.injectLine(":bar!me@moo KICK #D nick :Bye!");
 
-        verify(ick).onChannelKick(same(parser), (Date) anyObject(), (IRCChannelInfo) anyObject(),
-                (IRCChannelClientInfo) anyObject(), (IRCChannelClientInfo) anyObject(),
+        verify(ick).onChannelKick(same(parser), anyObject(), anyObject(), anyObject(), anyObject(),
                 anyString(), anyString());
     }
 
@@ -344,7 +348,7 @@ public class IRCParserTest {
         final ConnectErrorListener tiei = mock(ConnectErrorListener.class);
         tp.getCallbackManager().addCallback(ConnectErrorListener.class, tiei);
         tp.runSuper();
-        verify(tiei).onConnectError(same(tp), (Date) anyObject(), (ParserError) anyObject());
+        verify(tiei).onConnectError(same(tp), anyObject(), anyObject());
     }
 
 }

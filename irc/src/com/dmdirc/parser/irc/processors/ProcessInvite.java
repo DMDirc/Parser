@@ -26,6 +26,8 @@ import com.dmdirc.parser.interfaces.callbacks.InviteListener;
 import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ProcessingManager;
 
+import java.util.Date;
+
 /**
  * Process an Invite Request.
  */
@@ -63,7 +65,7 @@ public class ProcessInvite extends IRCProcessor {
      * @param channel The name of the channel we were invited to
      */
     protected void callInvite(final String userHost, final String channel) {
-        getCallback(InviteListener.class).onInvite(null, null, userHost, channel);
+        getCallback(InviteListener.class).onInvite(parser, new Date(), userHost, channel);
     }
 
     /**

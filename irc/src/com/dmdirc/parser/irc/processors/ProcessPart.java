@@ -32,6 +32,8 @@ import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ProcessingManager;
 
+import java.util.Date;
+
 /**
  * Process a channel part.
  */
@@ -113,7 +115,7 @@ public class ProcessPart extends IRCProcessor {
     protected void callChannelPart(final ChannelInfo cChannel,
             final ChannelClientInfo cChannelClient, final String sReason) {
         getCallback(ChannelPartListener.class)
-                .onChannelPart(null, null, cChannel, cChannelClient, sReason);
+                .onChannelPart(parser, new Date(), cChannel, cChannelClient, sReason);
     }
 
     /**

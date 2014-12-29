@@ -28,7 +28,6 @@ import com.dmdirc.parser.interfaces.SpecificCallback;
 import com.dmdirc.parser.interfaces.callbacks.CallbackInterface;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -136,40 +135,31 @@ public class CallbackObjectSpecific extends CallbackObject {
     }
 
     @Override
-    public boolean call(final Date date, final Object... args) {
-        boolean bResult = false;
-
-        final Object[] newArgs = new Object[args.length + 2];
-        System.arraycopy(args, 0, newArgs, 2, args.length);
-        newArgs[0] = myParser;
-        newArgs[1] = date;
-
-        createFakeArgs(newArgs);
+    public void call(final Object... args) {
+        createFakeArgs(args);
 
         for (CallbackInterface iface : new ArrayList<>(callbackInfo)) {
             if (type.isAnnotationPresent(SpecificCallback.class)
-                    && ((args[0] instanceof ClientInfo
-                    && !isValidUser(iface, ((ClientInfo) args[0]).getHostname()))
-                    || (args[0] instanceof ChannelInfo
-                    && !isValidChan(iface, (ChannelInfo) args[0]))
-                    || (!(args[0] instanceof ClientInfo
-                    || args[0] instanceof ChannelInfo)
+                    && (args[2] instanceof ClientInfo
+                    && !isValidUser(iface, ((ClientInfo) args[2]).getHostname())
+                    || args[2] instanceof ChannelInfo
+                    && !isValidChan(iface, (ChannelInfo) args[2])
+                    || !(args[2] instanceof ClientInfo
+                    || args[2] instanceof ChannelInfo)
                     && args[args.length - 1] instanceof String
-                    && !isValidUser(iface, (String) args[args.length - 1])))) {
+                    && !isValidUser(iface, (String) args[args.length - 1]))) {
                 continue;
             }
 
             try {
-                type.getMethods()[0].invoke(iface, newArgs);
+                type.getMethods()[0].invoke(iface, args);
             } catch (ReflectiveOperationException e) {
                 final ParserError ei = new ParserError(ParserError.ERROR_ERROR,
-                        "Exception in callback (" + e.getMessage() + ")",
+                        "Exception in callback (" + e.getMessage() + ')',
                         myParser.getLastLine());
                 ei.setException(e);
                 callErrorInfo(ei);
             }
-            bResult = true;
         }
-        return bResult;
     }
 }

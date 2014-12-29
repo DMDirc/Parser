@@ -33,6 +33,8 @@ import com.dmdirc.parser.irc.ModeManager;
 import com.dmdirc.parser.irc.PrefixModeManager;
 import com.dmdirc.parser.irc.ProcessingManager;
 
+import java.util.Date;
+
 /**
  * Process a Names reply.
  */
@@ -146,7 +148,7 @@ public class ProcessNames extends IRCProcessor {
     protected void callChannelTopic(final ChannelInfo cChannel, final boolean bIsJoinTopic) {
         ((IRCChannelInfo) cChannel).setHadTopic();
         getCallback(ChannelTopicListener.class)
-                .onChannelTopic(null, null, cChannel, bIsJoinTopic);
+                .onChannelTopic(parser, new Date(), cChannel, bIsJoinTopic);
     }
 
     /**
@@ -157,7 +159,7 @@ public class ProcessNames extends IRCProcessor {
      */
     protected void callChannelGotNames(final ChannelInfo cChannel) {
         getCallback(ChannelNamesListener.class)
-                .onChannelGotNames(null, null, cChannel);
+                .onChannelGotNames(parser, new Date(), cChannel);
     }
 
     /**
