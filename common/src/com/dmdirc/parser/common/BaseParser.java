@@ -90,7 +90,8 @@ public abstract class BaseParser extends ThreadedParser {
             }
         }
 
-        this.callbackManager = new CallbackManager(this, implementations);
+        callbackManager = new CallbackManager(implementations);
+        callbackManager.initialise(this);
     }
 
     @Override

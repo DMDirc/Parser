@@ -29,6 +29,7 @@ import com.dmdirc.parser.interfaces.callbacks.*; //NOPMD
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -118,13 +119,10 @@ public class CallbackManager {
     /**
      * Constructor to create a CallbackManager.
      *
-     * @param parser Parser that owns this callback manager.
      * @param implementationMap A map of implementations to use
      */
-    public CallbackManager(final Parser parser, final Map<Class<?>, Class<?>> implementationMap) {
-        this.implementationMap = implementationMap;
-
-        initialise(parser);
+    public CallbackManager(final Map<Class<?>, Class<?>> implementationMap) {
+        this.implementationMap = Collections.unmodifiableMap(implementationMap);
     }
 
     /**
@@ -132,7 +130,7 @@ public class CallbackManager {
      *
      * @param parser The parser associated with this CallbackManager
      */
-    protected void initialise(final Parser parser) {
+    public void initialise(final Parser parser) {
         for (Class<?> type : CLASSES) {
             if (type.isAnnotationPresent(SpecificCallback.class)) {
                 addCallbackType(getSpecificCallbackObject(parser, type));
@@ -150,7 +148,8 @@ public class CallbackManager {
      * @return The relevant CallbackObject
      */
     protected CallbackObject getCallbackObject(final Parser parser, final Class<?> type) {
-        return new CallbackObject(parser, this, type.asSubclass(CallbackInterface.class), implementationMap);
+        return new CallbackObject(parser, this, type.asSubclass(CallbackInterface.class),
+                implementationMap);
     }
 
     /**
@@ -160,8 +159,10 @@ public class CallbackManager {
      * @param type The type of callback to create an object for
      * @return The relevant CallbackObject
      */
-    protected CallbackObjectSpecific getSpecificCallbackObject(final Parser parser, final Class<?> type) {
-        return new CallbackObjectSpecific(parser, this, type.asSubclass(CallbackInterface.class), implementationMap);
+    protected CallbackObjectSpecific getSpecificCallbackObject(
+            final Parser parser, final Class<?> type) {
+        return new CallbackObjectSpecific(parser, this, type.asSubclass(CallbackInterface.class),
+                implementationMap);
     }
 
     /**
@@ -202,10 +203,7 @@ public class CallbackManager {
      */
     private CallbackObject getCallbackType(final Class<? extends CallbackInterface> callback) {
         if (!callbackHash.containsKey(callback)) {
-            throw new CallbackNotFoundException("Callback not found: " + callback.getName()
-                    + "\n\nMy class: " + getClass().getName()
-                    + "\nContents: " + callbackHash.keySet()
-                    + "\nThread: " + Thread.currentThread().getName());
+            throw new CallbackNotFoundException("Callback not found: " + callback.getName());
         }
 
         return callbackHash.get(callback);
