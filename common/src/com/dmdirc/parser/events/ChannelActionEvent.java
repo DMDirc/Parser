@@ -36,13 +36,15 @@ public class ChannelActionEvent extends ParserEvent {
     private final ChannelInfo channel;
     private final ChannelClientInfo client;
     private final String message;
+    private final String host;
 
     public ChannelActionEvent(final Parser parser, final Date date, final ChannelInfo channel,
-            final ChannelClientInfo client, final String message) {
+            final ChannelClientInfo client, final String message, final String host) {
         super(parser, date);
         this.channel = channel;
         this.client = client;
         this.message = message;
+        this.host = host;
     }
 
     public ChannelInfo getChannel() {
@@ -55,5 +57,9 @@ public class ChannelActionEvent extends ParserEvent {
 
     public String getMessage() {
         return message;
+    }
+
+    public String getHost() {
+        return host;
     }
 }
