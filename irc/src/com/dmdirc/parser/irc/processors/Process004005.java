@@ -47,7 +47,7 @@ public class Process004005 extends IRCProcessor {
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
     public Process004005(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager);
+        super(parser, manager, "002", "003", "004", "005");
     }
 
     /**
@@ -72,16 +72,6 @@ public class Process004005 extends IRCProcessor {
                 process005(token);
                 break;
         }
-    }
-
-    /**
-     * What does this IRCProcessor handle.
-     *
-     * @return String[] with the names of the tokens we handle.
-     */
-    @Override
-    public String[] handles() {
-        return new String[]{"002", "003", "004", "005"};
     }
 
     /**

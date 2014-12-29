@@ -68,7 +68,7 @@ public class ProcessMode extends IRCProcessor {
     public ProcessMode(final IRCParser parser, final PrefixModeManager prefixModeManager,
             final ModeManager userModeManager, final ModeManager chanModeManager,
             final ProcessingManager manager) {
-        super(parser, manager);
+        super(parser, manager, "MODE", "324", "221");
         this.prefixModeManager = prefixModeManager;
         this.userModeManager = userModeManager;
         this.chanModeManager = chanModeManager;
@@ -398,13 +398,4 @@ public class ProcessMode extends IRCProcessor {
                 .onUserModeDiscovered(parser, new Date(), cClient, sModes);
     }
 
-    /**
-     * What does this IRCProcessor handle.
-     *
-     * @return String[] with the names of the tokens we handle.
-     */
-    @Override
-    public String[] handles() {
-        return new String[]{"MODE", "324", "221"};
-    }
 }

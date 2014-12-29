@@ -43,6 +43,9 @@ public abstract class IRCProcessor {
     /** Reference to the Processing in charge of this IRCProcessor. */
     protected final ProcessingManager manager;
 
+    /** The names of the tokens this processor handles. */
+    private final String[] handledTokens;
+
     // Some functions from the main parser are useful, and having to use parser.functionName
     // is annoying, so we also implement them here (calling them again using parser)
     /**
@@ -50,10 +53,13 @@ public abstract class IRCProcessor {
      *
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
+     * @param handledTokens Tokens that this processor handles
      */
-    protected IRCProcessor(final IRCParser parser, final ProcessingManager manager) {
+    protected IRCProcessor(final IRCParser parser, final ProcessingManager manager,
+            final String ... handledTokens) {
         this.parser = parser;
         this.manager = manager;
+        this.handledTokens = handledTokens;
     }
 
     /**
@@ -153,7 +159,9 @@ public abstract class IRCProcessor {
      *
      * @return String[] with the names of the tokens we handle.
      */
-    public abstract String[] handles();
+    public String[] handles() {
+        return handledTokens;
+    }
 
     /**
      * Get the name for this Processor.

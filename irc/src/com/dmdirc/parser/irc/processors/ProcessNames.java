@@ -55,7 +55,7 @@ public class ProcessNames extends IRCProcessor {
      */
     public ProcessNames(final IRCParser parser, final PrefixModeManager prefixModeManager,
             final ModeManager userModeManager, final ProcessingManager manager) {
-        super(parser, manager);
+        super(parser, manager, "353", "366");
         this.prefixModeManager = prefixModeManager;
         this.userModeManager = userModeManager;
     }
@@ -162,13 +162,4 @@ public class ProcessNames extends IRCProcessor {
                 .onChannelGotNames(parser, new Date(), cChannel);
     }
 
-    /**
-     * What does this IRCProcessor handle.
-     *
-     * @return String[] with the names of the tokens we handle.
-     */
-    @Override
-    public String[] handles() {
-        return new String[]{"353", "366"};
-    }
 }

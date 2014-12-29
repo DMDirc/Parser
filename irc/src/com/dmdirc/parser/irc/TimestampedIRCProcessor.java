@@ -37,9 +37,11 @@ public abstract class TimestampedIRCProcessor extends IRCProcessor {
      *
      * @param parser IRCParser That owns this IRCProcessor
      * @param manager ProcessingManager that is in charge of this IRCProcessor
+     * @param handledTokens Tokens that this processor handles
      */
-    protected TimestampedIRCProcessor(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager);
+    protected TimestampedIRCProcessor(final IRCParser parser, final ProcessingManager manager,
+            final String... handledTokens) {
+        super(parser, manager, handledTokens);
     }
 
     @Override

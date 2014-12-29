@@ -46,7 +46,7 @@ public class ProcessPart extends IRCProcessor {
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
     public ProcessPart(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager);
+        super(parser, manager, "PART");
     }
 
     /**
@@ -118,13 +118,4 @@ public class ProcessPart extends IRCProcessor {
                 .onChannelPart(parser, new Date(), cChannel, cChannelClient, sReason);
     }
 
-    /**
-     * What does this IRCProcessor handle.
-     *
-     * @return String[] with the names of the tokens we handle.
-     */
-    @Override
-    public String[] handles() {
-        return new String[]{"PART"};
-    }
 }

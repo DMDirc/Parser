@@ -56,7 +56,7 @@ public class ProcessCap extends TimestampedIRCProcessor {
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
     public ProcessCap(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager);
+        super(parser, manager, "CAP");
 
         // IRCv3.1 Standard
         supportedCapabilities.add("multi-prefix");
@@ -131,13 +131,4 @@ public class ProcessCap extends TimestampedIRCProcessor {
         }
     }
 
-    /**
-     * What does this IRCProcessor handle.
-     *
-     * @return String[] with the names of the tokens we handle.
-     */
-    @Override
-    public String[] handles() {
-        return new String[]{"CAP"};
-    }
 }

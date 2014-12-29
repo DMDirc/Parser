@@ -47,7 +47,7 @@ public class ProcessKick extends IRCProcessor {
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
     public ProcessKick(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager);
+        super(parser, manager, "KICK");
     }
 
     /**
@@ -126,13 +126,4 @@ public class ProcessKick extends IRCProcessor {
                         sReason, sKickedByHost);
     }
 
-    /**
-     * What does this IRCProcessor handle.
-     *
-     * @return String[] with the names of the tokens we handle.
-     */
-    @Override
-    public String[] handles() {
-        return new String[]{"KICK"};
-    }
 }

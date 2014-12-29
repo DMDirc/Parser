@@ -41,7 +41,7 @@ public class ProcessAway extends IRCProcessor {
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
     public ProcessAway(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager);
+        super(parser, manager, "301", "305", "306", "AWAY");
     }
 
     /**
@@ -96,13 +96,4 @@ public class ProcessAway extends IRCProcessor {
                 .onAwayState(parser, new Date(), oldState, currentState, reason);
     }
 
-    /**
-     * What does this IRCProcessor handle.
-     *
-     * @return String[] with the names of the tokens we handle.
-     */
-    @Override
-    public String[] handles() {
-        return new String[]{"301", "305", "306", "AWAY"};
-    }
 }
