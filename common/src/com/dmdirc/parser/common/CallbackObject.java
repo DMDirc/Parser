@@ -31,6 +31,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,7 +103,7 @@ public class CallbackObject {
      * @param errorInfo ParserError object to pass as error.
      */
     protected final void callErrorInfo(final ParserError errorInfo) {
-        myManager.getCallback(ErrorInfoListener.class).onErrorInfo(null, null, errorInfo);
+        myManager.getCallback(ErrorInfoListener.class).onErrorInfo(myParser, new Date(), errorInfo);
     }
 
     /**

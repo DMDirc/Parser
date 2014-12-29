@@ -140,14 +140,14 @@ public class CallbackObjectSpecific extends CallbackObject {
 
         for (CallbackInterface iface : new ArrayList<>(callbackInfo)) {
             if (type.isAnnotationPresent(SpecificCallback.class)
-                    && ((args[0] instanceof ClientInfo
-                    && !isValidUser(iface, ((ClientInfo) args[0]).getHostname()))
-                    || (args[0] instanceof ChannelInfo
-                    && !isValidChan(iface, (ChannelInfo) args[0]))
-                    || (!(args[0] instanceof ClientInfo
-                    || args[0] instanceof ChannelInfo)
+                    && (args[2] instanceof ClientInfo
+                    && !isValidUser(iface, ((ClientInfo) args[2]).getHostname())
+                    || args[2] instanceof ChannelInfo
+                    && !isValidChan(iface, (ChannelInfo) args[2])
+                    || !(args[2] instanceof ClientInfo
+                    || args[2] instanceof ChannelInfo)
                     && args[args.length - 1] instanceof String
-                    && !isValidUser(iface, (String) args[args.length - 1])))) {
+                    && !isValidUser(iface, (String) args[args.length - 1]))) {
                 continue;
             }
 
@@ -155,7 +155,7 @@ public class CallbackObjectSpecific extends CallbackObject {
                 type.getMethods()[0].invoke(iface, args);
             } catch (ReflectiveOperationException e) {
                 final ParserError ei = new ParserError(ParserError.ERROR_ERROR,
-                        "Exception in callback (" + e.getMessage() + ")",
+                        "Exception in callback (" + e.getMessage() + ')',
                         myParser.getLastLine());
                 ei.setException(e);
                 callErrorInfo(ei);
