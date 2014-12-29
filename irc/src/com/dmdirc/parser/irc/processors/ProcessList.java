@@ -42,7 +42,7 @@ public class ProcessList extends IRCProcessor {
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
     public ProcessList(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager);
+        super(parser, manager, "321", "322", "323");
     }
 
     /**
@@ -71,13 +71,4 @@ public class ProcessList extends IRCProcessor {
         }
     }
 
-    /**
-     * What does this IRCProcessor handle.
-     *
-     * @return String[] with the names of the tokens we handle.
-     */
-    @Override
-    public String[] handles() {
-        return new String[]{"321", "322", "323"};
-    }
 }

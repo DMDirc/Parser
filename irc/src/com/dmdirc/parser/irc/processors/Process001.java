@@ -41,7 +41,7 @@ public class Process001 extends IRCProcessor {
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
     public Process001(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager);
+        super(parser, manager, "001");
     }
 
     /**
@@ -87,13 +87,4 @@ public class Process001 extends IRCProcessor {
         parser.joinChannels(requests.toArray(new ChannelJoinRequest[requests.size()]));
     }
 
-    /**
-     * What does this IRCProcessor handle.
-     *
-     * @return String[] with the names of the tokens we handle.
-     */
-    @Override
-    public String[] handles() {
-        return new String[]{"001"};
-    }
 }

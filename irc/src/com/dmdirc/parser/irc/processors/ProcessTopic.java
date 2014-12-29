@@ -43,7 +43,7 @@ public class ProcessTopic extends IRCProcessor {
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
     public ProcessTopic(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager);
+        super(parser, manager, "TOPIC", "332", "333");
     }
 
     /**
@@ -108,13 +108,4 @@ public class ProcessTopic extends IRCProcessor {
                 .onChannelTopic(parser, new Date(), cChannel, bIsJoinTopic);
     }
 
-    /**
-     * What does this IRCProcessor handle.
-     *
-     * @return String[] with the names of the tokens we handle.
-     */
-    @Override
-    public String[] handles() {
-        return new String[]{"TOPIC", "332", "333"};
-    }
 }

@@ -40,7 +40,7 @@ public class ProcessInvite extends IRCProcessor {
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
     public ProcessInvite(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager);
+        super(parser, manager, "INVITE");
     }
 
     /**
@@ -68,13 +68,4 @@ public class ProcessInvite extends IRCProcessor {
         getCallback(InviteListener.class).onInvite(parser, new Date(), userHost, channel);
     }
 
-    /**
-     * What does this IRCProcessor handle.
-     *
-     * @return String[] with the names of the tokens we handle.
-     */
-    @Override
-    public String[] handles() {
-        return new String[]{"INVITE"};
-    }
 }

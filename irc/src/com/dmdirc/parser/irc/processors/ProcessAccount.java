@@ -38,7 +38,7 @@ public class ProcessAccount extends IRCProcessor {
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
     public ProcessAccount(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager);
+        super(parser, manager, "ACCOUNT");
     }
 
     /**
@@ -56,13 +56,4 @@ public class ProcessAccount extends IRCProcessor {
         }
     }
 
-    /**
-     * What does this IRCProcessor handle.
-     *
-     * @return String[] with the names of the tokens we handle.
-     */
-    @Override
-    public String[] handles() {
-        return new String[]{"ACCOUNT"};
-    }
 }

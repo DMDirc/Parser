@@ -46,7 +46,7 @@ public class ProcessNickInUse extends IRCProcessor {
      * @param manager ProcessingManager that is in charge of this object
      */
     public ProcessNickInUse(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager);
+        super(parser, manager, "433");
     }
 
     /**
@@ -77,13 +77,4 @@ public class ProcessNickInUse extends IRCProcessor {
                 .onNickInUse(parser, new Date(), nickname);
     }
 
-    /**
-     * What does this IRCProcessor handle.
-     *
-     * @return String[] with the names of the tokens we handle.
-     */
-    @Override
-    public String[] handles() {
-        return new String[]{"433"};
-    }
 }

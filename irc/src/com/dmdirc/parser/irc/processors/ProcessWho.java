@@ -47,7 +47,7 @@ public class ProcessWho extends IRCProcessor {
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
     public ProcessWho(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager);
+        super(parser, manager, "352");
     }
 
     /**
@@ -142,13 +142,4 @@ public class ProcessWho extends IRCProcessor {
                         state);
     }
 
-    /**
-     * What does this IRCProcessor handle.
-     *
-     * @return String[] with the names of the tokens we handle.
-     */
-    @Override
-    public String[] handles() {
-        return new String[]{"352"};
-    }
 }

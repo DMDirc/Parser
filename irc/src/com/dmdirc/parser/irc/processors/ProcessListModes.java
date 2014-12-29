@@ -48,7 +48,19 @@ public class ProcessListModes extends IRCProcessor {
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
     public ProcessListModes(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager);
+        super(parser, manager,
+                "367", "368", /* Bans */
+                "344", "345", /* Reop list (ircnet) or bad words (euirc) */
+                "346", "347", /* Invite List */
+                "348", "349", /* Except/Exempt List */
+                "386", "387", /* Channel Owner List (swiftirc ) */
+                "388", "389", /* Protected User List (swiftirc) */
+                "940", "941", /* Censored words list */
+                "910", "911", /* INSPIRCD Channel Access List. */
+                "954", "953", /* INSPIRCD exemptchanops List. */
+                "482",        /* Permission Denied */
+                "__LISTMODE__" /* Sensible List Modes */
+        );
     }
 
     /**
@@ -265,26 +277,6 @@ public class ProcessListModes extends IRCProcessor {
                 }
             }
         }
-    }
-
-    /**
-     * What does this IRCProcessor handle.
-     *
-     * @return String[] with the names of the tokens we handle.
-     */
-    @Override
-    public String[] handles() {
-        return new String[]{"367", "368", /* Bans */
-                    "344", "345", /* Reop list (ircnet) or bad words (euirc) */
-                    "346", "347", /* Invite List */
-                    "348", "349", /* Except/Exempt List */
-                    "386", "387", /* Channel Owner List (swiftirc ) */
-                    "388", "389", /* Protected User List (swiftirc) */
-                    "940", "941", /* Censored words list */
-                    "910", "911", /* INSPIRCD Channel Access List. */
-                    "954", "953", /* INSPIRCD exemptchanops List. */
-                    "482", /* Permission Denied */
-                    "__LISTMODE__" /* Sensible List Modes */};
     }
 
     /**

@@ -40,7 +40,7 @@ public class Process464 extends IRCProcessor {
      * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
     public Process464(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager);
+        super(parser, manager, "464");
     }
 
     /**
@@ -52,16 +52,6 @@ public class Process464 extends IRCProcessor {
     @Override
     public void process(final String sParam, final String... token) {
         callPasswordRequired();
-    }
-
-    /**
-     * What does this IRCProcessor handle.
-     *
-     * @return String[] with the names of the tokens we handle.
-     */
-    @Override
-    public String[] handles() {
-        return new String[]{"464"};
     }
 
     /**

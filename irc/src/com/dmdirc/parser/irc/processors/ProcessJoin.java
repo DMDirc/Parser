@@ -65,7 +65,7 @@ public class ProcessJoin extends IRCProcessor {
     public ProcessJoin(final IRCParser parser, final PrefixModeManager prefixModeManager,
             final ModeManager userModeManager, final ModeManager chanModeManager,
             final ProcessingManager manager) {
-        super(parser, manager);
+        super(parser, manager, "JOIN", "329");
         this.prefixModeManager = prefixModeManager;
         this.userModeManager = userModeManager;
         this.chanModeManager = chanModeManager;
@@ -197,13 +197,4 @@ public class ProcessJoin extends IRCProcessor {
         getCallback(ChannelSelfJoinListener.class).onChannelSelfJoin(parser, new Date(), cChannel);
     }
 
-    /**
-     * What does this IRCProcessor handle.
-     *
-     * @return String[] with the names of the tokens we handle.
-     */
-    @Override
-    public String[] handles() {
-        return new String[]{"JOIN", "329"};
-    }
 }

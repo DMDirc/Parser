@@ -78,7 +78,7 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      */
     public ProcessMessage(final IRCParser parser, final PrefixModeManager prefixModeManager,
             final ProcessingManager manager) {
-        super(parser, manager);
+        super(parser, manager, "PRIVMSG", "NOTICE");
         this.prefixModeManager = prefixModeManager;
     }
 
@@ -586,13 +586,4 @@ public class ProcessMessage extends TimestampedIRCProcessor {
                 .onUnknownServerNotice(parser, date, sMessage, sTarget, sHost);
     }
 
-    /**
-     * What does this IRCProcessor handle.
-     *
-     * @return String[] with the names of the tokens we handle.
-     */
-    @Override
-    public String[] handles() {
-        return new String[]{"PRIVMSG", "NOTICE"};
-    }
 }
