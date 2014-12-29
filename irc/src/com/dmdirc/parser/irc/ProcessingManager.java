@@ -273,6 +273,6 @@ public class ProcessingManager {
      */
     protected void callNumeric(final int numeric, final String... token) {
         parser.getCallbackManager().getCallback(NumericListener.class)
-                .onNumeric(null, null, numeric, token);
+                .onNumeric(parser, new Date(), numeric, token);
     }
 }
