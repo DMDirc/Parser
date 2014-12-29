@@ -28,7 +28,6 @@ import com.dmdirc.parser.interfaces.SpecificCallback;
 import com.dmdirc.parser.interfaces.callbacks.CallbackInterface;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -136,15 +135,10 @@ public class CallbackObjectSpecific extends CallbackObject {
     }
 
     @Override
-    public boolean call(final Date date, final Object... args) {
+    public boolean call(final Object... args) {
         boolean bResult = false;
 
-        final Object[] newArgs = new Object[args.length + 2];
-        System.arraycopy(args, 0, newArgs, 2, args.length);
-        newArgs[0] = myParser;
-        newArgs[1] = date;
-
-        createFakeArgs(newArgs);
+        createFakeArgs(args);
 
         for (CallbackInterface iface : new ArrayList<>(callbackInfo)) {
             if (type.isAnnotationPresent(SpecificCallback.class)
@@ -160,7 +154,7 @@ public class CallbackObjectSpecific extends CallbackObject {
             }
 
             try {
-                type.getMethods()[0].invoke(iface, newArgs);
+                type.getMethods()[0].invoke(iface, args);
             } catch (ReflectiveOperationException e) {
                 final ParserError ei = new ParserError(ParserError.ERROR_ERROR,
                         "Exception in callback (" + e.getMessage() + ")",
