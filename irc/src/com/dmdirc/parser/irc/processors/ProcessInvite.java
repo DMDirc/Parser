@@ -63,8 +63,7 @@ public class ProcessInvite extends IRCProcessor {
      * @param channel The name of the channel we were invited to
      */
     protected void callInvite(final String userHost, final String channel) {
-        getCallbackManager().getCallback(InviteListener.class)
-                .onInvite(null, null, userHost, channel);
+        getCallback(InviteListener.class).onInvite(null, null, userHost, channel);
     }
 
     /**

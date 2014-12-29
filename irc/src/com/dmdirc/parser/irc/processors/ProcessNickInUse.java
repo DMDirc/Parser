@@ -71,7 +71,7 @@ public class ProcessNickInUse extends IRCProcessor {
      * @see NickInUseListener
      */
     protected void callNickInUse(final String nickname) {
-        getCallbackManager().getCallback(NickInUseListener.class)
+        getCallback(NickInUseListener.class)
                 .onNickInUse(null, null, nickname);
     }
 

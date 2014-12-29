@@ -112,7 +112,7 @@ public class ProcessPart extends IRCProcessor {
      */
     protected void callChannelPart(final ChannelInfo cChannel,
             final ChannelClientInfo cChannelClient, final String sReason) {
-        getCallbackManager().getCallback(ChannelPartListener.class)
+        getCallback(ChannelPartListener.class)
                 .onChannelPart(null, null, cChannel, cChannelClient, sReason);
     }
 

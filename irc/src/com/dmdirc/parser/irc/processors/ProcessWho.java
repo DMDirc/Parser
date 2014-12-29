@@ -106,7 +106,7 @@ public class ProcessWho extends IRCProcessor {
      */
     protected void callAwayState(final AwayState oldState, final AwayState currentState,
             final String reason) {
-        getCallbackManager().getCallback(AwayStateListener.class)
+        getCallback(AwayStateListener.class)
                 .onAwayState(null, null, oldState, currentState, reason);
     }
 
@@ -120,7 +120,7 @@ public class ProcessWho extends IRCProcessor {
      */
     protected void callAwayStateOther(final ClientInfo client, final AwayState oldState,
             final AwayState state) {
-        getCallbackManager().getCallback(OtherAwayStateListener.class)
+        getCallback(OtherAwayStateListener.class)
                 .onAwayStateOther(null, null, client, oldState, state);
     }
 
@@ -135,7 +135,7 @@ public class ProcessWho extends IRCProcessor {
      */
     protected void callChannelAwayStateOther(final ChannelInfo channel,
             final ChannelClientInfo channelClient, final AwayState oldState, final AwayState state) {
-        getCallbackManager().getCallback(ChannelOtherAwayStateListener.class)
+        getCallback(ChannelOtherAwayStateListener.class)
                 .onChannelAwayStateOther(null, null, channel, channelClient, oldState, state);
     }
 

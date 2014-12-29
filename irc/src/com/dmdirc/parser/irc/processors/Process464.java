@@ -68,7 +68,6 @@ public class Process464 extends IRCProcessor {
      * @see PasswordRequiredListener
      */
     protected void callPasswordRequired() {
-        getCallbackManager().getCallback(PasswordRequiredListener.class)
-                .onPasswordRequired(null, null);
+        getCallback(PasswordRequiredListener.class).onPasswordRequired(null, null);
     }
 }

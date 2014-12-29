@@ -72,8 +72,7 @@ public class ProcessMOTD extends IRCProcessor {
      * @see MotdEndListener
      */
     protected void callMOTDEnd(final boolean noMOTD, final String data) {
-        getCallbackManager().getCallback(MotdEndListener.class)
-                .onMOTDEnd(null, null, noMOTD, data);
+        getCallback(MotdEndListener.class).onMOTDEnd(null, null, noMOTD, data);
     }
 
     /**
@@ -83,8 +82,7 @@ public class ProcessMOTD extends IRCProcessor {
      * @param data Incomming Line.
      */
     protected void callMOTDLine(final String data) {
-        getCallbackManager().getCallback(MotdLineListener.class)
-                .onMOTDLine(null, null, data);
+        getCallback(MotdLineListener.class).onMOTDLine(null, null, data);
     }
 
     /**
@@ -94,8 +92,7 @@ public class ProcessMOTD extends IRCProcessor {
      * @param data Incomming Line.
      */
     protected void callMOTDStart(final String data) {
-        getCallbackManager().getCallback(MotdStartListener.class)
-                .onMOTDStart(null, null, data);
+        getCallback(MotdStartListener.class).onMOTDStart(null, null, data);
     }
 
     /**

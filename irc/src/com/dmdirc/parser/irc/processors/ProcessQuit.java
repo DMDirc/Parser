@@ -120,7 +120,7 @@ public class ProcessQuit extends IRCProcessor {
      */
     protected void callChannelQuit(final ChannelInfo cChannel,
             final ChannelClientInfo cChannelClient, final String sReason) {
-        getCallbackManager().getCallback(ChannelQuitListener.class)
+        getCallback(ChannelQuitListener.class)
                 .onChannelQuit(null, null, cChannel, cChannelClient, sReason);
     }
 
@@ -132,7 +132,7 @@ public class ProcessQuit extends IRCProcessor {
      * @param sReason Reason for quitting (may be "")
      */
     protected void callQuit(final ClientInfo cClient, final String sReason) {
-        getCallbackManager().getCallback(QuitListener.class)
+        getCallback(QuitListener.class)
                 .onQuit(null, null, cClient, sReason);
     }
 

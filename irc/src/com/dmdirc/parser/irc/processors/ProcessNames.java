@@ -145,7 +145,7 @@ public class ProcessNames extends IRCProcessor {
      */
     protected void callChannelTopic(final ChannelInfo cChannel, final boolean bIsJoinTopic) {
         ((IRCChannelInfo) cChannel).setHadTopic();
-        getCallbackManager().getCallback(ChannelTopicListener.class)
+        getCallback(ChannelTopicListener.class)
                 .onChannelTopic(null, null, cChannel, bIsJoinTopic);
     }
 
@@ -156,7 +156,7 @@ public class ProcessNames extends IRCProcessor {
      * @param cChannel Channel which the names reply is for
      */
     protected void callChannelGotNames(final ChannelInfo cChannel) {
-        getCallbackManager().getCallback(ChannelNamesListener.class)
+        getCallback(ChannelNamesListener.class)
                 .onChannelGotNames(null, null, cChannel);
     }
 
