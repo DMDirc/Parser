@@ -37,14 +37,17 @@ public class ChannelCTCPEvent extends ParserEvent {
     private final ChannelClientInfo client;
     private final String type;
     private final String message;
+    private final String host;
 
     public ChannelCTCPEvent(final Parser parser, final Date date, final ChannelInfo channel,
-            final ChannelClientInfo client, final String type, final String message) {
+            final ChannelClientInfo client, final String type, final String message,
+            final String host) {
         super(parser, date);
         this.channel = channel;
         this.client = client;
         this.type = type;
         this.message = message;
+        this.host = host;
     }
 
     public ChannelInfo getChannel() {
@@ -61,5 +64,9 @@ public class ChannelCTCPEvent extends ParserEvent {
 
     public String getMessage() {
         return message;
+    }
+
+    public String getHost() {
+        return host;
     }
 }
