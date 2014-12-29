@@ -138,11 +138,8 @@ public class CallbackObject {
      * specified in the callback's interface, or an error will be raised.
      *
      * @param args The arguments to pass to the callback implementation
-     * @return True if a method was called, false otherwise
      */
-    public boolean call(final Object... args) {
-        boolean bResult = false;
-
+    public void call(final Object... args) {
         createFakeArgs(args);
 
         for (CallbackInterface iface : callbackInfo) {
@@ -161,10 +158,7 @@ public class CallbackObject {
                     callErrorInfo(ei);
                 }
             }
-            bResult = true;
         }
-
-        return bResult;
     }
 
     /**

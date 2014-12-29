@@ -135,9 +135,7 @@ public class CallbackObjectSpecific extends CallbackObject {
     }
 
     @Override
-    public boolean call(final Object... args) {
-        boolean bResult = false;
-
+    public void call(final Object... args) {
         createFakeArgs(args);
 
         for (CallbackInterface iface : new ArrayList<>(callbackInfo)) {
@@ -162,8 +160,6 @@ public class CallbackObjectSpecific extends CallbackObject {
                 ei.setException(e);
                 callErrorInfo(ei);
             }
-            bResult = true;
         }
-        return bResult;
     }
 }
