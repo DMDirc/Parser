@@ -107,7 +107,7 @@ public class ProcessNick extends IRCProcessor {
      */
     protected void callChannelNickChanged(final ChannelInfo cChannel,
             final ChannelClientInfo cChannelClient, final String sOldNick) {
-        getCallbackManager().getCallback(ChannelNickChangeListener.class)
+        getCallback(ChannelNickChangeListener.class)
                 .onChannelNickChanged(null, null, cChannel, cChannelClient, sOldNick);
     }
 
@@ -119,7 +119,7 @@ public class ProcessNick extends IRCProcessor {
      * @param sOldNick Nickname before change
      */
     protected void callNickChanged(final ClientInfo cClient, final String sOldNick) {
-        getCallbackManager().getCallback(NickChangeListener.class)
+        getCallback(NickChangeListener.class)
                 .onNickChanged(null, null, cClient, sOldNick);
     }
 

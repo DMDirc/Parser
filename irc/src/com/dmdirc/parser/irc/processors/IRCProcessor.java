@@ -22,9 +22,9 @@
 
 package com.dmdirc.parser.irc.processors;
 
-import com.dmdirc.parser.common.CallbackManager;
 import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.common.QueuePriority;
+import com.dmdirc.parser.interfaces.callbacks.CallbackInterface;
 import com.dmdirc.parser.interfaces.callbacks.DebugInfoListener;
 import com.dmdirc.parser.interfaces.callbacks.ErrorInfoListener;
 import com.dmdirc.parser.irc.IRCChannelInfo;
@@ -120,21 +120,14 @@ public abstract class IRCProcessor {
     }
 
     /**
-     * Get a reference to the CallbackManager.
+     * Gets a callback proxy used to raise events.
      *
-     * @return Reference to the CallbackManager
+     * @param callback The type of callback proxy to retrieve.
+     * @param <T> The type of callback proxy to retrieve.
+     * @return A proxy that can be used to call events.
      */
-    protected final CallbackManager getCallbackManager() {
-        return parser.getCallbackManager();
-    }
-
-    /**
-     * Send a line to the server and add proper line ending.
-     *
-     * @param line Line to send (\r\n termination is added automatically)
-     */
-    protected final void sendString(final String line) {
-        parser.sendString(line);
+    protected <T extends CallbackInterface> T getCallback(final Class<T> callback) {
+        return parser.getCallbackManager().getCallback(callback);
     }
 
     /**
@@ -173,14 +166,6 @@ public abstract class IRCProcessor {
             packageLength = thisPackage.getName().length() + 1;
         }
         return getClass().getName().substring(packageLength);
-    }
-
-    /**
-     * Get the name for this Processor in lowercase.
-     * @return lower case name of this processor
-     */
-    public final String getLowerName() {
-        return getName().toLowerCase();
     }
 
     /**

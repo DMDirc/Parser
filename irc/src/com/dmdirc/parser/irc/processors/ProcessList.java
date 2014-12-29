@@ -56,16 +56,15 @@ public class ProcessList extends IRCProcessor {
         // :port80b.se.quakenet.org 323 MD87 :End of /LIST
         switch (sParam) {
             case "321":
-                getCallbackManager().getCallback(GroupListStartListener.class)
-                        .onGroupListStart(null, null);
+                getCallback(GroupListStartListener.class).onGroupListStart(null, null);
                 break;
             case "322":
-                getCallbackManager().getCallback(GroupListEntryListener.class)
-                        .onGroupListEntry(null, null, token[3], Integer.parseInt(token[4]), token[5]);
+                getCallback(GroupListEntryListener.class)
+                        .onGroupListEntry(null, null, token[3], Integer.parseInt(token[4]),
+                                token[5]);
                 break;
             case "323":
-                getCallbackManager().getCallback(GroupListEndListener.class)
-                        .onGroupListEnd(null, null);
+                getCallback(GroupListEndListener.class).onGroupListEnd(null, null);
                 break;
         }
     }

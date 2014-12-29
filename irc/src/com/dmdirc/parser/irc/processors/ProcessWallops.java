@@ -82,7 +82,7 @@ public class ProcessWallops extends IRCProcessor {
      * @param host Host of the user who sent the wallop
      */
     protected void callWallop(final String message, final String host) {
-        getCallbackManager().getCallback(WallopListener.class).onWallop(null, null, message, host);
+        getCallback(WallopListener.class).onWallop(null, null, message, host);
     }
 
     /**
@@ -93,7 +93,7 @@ public class ProcessWallops extends IRCProcessor {
      * @param host Host of the user who sent the walluser
      */
     protected void callWalluser(final String message, final String host) {
-        getCallbackManager().getCallback(WalluserListener.class)
+        getCallback(WalluserListener.class)
                 .onWalluser(null, null, message, host);
     }
 
@@ -105,7 +105,7 @@ public class ProcessWallops extends IRCProcessor {
      * @param host Host of the user who sent the WallDesync
      */
     protected void callWallDesync(final String message, final String host) {
-        getCallbackManager().getCallback(WallDesyncListener.class)
+        getCallback(WallDesyncListener.class)
                 .onWallDesync(null, null, message, host);
     }
 
