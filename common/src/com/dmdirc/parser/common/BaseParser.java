@@ -71,9 +71,6 @@ public abstract class BaseParser extends ThreadedParser {
     /** The callback manager to use for this parser. */
     private final CallbackManager callbackManager;
 
-    /** A map for callers to use to store things for no sane reason. */
-    private final Map<Object, Object> map = new HashMap<>();
-
     /**
      * Creates a new base parser for the specified URI.
      *
@@ -176,12 +173,6 @@ public abstract class BaseParser extends ThreadedParser {
      */
     protected <T extends CallbackInterface> T getCallback(final Class<T> callback) {
         return callbackManager.getCallback(callback);
-    }
-
-    @Override
-    @SuppressWarnings("ReturnOfCollectionOrArrayField")
-    public Map<Object, Object> getMap() {
-        return map;
     }
 
     @Override
