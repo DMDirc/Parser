@@ -22,6 +22,7 @@
 
 package com.dmdirc.parser.interfaces;
 
+import java.util.Comparator;
 import java.util.Map;
 
 /**
@@ -94,5 +95,12 @@ public interface ChannelClientInfo extends Comparable<ChannelClientInfo> {
      * @param message The kick message to use
      */
     void kick(String message);
+
+    /**
+     * Gets a comparator to compare important prefix modes.
+     *
+     * @return Important mode comparator
+     */
+    Comparator<String> getImportantModeComparator();
 
 }

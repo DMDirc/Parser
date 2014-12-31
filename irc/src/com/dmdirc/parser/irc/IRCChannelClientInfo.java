@@ -25,6 +25,7 @@ package com.dmdirc.parser.irc;
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -156,6 +157,11 @@ public class IRCChannelClientInfo implements ChannelClientInfo {
     @Override
     public int compareTo(final ChannelClientInfo arg0) {
         return modeManager.compareImportantModes(getAllModes(), arg0.getAllModes());
+    }
+
+    @Override
+    public Comparator<String> getImportantModeComparator() {
+        return modeManager::compareImportantModes;
     }
 
     /**
