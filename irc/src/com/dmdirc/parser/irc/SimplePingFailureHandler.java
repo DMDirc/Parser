@@ -32,6 +32,12 @@ import java.util.Date;
  */
 public class SimplePingFailureHandler implements PingFailureListener {
 
+    @SuppressWarnings("TypeMayBeWeakened")
+    public static void install(final IRCParser parser) {
+        parser.getCallbackManager()
+                .addCallback(PingFailureListener.class, new SimplePingFailureHandler());
+    }
+
     @Override
     public void onPingFailed(final Parser parser, final Date date) {
         final IRCParser ircParser = (IRCParser) parser;
