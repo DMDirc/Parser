@@ -154,8 +154,6 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     public String networkName;
     /** This is what we think the nickname should be. */
     public String thinkNickname;
-    /** When using inbuilt pre-001 NickInUse handler, have we tried our AltNick. */
-    public boolean triedAlt;
     /** Have we received the 001. */
     public boolean got001;
     /** Have we fired post005? */
@@ -671,7 +669,6 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     /** Reset internal state (use before doConnect). */
     private void resetState() {
         // Reset General State info
-        triedAlt = false;
         got001 = false;
         post005 = false;
         // Clear the hash tables
@@ -1984,7 +1981,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      *
      * @return value of pingNeeded.
      */
-    private boolean getPingNeeded() {
+    boolean getPingNeeded() {
         return pingNeeded.get();
     }
 
