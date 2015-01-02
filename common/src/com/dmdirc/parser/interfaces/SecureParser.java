@@ -40,13 +40,13 @@ public interface SecureParser extends Parser {
      *
      * @param managers The new trust managers to use
      */
-    void setTrustManagers(TrustManager[] managers);
+    void setTrustManagers(TrustManager... managers);
 
     /**
      * Sets the key managers which should be used to supply client certificates.
      *
      * @param managers The new key managers to use
      */
-    void setKeyManagers(KeyManager[] managers);
+    void setKeyManagers(KeyManager... managers);
 
 }
