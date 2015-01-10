@@ -89,22 +89,7 @@ subprojects {
         testCompile group: 'org.mockito', name: 'mockito-all', version: '1.10.17'
     }
 
-    task getCredentials << {
-        def target = file('../nexus-teamcity.gradle')
-        if (!target.exists()) {
-            new URL('http://www.dmdirc.com/private/nexus-teamcity.gradle').withInputStream{
-                 i -> target.withOutputStream { it << i }
-            }
-        }
-
-        apply from: '../nexus-teamcity.gradle'
-        project.publishing.repositories[0].credentials {
-            username "$nexusUser"
-            password "$nexusPass"
-        }
-    }
-
-    task publishSnapshot(dependsOn: ['getCredentials', 'publishMavenJavaPublicationToSnapshotsRepository']) << {
+    task publishSnapshot(dependsOn: 'publishMavenJavaPublicationToSnapshotsRepository') << {
     }
 
     task javadocJar(type: Jar) {
