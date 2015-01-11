@@ -14,4 +14,4 @@ test:
   override:
     - ./gradlew check
   post:
-    - ./gradlew jacocoTestReport coveralls
+    - ./gradlew coveralls
