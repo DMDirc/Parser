@@ -4,6 +4,8 @@ subprojects {
     apply plugin: 'com.dmdirc.git-version'
     apply plugin: 'maven-publish'
     apply plugin: 'java'
+    apply plugin: 'jacoco'
+    apply plugin: 'com.github.kt3k.coveralls'
 
     sourceSets {
         main.java.srcDirs = ['src']
@@ -104,6 +106,13 @@ subprojects {
     artifacts {
         archives javadocJar, sourcesJar
     }
+
+    jacocoTestReport {
+        reports {
+            xml.enabled = true // coveralls plugin depends on xml format report
+            html.enabled = true
+        }
+    }
 }
 
 task wrapper(type: Wrapper) {
@@ -130,5 +139,6 @@ buildscript {
 
     dependencies {
         classpath group: 'com.dmdirc', name: 'git-version', version: '1.0'
+        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.1.0'
     }
 }
