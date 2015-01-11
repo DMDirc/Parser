@@ -3,6 +3,8 @@
 machine:
   java:
     version: oraclejdk8
+  environment:
+    TERM: dumb
 
 dependencies:
   override:
@@ -11,3 +13,5 @@ dependencies:
 test:
   override:
     - ./gradlew check
+  post:
+    - ./gradlew jacocoTestReport coveralls
