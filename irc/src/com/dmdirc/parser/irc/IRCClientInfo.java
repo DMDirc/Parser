@@ -23,6 +23,7 @@
 package com.dmdirc.parser.irc;
 
 import com.dmdirc.parser.common.AwayState;
+import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.LocalClientInfo;
 import com.dmdirc.parser.interfaces.Parser;
 
@@ -372,12 +373,8 @@ public class IRCClientInfo implements LocalClientInfo {
         return clients.size();
     }
 
-    /**
-     * Get a list of channelClients that point to this object.
-     *
-     * @return int with the count of known channels
-     */
-    public List<IRCChannelClientInfo> getChannelClients() {
+    @Override
+    public List<ChannelClientInfo> getChannelClients() {
         return new ArrayList<>(clients.values());
     }
 
