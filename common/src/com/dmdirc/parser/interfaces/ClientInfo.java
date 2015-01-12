@@ -24,6 +24,7 @@ package com.dmdirc.parser.interfaces;
 
 import com.dmdirc.parser.common.AwayState;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -75,6 +76,13 @@ public interface ClientInfo {
      * @return The number of channels the client is known to be on
      */
     int getChannelCount();
+
+    /**
+     * Get a list of channelClients that point to this object.
+     *
+     * @return int with the count of known channels
+     */
+    public List<ChannelClientInfo> getChannelClients();
 
     /**
      * Get the away state of a user.

@@ -23,18 +23,23 @@
 package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.harness.parser.TestParser;
-import com.dmdirc.parser.common.ParserError;
-import com.dmdirc.parser.interfaces.ClientInfo;
-import com.dmdirc.parser.interfaces.Parser;
+import com.dmdirc.parser.common.CallbackNotFoundException;
+import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.callbacks.ErrorInfoListener;
 import com.dmdirc.parser.interfaces.callbacks.NickChangeListener;
-import com.dmdirc.parser.common.CallbackNotFoundException;
-import com.dmdirc.parser.irc.IRCChannelClientInfo;
 
-import java.util.Date;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.anyObject;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.same;
+import static org.mockito.Mockito.verify;
 
 public class ProcessNickTest {
     
@@ -55,11 +60,11 @@ public class ProcessNickTest {
         assertNotNull(parser.getClient("LUSER"));
         assertEquals(1, parser.getClient("LUSER").getChannelClients().size());
 
-        final IRCChannelClientInfo cci = parser.getClient("LUSER").getChannelClients().get(0);
+        final ChannelClientInfo cci = parser.getClient("LUSER").getChannelClients().get(0);
         assertEquals(parser.getChannel("#DMDirc_testing"), cci.getChannel());
         assertEquals("+", cci.getAllModesPrefix());
 
-        verify(tinc).onNickChanged(same(parser), (Date) anyObject(),
+        verify(tinc).onNickChanged(same(parser), anyObject(),
                 same(parser.getClient("LUSER")), eq("luser"));
     }
     
@@ -77,7 +82,7 @@ public class ProcessNickTest {
         assertFalse(parser.isKnownClient("luser"));
         assertEquals(1, parser.getClient("foobar").getChannelClients().size());
 
-        final IRCChannelClientInfo cci = parser.getClient("foobar").getChannelClients().get(0);
+        final ChannelClientInfo cci = parser.getClient("foobar").getChannelClients().get(0);
         assertEquals(parser.getChannel("#DMDirc_testing"), cci.getChannel());
         assertEquals("+", cci.getAllModesPrefix());
     }    
@@ -94,7 +99,7 @@ public class ProcessNickTest {
         parser.injectLine(":server 366 nick #DMDirc_testing :End of /NAMES list");
         parser.injectLine(":luser!lu@ser.com NICK nick3");
 
-        verify(info).onErrorInfo(same(parser), (Date) anyObject(), (ParserError) anyObject());
+        verify(info).onErrorInfo(same(parser), anyObject(), anyObject());
     }
     
     @Test
@@ -107,8 +112,7 @@ public class ProcessNickTest {
         parser.injectConnectionStrings();
         parser.injectLine(":random!lu@ser NICK rand");
 
-        verify(tinc, never()).onNickChanged((Parser) anyObject(),
-                (Date) anyObject(), (ClientInfo) anyObject(), anyString());
+        verify(tinc, never()).onNickChanged(anyObject(), anyObject(), anyObject(), anyString());
     }
 
 }
