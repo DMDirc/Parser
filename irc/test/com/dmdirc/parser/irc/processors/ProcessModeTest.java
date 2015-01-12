@@ -24,10 +24,13 @@ package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.harness.parser.TestParser;
 import com.dmdirc.parser.common.CallbackNotFoundException;
-import com.dmdirc.parser.irc.IRCChannelClientInfo;
+import com.dmdirc.parser.interfaces.ChannelClientInfo;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class ProcessModeTest {
     
@@ -67,7 +70,7 @@ public class ProcessModeTest {
         parser.injectLine(":server 353 nick = #DMDirc_testing :@nick +luser");
         parser.injectLine(":server 366 nick #DMDirc_testing :End of /NAMES list");
 
-        final IRCChannelClientInfo cci = parser.getClient("luser").getChannelClients().get(0);
+        final ChannelClientInfo cci = parser.getClient("luser").getChannelClients().get(0);
 
         parser.injectLine(":server MODE #DMDirc_testing +v luser");
         assertEquals("v", cci.getAllModes());

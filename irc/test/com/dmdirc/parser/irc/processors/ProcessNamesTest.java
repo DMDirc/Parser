@@ -24,15 +24,17 @@ package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.harness.parser.TestParser;
 import com.dmdirc.parser.common.CallbackNotFoundException;
-import com.dmdirc.parser.common.ParserError;
-import com.dmdirc.parser.interfaces.Parser;
+import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.callbacks.ErrorInfoListener;
-import com.dmdirc.parser.irc.IRCChannelClientInfo;
 
-import java.util.Date;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.anyObject;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 public class ProcessNamesTest {
     
@@ -45,8 +47,7 @@ public class ProcessNamesTest {
         
         parser.injectLine(":server 366 nick #nonexistant :End of /NAMES list.");
         
-        verify(test, never()).onErrorInfo((Parser) anyObject(),
-                (Date) anyObject(), (ParserError) anyObject());
+        verify(test, never()).onErrorInfo(anyObject(), anyObject(), anyObject());
     }
     
     @Test
@@ -64,7 +65,7 @@ public class ProcessNamesTest {
         assertNotNull(parser.getClient("luser"));
         assertEquals(1, parser.getClient("luser").getChannelClients().size());
 
-        IRCChannelClientInfo cci = parser.getClient("luser").getChannelClients().get(0);
+        ChannelClientInfo cci = parser.getClient("luser").getChannelClients().get(0);
         assertEquals(parser.getChannel("#DMDirc_testing"), cci.getChannel());
         assertEquals("+", cci.getAllModesPrefix());
         
