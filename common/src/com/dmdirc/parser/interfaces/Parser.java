@@ -442,6 +442,13 @@ public interface Parser {
     void sendInvite(String channel, String user);
 
     /**
+     * Sends a whois request about the specified target to the server.
+     *
+     * @param nickname Nickname to whois
+     */
+    void sendWhois(String nickname);
+
+    /**
      * Retrieves the last line/communication received from the server, for use
      * in debugging purposes.
      *

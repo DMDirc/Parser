@@ -980,6 +980,11 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     }
 
     @Override
+    public void sendWhois(final String nickname) {
+        sendRawMessage("WHOIS " + nickname);
+    }
+
+    @Override
     public void sendRawMessage(final String message) {
         doSendString(message, QueuePriority.NORMAL, false);
     }
