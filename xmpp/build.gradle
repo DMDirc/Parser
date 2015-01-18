@@ -1,0 +1,22 @@
+configurations {
+    bundle
+
+    compile {
+        extendsFrom bundle
+    }
+}
+
+dependencies {
+    compile find("common")
+    bundle group: 'org.igniterealtime.smack', name: 'smack', version: '3.2.1'
+    bundle group: 'org.igniterealtime.smack', name: 'smackx', version: '3.2.1'
+    compile group: 'com.google.guava', name:'guava', version: '18.0'
+    compile group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.0'
+    compile group: 'org.slf4j', name: 'slf4j-api', version:'1.7.9'
+}
+
+jar {
+    from { configurations.bundle.collect { it.isDirectory() ? it : zipTree(it) } } {
+        exclude 'META-INF/**'
+    }
+}
