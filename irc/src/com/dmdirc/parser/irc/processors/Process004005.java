@@ -24,6 +24,7 @@ package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.common.QueuePriority;
+import com.dmdirc.parser.events.NetworkDetectedEvent;
 import com.dmdirc.parser.interfaces.callbacks.NetworkDetectedListener;
 import com.dmdirc.parser.irc.CapabilityState;
 import com.dmdirc.parser.irc.IRCEncoding;
@@ -85,8 +86,8 @@ public class Process004005 extends IRCProcessor {
         final String ircdVersion = parser.getServerSoftware();
         final String ircdType = parser.getServerSoftwareType();
 
-        getCallback(NetworkDetectedListener.class)
-                .onGotNetwork(parser, new Date(), networkName, ircdVersion, ircdType);
+        getCallbackManager().publish(
+                new NetworkDetectedEvent(parser, new Date(), networkName, ircdVersion, ircdType));
     }
 
     /**

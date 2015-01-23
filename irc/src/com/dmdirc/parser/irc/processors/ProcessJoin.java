@@ -24,6 +24,8 @@ package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.common.QueuePriority;
+import com.dmdirc.parser.events.ChannelJoinEvent;
+import com.dmdirc.parser.events.ChannelSelfJoinEvent;
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.callbacks.ChannelJoinListener;
@@ -183,8 +185,8 @@ public class ProcessJoin extends IRCProcessor {
      */
     protected void callChannelJoin(final ChannelInfo cChannel,
             final ChannelClientInfo cChannelClient) {
-        getCallback(ChannelJoinListener.class).onChannelJoin(parser, new Date(), cChannel,
-                cChannelClient);
+        getCallbackManager().publish(
+                new ChannelJoinEvent(parser, new Date(), cChannel, cChannelClient));
     }
 
     /**
@@ -194,7 +196,7 @@ public class ProcessJoin extends IRCProcessor {
      * @param cChannel Channel Object
      */
     protected void callChannelSelfJoin(final ChannelInfo cChannel) {
-        getCallback(ChannelSelfJoinListener.class).onChannelSelfJoin(parser, new Date(), cChannel);
+        getCallbackManager().publish(new ChannelSelfJoinEvent(parser, new Date(), cChannel));
     }
 
 }

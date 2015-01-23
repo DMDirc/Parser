@@ -22,6 +22,8 @@
 
 package com.dmdirc.parser.irc.processors;
 
+import com.dmdirc.parser.events.ChannelQuitEvent;
+import com.dmdirc.parser.events.QuitEvent;
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.ClientInfo;
@@ -121,8 +123,8 @@ public class ProcessQuit extends IRCProcessor {
      */
     protected void callChannelQuit(final ChannelInfo cChannel,
             final ChannelClientInfo cChannelClient, final String sReason) {
-        getCallback(ChannelQuitListener.class)
-                .onChannelQuit(parser, new Date(), cChannel, cChannelClient, sReason);
+        getCallbackManager().publish(
+                new ChannelQuitEvent(parser, new Date(), cChannel, cChannelClient, sReason));
     }
 
     /**
@@ -133,8 +135,7 @@ public class ProcessQuit extends IRCProcessor {
      * @param sReason Reason for quitting (may be "")
      */
     protected void callQuit(final ClientInfo cClient, final String sReason) {
-        getCallback(QuitListener.class)
-                .onQuit(parser, new Date(), cClient, sReason);
+        getCallbackManager().publish(new QuitEvent(parser, new Date(), cClient, sReason));
     }
 
 }

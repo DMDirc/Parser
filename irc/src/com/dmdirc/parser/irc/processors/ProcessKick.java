@@ -23,6 +23,7 @@
 package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.common.ParserError;
+import com.dmdirc.parser.events.ChannelKickEvent;
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.callbacks.ChannelKickListener;
@@ -121,9 +122,9 @@ public class ProcessKick extends IRCProcessor {
     protected void callChannelKick(final ChannelInfo cChannel,
             final ChannelClientInfo cKickedClient, final ChannelClientInfo cKickedByClient,
             final String sReason, final String sKickedByHost) {
-        getCallback(ChannelKickListener.class)
-                .onChannelKick(parser, new Date(), cChannel, cKickedClient, cKickedByClient,
-                        sReason, sKickedByHost);
+        getCallbackManager().publish(
+                new ChannelKickEvent(parser, new Date(), cChannel, cKickedClient, cKickedByClient,
+                        sReason, sKickedByHost));
     }
 
 }

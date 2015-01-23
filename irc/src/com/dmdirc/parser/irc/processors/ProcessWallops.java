@@ -22,6 +22,9 @@
 
 package com.dmdirc.parser.irc.processors;
 
+import com.dmdirc.parser.events.WallDesyncEvent;
+import com.dmdirc.parser.events.WallopEvent;
+import com.dmdirc.parser.events.WalluserEvent;
 import com.dmdirc.parser.interfaces.callbacks.WallDesyncListener;
 import com.dmdirc.parser.interfaces.callbacks.WallopListener;
 import com.dmdirc.parser.interfaces.callbacks.WalluserListener;
@@ -84,7 +87,7 @@ public class ProcessWallops extends IRCProcessor {
      * @param host Host of the user who sent the wallop
      */
     protected void callWallop(final String message, final String host) {
-        getCallback(WallopListener.class).onWallop(parser, new Date(), message, host);
+        getCallbackManager().publish(new WallopEvent(parser, new Date(), message, host));
     }
 
     /**
@@ -95,8 +98,7 @@ public class ProcessWallops extends IRCProcessor {
      * @param host Host of the user who sent the walluser
      */
     protected void callWalluser(final String message, final String host) {
-        getCallback(WalluserListener.class)
-                .onWalluser(parser, new Date(), message, host);
+        getCallbackManager().publish(new WalluserEvent(parser, new Date(), message, host));
     }
 
     /**
@@ -107,8 +109,7 @@ public class ProcessWallops extends IRCProcessor {
      * @param host Host of the user who sent the WallDesync
      */
     protected void callWallDesync(final String message, final String host) {
-        getCallback(WallDesyncListener.class)
-                .onWallDesync(parser, new Date(), message, host);
+        getCallbackManager().publish(new WallDesyncEvent(parser, new Date(), message, host));
     }
 
 }

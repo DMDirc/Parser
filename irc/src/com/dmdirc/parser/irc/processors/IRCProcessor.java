@@ -22,9 +22,9 @@
 
 package com.dmdirc.parser.irc.processors;
 
+import com.dmdirc.parser.common.CallbackManager;
 import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.common.QueuePriority;
-import com.dmdirc.parser.interfaces.callbacks.CallbackInterface;
 import com.dmdirc.parser.interfaces.callbacks.DebugInfoListener;
 import com.dmdirc.parser.interfaces.callbacks.ErrorInfoListener;
 import com.dmdirc.parser.irc.IRCChannelInfo;
@@ -125,15 +125,8 @@ public abstract class IRCProcessor {
         return parser.getChannel(name);
     }
 
-    /**
-     * Gets a callback proxy used to raise events.
-     *
-     * @param callback The type of callback proxy to retrieve.
-     * @param <T> The type of callback proxy to retrieve.
-     * @return A proxy that can be used to call events.
-     */
-    protected <T extends CallbackInterface> T getCallback(final Class<T> callback) {
-        return parser.getCallbackManager().getCallback(callback);
+    protected CallbackManager getCallbackManager() {
+        return parser.getCallbackManager();
     }
 
     /**

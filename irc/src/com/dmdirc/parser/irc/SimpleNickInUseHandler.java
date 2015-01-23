@@ -22,8 +22,8 @@
 
 package com.dmdirc.parser.irc;
 
+import com.dmdirc.parser.events.DebugInfoEvent;
 import com.dmdirc.parser.interfaces.Parser;
-import com.dmdirc.parser.interfaces.callbacks.DebugInfoListener;
 import com.dmdirc.parser.interfaces.callbacks.NickInUseListener;
 
 import java.util.Date;
@@ -78,7 +78,7 @@ public class SimpleNickInUseHandler implements NickInUseListener {
     }
 
     private void callDebugInfo(final Parser parser, final int level, final String data) {
-        parser.getCallbackManager().getCallback(DebugInfoListener.class)
-                .onDebugInfo(parser, new Date(), level, data);
+        parser.getCallbackManager().publish(
+                new DebugInfoEvent(parser, new Date(), level, data));
     }
 }

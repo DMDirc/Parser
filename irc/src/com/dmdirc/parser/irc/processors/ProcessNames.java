@@ -22,6 +22,8 @@
 
 package com.dmdirc.parser.irc.processors;
 
+import com.dmdirc.parser.events.ChannelNamesEvent;
+import com.dmdirc.parser.events.ChannelTopicEvent;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.callbacks.ChannelNamesListener;
 import com.dmdirc.parser.interfaces.callbacks.ChannelTopicListener;
@@ -147,8 +149,8 @@ public class ProcessNames extends IRCProcessor {
      */
     protected void callChannelTopic(final ChannelInfo cChannel, final boolean bIsJoinTopic) {
         ((IRCChannelInfo) cChannel).setHadTopic();
-        getCallback(ChannelTopicListener.class)
-                .onChannelTopic(parser, new Date(), cChannel, bIsJoinTopic);
+        getCallbackManager().publish(
+                new ChannelTopicEvent(parser, new Date(), cChannel, bIsJoinTopic));
     }
 
     /**
@@ -158,8 +160,7 @@ public class ProcessNames extends IRCProcessor {
      * @param cChannel Channel which the names reply is for
      */
     protected void callChannelGotNames(final ChannelInfo cChannel) {
-        getCallback(ChannelNamesListener.class)
-                .onChannelGotNames(parser, new Date(), cChannel);
+        getCallbackManager().publish(new ChannelNamesEvent(parser, new Date(), cChannel));
     }
 
 }
