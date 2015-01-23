@@ -24,10 +24,10 @@ package com.dmdirc.parser.xmpp;
 
 import com.dmdirc.parser.common.BaseChannelInfo;
 import com.dmdirc.parser.common.ChannelListModeItem;
+import com.dmdirc.parser.events.ChannelNamesEvent;
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ClientInfo;
 import com.dmdirc.parser.interfaces.Parser;
-import com.dmdirc.parser.interfaces.callbacks.ChannelNamesListener;
 
 import java.util.Collection;
 import java.util.Date;
@@ -134,8 +134,8 @@ public class XmppFakeChannel extends BaseChannelInfo {
         }
 
         // TODO: Delete old contacts, don't needlessly create new objects
-        getParser().getCallbackManager().getCallback(ChannelNamesListener.class)
-                .onChannelGotNames(getParser(), new Date(), this);
+        getParser().getCallbackManager().publish(
+                new ChannelNamesEvent(getParser(), new Date(), this));
     }
 
 }

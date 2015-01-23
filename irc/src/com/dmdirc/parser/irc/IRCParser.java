@@ -31,6 +31,17 @@ import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.common.QueuePriority;
 import com.dmdirc.parser.common.SRVRecord;
 import com.dmdirc.parser.common.SystemEncoder;
+import com.dmdirc.parser.events.ConnectErrorEvent;
+import com.dmdirc.parser.events.DataInEvent;
+import com.dmdirc.parser.events.DataOutEvent;
+import com.dmdirc.parser.events.DebugInfoEvent;
+import com.dmdirc.parser.events.ErrorInfoEvent;
+import com.dmdirc.parser.events.PingFailureEvent;
+import com.dmdirc.parser.events.PingSentEvent;
+import com.dmdirc.parser.events.PingSuccessEvent;
+import com.dmdirc.parser.events.ServerErrorEvent;
+import com.dmdirc.parser.events.ServerReadyEvent;
+import com.dmdirc.parser.events.SocketCloseEvent;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.Encoder;
 import com.dmdirc.parser.interfaces.EncodingParser;
@@ -59,8 +70,8 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
-import java.text.SimpleDateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -535,7 +546,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @param message The error message
      */
     protected void callServerError(final String message) {
-        getCallback(ServerErrorListener.class).onServerError(this, new Date(), message);
+        getCallbackManager().publish(new ServerErrorEvent(this, new Date(), message));
     }
 
     /**
@@ -545,7 +556,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @param data Incoming Line.
      */
     protected void callDataIn(final String data) {
-        getCallback(DataInListener.class).onDataIn(this, new Date(), data);
+        getCallbackManager().publish(new DataInEvent(this, new Date(), data));
     }
 
     /**
@@ -556,7 +567,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @see DataOutListener
      */
     protected void callDataOut(final String data, final boolean fromParser) {
-        getCallback(DataOutListener.class).onDataOut(this, new Date(), data, fromParser);
+        getCallbackManager().publish(new DataOutEvent(this, new Date(), data));
     }
 
     /**
@@ -579,7 +590,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @param data Debugging Information
      */
     protected void callDebugInfo(final int level, final String data) {
-        getCallback(DebugInfoListener.class).onDebugInfo(this, new Date(), level, data);
+        getCallbackManager().publish(new DebugInfoEvent(this, new Date(), level, data));
     }
 
     /**
@@ -589,7 +600,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @param errorInfo ParserError object representing the error.
      */
     public void callErrorInfo(final ParserError errorInfo) {
-        getCallback(ErrorInfoListener.class).onErrorInfo(this, new Date(), errorInfo);
+        getCallbackManager().publish(new ErrorInfoEvent(this, new Date(), errorInfo));
     }
 
     /**
@@ -599,7 +610,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @param errorInfo ParserError object representing the error.
      */
     protected void callConnectError(final ParserError errorInfo) {
-        getCallback(ConnectErrorListener.class).onConnectError(this, new Date(), errorInfo);
+        getCallbackManager().publish(new ConnectErrorEvent(this, new Date(), errorInfo));
     }
 
     /**
@@ -608,7 +619,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @see SocketCloseListener
      */
     protected void callSocketClosed() {
-        getCallback(SocketCloseListener.class).onSocketClosed(this, new Date());
+        getCallbackManager().publish(new SocketCloseEvent(this, new Date()));
     }
 
     /**
@@ -617,7 +628,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @see PingFailureListener
      */
     protected void callPingFailed() {
-        getCallbackManager().getCallback(PingFailureListener.class).onPingFailed(this, new Date());
+        getCallbackManager().publish(new PingFailureEvent(this, new Date()));
     }
 
     /**
@@ -626,7 +637,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @see PingSentListener
      */
     protected void callPingSent() {
-        getCallback(PingSentListener.class).onPingSent(this, new Date());
+        getCallbackManager().publish(new PingSentEvent(this, new Date()));
     }
 
     /**
@@ -635,7 +646,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @see PingSuccessListener
      */
     protected void callPingSuccess() {
-        getCallback(PingSuccessListener.class).onPingSuccess(this, new Date());
+        getCallbackManager().publish(new PingSuccessEvent(this, new Date()));
     }
 
     /**
@@ -660,7 +671,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
             parseChanModes();
         }
 
-        getCallback(ServerReadyListener.class).onServerReady(this, new Date());
+        getCallbackManager().publish(new ServerReadyEvent(this, new Date()));
     }
 
     //---------------------------------------------------------------------------

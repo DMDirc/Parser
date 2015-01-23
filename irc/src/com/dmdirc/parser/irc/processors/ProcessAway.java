@@ -22,6 +22,7 @@
 package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.common.AwayState;
+import com.dmdirc.parser.events.AwayStateEvent;
 import com.dmdirc.parser.interfaces.callbacks.AwayStateListener;
 import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
@@ -92,8 +93,8 @@ public class ProcessAway extends IRCProcessor {
      */
     protected void callAwayState(final AwayState oldState, final AwayState currentState,
             final String reason) {
-        getCallback(AwayStateListener.class)
-                .onAwayState(parser, new Date(), oldState, currentState, reason);
+        getCallbackManager().publish(
+                new AwayStateEvent(parser, new Date(), oldState, currentState, reason));
     }
 
 }

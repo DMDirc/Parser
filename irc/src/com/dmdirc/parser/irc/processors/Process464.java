@@ -22,6 +22,7 @@
 
 package com.dmdirc.parser.irc.processors;
 
+import com.dmdirc.parser.events.PasswordRequiredEvent;
 import com.dmdirc.parser.interfaces.callbacks.PasswordRequiredListener;
 import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ProcessingManager;
@@ -60,6 +61,6 @@ public class Process464 extends IRCProcessor {
      * @see PasswordRequiredListener
      */
     protected void callPasswordRequired() {
-        getCallback(PasswordRequiredListener.class).onPasswordRequired(parser, new Date());
+        getCallbackManager().publish(new PasswordRequiredEvent(parser, new Date()));
     }
 }

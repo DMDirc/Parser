@@ -23,6 +23,8 @@
 package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.common.ParserError;
+import com.dmdirc.parser.events.ChannelNickChangeEvent;
+import com.dmdirc.parser.events.NickChangeEvent;
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.ClientInfo;
@@ -109,8 +111,8 @@ public class ProcessNick extends IRCProcessor {
      */
     protected void callChannelNickChanged(final ChannelInfo cChannel,
             final ChannelClientInfo cChannelClient, final String sOldNick) {
-        getCallback(ChannelNickChangeListener.class)
-                .onChannelNickChanged(parser, new Date(), cChannel, cChannelClient, sOldNick);
+        getCallbackManager().publish(
+                new ChannelNickChangeEvent(parser, new Date(), cChannel, cChannelClient, sOldNick));
     }
 
     /**
@@ -121,8 +123,7 @@ public class ProcessNick extends IRCProcessor {
      * @param sOldNick Nickname before change
      */
     protected void callNickChanged(final ClientInfo cClient, final String sOldNick) {
-        getCallback(NickChangeListener.class)
-                .onNickChanged(parser, new Date(), cClient, sOldNick);
+        getCallbackManager().publish(new NickChangeEvent(parser, new Date(), cClient, sOldNick));
     }
 
 }

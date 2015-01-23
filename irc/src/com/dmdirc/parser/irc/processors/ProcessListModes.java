@@ -23,6 +23,7 @@ package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.common.ChannelListModeItem;
 import com.dmdirc.parser.common.ParserError;
+import com.dmdirc.parser.events.ChannelListModeEvent;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.callbacks.ChannelListModeListener;
 import com.dmdirc.parser.irc.IRCChannelInfo;
@@ -287,7 +288,6 @@ public class ProcessListModes extends IRCProcessor {
      * @param mode the mode that we got list modes for.
      */
     protected void callChannelGotListModes(final ChannelInfo cChannel, final char mode) {
-        getCallback(ChannelListModeListener.class)
-                .onChannelGotListModes(parser, new Date(), cChannel, mode);
+        getCallbackManager().publish(new ChannelListModeEvent(parser, new Date(), cChannel, mode));
     }
 }

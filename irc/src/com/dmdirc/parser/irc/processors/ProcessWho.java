@@ -23,6 +23,9 @@
 package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.common.AwayState;
+import com.dmdirc.parser.events.AwayStateEvent;
+import com.dmdirc.parser.events.ChannelOtherAwayStateEvent;
+import com.dmdirc.parser.events.OtherAwayStateEvent;
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.ClientInfo;
@@ -108,8 +111,8 @@ public class ProcessWho extends IRCProcessor {
      */
     protected void callAwayState(final AwayState oldState, final AwayState currentState,
             final String reason) {
-        getCallback(AwayStateListener.class)
-                .onAwayState(parser, new Date(), oldState, currentState, reason);
+        getCallbackManager().publish(
+                new AwayStateEvent(parser, new Date(), oldState, currentState, reason));
     }
 
     /**
@@ -122,8 +125,8 @@ public class ProcessWho extends IRCProcessor {
      */
     protected void callAwayStateOther(final ClientInfo client, final AwayState oldState,
             final AwayState state) {
-        getCallback(OtherAwayStateListener.class)
-                .onAwayStateOther(parser, new Date(), client, oldState, state);
+        getCallbackManager().publish(
+                new OtherAwayStateEvent(parser, new Date(), client, oldState, state));
     }
 
     /**
@@ -137,9 +140,9 @@ public class ProcessWho extends IRCProcessor {
      */
     protected void callChannelAwayStateOther(final ChannelInfo channel,
             final ChannelClientInfo channelClient, final AwayState oldState, final AwayState state) {
-        getCallback(ChannelOtherAwayStateListener.class)
-                .onChannelAwayStateOther(parser, new Date(), channel, channelClient, oldState,
-                        state);
+        getCallbackManager().publish(
+                new ChannelOtherAwayStateEvent(parser, new Date(), channel, channelClient, oldState,
+                        state));
     }
 
 }
