@@ -28,8 +28,6 @@ import com.dmdirc.parser.events.ChannelJoinEvent;
 import com.dmdirc.parser.events.ChannelSelfJoinEvent;
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
-import com.dmdirc.parser.interfaces.callbacks.ChannelJoinListener;
-import com.dmdirc.parser.interfaces.callbacks.ChannelSelfJoinListener;
 import com.dmdirc.parser.irc.CapabilityState;
 import com.dmdirc.parser.irc.IRCChannelClientInfo;
 import com.dmdirc.parser.irc.IRCChannelInfo;
@@ -179,7 +177,6 @@ public class ProcessJoin extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelJoin Callback.
      *
-     * @see ChannelJoinListener
      * @param cChannel Channel Object
      * @param cChannelClient ChannelClient object for new person
      */
@@ -192,7 +189,6 @@ public class ProcessJoin extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelSelfJoin Callback.
      *
-     * @see ChannelSelfJoinListener
      * @param cChannel Channel Object
      */
     protected void callChannelSelfJoin(final ChannelInfo cChannel) {

@@ -25,9 +25,6 @@ package com.dmdirc.parser.irc.processors;
 import com.dmdirc.parser.events.MOTDEndEvent;
 import com.dmdirc.parser.events.MOTDLineEvent;
 import com.dmdirc.parser.events.MOTDStartEvent;
-import com.dmdirc.parser.interfaces.callbacks.MotdEndListener;
-import com.dmdirc.parser.interfaces.callbacks.MotdLineListener;
-import com.dmdirc.parser.interfaces.callbacks.MotdStartListener;
 import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ProcessingManager;
 
@@ -74,7 +71,6 @@ public class ProcessMOTD extends IRCProcessor {
      *
      * @param noMOTD Was this an MOTDEnd or NoMOTD
      * @param data The contents of the line (incase of language changes or so)
-     * @see MotdEndListener
      */
     protected void callMOTDEnd(final boolean noMOTD, final String data) {
         getCallbackManager().publish(new MOTDEndEvent(parser, new Date(), noMOTD, data));
@@ -83,7 +79,6 @@ public class ProcessMOTD extends IRCProcessor {
     /**
      * Callback to all objects implementing the MOTDLine Callback.
      *
-     * @see MotdLineListener
      * @param data Incomming Line.
      */
     protected void callMOTDLine(final String data) {
@@ -93,7 +88,6 @@ public class ProcessMOTD extends IRCProcessor {
     /**
      * Callback to all objects implementing the MOTDStart Callback.
      *
-     * @see MotdStartListener
      * @param data Incomming Line.
      */
     protected void callMOTDStart(final String data) {

@@ -26,7 +26,6 @@ import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.events.ChannelPartEvent;
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
-import com.dmdirc.parser.interfaces.callbacks.ChannelPartListener;
 import com.dmdirc.parser.irc.IRCChannelClientInfo;
 import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCClientInfo;
@@ -108,7 +107,6 @@ public class ProcessPart extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelPart Callback.
      *
-     * @see ChannelPartListener
      * @param cChannel Channel that the user parted
      * @param cChannelClient Client that parted
      * @param sReason Reason given for parting (May be "")

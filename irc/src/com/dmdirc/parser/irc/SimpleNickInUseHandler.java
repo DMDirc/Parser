@@ -24,7 +24,6 @@ package com.dmdirc.parser.irc;
 
 import com.dmdirc.parser.events.DebugInfoEvent;
 import com.dmdirc.parser.interfaces.Parser;
-import com.dmdirc.parser.interfaces.callbacks.NickInUseListener;
 
 import java.util.Date;
 
@@ -32,7 +31,7 @@ import java.util.Date;
  * Simple nick in use handler that tries the alternative nickname, then prepends a character until
  * it gets a nickname.
  */
-public class SimpleNickInUseHandler implements NickInUseListener {
+public class SimpleNickInUseHandler {
 
     private final String altNickname;
     private final char prependChar;
@@ -43,7 +42,7 @@ public class SimpleNickInUseHandler implements NickInUseListener {
         this.prependChar = prependChar;
     }
 
-    @Override
+    // TODO: Subscribe
     public void onNickInUse(final Parser parser, final Date date, final String nickname) {
         final IRCParser ircParser = (IRCParser) parser;
         callDebugInfo(parser, IRCParser.DEBUG_INFO, "No Nick in use Handler.");

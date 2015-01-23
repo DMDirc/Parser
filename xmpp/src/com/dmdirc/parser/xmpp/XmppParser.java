@@ -46,9 +46,6 @@ import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.ClientInfo;
 import com.dmdirc.parser.interfaces.LocalClientInfo;
 import com.dmdirc.parser.interfaces.StringConverter;
-import com.dmdirc.parser.interfaces.callbacks.CallbackInterface;
-import com.dmdirc.parser.interfaces.callbacks.DataInListener;
-import com.dmdirc.parser.interfaces.callbacks.DataOutListener;
 
 import java.net.URI;
 import java.util.Collection;
@@ -433,9 +430,9 @@ public class XmppParser extends BaseSocketAwareParser {
             connection.connect();
 
             connection.addConnectionListener(new ConnectionListenerImpl());
-            connection.addPacketListener(new PacketListenerImpl(DataInListener.class),
+            connection.addPacketListener(new PacketListenerImpl(false),
                     new AcceptAllPacketFilter());
-            connection.addPacketSendingListener(new PacketListenerImpl(DataOutListener.class),
+            connection.addPacketSendingListener(new PacketListenerImpl(true),
                     new AcceptAllPacketFilter());
             connection.getChatManager().addChatListener(new ChatManagerListenerImpl());
 
@@ -685,15 +682,15 @@ public class XmppParser extends BaseSocketAwareParser {
 
     private class PacketListenerImpl implements PacketListener {
 
-        private final Class<? extends CallbackInterface> callback;
+        private final boolean dataOut;
 
-        public PacketListenerImpl(final Class<? extends CallbackInterface> callback) {
-            this.callback = callback;
+        public PacketListenerImpl(final boolean dataOut) {
+            this.dataOut = dataOut;
         }
 
         @Override
         public void processPacket(final Packet packet) {
-            if (callback.equals(DataOutListener.class)) {
+            if (dataOut) {
                 getCallbackManager().publish(
                         new DataOutEvent(XmppParser.this, new Date(), packet.toXML()));
             } else {

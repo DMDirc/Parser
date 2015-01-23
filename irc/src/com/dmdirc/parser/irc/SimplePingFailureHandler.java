@@ -23,16 +23,15 @@
 package com.dmdirc.parser.irc;
 
 import com.dmdirc.parser.interfaces.Parser;
-import com.dmdirc.parser.interfaces.callbacks.PingFailureListener;
 
 import java.util.Date;
 
 /**
  * Simple ping failure listener that disconnects on missed pings.
  */
-public class SimplePingFailureHandler implements PingFailureListener {
+public class SimplePingFailureHandler {
 
-    @Override
+    // TODO: Subscribe
     public void onPingFailed(final Parser parser, final Date date) {
         final IRCParser ircParser = (IRCParser) parser;
         if (ircParser.getPingNeeded()) {

@@ -25,7 +25,6 @@ package com.dmdirc.parser.irc.processors;
 import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.common.QueuePriority;
 import com.dmdirc.parser.events.NetworkDetectedEvent;
-import com.dmdirc.parser.interfaces.callbacks.NetworkDetectedListener;
 import com.dmdirc.parser.irc.CapabilityState;
 import com.dmdirc.parser.irc.IRCEncoding;
 import com.dmdirc.parser.irc.IRCParser;
@@ -78,8 +77,6 @@ public class Process004005 extends IRCProcessor {
     /**
      * Callback to all objects implementing the GotNetwork Callback.
      * This takes no params of its own, but works them out itself.
-     *
-     * @see NetworkDetectedListener
      */
     private void callGotNetwork() {
         final String networkName = parser.networkName;

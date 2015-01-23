@@ -33,10 +33,6 @@ import com.dmdirc.parser.events.UserModeDiscoveryEvent;
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.ClientInfo;
-import com.dmdirc.parser.interfaces.callbacks.ChannelModeChangeListener;
-import com.dmdirc.parser.interfaces.callbacks.ChannelUserModeChangeListener;
-import com.dmdirc.parser.interfaces.callbacks.UserModeChangeListener;
-import com.dmdirc.parser.interfaces.callbacks.UserModeDiscoveryListener;
 import com.dmdirc.parser.irc.IRCChannelClientInfo;
 import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCClientInfo;
@@ -347,7 +343,6 @@ public class ProcessMode extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelModeChanged Callback.
      *
-     * @see ChannelModeChangeListener
      * @param cChannel Channel where modes were changed
      * @param cChannelClient Client chaning the modes (null if server)
      * @param sHost Host doing the mode changing (User host or server name)
@@ -363,7 +358,6 @@ public class ProcessMode extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelUserModeChanged Callback.
      *
-     * @see ChannelUserModeChangeListener
      * @param cChannel Channel where modes were changed
      * @param cChangedClient Client being changed
      * @param cSetByClient Client chaning the modes (null if server)
@@ -381,7 +375,6 @@ public class ProcessMode extends IRCProcessor {
     /**
      * Callback to all objects implementing the UserModeChanged Callback.
      *
-     * @see UserModeChangeListener
      * @param cClient Client that had the mode changed (almost always us)
      * @param sSetby Host that set the mode (us or servername)
      * @param sModes The modes set.
@@ -395,7 +388,6 @@ public class ProcessMode extends IRCProcessor {
     /**
      * Callback to all objects implementing the UserModeDiscovered Callback.
      *
-     * @see UserModeDiscoveryListener
      * @param cClient Client that had the mode changed (almost always us)
      * @param sModes The modes set.
      */

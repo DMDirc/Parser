@@ -28,8 +28,6 @@ import com.dmdirc.parser.events.NickChangeEvent;
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.ClientInfo;
-import com.dmdirc.parser.interfaces.callbacks.ChannelNickChangeListener;
-import com.dmdirc.parser.interfaces.callbacks.NickChangeListener;
 import com.dmdirc.parser.irc.IRCChannelClientInfo;
 import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCClientInfo;
@@ -104,7 +102,6 @@ public class ProcessNick extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelNickChanged Callback.
      *
-     * @see ChannelNickChangeListener
      * @param cChannel One of the channels that the user is on
      * @param cChannelClient Client changing nickname
      * @param sOldNick Nickname before change
@@ -118,7 +115,6 @@ public class ProcessNick extends IRCProcessor {
     /**
      * Callback to all objects implementing the NickChanged Callback.
      *
-     * @see NickChangeListener
      * @param cClient Client changing nickname
      * @param sOldNick Nickname before change
      */

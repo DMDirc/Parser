@@ -24,7 +24,6 @@ package com.dmdirc.parser.irc;
 
 import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.events.NumericEvent;
-import com.dmdirc.parser.interfaces.callbacks.NumericListener;
 import com.dmdirc.parser.irc.processors.IRCProcessor;
 import com.dmdirc.parser.irc.processors.Process001;
 import com.dmdirc.parser.irc.processors.Process004005;
@@ -268,7 +267,6 @@ public class ProcessingManager {
     /**
      * Callback to all objects implementing the onNumeric Callback.
      *
-     * @see NumericListener
      * @param numeric What numeric is this for
      * @param token IRC Tokenised line
      */

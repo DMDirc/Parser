@@ -44,25 +44,6 @@ import com.dmdirc.parser.events.UnknownNoticeEvent;
 import com.dmdirc.parser.events.UnknownServerNoticeEvent;
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
-import com.dmdirc.parser.interfaces.callbacks.ChannelActionListener;
-import com.dmdirc.parser.interfaces.callbacks.ChannelCtcpListener;
-import com.dmdirc.parser.interfaces.callbacks.ChannelCtcpReplyListener;
-import com.dmdirc.parser.interfaces.callbacks.ChannelMessageListener;
-import com.dmdirc.parser.interfaces.callbacks.ChannelModeMessageListener;
-import com.dmdirc.parser.interfaces.callbacks.ChannelModeNoticeListener;
-import com.dmdirc.parser.interfaces.callbacks.ChannelNoticeListener;
-import com.dmdirc.parser.interfaces.callbacks.PrivateActionListener;
-import com.dmdirc.parser.interfaces.callbacks.PrivateCtcpListener;
-import com.dmdirc.parser.interfaces.callbacks.PrivateCtcpReplyListener;
-import com.dmdirc.parser.interfaces.callbacks.PrivateMessageListener;
-import com.dmdirc.parser.interfaces.callbacks.PrivateNoticeListener;
-import com.dmdirc.parser.interfaces.callbacks.ServerNoticeListener;
-import com.dmdirc.parser.interfaces.callbacks.UnknownActionListener;
-import com.dmdirc.parser.interfaces.callbacks.UnknownCtcpListener;
-import com.dmdirc.parser.interfaces.callbacks.UnknownCtcpReplyListener;
-import com.dmdirc.parser.interfaces.callbacks.UnknownMessageListener;
-import com.dmdirc.parser.interfaces.callbacks.UnknownNoticeListener;
-import com.dmdirc.parser.interfaces.callbacks.UnknownServerNoticeListener;
 import com.dmdirc.parser.irc.IRCChannelClientInfo;
 import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCClientInfo;
@@ -312,7 +293,6 @@ public class ProcessMessage extends TimestampedIRCProcessor {
     /**
      * Callback to all objects implementing the ChannelAction Callback.
      *
-     * @see ChannelActionListener
      * @param date The date of this line
      * @param cChannel Channel where the action was sent to
      * @param cChannelClient ChannelClient who sent the action (may be null if server)
@@ -328,7 +308,6 @@ public class ProcessMessage extends TimestampedIRCProcessor {
     /**
      * Callback to all objects implementing the ChannelCTCP Callback.
      *
-     * @see ChannelCtcpListener
      * @param date The date of this line
      * @param cChannel Channel where CTCP was sent
      * @param cChannelClient ChannelClient who sent the message (may be null if server)
@@ -347,7 +326,6 @@ public class ProcessMessage extends TimestampedIRCProcessor {
     /**
      * Callback to all objects implementing the ChannelCTCPReply Callback.
      *
-     * @see ChannelCtcpReplyListener
      * @param date The date of this line
      * @param cChannel Channel where CTCPReply was sent
      * @param cChannelClient ChannelClient who sent the message (may be null if server)
@@ -366,7 +344,6 @@ public class ProcessMessage extends TimestampedIRCProcessor {
     /**
      * Callback to all objects implementing the ChannelMessage Callback.
      *
-     * @see ChannelMessageListener
      * @param date The date of this line
      * @param cChannel Channel where the message was sent to
      * @param cChannelClient ChannelClient who sent the message (may be null if server)
@@ -382,7 +359,6 @@ public class ProcessMessage extends TimestampedIRCProcessor {
     /**
      * Callback to all objects implementing the ChannelNotice Callback.
      *
-     * @see ChannelNoticeListener
      * @param date The date of this line
      * @param cChannel Channel where the notice was sent to
      * @param cChannelClient ChannelClient who sent the notice (may be null if server)
@@ -398,7 +374,6 @@ public class ProcessMessage extends TimestampedIRCProcessor {
     /**
      * Callback to all objects implementing the ChannelModeNotice Callback.
      *
-     * @see ChannelModeNoticeListener
      * @param date The date of this line
      * @param prefix Prefix that was used to send this notice.
      * @param cChannel Channel where the notice was sent to
@@ -417,7 +392,6 @@ public class ProcessMessage extends TimestampedIRCProcessor {
     /**
      * Callback to all objects implementing the ChannelModeMessage Callback.
      *
-     * @see ChannelModeMessageListener
      * @param date The date of this line
      * @param prefix Prefix that was used to send this notice.
      * @param cChannel Channel where the notice was sent to
@@ -436,7 +410,6 @@ public class ProcessMessage extends TimestampedIRCProcessor {
     /**
      * Callback to all objects implementing the PrivateAction Callback.
      *
-     * @see PrivateActionListener
      * @param date The date of this line
      * @param sMessage action contents
      * @param sHost Hostname of sender (or servername)
@@ -448,7 +421,6 @@ public class ProcessMessage extends TimestampedIRCProcessor {
     /**
      * Callback to all objects implementing the PrivateCTCP Callback.
      *
-     * @see PrivateCtcpListener
      * @param date The date of this line
      * @param sType Type of CTCP (VERSION, TIME etc)
      * @param sMessage Additional contents
@@ -462,7 +434,6 @@ public class ProcessMessage extends TimestampedIRCProcessor {
     /**
      * Callback to all objects implementing the PrivateCTCPReply Callback.
      *
-     * @see PrivateCtcpReplyListener
      * @param date The date of this line
      * @param sType Type of CTCPRReply (VERSION, TIME etc)
      * @param sMessage Reply Contents
@@ -477,7 +448,6 @@ public class ProcessMessage extends TimestampedIRCProcessor {
     /**
      * Callback to all objects implementing the PrivateMessage Callback.
      *
-     * @see PrivateMessageListener
      * @param date The date of this line
      * @param sMessage Message contents
      * @param sHost Hostname of sender (or servername)
@@ -489,7 +459,6 @@ public class ProcessMessage extends TimestampedIRCProcessor {
     /**
      * Callback to all objects implementing the PrivateNotice Callback.
      *
-     * @see PrivateNoticeListener
      * @param date The date of this line
      * @param sMessage Notice contents
      * @param sHost Hostname of sender (or servername)
@@ -501,7 +470,6 @@ public class ProcessMessage extends TimestampedIRCProcessor {
     /**
      * Callback to all objects implementing the ServerNotice Callback.
      *
-     * @see ServerNoticeListener
      * @param date The date of this line
      * @param sMessage Notice contents
      * @param sHost Hostname of sender (or servername)
@@ -513,7 +481,6 @@ public class ProcessMessage extends TimestampedIRCProcessor {
     /**
      * Callback to all objects implementing the UnknownAction Callback.
      *
-     * @see UnknownActionListener
      * @param date The date of this line
      * @param sMessage Action contents
      * @param sTarget Actual target of action
@@ -527,7 +494,6 @@ public class ProcessMessage extends TimestampedIRCProcessor {
     /**
      * Callback to all objects implementing the UnknownCTCP Callback.
      *
-     * @see UnknownCtcpListener
      * @param date The date of this line
      * @param sType Type of CTCP (VERSION, TIME etc)
      * @param sMessage Additional contents
@@ -543,7 +509,6 @@ public class ProcessMessage extends TimestampedIRCProcessor {
     /**
      * Callback to all objects implementing the UnknownCTCPReply Callback.
      *
-     * @see UnknownCtcpReplyListener
      * @param date The date of this line
      * @param sType Type of CTCPRReply (VERSION, TIME etc)
      * @param sMessage Reply Contents
@@ -559,7 +524,6 @@ public class ProcessMessage extends TimestampedIRCProcessor {
     /**
      * Callback to all objects implementing the UnknownMessage Callback.
      *
-     * @see UnknownMessageListener
      * @param date The date of this line
      * @param sMessage Message contents
      * @param sTarget Actual target of message
@@ -574,7 +538,6 @@ public class ProcessMessage extends TimestampedIRCProcessor {
     /**
      * Callback to all objects implementing the UnknownNotice Callback.
      *
-     * @see UnknownNoticeListener
      * @param date The date of this line
      * @param sMessage Notice contents
      * @param sTarget Actual target of notice
@@ -588,7 +551,6 @@ public class ProcessMessage extends TimestampedIRCProcessor {
     /**
      * Callback to all objects implementing the UnknownNotice Callback.
      *
-     * @see UnknownServerNoticeListener
      * @param date The date of this line
      * @param sMessage Notice contents
      * @param sTarget Actual target of notice

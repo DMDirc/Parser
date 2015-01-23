@@ -29,9 +29,6 @@ import com.dmdirc.parser.events.OtherAwayStateEvent;
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.ClientInfo;
-import com.dmdirc.parser.interfaces.callbacks.AwayStateListener;
-import com.dmdirc.parser.interfaces.callbacks.ChannelOtherAwayStateListener;
-import com.dmdirc.parser.interfaces.callbacks.OtherAwayStateListener;
 import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ProcessingManager;
@@ -104,7 +101,6 @@ public class ProcessWho extends IRCProcessor {
     /**
      * Callback to all objects implementing the onAwayState Callback.
      *
-     * @see AwayStateListener
      * @param oldState Old Away State
      * @param currentState Current Away State
      * @param reason Best guess at away reason
@@ -118,7 +114,6 @@ public class ProcessWho extends IRCProcessor {
     /**
      * Callback to all objects implementing the onAwayStateOther Callback.
      *
-     * @see OtherAwayStateListener
      * @param client Client this is for
      * @param oldState Old Away State
      * @param state Current Away State
@@ -132,7 +127,6 @@ public class ProcessWho extends IRCProcessor {
     /**
      * Callback to all objects implementing the onChannelAwayStateOther Callback.
      *
-     * @see ChannelOtherAwayStateListener
      * @param channel Channel this is for
      * @param channelClient ChannelClient this is for
      * @param oldState Old Away State
