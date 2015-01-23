@@ -23,6 +23,7 @@
 package com.dmdirc.parser.irc;
 
 import com.dmdirc.parser.common.ParserError;
+import com.dmdirc.parser.events.NumericEvent;
 import com.dmdirc.parser.interfaces.callbacks.NumericListener;
 import com.dmdirc.parser.irc.processors.IRCProcessor;
 import com.dmdirc.parser.irc.processors.Process001;
@@ -272,7 +273,6 @@ public class ProcessingManager {
      * @param token IRC Tokenised line
      */
     protected void callNumeric(final int numeric, final String... token) {
-        parser.getCallbackManager().getCallback(NumericListener.class)
-                .onNumeric(parser, new Date(), numeric, token);
+        parser.getCallbackManager().publish(new NumericEvent(parser, new Date(), numeric, token));
     }
 }

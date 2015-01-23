@@ -21,6 +21,7 @@
  */
 package com.dmdirc.parser.common;
 
+import com.dmdirc.parser.events.ErrorInfoEvent;
 import com.dmdirc.parser.interfaces.FakableArgument;
 import com.dmdirc.parser.interfaces.FakableSource;
 import com.dmdirc.parser.interfaces.Parser;
@@ -103,7 +104,7 @@ public class CallbackObject {
      * @param errorInfo ParserError object to pass as error.
      */
     protected final void callErrorInfo(final ParserError errorInfo) {
-        myManager.getCallback(ErrorInfoListener.class).onErrorInfo(myParser, new Date(), errorInfo);
+        myManager.publish(new ErrorInfoEvent(myParser, new Date(), errorInfo));
     }
 
     /**

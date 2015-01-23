@@ -23,6 +23,7 @@
 package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.common.ParserError;
+import com.dmdirc.parser.events.ChannelPartEvent;
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.callbacks.ChannelPartListener;
@@ -114,8 +115,8 @@ public class ProcessPart extends IRCProcessor {
      */
     protected void callChannelPart(final ChannelInfo cChannel,
             final ChannelClientInfo cChannelClient, final String sReason) {
-        getCallback(ChannelPartListener.class)
-                .onChannelPart(parser, new Date(), cChannel, cChannelClient, sReason);
+        getCallbackManager().publish(
+                new ChannelPartEvent(parser, new Date(), cChannel, cChannelClient, sReason));
     }
 
 }

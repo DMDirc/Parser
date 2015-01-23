@@ -22,9 +22,9 @@
 
 package com.dmdirc.parser.irc.processors;
 
-import com.dmdirc.parser.interfaces.callbacks.GroupListEndListener;
-import com.dmdirc.parser.interfaces.callbacks.GroupListEntryListener;
-import com.dmdirc.parser.interfaces.callbacks.GroupListStartListener;
+import com.dmdirc.parser.events.GroupListEndEvent;
+import com.dmdirc.parser.events.GroupListEntryEvent;
+import com.dmdirc.parser.events.GroupListStartEvent;
 import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ProcessingManager;
 
@@ -58,15 +58,14 @@ public class ProcessList extends IRCProcessor {
         // :port80b.se.quakenet.org 323 MD87 :End of /LIST
         switch (sParam) {
             case "321":
-                getCallback(GroupListStartListener.class).onGroupListStart(parser, new Date());
+                getCallbackManager().publish(new GroupListStartEvent(parser, new Date()));
                 break;
             case "322":
-                getCallback(GroupListEntryListener.class)
-                        .onGroupListEntry(parser, new Date(), token[3], Integer.parseInt(token[4]),
-                                token[5]);
+                getCallbackManager().publish(new GroupListEntryEvent(parser, new Date(), token[3],
+                        Integer.parseInt(token[4]), token[5]));
                 break;
             case "323":
-                getCallback(GroupListEndListener.class).onGroupListEnd(parser, new Date());
+                getCallbackManager().publish(new GroupListEndEvent(parser, new Date()));
                 break;
         }
     }

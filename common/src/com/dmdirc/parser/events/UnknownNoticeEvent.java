@@ -35,7 +35,7 @@ public class UnknownNoticeEvent extends ParserEvent {
     private final String target;
     private final String host;
 
-    public UnknownNoticeEvent(final Parser parser, final Date date, final String type,
+    public UnknownNoticeEvent(final Parser parser, final Date date,
             final String message, final String target, final String host) {
         super(parser, date);
         this.message = message;
