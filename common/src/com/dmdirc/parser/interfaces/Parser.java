@@ -135,7 +135,7 @@ public interface Parser {
      * @return A URI representing the proxy this parser is configured to use,
      * or <code>null</code> if no proxy is set.
      * @since 0.6.7
-     * @see #setProxy(URI)
+     * @see #setProxy(java.net.URI)
      */
     URI getProxy();
 
@@ -382,13 +382,6 @@ public interface Parser {
      * @return This parser's callback manager
      */
     CallbackManager getCallbackManager();
-
-    /**
-     * Sets the callback manager to handle parser callbacks.
-     *
-     * @param callbackManager New callback manager
-     */
-    void setCallbackManager(final CallbackManager callbackManager);
 
     /**
      * Retrieves the latency between the parser and the server in milliseconds.
