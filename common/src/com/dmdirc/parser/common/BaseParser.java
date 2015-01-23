@@ -24,7 +24,6 @@ package com.dmdirc.parser.common;
 
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.ClientInfo;
-import com.dmdirc.parser.interfaces.callbacks.CallbackInterface;
 
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -32,9 +31,7 @@ import java.net.ProxySelector;
 import java.net.SocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Implements common base functionality for parsers.
@@ -79,16 +76,7 @@ public abstract class BaseParser extends ThreadedParser {
     public BaseParser(final URI uri) {
         this.uri = uri;
 
-        final Map<Class<?>, Class<?>> implementations = new HashMap<>();
-
-        for (Class<?> child : getClass().getAnnotation(ChildImplementations.class).value()) {
-            for (Class<?> iface : child.getInterfaces()) {
-                implementations.put(iface, child);
-            }
-        }
-
-        callbackManager = new CallbackManager(implementations);
-        callbackManager.initialise(this);
+        callbackManager = new CallbackManager(this);
     }
 
     @Override
@@ -159,20 +147,6 @@ public abstract class BaseParser extends ThreadedParser {
     @Override
     public CallbackManager getCallbackManager() {
         return callbackManager;
-    }
-
-    /**
-     * Gets a proxy object which can be used to despatch callbacks of the
-     * specified type. Callers may pass <code>null</code> for the first two
-     * arguments of any callback, and these will automatically be replaced
-     * by the relevant Parser instance and the current date.
-     *
-     * @param <T> The type of the callback to retrieve
-     * @param callback The callback to retrieve
-     * @return A proxy object which can be used to call the specified callback
-     */
-    protected <T extends CallbackInterface> T getCallback(final Class<T> callback) {
-        return callbackManager.getCallback(callback);
     }
 
     @Override
