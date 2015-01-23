@@ -25,9 +25,6 @@ package com.dmdirc.parser.irc.processors;
 import com.dmdirc.parser.events.WallDesyncEvent;
 import com.dmdirc.parser.events.WallopEvent;
 import com.dmdirc.parser.events.WalluserEvent;
-import com.dmdirc.parser.interfaces.callbacks.WallDesyncListener;
-import com.dmdirc.parser.interfaces.callbacks.WallopListener;
-import com.dmdirc.parser.interfaces.callbacks.WalluserListener;
 import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ProcessingManager;
 
@@ -82,7 +79,6 @@ public class ProcessWallops extends IRCProcessor {
     /**
      * Callback to all objects implementing the Wallop Callback.
      *
-     * @see WallopListener
      * @param message The message
      * @param host Host of the user who sent the wallop
      */
@@ -93,7 +89,6 @@ public class ProcessWallops extends IRCProcessor {
     /**
      * Callback to all objects implementing the Walluser Callback.
      *
-     * @see WalluserListener
      * @param message The message
      * @param host Host of the user who sent the walluser
      */
@@ -104,7 +99,6 @@ public class ProcessWallops extends IRCProcessor {
     /**
      * Callback to all objects implementing the WallDesync Callback.
      *
-     * @see WallDesyncListener
      * @param message The message
      * @param host Host of the user who sent the WallDesync
      */

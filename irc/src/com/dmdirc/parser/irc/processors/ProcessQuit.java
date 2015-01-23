@@ -27,8 +27,6 @@ import com.dmdirc.parser.events.QuitEvent;
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.ClientInfo;
-import com.dmdirc.parser.interfaces.callbacks.ChannelQuitListener;
-import com.dmdirc.parser.interfaces.callbacks.QuitListener;
 import com.dmdirc.parser.irc.IRCChannelClientInfo;
 import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCClientInfo;
@@ -116,7 +114,6 @@ public class ProcessQuit extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelQuit Callback.
      *
-     * @see ChannelQuitListener
      * @param cChannel Channel that user was on
      * @param cChannelClient User thats quitting
      * @param sReason Quit reason
@@ -130,7 +127,6 @@ public class ProcessQuit extends IRCProcessor {
     /**
      * Callback to all objects implementing the Quit Callback.
      *
-     * @see QuitListener
      * @param cClient Client Quitting
      * @param sReason Reason for quitting (may be "")
      */

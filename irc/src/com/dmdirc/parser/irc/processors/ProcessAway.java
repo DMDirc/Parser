@@ -23,7 +23,6 @@ package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.common.AwayState;
 import com.dmdirc.parser.events.AwayStateEvent;
-import com.dmdirc.parser.interfaces.callbacks.AwayStateListener;
 import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ProcessingManager;
@@ -86,7 +85,6 @@ public class ProcessAway extends IRCProcessor {
     /**
      * Callback to all objects implementing the onAwayState Callback.
      *
-     * @see AwayStateListener
      * @param oldState Old Away State
      * @param currentState Current Away State
      * @param reason Best guess at away reason

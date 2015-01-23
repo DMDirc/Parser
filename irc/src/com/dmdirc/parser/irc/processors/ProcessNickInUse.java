@@ -23,7 +23,6 @@
 package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.events.NickInUseEvent;
-import com.dmdirc.parser.interfaces.callbacks.NickInUseListener;
 import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ProcessingManager;
 
@@ -71,7 +70,6 @@ public class ProcessNickInUse extends IRCProcessor {
      * Callback to all objects implementing the NickInUse Callback.
      *
      * @param nickname Nickname that was wanted.
-     * @see NickInUseListener
      */
     protected void callNickInUse(final String nickname) {
         getCallbackManager().publish(new NickInUseEvent(parser, new Date(), nickname));

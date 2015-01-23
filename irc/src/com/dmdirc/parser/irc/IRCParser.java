@@ -46,17 +46,6 @@ import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.Encoder;
 import com.dmdirc.parser.interfaces.EncodingParser;
 import com.dmdirc.parser.interfaces.SecureParser;
-import com.dmdirc.parser.interfaces.callbacks.ConnectErrorListener;
-import com.dmdirc.parser.interfaces.callbacks.DataInListener;
-import com.dmdirc.parser.interfaces.callbacks.DataOutListener;
-import com.dmdirc.parser.interfaces.callbacks.DebugInfoListener;
-import com.dmdirc.parser.interfaces.callbacks.ErrorInfoListener;
-import com.dmdirc.parser.interfaces.callbacks.PingFailureListener;
-import com.dmdirc.parser.interfaces.callbacks.PingSentListener;
-import com.dmdirc.parser.interfaces.callbacks.PingSuccessListener;
-import com.dmdirc.parser.interfaces.callbacks.ServerErrorListener;
-import com.dmdirc.parser.interfaces.callbacks.ServerReadyListener;
-import com.dmdirc.parser.interfaces.callbacks.SocketCloseListener;
 import com.dmdirc.parser.irc.IRCReader.ReadLine;
 import com.dmdirc.parser.irc.outputqueue.OutputQueue;
 
@@ -542,7 +531,6 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     /**
      * Callback to all objects implementing the ServerError Callback.
      *
-     * @see ServerErrorListener
      * @param message The error message
      */
     protected void callServerError(final String message) {
@@ -552,7 +540,6 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     /**
      * Callback to all objects implementing the DataIn Callback.
      *
-     * @see DataInListener
      * @param data Incoming Line.
      */
     protected void callDataIn(final String data) {
@@ -564,7 +551,6 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      *
      * @param data Outgoing Data
      * @param fromParser True if parser sent the data, false if sent using .sendLine
-     * @see DataOutListener
      */
     protected void callDataOut(final String data, final boolean fromParser) {
         getCallbackManager().publish(new DataOutEvent(this, new Date(), data));
@@ -573,7 +559,6 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     /**
      * Callback to all objects implementing the DebugInfo Callback.
      *
-     * @see DebugInfoListener
      * @param level Debugging Level (DEBUG_INFO, DEBUG_SOCKET etc)
      * @param data Debugging Information as a format string
      * @param args Formatting String Options
@@ -585,7 +570,6 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     /**
      * Callback to all objects implementing the DebugInfo Callback.
      *
-     * @see DebugInfoListener
      * @param level Debugging Level (DEBUG_INFO, DEBUG_SOCKET etc)
      * @param data Debugging Information
      */
@@ -596,7 +580,6 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     /**
      * Callback to all objects implementing the IErrorInfo Interface.
      *
-     * @see ErrorInfoListener
      * @param errorInfo ParserError object representing the error.
      */
     public void callErrorInfo(final ParserError errorInfo) {
@@ -606,7 +589,6 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     /**
      * Callback to all objects implementing the IConnectError Interface.
      *
-     * @see ConnectErrorListener
      * @param errorInfo ParserError object representing the error.
      */
     protected void callConnectError(final ParserError errorInfo) {
@@ -615,8 +597,6 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
 
     /**
      * Callback to all objects implementing the SocketClosed Callback.
-     *
-     * @see SocketCloseListener
      */
     protected void callSocketClosed() {
         getCallbackManager().publish(new SocketCloseEvent(this, new Date()));
@@ -624,8 +604,6 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
 
     /**
      * Callback to all objects implementing the PingFailed Callback.
-     *
-     * @see PingFailureListener
      */
     protected void callPingFailed() {
         getCallbackManager().publish(new PingFailureEvent(this, new Date()));
@@ -633,8 +611,6 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
 
     /**
      * Callback to all objects implementing the PingSent Callback.
-     *
-     * @see PingSentListener
      */
     protected void callPingSent() {
         getCallbackManager().publish(new PingSentEvent(this, new Date()));
@@ -642,8 +618,6 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
 
     /**
      * Callback to all objects implementing the PingSuccess Callback.
-     *
-     * @see PingSuccessListener
      */
     protected void callPingSuccess() {
         getCallbackManager().publish(new PingSuccessEvent(this, new Date()));
@@ -651,8 +625,6 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
 
     /**
      * Callback to all objects implementing the Post005 Callback.
-     *
-     * @see ServerReadyListener
      */
     protected synchronized void callPost005() {
         if (post005) {

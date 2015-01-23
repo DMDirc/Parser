@@ -25,8 +25,6 @@ package com.dmdirc.parser.irc.processors;
 import com.dmdirc.parser.events.ChannelNamesEvent;
 import com.dmdirc.parser.events.ChannelTopicEvent;
 import com.dmdirc.parser.interfaces.ChannelInfo;
-import com.dmdirc.parser.interfaces.callbacks.ChannelNamesListener;
-import com.dmdirc.parser.interfaces.callbacks.ChannelTopicListener;
 import com.dmdirc.parser.irc.IRCChannelClientInfo;
 import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCClientInfo;
@@ -143,7 +141,6 @@ public class ProcessNames extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelTopic Callback.
      *
-     * @see ChannelTopicListener
      * @param cChannel Channel that topic was set on
      * @param bIsJoinTopic True when getting topic on join, false if set by user/server
      */
@@ -156,7 +153,6 @@ public class ProcessNames extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelGotNames Callback.
      *
-     * @see ChannelNamesListener
      * @param cChannel Channel which the names reply is for
      */
     protected void callChannelGotNames(final ChannelInfo cChannel) {

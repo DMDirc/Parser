@@ -26,7 +26,6 @@ import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.events.ChannelKickEvent;
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
-import com.dmdirc.parser.interfaces.callbacks.ChannelKickListener;
 import com.dmdirc.parser.irc.IRCChannelClientInfo;
 import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCClientInfo;
@@ -112,7 +111,6 @@ public class ProcessKick extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelKick Callback.
      *
-     * @see ChannelKickListener
      * @param cChannel Channel where the kick took place
      * @param cKickedClient ChannelClient that got kicked
      * @param cKickedByClient ChannelClient that did the kicking (may be null if server)

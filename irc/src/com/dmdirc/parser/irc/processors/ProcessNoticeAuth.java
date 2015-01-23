@@ -23,7 +23,6 @@
 package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.events.AuthNoticeEvent;
-import com.dmdirc.parser.interfaces.callbacks.AuthNoticeListener;
 import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ProcessingManager;
 
@@ -58,7 +57,6 @@ public class ProcessNoticeAuth extends IRCProcessor {
     /**
      * Callback to all objects implementing the NoticeAuth Callback.
      *
-     * @see AuthNoticeListener
      * @param data Incomming Line.
      */
     protected void callNoticeAuth(final String data) {

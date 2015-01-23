@@ -25,7 +25,6 @@ import com.dmdirc.parser.common.ChannelListModeItem;
 import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.events.ChannelListModeEvent;
 import com.dmdirc.parser.interfaces.ChannelInfo;
-import com.dmdirc.parser.interfaces.callbacks.ChannelListModeListener;
 import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ProcessingManager;
@@ -283,7 +282,6 @@ public class ProcessListModes extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelGotListModes Callback.
      *
-     * @see ChannelListModeListener
      * @param cChannel Channel which the ListModes reply is for
      * @param mode the mode that we got list modes for.
      */
