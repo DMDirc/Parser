@@ -22,38 +22,24 @@
 
 package com.dmdirc.parser.events;
 
+import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
 /**
- *
+ * Parser error event.
  */
-public class ParserEvent {
+public class ParserErrorEvent extends ParserEvent {
 
-    private Parser parser;
-    private Date date;
+    private final ParserError parserError;
 
-    public ParserEvent(final Parser parser, final Date date) {
-        this.parser = parser;
-        this.date = date;
+    public ParserErrorEvent(final Parser parser, final Date date, final ParserError parserError) {
+        super(parser, date);
+        this.parserError = parserError;
     }
 
-    public Parser getParser() {
-        return parser;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    // TODO: HACKY REMOVE
-    public void setParser(final Parser parser) {
-        this.parser = parser;
-    }
-
-    // TODO: HACKY REMOVE
-    public void setDate(final Date date) {
-        this.date = date;
+    public ParserError getParserError() {
+        return parserError;
     }
 }
