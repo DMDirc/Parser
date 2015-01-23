@@ -69,7 +69,7 @@ public abstract class BaseParser extends ThreadedParser {
     private URI proxy;
 
     /** The callback manager to use for this parser. */
-    private final CallbackManager callbackManager;
+    private CallbackManager callbackManager;
 
     /**
      * Creates a new base parser for the specified URI.
@@ -87,7 +87,7 @@ public abstract class BaseParser extends ThreadedParser {
             }
         }
 
-        callbackManager = new CallbackManager(implementations);
+        callbackManager = new CallbackManagerImpl(implementations);
         callbackManager.initialise(this);
     }
 
@@ -159,6 +159,11 @@ public abstract class BaseParser extends ThreadedParser {
     @Override
     public CallbackManager getCallbackManager() {
         return callbackManager;
+    }
+
+    @Override
+    public void setCallbackManager(final CallbackManager callbackManager) {
+        this.callbackManager = callbackManager;
     }
 
     /**
