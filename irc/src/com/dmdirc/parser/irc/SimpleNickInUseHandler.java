@@ -34,17 +34,6 @@ import java.util.Date;
  */
 public class SimpleNickInUseHandler implements NickInUseListener {
 
-    @SuppressWarnings("TypeMayBeWeakened")
-    public static void install(final IRCParser parser, final String altNickname) {
-        install(parser, altNickname, '_');
-    }
-
-    @SuppressWarnings("TypeMayBeWeakened")
-    public static void install(final IRCParser parser, final String altNickname, final char prependChar) {
-        parser.getCallbackManager()
-                .addCallback(NickInUseListener.class, new SimpleNickInUseHandler(altNickname, prependChar));
-    }
-
     private final String altNickname;
     private final char prependChar;
     private boolean triedAlt;
