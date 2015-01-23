@@ -26,12 +26,14 @@ import com.dmdirc.harness.parser.TestParser;
 import com.dmdirc.parser.common.CallbackNotFoundException;
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+@Ignore
 public class ProcessModeTest {
     
     @Test
