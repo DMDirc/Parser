@@ -24,7 +24,6 @@ package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.irc.CapabilityState;
 import com.dmdirc.parser.irc.IRCParser;
-import com.dmdirc.parser.irc.ProcessingManager;
 import com.dmdirc.parser.irc.TimestampedIRCProcessor;
 
 import java.util.ArrayList;
@@ -53,10 +52,9 @@ public class ProcessCap extends TimestampedIRCProcessor {
      * Create a new instance of the IRCProcessor Object.
      *
      * @param parser IRCParser That owns this IRCProcessor
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    public ProcessCap(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager, "CAP");
+    public ProcessCap(final IRCParser parser) {
+        super(parser, "CAP");
 
         // IRCv3.1 Standard
         supportedCapabilities.add("multi-prefix");

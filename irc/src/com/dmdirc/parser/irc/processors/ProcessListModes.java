@@ -27,7 +27,6 @@ import com.dmdirc.parser.events.ChannelListModeEvent;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCParser;
-import com.dmdirc.parser.irc.ProcessingManager;
 import com.dmdirc.parser.irc.ServerType;
 import com.dmdirc.parser.irc.ServerTypeGroup;
 
@@ -45,11 +44,9 @@ public class ProcessListModes extends IRCProcessor {
      * Create a new instance of the IRCProcessor Object.
      *
      * @param parser IRCParser That owns this IRCProcessor
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    public ProcessListModes(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager,
-                "367", "368", /* Bans */
+    public ProcessListModes(final IRCParser parser) {
+        super(parser, "367", "368", /* Bans */
                 "344", "345", /* Reop list (ircnet) or bad words (euirc) */
                 "346", "347", /* Invite List */
                 "348", "349", /* Except/Exempt List */

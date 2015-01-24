@@ -32,16 +32,15 @@ import java.util.Date;
  * Superclass for all IRCProcessor types that accept timestamps for process.
  */
 public abstract class TimestampedIRCProcessor extends IRCProcessor {
+
     /**
      * Create a new instance of the IRCTimestampedProcessor Object.
      *
      * @param parser IRCParser That owns this IRCProcessor
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
      * @param handledTokens Tokens that this processor handles
      */
-    protected TimestampedIRCProcessor(final IRCParser parser, final ProcessingManager manager,
-            final String... handledTokens) {
-        super(parser, manager, handledTokens);
+    protected TimestampedIRCProcessor(final IRCParser parser, final String... handledTokens) {
+        super(parser, handledTokens);
     }
 
     @Override

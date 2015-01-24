@@ -24,7 +24,6 @@ package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.events.AuthNoticeEvent;
 import com.dmdirc.parser.irc.IRCParser;
-import com.dmdirc.parser.irc.ProcessingManager;
 
 import java.util.Date;
 
@@ -37,10 +36,9 @@ public class ProcessNoticeAuth extends IRCProcessor {
      * Create a new instance of the ProcessNoticeAuth Object.
      *
      * @param parser IRCParser That owns this object
-     * @param manager ProcessingManager that is in charge of this object
      */
-    public ProcessNoticeAuth(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager, "Notice Auth");
+    public ProcessNoticeAuth(final IRCParser parser) {
+        super(parser, "Notice Auth");
     }
 
     /**

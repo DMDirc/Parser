@@ -26,7 +26,6 @@ import com.dmdirc.parser.events.GroupListEndEvent;
 import com.dmdirc.parser.events.GroupListEntryEvent;
 import com.dmdirc.parser.events.GroupListStartEvent;
 import com.dmdirc.parser.irc.IRCParser;
-import com.dmdirc.parser.irc.ProcessingManager;
 
 import java.util.Date;
 
@@ -39,10 +38,9 @@ public class ProcessList extends IRCProcessor {
      * Create a new instance of the IRCProcessor Object.
      *
      * @param parser IRCParser That owns this IRCProcessor
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    public ProcessList(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager, "321", "322", "323");
+    public ProcessList(final IRCParser parser) {
+        super(parser, "321", "322", "323");
     }
 
     /**

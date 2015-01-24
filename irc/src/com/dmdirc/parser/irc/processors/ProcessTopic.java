@@ -27,7 +27,6 @@ import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
-import com.dmdirc.parser.irc.ProcessingManager;
 
 import java.util.Date;
 
@@ -40,10 +39,9 @@ public class ProcessTopic extends IRCProcessor {
      * Create a new instance of the IRCProcessor Object.
      *
      * @param parser IRCParser That owns this IRCProcessor
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    public ProcessTopic(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager, "TOPIC", "332", "333");
+    public ProcessTopic(final IRCParser parser) {
+        super(parser, "TOPIC", "332", "333");
     }
 
     /**

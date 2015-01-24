@@ -26,7 +26,6 @@ import com.dmdirc.parser.events.MOTDEndEvent;
 import com.dmdirc.parser.events.MOTDLineEvent;
 import com.dmdirc.parser.events.MOTDStartEvent;
 import com.dmdirc.parser.irc.IRCParser;
-import com.dmdirc.parser.irc.ProcessingManager;
 
 import java.util.Date;
 
@@ -39,10 +38,9 @@ public class ProcessMOTD extends IRCProcessor {
      * Create a new instance of the IRCProcessor Object.
      *
      * @param parser IRCParser That owns this IRCProcessor
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    public ProcessMOTD(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager, "372", "375", "376", "422");
+    public ProcessMOTD(final IRCParser parser) {
+        super(parser, "372", "375", "376", "422");
     }
 
     /**

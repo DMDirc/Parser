@@ -24,7 +24,6 @@ package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.events.InviteEvent;
 import com.dmdirc.parser.irc.IRCParser;
-import com.dmdirc.parser.irc.ProcessingManager;
 
 import java.util.Date;
 
@@ -37,10 +36,9 @@ public class ProcessInvite extends IRCProcessor {
      * Create a new instance of the IRCProcessor Object.
      *
      * @param parser IRCParser That owns this IRCProcessor
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    public ProcessInvite(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager, "INVITE");
+    public ProcessInvite(final IRCParser parser) {
+        super(parser, "INVITE");
     }
 
     /**

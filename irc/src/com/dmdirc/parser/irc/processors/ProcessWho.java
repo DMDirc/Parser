@@ -31,7 +31,6 @@ import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.ClientInfo;
 import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
-import com.dmdirc.parser.irc.ProcessingManager;
 
 import java.util.Date;
 
@@ -44,10 +43,9 @@ public class ProcessWho extends IRCProcessor {
      * Create a new instance of the IRCProcessor Object.
      *
      * @param parser IRCParser That owns this IRCProcessor
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    public ProcessWho(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager, "352");
+    public ProcessWho(final IRCParser parser) {
+        super(parser, "352");
     }
 
     /**

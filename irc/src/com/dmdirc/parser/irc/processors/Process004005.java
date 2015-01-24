@@ -28,7 +28,6 @@ import com.dmdirc.parser.events.NetworkDetectedEvent;
 import com.dmdirc.parser.irc.CapabilityState;
 import com.dmdirc.parser.irc.IRCEncoding;
 import com.dmdirc.parser.irc.IRCParser;
-import com.dmdirc.parser.irc.ProcessingManager;
 import com.dmdirc.parser.irc.ProcessorNotFoundException;
 
 import java.util.Date;
@@ -44,10 +43,9 @@ public class Process004005 extends IRCProcessor {
      * Create a new instance of the IRCProcessor Object.
      *
      * @param parser IRCParser That owns this IRCProcessor
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    public Process004005(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager, "002", "003", "004", "005");
+    public Process004005(final IRCParser parser) {
+        super(parser, "002", "003", "004", "005");
     }
 
     /**

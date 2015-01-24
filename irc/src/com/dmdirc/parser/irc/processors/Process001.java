@@ -25,7 +25,6 @@ package com.dmdirc.parser.irc.processors;
 import com.dmdirc.parser.common.ChannelJoinRequest;
 import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.irc.IRCParser;
-import com.dmdirc.parser.irc.ProcessingManager;
 
 import java.util.Collection;
 
@@ -38,10 +37,9 @@ public class Process001 extends IRCProcessor {
      * Create a new instance of the IRCProcessor Object.
      *
      * @param parser IRCParser That owns this IRCProcessor
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    public Process001(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager, "001");
+    public Process001(final IRCParser parser) {
+        super(parser, "001");
     }
 
     /**

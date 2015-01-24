@@ -24,7 +24,6 @@ package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
-import com.dmdirc.parser.irc.ProcessingManager;
 
 /**
  * Process an Account message.
@@ -35,10 +34,9 @@ public class ProcessAccount extends IRCProcessor {
      * Create a new instance of the IRCProcessor Object.
      *
      * @param parser IRCParser That owns this IRCProcessor
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    public ProcessAccount(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager, "ACCOUNT");
+    public ProcessAccount(final IRCParser parser) {
+        super(parser, "ACCOUNT");
     }
 
     /**

@@ -49,7 +49,6 @@ import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.PrefixModeManager;
-import com.dmdirc.parser.irc.ProcessingManager;
 import com.dmdirc.parser.irc.ProcessorNotFoundException;
 import com.dmdirc.parser.irc.TimestampedIRCProcessor;
 
@@ -74,11 +73,9 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      *
      * @param parser IRCParser That owns this IRCProcessor
      * @param prefixModeManager The manager to use to access prefix modes.
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    public ProcessMessage(final IRCParser parser, final PrefixModeManager prefixModeManager,
-            final ProcessingManager manager) {
-        super(parser, manager, "PRIVMSG", "NOTICE");
+    public ProcessMessage(final IRCParser parser, final PrefixModeManager prefixModeManager) {
+        super(parser, "PRIVMSG", "NOTICE");
         this.prefixModeManager = prefixModeManager;
     }
 
