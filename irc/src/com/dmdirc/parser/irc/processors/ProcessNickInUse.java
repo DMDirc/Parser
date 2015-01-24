@@ -27,6 +27,8 @@ import com.dmdirc.parser.irc.IRCParser;
 
 import java.util.Date;
 
+import javax.inject.Inject;
+
 /**
  * Process a NickInUse message.
  * Parser implements handling of this if Pre-001 and no other handler found,
@@ -43,6 +45,7 @@ public class ProcessNickInUse extends IRCProcessor {
      *
      * @param parser IRCParser That owns this object
      */
+    @Inject
     public ProcessNickInUse(final IRCParser parser) {
         super(parser, "433");
     }

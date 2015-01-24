@@ -29,6 +29,8 @@ import com.dmdirc.parser.irc.IRCParser;
 
 import java.util.Date;
 
+import javax.inject.Inject;
+
 /**
  * Process a list response.
  */
@@ -39,6 +41,7 @@ public class ProcessList extends IRCProcessor {
      *
      * @param parser IRCParser That owns this IRCProcessor
      */
+    @Inject
     public ProcessList(final IRCParser parser) {
         super(parser, "321", "322", "323");
     }

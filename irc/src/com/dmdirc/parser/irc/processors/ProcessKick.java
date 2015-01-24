@@ -34,6 +34,8 @@ import com.dmdirc.parser.irc.IRCParser;
 import java.util.Arrays;
 import java.util.Date;
 
+import javax.inject.Inject;
+
 /**
  * Process a channel kick.
  */
@@ -44,6 +46,7 @@ public class ProcessKick extends IRCProcessor {
      *
      * @param parser IRCParser That owns this IRCProcessor
      */
+    @Inject
     public ProcessKick(final IRCParser parser) {
         super(parser, "KICK");
     }

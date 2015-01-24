@@ -40,6 +40,9 @@ import com.dmdirc.parser.irc.ProcessorNotFoundException;
 import java.util.Arrays;
 import java.util.Date;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 /**
  * Process a channel join.
  */
@@ -60,8 +63,10 @@ public class ProcessJoin extends IRCProcessor {
      * @param userModeManager Mode manager to use for user modes.
      * @param chanModeManager Mode manager to use for channel modes.
      */
+    @Inject
     public ProcessJoin(final IRCParser parser, final PrefixModeManager prefixModeManager,
-            final ModeManager userModeManager, final ModeManager chanModeManager) {
+            @Named("user") final ModeManager userModeManager,
+            @Named("channel") final ModeManager chanModeManager) {
         super(parser, "JOIN", "329");
         this.prefixModeManager = prefixModeManager;
         this.userModeManager = userModeManager;

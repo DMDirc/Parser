@@ -35,6 +35,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Queue;
 
+import javax.inject.Inject;
+
 /**
  * Process a List Modes.
  */
@@ -45,6 +47,7 @@ public class ProcessListModes extends IRCProcessor {
      *
      * @param parser IRCParser That owns this IRCProcessor
      */
+    @Inject
     public ProcessListModes(final IRCParser parser) {
         super(parser, "367", "368", /* Bans */
                 "344", "345", /* Reop list (ircnet) or bad words (euirc) */

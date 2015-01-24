@@ -43,6 +43,9 @@ import com.dmdirc.parser.irc.PrefixModeManager;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 /**
  * Process a Mode line.
  */
@@ -63,8 +66,10 @@ public class ProcessMode extends IRCProcessor {
      * @param userModeManager Mode manager to use for user modes.
      * @param chanModeManager Mode manager to use for channel modes.
      */
+    @Inject
     public ProcessMode(final IRCParser parser, final PrefixModeManager prefixModeManager,
-            final ModeManager userModeManager, final ModeManager chanModeManager) {
+            @Named("user") final ModeManager userModeManager,
+            @Named("channel") final ModeManager chanModeManager) {
         super(parser, "MODE", "324", "221");
         this.prefixModeManager = prefixModeManager;
         this.userModeManager = userModeManager;

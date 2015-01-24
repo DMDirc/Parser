@@ -27,6 +27,8 @@ import com.dmdirc.parser.irc.IRCParser;
 
 import java.util.Date;
 
+import javax.inject.Inject;
+
 /**
  * Process a NoticeAuth message.
  */
@@ -37,6 +39,7 @@ public class ProcessNoticeAuth extends IRCProcessor {
      *
      * @param parser IRCParser That owns this object
      */
+    @Inject
     public ProcessNoticeAuth(final IRCParser parser) {
         super(parser, "Notice Auth");
     }

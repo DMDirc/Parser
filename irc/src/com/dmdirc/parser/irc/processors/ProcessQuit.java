@@ -35,6 +35,8 @@ import com.dmdirc.parser.irc.IRCParser;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.inject.Inject;
+
 /**
  * Process a Quit message.
  */
@@ -45,6 +47,7 @@ public class ProcessQuit extends IRCProcessor {
      *
      * @param parser IRCParser That owns this IRCProcessor
      */
+    @Inject
     public ProcessQuit(final IRCParser parser) {
         super(parser, "QUIT");
     }

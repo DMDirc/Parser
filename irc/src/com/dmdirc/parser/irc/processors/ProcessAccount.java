@@ -25,6 +25,8 @@ package com.dmdirc.parser.irc.processors;
 import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
 
+import javax.inject.Inject;
+
 /**
  * Process an Account message.
  */
@@ -35,6 +37,7 @@ public class ProcessAccount extends IRCProcessor {
      *
      * @param parser IRCParser That owns this IRCProcessor
      */
+    @Inject
     public ProcessAccount(final IRCParser parser) {
         super(parser, "ACCOUNT");
     }

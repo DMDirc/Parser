@@ -82,6 +82,8 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
+import dagger.ObjectGraph;
+
 /**
  * IRC Parser.
  */
@@ -283,7 +285,10 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     public IRCParser(final MyInfo myDetails, final URI uri) {
         super(uri);
 
-        myProcessingManager = new ProcessingManager(this, prefixModes, userModes, chanModesBool);
+        // TODO: There should be a factory or builder for parsers that can construct the graph
+        final ObjectGraph graph = ObjectGraph.create(new IRCParserModule(this, prefixModes,
+                userModes, chanModesBool));
+        myProcessingManager = graph.get(ProcessingManager.class);
         myself = new IRCClientInfo(this, userModes, "myself").setFake(true);
 
         out = new OutputQueue();

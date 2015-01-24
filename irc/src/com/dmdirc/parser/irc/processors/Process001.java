@@ -28,6 +28,8 @@ import com.dmdirc.parser.irc.IRCParser;
 
 import java.util.Collection;
 
+import javax.inject.Inject;
+
 /**
  * Process a 001 message.
  */
@@ -38,6 +40,7 @@ public class Process001 extends IRCProcessor {
      *
      * @param parser IRCParser That owns this IRCProcessor
      */
+    @Inject
     public Process001(final IRCParser parser) {
         super(parser, "001");
     }

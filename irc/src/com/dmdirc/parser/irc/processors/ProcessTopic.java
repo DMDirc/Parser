@@ -30,6 +30,8 @@ import com.dmdirc.parser.irc.IRCParser;
 
 import java.util.Date;
 
+import javax.inject.Inject;
+
 /**
  * Process a topic change.
  */
@@ -40,6 +42,7 @@ public class ProcessTopic extends IRCProcessor {
      *
      * @param parser IRCParser That owns this IRCProcessor
      */
+    @Inject
     public ProcessTopic(final IRCParser parser) {
         super(parser, "TOPIC", "332", "333");
     }

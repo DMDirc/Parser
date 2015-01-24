@@ -30,6 +30,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
+import javax.inject.Inject;
+
 /**
  * Process CAP extension.
  * There are currently no callbacks related to this, as it is just to tell
@@ -53,6 +55,7 @@ public class ProcessCap extends TimestampedIRCProcessor {
      *
      * @param parser IRCParser That owns this IRCProcessor
      */
+    @Inject
     public ProcessCap(final IRCParser parser) {
         super(parser, "CAP");
 
