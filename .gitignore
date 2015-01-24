@@ -11,4 +11,5 @@ build-before-profiler.xml
 /etc/nexus-teamcity.properties
 /.gradle
 /*/build
+/*/generated
 /nexus-teamcity.gradle
