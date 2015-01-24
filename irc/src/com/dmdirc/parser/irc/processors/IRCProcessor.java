@@ -28,7 +28,6 @@ import com.dmdirc.parser.common.QueuePriority;
 import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
-import com.dmdirc.parser.irc.ProcessingManager;
 
 /**
  * IRCProcessor.
@@ -38,8 +37,6 @@ public abstract class IRCProcessor {
 
     /** Reference to the IRCParser that owns this IRCProcessor. */
     protected final IRCParser parser;
-    /** Reference to the Processing in charge of this IRCProcessor. */
-    protected final ProcessingManager manager;
 
     /** The names of the tokens this processor handles. */
     private final String[] handledTokens;
@@ -48,15 +45,11 @@ public abstract class IRCProcessor {
     // is annoying, so we also implement them here (calling them again using parser)
     /**
      * Create a new instance of the IRCProcessor Object.
-     *
-     * @param parser IRCParser That owns this IRCProcessor
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
+     *  @param parser IRCParser That owns this IRCProcessor
      * @param handledTokens Tokens that this processor handles
      */
-    protected IRCProcessor(final IRCParser parser, final ProcessingManager manager,
-            final String ... handledTokens) {
+    protected IRCProcessor(final IRCParser parser, final String... handledTokens) {
         this.parser = parser;
-        this.manager = manager;
         this.handledTokens = handledTokens;
     }
 

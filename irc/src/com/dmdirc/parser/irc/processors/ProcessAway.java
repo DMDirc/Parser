@@ -25,7 +25,6 @@ import com.dmdirc.parser.common.AwayState;
 import com.dmdirc.parser.events.AwayStateEvent;
 import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
-import com.dmdirc.parser.irc.ProcessingManager;
 
 import java.util.Date;
 
@@ -38,10 +37,9 @@ public class ProcessAway extends IRCProcessor {
      * Create a new instance of the IRCProcessor Object.
      *
      * @param parser IRCParser That owns this IRCProcessor
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    public ProcessAway(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager, "301", "305", "306", "AWAY");
+    public ProcessAway(final IRCParser parser) {
+        super(parser, "301", "305", "306", "AWAY");
     }
 
     /**

@@ -60,7 +60,7 @@ public class Process001Test {
     @Before
     public void setup() {
         when(parser.getLocalClient()).thenReturn(localClient);
-        processor = new Process001(parser, processingManager);
+        processor = new Process001(parser);
     }
 
     @Test

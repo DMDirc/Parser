@@ -79,54 +79,52 @@ public class ProcessingManager {
         // Add processors
         //------------------------------------------------
         // NOTICE AUTH
-        addProcessor(new ProcessNoticeAuth(parser, this));
+        addProcessor(new ProcessNoticeAuth(parser));
         // 001
-        addProcessor(new Process001(parser, this));
+        addProcessor(new Process001(parser));
         // 004
         // 005
-        addProcessor(new Process004005(parser, this));
+        addProcessor(new Process004005(parser));
         // 464
-        addProcessor(new Process464(parser, this));
+        addProcessor(new Process464(parser));
         // 301
         // 305
         // 306
-        addProcessor(new ProcessAway(parser, this));
+        addProcessor(new ProcessAway(parser));
         // 352
-        addProcessor(new ProcessWho(parser, this));
+        addProcessor(new ProcessWho(parser));
         // INVITE
-        addProcessor(new ProcessInvite(parser, this));
+        addProcessor(new ProcessInvite(parser));
         // JOIN
-        addProcessor(new ProcessJoin(parser, prefixModeManager, userModeManager, chanModeManager,
-                this));
+        addProcessor(new ProcessJoin(parser, prefixModeManager, userModeManager, chanModeManager));
         // KICK
-        addProcessor(new ProcessKick(parser, this));
+        addProcessor(new ProcessKick(parser));
         // PRIVMSG
         // NOTICE
-        addProcessor(new ProcessMessage(parser, prefixModeManager, this));
+        addProcessor(new ProcessMessage(parser, prefixModeManager));
         // MODE
         // 324
-        addProcessor(new ProcessMode(parser, prefixModeManager, userModeManager, chanModeManager,
-                this));
+        addProcessor(new ProcessMode(parser, prefixModeManager, userModeManager, chanModeManager));
         // 372
         // 375
         // 376
         // 422
-        addProcessor(new ProcessMOTD(parser, this));
+        addProcessor(new ProcessMOTD(parser));
         // 353
         // 366
-        addProcessor(new ProcessNames(parser, prefixModeManager, userModeManager, this));
+        addProcessor(new ProcessNames(parser, prefixModeManager, userModeManager));
         // 433
-        addProcessor(new ProcessNickInUse(parser, this));
+        addProcessor(new ProcessNickInUse(parser));
         // NICK
-        addProcessor(new ProcessNick(parser, this));
+        addProcessor(new ProcessNick(parser));
         // PART
-        addProcessor(new ProcessPart(parser, this));
+        addProcessor(new ProcessPart(parser));
         // QUIT
-        addProcessor(new ProcessQuit(parser, this));
+        addProcessor(new ProcessQuit(parser));
         // TOPIC
         // 332
         // 333
-        addProcessor(new ProcessTopic(parser, this));
+        addProcessor(new ProcessTopic(parser));
         // 344
         // 345
         // 346
@@ -135,17 +133,17 @@ public class ProcessingManager {
         // 349
         // 367
         // 368
-        addProcessor(new ProcessListModes(parser, this));
+        addProcessor(new ProcessListModes(parser));
         // WALLOPS
-        addProcessor(new ProcessWallops(parser, this));
+        addProcessor(new ProcessWallops(parser));
         // 321
         // 322
         // 323
-        addProcessor(new ProcessList(parser, this));
+        addProcessor(new ProcessList(parser));
         // CAP
-        addProcessor(new ProcessCap(parser, this));
+        addProcessor(new ProcessCap(parser));
         // ACCOUNT
-        addProcessor(new ProcessAccount(parser, this));
+        addProcessor(new ProcessAccount(parser));
     }
 
     /**

@@ -32,7 +32,6 @@ import com.dmdirc.parser.irc.IRCChannelClientInfo;
 import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
-import com.dmdirc.parser.irc.ProcessingManager;
 
 import java.util.Date;
 
@@ -45,10 +44,9 @@ public class ProcessNick extends IRCProcessor {
      * Create a new instance of the IRCProcessor Object.
      *
      * @param parser IRCParser That owns this IRCProcessor
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    public ProcessNick(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager, "NICK");
+    public ProcessNick(final IRCParser parser) {
+        super(parser, "NICK");
     }
 
     /**

@@ -39,7 +39,6 @@ import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ModeManager;
 import com.dmdirc.parser.irc.PrefixModeManager;
-import com.dmdirc.parser.irc.ProcessingManager;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -63,12 +62,10 @@ public class ProcessMode extends IRCProcessor {
      * @param prefixModeManager The manager to use to access prefix modes.
      * @param userModeManager Mode manager to use for user modes.
      * @param chanModeManager Mode manager to use for channel modes.
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
     public ProcessMode(final IRCParser parser, final PrefixModeManager prefixModeManager,
-            final ModeManager userModeManager, final ModeManager chanModeManager,
-            final ProcessingManager manager) {
-        super(parser, manager, "MODE", "324", "221");
+            final ModeManager userModeManager, final ModeManager chanModeManager) {
+        super(parser, "MODE", "324", "221");
         this.prefixModeManager = prefixModeManager;
         this.userModeManager = userModeManager;
         this.chanModeManager = chanModeManager;

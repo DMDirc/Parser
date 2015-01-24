@@ -26,7 +26,6 @@ import com.dmdirc.parser.events.WallDesyncEvent;
 import com.dmdirc.parser.events.WallopEvent;
 import com.dmdirc.parser.events.WalluserEvent;
 import com.dmdirc.parser.irc.IRCParser;
-import com.dmdirc.parser.irc.ProcessingManager;
 
 import java.util.Date;
 
@@ -39,10 +38,9 @@ public class ProcessWallops extends IRCProcessor {
      * Create a new instance of the IRCProcessor Object.
      *
      * @param parser IRCParser That owns this IRCProcessor
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
-    public ProcessWallops(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager, "WALLOPS");
+    public ProcessWallops(final IRCParser parser) {
+        super(parser, "WALLOPS");
     }
 
     /**

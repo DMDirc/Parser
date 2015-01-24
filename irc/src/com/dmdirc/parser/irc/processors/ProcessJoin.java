@@ -35,7 +35,6 @@ import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ModeManager;
 import com.dmdirc.parser.irc.PrefixModeManager;
-import com.dmdirc.parser.irc.ProcessingManager;
 import com.dmdirc.parser.irc.ProcessorNotFoundException;
 
 import java.util.Arrays;
@@ -60,12 +59,10 @@ public class ProcessJoin extends IRCProcessor {
      * @param prefixModeManager The manager to use to access prefix modes.
      * @param userModeManager Mode manager to use for user modes.
      * @param chanModeManager Mode manager to use for channel modes.
-     * @param manager ProcessingManager that is in charge of this IRCProcessor
      */
     public ProcessJoin(final IRCParser parser, final PrefixModeManager prefixModeManager,
-            final ModeManager userModeManager, final ModeManager chanModeManager,
-            final ProcessingManager manager) {
-        super(parser, manager, "JOIN", "329");
+            final ModeManager userModeManager, final ModeManager chanModeManager) {
+        super(parser, "JOIN", "329");
         this.prefixModeManager = prefixModeManager;
         this.userModeManager = userModeManager;
         this.chanModeManager = chanModeManager;

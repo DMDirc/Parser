@@ -24,7 +24,6 @@ package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.events.NickInUseEvent;
 import com.dmdirc.parser.irc.IRCParser;
-import com.dmdirc.parser.irc.ProcessingManager;
 
 import java.util.Date;
 
@@ -43,10 +42,9 @@ public class ProcessNickInUse extends IRCProcessor {
      * Create a new instance of the ProcessNickInUse Object.
      *
      * @param parser IRCParser That owns this object
-     * @param manager ProcessingManager that is in charge of this object
      */
-    public ProcessNickInUse(final IRCParser parser, final ProcessingManager manager) {
-        super(parser, manager, "433");
+    public ProcessNickInUse(final IRCParser parser) {
+        super(parser, "433");
     }
 
     /**

@@ -23,42 +23,42 @@
 package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.common.CallbackManager;
-import com.dmdirc.parser.interfaces.callbacks.PasswordRequiredListener;
+import com.dmdirc.parser.events.PasswordRequiredEvent;
 import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ProcessingManager;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.same;
+import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-@Ignore
 public class Process464Test {
 
     @Mock private IRCParser parser;
     @Mock private ProcessingManager processingManager;
     @Mock private CallbackManager callbackManager;
-    @Mock private PasswordRequiredListener listener;
+    @Captor private ArgumentCaptor<PasswordRequiredEvent> eventCaptor;
     private Process464 processor;
 
     @Before
     public void setup() {
         when(parser.getCallbackManager()).thenReturn(callbackManager);
-        processor = new Process464(parser, processingManager);
+        processor = new Process464(parser);
     }
 
     @Test
     public void testFiresPasswordListenerOn464() {
         processor.process("464", ":server.com", "464", ":Bad password!");
-        verify(listener).onPasswordRequired(same(parser), anyObject());
+        verify(callbackManager).publish(eventCaptor.capture());
+        assertSame(parser, eventCaptor.getValue().getParser());
     }
 
 }
