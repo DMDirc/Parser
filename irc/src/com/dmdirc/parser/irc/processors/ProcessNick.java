@@ -35,6 +35,8 @@ import com.dmdirc.parser.irc.IRCParser;
 
 import java.util.Date;
 
+import javax.inject.Inject;
+
 /**
  * Process a Nick change.
  */
@@ -45,6 +47,7 @@ public class ProcessNick extends IRCProcessor {
      *
      * @param parser IRCParser That owns this IRCProcessor
      */
+    @Inject
     public ProcessNick(final IRCParser parser) {
         super(parser, "NICK");
     }

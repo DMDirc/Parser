@@ -27,6 +27,8 @@ import com.dmdirc.parser.irc.IRCParser;
 
 import java.util.Date;
 
+import javax.inject.Inject;
+
 /**
  * Process an Invite Request.
  */
@@ -37,6 +39,7 @@ public class ProcessInvite extends IRCProcessor {
      *
      * @param parser IRCParser That owns this IRCProcessor
      */
+    @Inject
     public ProcessInvite(final IRCParser parser) {
         super(parser, "INVITE");
     }

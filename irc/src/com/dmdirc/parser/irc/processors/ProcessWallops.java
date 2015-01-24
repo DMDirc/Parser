@@ -29,6 +29,8 @@ import com.dmdirc.parser.irc.IRCParser;
 
 import java.util.Date;
 
+import javax.inject.Inject;
+
 /**
  * Process a WALLOPS Message.
  */
@@ -39,6 +41,7 @@ public class ProcessWallops extends IRCProcessor {
      *
      * @param parser IRCParser That owns this IRCProcessor
      */
+    @Inject
     public ProcessWallops(final IRCParser parser) {
         super(parser, "WALLOPS");
     }

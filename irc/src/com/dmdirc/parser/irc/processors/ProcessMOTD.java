@@ -29,6 +29,8 @@ import com.dmdirc.parser.irc.IRCParser;
 
 import java.util.Date;
 
+import javax.inject.Inject;
+
 /**
  * Process a MOTD Related Line.
  */
@@ -39,6 +41,7 @@ public class ProcessMOTD extends IRCProcessor {
      *
      * @param parser IRCParser That owns this IRCProcessor
      */
+    @Inject
     public ProcessMOTD(final IRCParser parser) {
         super(parser, "372", "375", "376", "422");
     }

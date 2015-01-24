@@ -33,6 +33,8 @@ import com.dmdirc.parser.irc.IRCParser;
 
 import java.util.Date;
 
+import javax.inject.Inject;
+
 /**
  * Process a channel part.
  */
@@ -43,6 +45,7 @@ public class ProcessPart extends IRCProcessor {
      *
      * @param parser IRCParser That owns this IRCProcessor
      */
+    @Inject
     public ProcessPart(final IRCParser parser) {
         super(parser, "PART");
     }

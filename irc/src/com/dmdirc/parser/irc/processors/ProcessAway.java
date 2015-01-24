@@ -28,6 +28,8 @@ import com.dmdirc.parser.irc.IRCParser;
 
 import java.util.Date;
 
+import javax.inject.Inject;
+
 /**
  * Process an Away/Back message.
  */
@@ -38,6 +40,7 @@ public class ProcessAway extends IRCProcessor {
      *
      * @param parser IRCParser That owns this IRCProcessor
      */
+    @Inject
     public ProcessAway(final IRCParser parser) {
         super(parser, "301", "305", "306", "AWAY");
     }

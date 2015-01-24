@@ -34,6 +34,8 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.inject.Inject;
+
 /**
  * Process ISUPPORT lines.
  */
@@ -44,6 +46,7 @@ public class Process004005 extends IRCProcessor {
      *
      * @param parser IRCParser That owns this IRCProcessor
      */
+    @Inject
     public Process004005(final IRCParser parser) {
         super(parser, "002", "003", "004", "005");
     }

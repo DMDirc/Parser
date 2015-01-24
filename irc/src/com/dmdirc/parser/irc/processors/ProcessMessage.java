@@ -55,6 +55,8 @@ import com.dmdirc.parser.irc.TimestampedIRCProcessor;
 import java.util.Date;
 import java.util.regex.PatternSyntaxException;
 
+import javax.inject.Inject;
+
 /**
  * Process PRIVMSGs and NOTICEs.
  * This horrible handles PRIVMSGs and NOTICE<br>
@@ -74,6 +76,7 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      * @param parser IRCParser That owns this IRCProcessor
      * @param prefixModeManager The manager to use to access prefix modes.
      */
+    @Inject
     public ProcessMessage(final IRCParser parser, final PrefixModeManager prefixModeManager) {
         super(parser, "PRIVMSG", "NOTICE");
         this.prefixModeManager = prefixModeManager;

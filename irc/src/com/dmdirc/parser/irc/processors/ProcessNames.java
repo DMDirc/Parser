@@ -34,6 +34,9 @@ import com.dmdirc.parser.irc.PrefixModeManager;
 
 import java.util.Date;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 /**
  * Process a Names reply.
  */
@@ -51,8 +54,9 @@ public class ProcessNames extends IRCProcessor {
      * @param prefixModeManager The manager to use to access prefix modes.
      * @param userModeManager Mode manager to use for user modes.
      */
+    @Inject
     public ProcessNames(final IRCParser parser, final PrefixModeManager prefixModeManager,
-            final ModeManager userModeManager) {
+            @Named("user") final ModeManager userModeManager) {
         super(parser, "353", "366");
         this.prefixModeManager = prefixModeManager;
         this.userModeManager = userModeManager;

@@ -25,33 +25,13 @@ package com.dmdirc.parser.irc;
 import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.events.NumericEvent;
 import com.dmdirc.parser.irc.processors.IRCProcessor;
-import com.dmdirc.parser.irc.processors.Process001;
-import com.dmdirc.parser.irc.processors.Process004005;
-import com.dmdirc.parser.irc.processors.Process464;
-import com.dmdirc.parser.irc.processors.ProcessAccount;
-import com.dmdirc.parser.irc.processors.ProcessAway;
-import com.dmdirc.parser.irc.processors.ProcessCap;
-import com.dmdirc.parser.irc.processors.ProcessInvite;
-import com.dmdirc.parser.irc.processors.ProcessJoin;
-import com.dmdirc.parser.irc.processors.ProcessKick;
-import com.dmdirc.parser.irc.processors.ProcessList;
-import com.dmdirc.parser.irc.processors.ProcessListModes;
-import com.dmdirc.parser.irc.processors.ProcessMOTD;
-import com.dmdirc.parser.irc.processors.ProcessMessage;
-import com.dmdirc.parser.irc.processors.ProcessMode;
-import com.dmdirc.parser.irc.processors.ProcessNames;
-import com.dmdirc.parser.irc.processors.ProcessNick;
-import com.dmdirc.parser.irc.processors.ProcessNickInUse;
-import com.dmdirc.parser.irc.processors.ProcessNoticeAuth;
-import com.dmdirc.parser.irc.processors.ProcessPart;
-import com.dmdirc.parser.irc.processors.ProcessQuit;
-import com.dmdirc.parser.irc.processors.ProcessTopic;
-import com.dmdirc.parser.irc.processors.ProcessWallops;
-import com.dmdirc.parser.irc.processors.ProcessWho;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
 
 /**
  * IRC Parser Processing Manager.
@@ -68,82 +48,12 @@ public class ProcessingManager {
      * Constructor to create a ProcessingManager.
      *
      * @param parser IRCParser that owns this Processing Manager
-     * @param prefixModeManager The manager to use to access prefix modes.
-     * @param userModeManager Mode manager to use for user modes.
-     * @param chanModeManager Mode manager to use for channel modes.
+     * @param processors The processors to add.
      */
-    public ProcessingManager(final IRCParser parser, final PrefixModeManager prefixModeManager,
-            final ModeManager userModeManager, final ModeManager chanModeManager) {
+    @Inject
+    public ProcessingManager(final IRCParser parser, final Set<IRCProcessor> processors) {
         this.parser = parser;
-        //------------------------------------------------
-        // Add processors
-        //------------------------------------------------
-        // NOTICE AUTH
-        addProcessor(new ProcessNoticeAuth(parser));
-        // 001
-        addProcessor(new Process001(parser));
-        // 004
-        // 005
-        addProcessor(new Process004005(parser));
-        // 464
-        addProcessor(new Process464(parser));
-        // 301
-        // 305
-        // 306
-        addProcessor(new ProcessAway(parser));
-        // 352
-        addProcessor(new ProcessWho(parser));
-        // INVITE
-        addProcessor(new ProcessInvite(parser));
-        // JOIN
-        addProcessor(new ProcessJoin(parser, prefixModeManager, userModeManager, chanModeManager));
-        // KICK
-        addProcessor(new ProcessKick(parser));
-        // PRIVMSG
-        // NOTICE
-        addProcessor(new ProcessMessage(parser, prefixModeManager));
-        // MODE
-        // 324
-        addProcessor(new ProcessMode(parser, prefixModeManager, userModeManager, chanModeManager));
-        // 372
-        // 375
-        // 376
-        // 422
-        addProcessor(new ProcessMOTD(parser));
-        // 353
-        // 366
-        addProcessor(new ProcessNames(parser, prefixModeManager, userModeManager));
-        // 433
-        addProcessor(new ProcessNickInUse(parser));
-        // NICK
-        addProcessor(new ProcessNick(parser));
-        // PART
-        addProcessor(new ProcessPart(parser));
-        // QUIT
-        addProcessor(new ProcessQuit(parser));
-        // TOPIC
-        // 332
-        // 333
-        addProcessor(new ProcessTopic(parser));
-        // 344
-        // 345
-        // 346
-        // 347
-        // 348
-        // 349
-        // 367
-        // 368
-        addProcessor(new ProcessListModes(parser));
-        // WALLOPS
-        addProcessor(new ProcessWallops(parser));
-        // 321
-        // 322
-        // 323
-        addProcessor(new ProcessList(parser));
-        // CAP
-        addProcessor(new ProcessCap(parser));
-        // ACCOUNT
-        addProcessor(new ProcessAccount(parser));
+        processors.forEach(this::addProcessor);
     }
 
     /**
@@ -189,11 +99,10 @@ public class ProcessingManager {
      * @param processor IRCProcessor subclass for the processor.
      */
     public void delProcessor(final IRCProcessor processor) {
-        IRCProcessor testProcessor;
         doDebug("Deleting processor: " + processor.getName());
         for (String elementName : processHash.keySet()) {
             doDebug("\t Checking handler for: " + elementName);
-            testProcessor = processHash.get(elementName);
+            final IRCProcessor testProcessor = processHash.get(elementName);
             if (testProcessor.getName().equalsIgnoreCase(processor.getName())) {
                 doDebug("\t Removed handler for: " + elementName);
                 processHash.remove(elementName);

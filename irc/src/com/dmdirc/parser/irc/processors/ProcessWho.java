@@ -34,6 +34,8 @@ import com.dmdirc.parser.irc.IRCParser;
 
 import java.util.Date;
 
+import javax.inject.Inject;
+
 /**
  * Process a /who reply.
  */
@@ -44,6 +46,7 @@ public class ProcessWho extends IRCProcessor {
      *
      * @param parser IRCParser That owns this IRCProcessor
      */
+    @Inject
     public ProcessWho(final IRCParser parser) {
         super(parser, "352");
     }

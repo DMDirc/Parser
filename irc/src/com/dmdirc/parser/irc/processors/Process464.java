@@ -27,6 +27,8 @@ import com.dmdirc.parser.irc.IRCParser;
 
 import java.util.Date;
 
+import javax.inject.Inject;
+
 /**
  * Process a 464 message.
  */
@@ -37,6 +39,7 @@ public class Process464 extends IRCProcessor {
      *
      * @param parser IRCParser That owns this IRCProcessor
      */
+    @Inject
     public Process464(final IRCParser parser) {
         super(parser, "464");
     }
