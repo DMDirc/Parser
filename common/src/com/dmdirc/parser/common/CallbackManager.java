@@ -26,8 +26,6 @@ import com.dmdirc.parser.events.ParserErrorEvent;
 import com.dmdirc.parser.events.ParserEvent;
 import com.dmdirc.parser.interfaces.Parser;
 
-import com.google.common.base.Throwables;
-
 import java.util.Date;
 
 import net.engio.mbassy.bus.MBassador;
@@ -89,10 +87,9 @@ public class CallbackManager extends MBassador<ParserEvent> {
             }
 
             synchronized (errorHandlerLock) {
-                final Throwable error = e.getCause().getCause();
-                publish(new ParserErrorEvent(parser, new Date(),
-                        new ParserError(ParserError.ERROR_EXCEPTION,
-                        error.getMessage(), Throwables.getStackTraceAsString(error))));
+                publish(new ParserErrorEvent(parser, new Date(), new Exception(
+                        "Message: " + e.getCause().getCause().getMessage() + " in Handler: "
+                                + e.getHandler(), e.getCause().getCause())));
             }
         });
     }
