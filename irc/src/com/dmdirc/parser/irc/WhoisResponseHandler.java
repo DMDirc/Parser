@@ -82,15 +82,15 @@ public class WhoisResponseHandler {
 
     private void handleWhoisResponse(final int numeric, final String... tokens) {
         switch (numeric) {
+            case 301:
+                // :server 301 DMDirc User :away message
+                info.put(UserInfoType.AWAY_MESSAGE, tokens[4]);
+                break;
+
             case 311:
                 // :server 311 DMDirc User ~Ident host.dmdirc.com * :Real name
                 info.put(UserInfoType.ADDRESS, tokens[3] + '!' + tokens[4] + '@' + tokens[5]);
                 info.put(UserInfoType.REAL_NAME, tokens[7]);
-                break;
-
-            case 319:
-                // :server 319 DMDirc User :@#channel1 +#channel2 ...
-                info.put(UserInfoType.GROUP_CHAT_LIST, tokens[4]);
                 break;
 
             case 312:
@@ -99,15 +99,20 @@ public class WhoisResponseHandler {
                 info.put(UserInfoType.SERVER_INFO, tokens[5]);
                 break;
 
-            case 330:
-                // :server 330 DMDirc User Account :is authed as
-                info.put(UserInfoType.ACCOUNT_NAME, tokens[4]);
+            case 319:
+                // :server 319 DMDirc User :@#channel1 +#channel2 ...
+                info.put(UserInfoType.GROUP_CHAT_LIST, tokens[4]);
                 break;
 
             case 317:
                 // :server 317 DMDirc User 305 1422561556 :seconds idle, signon time
                 info.put(UserInfoType.IDLE_TIME, tokens[4]);
                 info.put(UserInfoType.CONNECTION_TIME, tokens[5]);
+                break;
+
+            case 330:
+                // :server 330 DMDirc User Account :is authed as
+                info.put(UserInfoType.ACCOUNT_NAME, tokens[4]);
                 break;
         }
     }
