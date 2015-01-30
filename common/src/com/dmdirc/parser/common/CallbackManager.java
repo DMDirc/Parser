@@ -87,9 +87,7 @@ public class CallbackManager extends MBassador<ParserEvent> {
             }
 
             synchronized (errorHandlerLock) {
-                publish(new ParserErrorEvent(parser, new Date(), new Exception(
-                        "Message: " + e.getCause().getCause().getMessage() + " in Handler: "
-                                + e.getHandler(), e.getCause().getCause())));
+                publish(new ParserErrorEvent(parser, new Date(), e.getCause()));
             }
         });
     }
