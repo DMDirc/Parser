@@ -217,10 +217,7 @@ public class ProcessMessage extends TimestampedIRCProcessor {
                 // callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got message for channel ("+targetName+") that I am not on.", parser.getLastLine()));
                 return;
             }
-            IRCChannelClientInfo iChannelClient = null;
-            if (iClient != null) {
-                iChannelClient = iChannel.getChannelClient(iClient);
-            }
+            final IRCChannelClientInfo iChannelClient = iChannel.getChannelClient(token[0], true);
             if ("PRIVMSG".equalsIgnoreCase(sParam)) {
                 if (isAction) {
                     callChannelAction(date, iChannel, iChannelClient, sMessage, firstToken);

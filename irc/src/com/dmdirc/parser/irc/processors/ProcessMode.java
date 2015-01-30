@@ -140,7 +140,7 @@ public class ProcessMode extends IRCProcessor {
             nCurrent = iChannel.getMode();
         }
 
-        final IRCChannelClientInfo setterCCI = iChannel.getChannelClient(token[0]);
+        final IRCChannelClientInfo setterCCI = iChannel.getChannelClient(token[0], true);
         // Facilitate dmdirc formatter
         if (IRCParser.ALWAYS_UPDATECLIENT && setterCCI != null && setterCCI.getClient().getHostname().isEmpty()) {
             setterCCI.getClient().setUserBits(token[0], false);
@@ -280,7 +280,7 @@ public class ProcessMode extends IRCProcessor {
 
         iChannel.setMode(nCurrent);
         if ("324".equals(sParam)) {
-            callChannelModeChanged(iChannel, null, "", sFullModeStr.toString().trim());
+            callChannelModeChanged(iChannel, setterCCI, "", sFullModeStr.toString().trim());
         } else {
             callChannelModeChanged(iChannel, setterCCI, token[0], sFullModeStr.toString().trim());
             getCallbackManager().publish(
