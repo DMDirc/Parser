@@ -26,6 +26,8 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Called when "End of MOTD" or "No MOTD" is received.
  */
@@ -38,7 +40,7 @@ public class MOTDEndEvent extends ParserEvent {
             final String data) {
         super(parser, date);
         this.noMOTD = noMOTD;
-        this.data = data;
+        this.data = checkNotNull(data);
     }
 
     public boolean isNoMOTD() {

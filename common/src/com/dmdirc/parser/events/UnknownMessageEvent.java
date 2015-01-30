@@ -26,6 +26,8 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Called when a person sends a message not aimed specifically at you or a channel (ie $*).
  */
@@ -38,9 +40,9 @@ public class UnknownMessageEvent extends ParserEvent {
     public UnknownMessageEvent(final Parser parser, final Date date,
             final String message, final String target, final String host) {
         super(parser, date);
-        this.message = message;
-        this.target = target;
-        this.host = host;
+        this.message = checkNotNull(message);
+        this.target = checkNotNull(target);
+        this.host = checkNotNull(host);
     }
 
     public String getMessage() {

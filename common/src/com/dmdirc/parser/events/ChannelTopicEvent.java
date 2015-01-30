@@ -27,6 +27,8 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Called when the topic is changed or discovered for the first time.
  */
@@ -38,7 +40,7 @@ public class ChannelTopicEvent extends ParserEvent {
     public ChannelTopicEvent(final Parser parser, final Date date, final ChannelInfo channel,
             final boolean isJoinTopic) {
         super(parser, date);
-        this.channel = channel;
+        this.channel = checkNotNull(channel);
         this.isJoinTopic = isJoinTopic;
     }
 

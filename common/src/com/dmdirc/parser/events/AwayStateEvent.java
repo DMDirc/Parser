@@ -27,6 +27,10 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
+import javax.annotation.Nullable;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Called when we go away, or come back.
  */
@@ -37,10 +41,10 @@ public class AwayStateEvent extends ParserEvent {
     private final String reason;
 
     public AwayStateEvent(final Parser parser, final Date date, final AwayState oldState,
-            final AwayState newState, final String reason) {
+            final AwayState newState, @Nullable final String reason) {
         super(parser, date);
-        this.oldState = oldState;
-        this.newState = newState;
+        this.oldState = checkNotNull(oldState);
+        this.newState = checkNotNull(newState);
         this.reason = reason;
     }
 
@@ -52,6 +56,7 @@ public class AwayStateEvent extends ParserEvent {
         return newState;
     }
 
+    @Nullable
     public String getReason() {
         return reason;
     }

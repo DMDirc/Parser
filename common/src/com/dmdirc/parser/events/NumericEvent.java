@@ -26,6 +26,8 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Interface Used to give numeric Information.
  */
@@ -37,8 +39,8 @@ public class NumericEvent extends ParserEvent {
     public NumericEvent(final Parser parser, final Date date, final int numeric,
             final String[] token) {
         super(parser, date);
-        this.numeric = numeric;
-        this.token = token;
+        this.numeric = checkNotNull(numeric);
+        this.token = checkNotNull(token);
     }
 
     public int getNumeric() {

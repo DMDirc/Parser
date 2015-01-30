@@ -26,6 +26,8 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Called when a person sends a CTCP not aimed at you or a channel (ie $*).
  */
@@ -39,10 +41,10 @@ public class UnknownCTCPReplyEvent extends ParserEvent {
     public UnknownCTCPReplyEvent(final Parser parser, final Date date, final String type,
             final String message, final String target, final String host) {
         super(parser, date);
-        this.type = type;
-        this.message = message;
-        this.target = target;
-        this.host = host;
+        this.type = checkNotNull(type);
+        this.message = checkNotNull(message);
+        this.target = checkNotNull(target);
+        this.host = checkNotNull(host);
     }
 
     public String getType() {

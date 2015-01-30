@@ -28,6 +28,8 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Called when we or another user change nickname (Called once per channel the user is on).
  */
@@ -40,9 +42,9 @@ public class ChannelNickChangeEvent extends ParserEvent {
     public ChannelNickChangeEvent(final Parser parser, final Date date, final ChannelInfo channel,
             final ChannelClientInfo client, final String oldNick) {
         super(parser, date);
-        this.channel = channel;
-        this.client = client;
-        this.oldNick = oldNick;
+        this.channel = checkNotNull(channel);
+        this.client = checkNotNull(client);
+        this.oldNick = checkNotNull(oldNick);
     }
 
     public ChannelInfo getChannel() {

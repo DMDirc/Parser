@@ -27,6 +27,8 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Called when all requested ListModes have been sent.
  */
@@ -38,7 +40,7 @@ public class ChannelListModeEvent extends ParserEvent {
     public ChannelListModeEvent(final Parser parser, final Date date, final ChannelInfo channel,
             final char mode) {
         super(parser, date);
-        this.channel = channel;
+        this.channel = checkNotNull(channel);
         this.mode = mode;
     }
 

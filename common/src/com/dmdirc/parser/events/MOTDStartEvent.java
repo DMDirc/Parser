@@ -26,6 +26,8 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Interface Used when the MOTD Starts.
  */
@@ -35,7 +37,7 @@ public class MOTDStartEvent extends ParserEvent {
 
     public MOTDStartEvent(final Parser parser, final Date date, final String data) {
         super(parser, date);
-        this.data = data;
+        this.data = checkNotNull(data);
     }
 
     public String getData() {

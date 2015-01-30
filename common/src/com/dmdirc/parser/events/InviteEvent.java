@@ -26,6 +26,8 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Called when we are invited to a channel.
  */
@@ -37,8 +39,8 @@ public class InviteEvent extends ParserEvent {
     public InviteEvent(final Parser parser, final Date date, final String userHost,
             final String channel) {
         super(parser, date);
-        this.userHost = userHost;
-        this.channel = channel;
+        this.userHost = checkNotNull(userHost);
+        this.channel = checkNotNull(channel);
     }
 
     public String getUserHost() {

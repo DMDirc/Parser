@@ -26,6 +26,8 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Callback interface for when the parser receives an entry during a group list response.
  */
@@ -38,9 +40,9 @@ public class GroupListEntryEvent extends ParserEvent {
     public GroupListEntryEvent(final Parser parser, final Date date, final String name,
             final int users, final String topic) {
         super(parser, date);
-        this.name = name;
-        this.users = users;
-        this.topic = topic;
+        this.name = checkNotNull(name);
+        this.users = checkNotNull(users);
+        this.topic = checkNotNull(topic);
     }
 
     public String getName() {

@@ -27,6 +27,8 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Called when we or another user change nickname.
  */
@@ -38,8 +40,8 @@ public class NickChangeEvent extends ParserEvent {
     public NickChangeEvent(final Parser parser, final Date date, final ClientInfo client,
             final String oldNick) {
         super(parser, date);
-        this.client = client;
-        this.oldNick = oldNick;
+        this.client = checkNotNull(client);
+        this.oldNick = checkNotNull(oldNick);
     }
 
     public ClientInfo getClient() {

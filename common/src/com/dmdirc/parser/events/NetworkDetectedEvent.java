@@ -26,6 +26,8 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Interface Used when the Network=blah 005 token is recieved.
  */
@@ -38,9 +40,9 @@ public class NetworkDetectedEvent extends ParserEvent {
     public NetworkDetectedEvent(final Parser parser, final Date date, final String networkName,
             final String ircdVersion, final String ircdType) {
         super(parser, date);
-        this.networkName = networkName;
-        this.ircdVersion = ircdVersion;
-        this.ircdType = ircdType;
+        this.networkName = checkNotNull(networkName);
+        this.ircdVersion = checkNotNull(ircdVersion);
+        this.ircdType = checkNotNull(ircdType);
     }
 
     public String getNetworkName() {

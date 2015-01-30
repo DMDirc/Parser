@@ -26,6 +26,8 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Called when an oper-only message is recieved over wallops.
  */
@@ -37,8 +39,8 @@ public class WallopEvent extends ParserEvent {
     public WallopEvent(final Parser parser, final Date date, final String message,
             final String host) {
         super(parser, date);
-        this.message = message;
-        this.host = host;
+        this.message = checkNotNull(message);
+        this.host = checkNotNull(host);
     }
 
     public String getMessage() {

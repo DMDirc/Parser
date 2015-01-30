@@ -57,19 +57,6 @@ public class CallbackManager extends MBassador<ParserEvent> {
         this.parser = parser;
     }
 
-    @Override
-    public void publish(final ParserEvent message) {
-        // TODO: HACKY REMOVE
-        if (message.getParser() == null) {
-            message.setParser(parser);
-        }
-        if (message.getDate() == null) {
-            message.setDate(new Date());
-        }
-        // TODO: HACKY REMOVE
-        super.publish(message);
-    }
-
     @SuppressWarnings({
             "ThrowableResultOfMethodCallIgnored",
             "CallToPrintStackTrace",

@@ -27,6 +27,8 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Called when a person's composition state changes.
  */
@@ -38,8 +40,8 @@ public class CompositionStateChangeEvent extends ParserEvent {
     public CompositionStateChangeEvent(final Parser parser, final Date date,
             final CompositionState state, final String host) {
         super(parser, date);
-        this.state = state;
-        this.host = host;
+        this.state = checkNotNull(state);
+        this.host = checkNotNull(host);
     }
 
     public CompositionState getState() {

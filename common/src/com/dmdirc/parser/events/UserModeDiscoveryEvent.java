@@ -27,6 +27,8 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Called when user modes are Discovered.
  */
@@ -38,8 +40,8 @@ public class UserModeDiscoveryEvent extends ParserEvent {
     public UserModeDiscoveryEvent(final Parser parser, final Date date, final ClientInfo client,
             final String modes) {
         super(parser, date);
-        this.client = client;
-        this.modes = modes;
+        this.client = checkNotNull(client);
+        this.modes = checkNotNull(modes);
     }
 
     public ClientInfo getClient() {

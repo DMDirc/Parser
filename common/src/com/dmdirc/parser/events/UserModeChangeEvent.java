@@ -27,6 +27,8 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Called when user modes are changed.
  */
@@ -39,9 +41,9 @@ public class UserModeChangeEvent extends ParserEvent {
     public UserModeChangeEvent(final Parser parser, final Date date, final ClientInfo client,
             final String host, final String modes) {
         super(parser, date);
-        this.client = client;
-        this.host = host;
-        this.modes = modes;
+        this.client = checkNotNull(client);
+        this.host = checkNotNull(host);
+        this.modes = checkNotNull(modes);
     }
 
     public ClientInfo getClient() {

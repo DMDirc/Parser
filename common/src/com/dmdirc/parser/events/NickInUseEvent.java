@@ -26,6 +26,8 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Called when requested nickname is in use.
  */
@@ -35,7 +37,7 @@ public class NickInUseEvent extends ParserEvent {
 
     public NickInUseEvent(final Parser parser, final Date date, final String nickname) {
         super(parser, date);
-        this.nickname = nickname;
+        this.nickname = checkNotNull(nickname);
     }
 
     public String getNickname() {

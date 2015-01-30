@@ -27,6 +27,8 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Called to give Error Information.
  */
@@ -36,7 +38,7 @@ public class ErrorInfoEvent extends ParserEvent {
 
     public ErrorInfoEvent(final Parser parser, final Date date, final ParserError errorInfo) {
         super(parser, date);
-        this.errorInfo = errorInfo;
+        this.errorInfo = checkNotNull(errorInfo);
     }
 
     public ParserError getErrorInfo() {

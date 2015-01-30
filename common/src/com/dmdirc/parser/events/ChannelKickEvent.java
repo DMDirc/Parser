@@ -28,26 +28,28 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Called when a person is kicked.
  */
 public class ChannelKickEvent extends ParserEvent {
 
-    final ChannelInfo channel;
-    final ChannelClientInfo kickedClient;
-    final ChannelClientInfo client;
-    final String reason;
-    final String host;
+    private final ChannelInfo channel;
+    private final ChannelClientInfo kickedClient;
+    private final ChannelClientInfo client;
+    private final String reason;
+    private final String host;
 
     public ChannelKickEvent(final Parser parser, final Date date, final ChannelInfo channel,
             final ChannelClientInfo kickedClient, final ChannelClientInfo client,
             final String reason, final String host) {
         super(parser, date);
-        this.channel = channel;
-        this.kickedClient = kickedClient;
-        this.client = client;
-        this.reason = reason;
-        this.host = host;
+        this.channel = checkNotNull(channel);
+        this.kickedClient = checkNotNull(kickedClient);
+        this.client = checkNotNull(client);
+        this.reason = checkNotNull(reason);
+        this.host = checkNotNull(host);
     }
 
     public ChannelInfo getChannel() {
