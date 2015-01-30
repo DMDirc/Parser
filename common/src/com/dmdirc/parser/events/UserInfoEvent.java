@@ -75,6 +75,8 @@ public class UserInfoEvent extends ParserEvent {
         REAL_NAME,
         /** The list of group chats the user is in. */
         GROUP_CHAT_LIST,
+        /** The name of the server the user is connected to. */
+        SERVER_NAME,
         /** Information about the server the user is connected to. */
         SERVER_INFO,
         /** The account the user is authenticated as. */
@@ -87,6 +89,10 @@ public class UserInfoEvent extends ParserEvent {
         AWAY_MESSAGE,
         /** The user's server operator status. */
         SERVER_OPER,
+        /** Information about the security of the user's connection to the server. */
+        CONNECTION_SECURITY,
+        /** The language the user uses. */
+        LANGUAGE,
 
     }
 
