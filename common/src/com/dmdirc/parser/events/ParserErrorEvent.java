@@ -22,7 +22,6 @@
 
 package com.dmdirc.parser.events;
 
-import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
@@ -32,14 +31,14 @@ import java.util.Date;
  */
 public class ParserErrorEvent extends ParserEvent {
 
-    private final ParserError parserError;
+    private final Throwable throwable;
 
-    public ParserErrorEvent(final Parser parser, final Date date, final ParserError parserError) {
+    public ParserErrorEvent(final Parser parser, final Date date, final Throwable throwable) {
         super(parser, date);
-        this.parserError = parserError;
+        this.throwable = throwable;
     }
 
-    public ParserError getParserError() {
-        return parserError;
+    public Throwable getThrowable() {
+        return throwable;
     }
 }
