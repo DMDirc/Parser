@@ -26,17 +26,19 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
-/**
- *
- */
-public class ParserEvent {
+import static com.google.common.base.Preconditions.checkNotNull;
 
-    private Parser parser;
-    private Date date;
+/**
+ * Base class for events emitted by a {@link Parser}.
+ */
+public abstract class ParserEvent {
+
+    private final Parser parser;
+    private final Date date;
 
     public ParserEvent(final Parser parser, final Date date) {
-        this.parser = parser;
-        this.date = date;
+        this.parser = checkNotNull(parser);
+        this.date = checkNotNull(date);
     }
 
     public Parser getParser() {
@@ -47,13 +49,4 @@ public class ParserEvent {
         return date;
     }
 
-    // TODO: HACKY REMOVE
-    public void setParser(final Parser parser) {
-        this.parser = parser;
-    }
-
-    // TODO: HACKY REMOVE
-    public void setDate(final Date date) {
-        this.date = date;
-    }
 }

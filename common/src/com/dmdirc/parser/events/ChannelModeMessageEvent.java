@@ -28,6 +28,8 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Called when a person sends a Message to a channel with a mode prefix.
  */
@@ -43,11 +45,11 @@ public class ChannelModeMessageEvent extends ParserEvent {
             final char prefix, final ChannelClientInfo client, final String message,
             final String host) {
         super(parser, date);
-        this.channel = channel;
-        this.prefix = prefix;
-        this.client = client;
-        this.message = message;
-        this.host = host;
+        this.channel = checkNotNull(channel);
+        this.prefix = checkNotNull(prefix);
+        this.client = checkNotNull(client);
+        this.message = checkNotNull(message);
+        this.host = checkNotNull(host);
     }
 
     public ChannelInfo getChannel() {

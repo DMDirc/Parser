@@ -27,6 +27,8 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Called When we, or another client quits IRC (Called once in total).
  */
@@ -38,8 +40,8 @@ public class QuitEvent extends ParserEvent {
     public QuitEvent(final Parser parser, final Date date, final ClientInfo client,
             final String reason) {
         super(parser, date);
-        this.client = client;
-        this.reason = reason;
+        this.client = checkNotNull(client);
+        this.reason = checkNotNull(reason);
     }
 
     public ClientInfo getClient() {

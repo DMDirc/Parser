@@ -27,6 +27,8 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Called when a names reply is parsed.
  */
@@ -36,7 +38,7 @@ public class ChannelNamesEvent extends ParserEvent {
 
     public ChannelNamesEvent(final Parser parser, final Date date, final ChannelInfo channel) {
         super(parser, date);
-        this.channel = channel;
+        this.channel = checkNotNull(channel);
     }
 
     public ChannelInfo getChannel() {

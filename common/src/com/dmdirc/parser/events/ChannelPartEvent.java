@@ -28,6 +28,8 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Called When we, or another client parts a channel.
  */
@@ -40,9 +42,9 @@ public class ChannelPartEvent extends ParserEvent {
     public ChannelPartEvent(final Parser parser, final Date date, final ChannelInfo channel,
             final ChannelClientInfo client, final String reason) {
         super(parser, date);
-        this.channel = channel;
-        this.client = client;
-        this.reason = reason;
+        this.channel = checkNotNull(channel);
+        this.client = checkNotNull(client);
+        this.reason = checkNotNull(reason);
     }
 
     public ChannelInfo getChannel() {

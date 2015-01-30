@@ -28,6 +28,8 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Called when we go away, or come back.
  */
@@ -40,9 +42,9 @@ public class OtherAwayStateEvent extends ParserEvent {
     public OtherAwayStateEvent(final Parser parser, final Date date, final ClientInfo client,
             final AwayState oldState, final AwayState newState) {
         super(parser, date);
-        this.client = client;
-        this.oldState = oldState;
-        this.newState = newState;
+        this.client = checkNotNull(client);
+        this.oldState = checkNotNull(oldState);
+        this.newState = checkNotNull(newState);
     }
 
     public ClientInfo getClient() {

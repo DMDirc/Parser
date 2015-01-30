@@ -26,6 +26,8 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Called when a person sends a CTCPRReply to you directly.
  */
@@ -38,9 +40,9 @@ public class PrivateCTCPReplyEvent extends ParserEvent {
     public PrivateCTCPReplyEvent(final Parser parser, final Date date, final String type,
             final String message, final String host) {
         super(parser, date);
-        this.type = type;
-        this.message = message;
-        this.host = host;
+        this.type = checkNotNull(type);
+        this.message = checkNotNull(message);
+        this.host = checkNotNull(host);
     }
 
     public String getType() {

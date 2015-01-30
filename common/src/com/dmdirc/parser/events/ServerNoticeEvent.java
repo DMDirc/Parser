@@ -26,6 +26,8 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Called when a server sends a notice to you.
  */
@@ -37,8 +39,8 @@ public class ServerNoticeEvent extends ParserEvent {
     public ServerNoticeEvent(final Parser parser, final Date date, final String message,
             final String host) {
         super(parser, date);
-        this.message = message;
-        this.host = host;
+        this.message = checkNotNull(message);
+        this.host = checkNotNull(host);
     }
 
     public String getMessage() {

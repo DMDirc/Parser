@@ -28,6 +28,8 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Called when the channel modes are changed or discovered.
  */
@@ -42,10 +44,10 @@ public class ChannelNonUserModeChangeEvent extends ParserEvent {
             final ChannelInfo channel, final ChannelClientInfo client, final String host,
             final String modes) {
         super(parser, date);
-        this.channel = channel;
-        this.client = client;
-        this.host = host;
-        this.modes = modes;
+        this.channel = checkNotNull(channel);
+        this.client = checkNotNull(client);
+        this.host = checkNotNull(host);
+        this.modes = checkNotNull(modes);
     }
 
     public ChannelInfo getChannel() {

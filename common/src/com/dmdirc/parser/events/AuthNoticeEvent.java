@@ -26,6 +26,8 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Used on every incomming line before 001.
  */
@@ -35,7 +37,7 @@ public class AuthNoticeEvent extends ParserEvent {
 
     public AuthNoticeEvent(final Parser parser, final Date date, final String message) {
         super(parser, date);
-        this.message = message;
+        this.message = checkNotNull(message);
     }
 
     public String getMessage() {

@@ -26,6 +26,8 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Interface Used on every incoming line BEFORE parsing.
  */
@@ -35,7 +37,7 @@ public class DataInEvent extends ParserEvent {
 
     public DataInEvent(final Parser parser, final Date date, final String data) {
         super(parser, date);
-        this.data = data;
+        this.data = checkNotNull(data);
     }
 
     public String getData() {

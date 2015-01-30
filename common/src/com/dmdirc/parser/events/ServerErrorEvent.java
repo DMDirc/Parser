@@ -26,6 +26,8 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Interface Used to give ServerError.
  */
@@ -35,7 +37,7 @@ public class ServerErrorEvent extends ParserEvent {
 
     public ServerErrorEvent(final Parser parser, final Date date, final String message) {
         super(parser, date);
-        this.message = message;
+        this.message = checkNotNull(message);
     }
 
     public String getMessage() {

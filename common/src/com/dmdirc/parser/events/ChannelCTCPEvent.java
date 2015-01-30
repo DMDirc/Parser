@@ -28,6 +28,8 @@ import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Called when a person sends a CTCP to a channel.
  */
@@ -43,11 +45,11 @@ public class ChannelCTCPEvent extends ParserEvent {
             final ChannelClientInfo client, final String type, final String message,
             final String host) {
         super(parser, date);
-        this.channel = channel;
-        this.client = client;
-        this.type = type;
-        this.message = message;
-        this.host = host;
+        this.channel = checkNotNull(channel);
+        this.client = checkNotNull(client);
+        this.type = checkNotNull(type);
+        this.message = checkNotNull(message);
+        this.host = checkNotNull(host);
     }
 
     public ChannelInfo getChannel() {
