@@ -25,6 +25,7 @@ package com.dmdirc.parser.events;
 import com.dmdirc.parser.interfaces.ClientInfo;
 import com.dmdirc.parser.interfaces.Parser;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.Map;
@@ -62,6 +63,15 @@ public class UserInfoEvent extends ParserEvent {
      */
     public Optional<String> getInfo(final UserInfoType type) {
         return Optional.ofNullable(info.get(type));
+    }
+
+    /**
+     * Gets all the pieces of information about the user.
+     *
+     * @return Map of all information about a user, may be empty
+     */
+    public Map<UserInfoType, String> getInfo() {
+        return Collections.unmodifiableMap(info);
     }
 
     /**
