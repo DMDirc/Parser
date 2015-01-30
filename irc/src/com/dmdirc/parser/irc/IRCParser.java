@@ -248,6 +248,8 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     private final List<String> serverInformationLines = new LinkedList<>();
     /** Map of capabilities and their state. */
     private final Map<String, CapabilityState> capabilities = new HashMap<>();
+    /** Handler for whois responses. */
+    private final WhoisResponseHandler whoisHandler;
 
     /**
      * Default constructor, ServerInfo and MyInfo need to be added separately (using IRC.me and IRC.server).
@@ -296,10 +298,13 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
             this.me = myDetails;
         }
 
+        this.whoisHandler = new WhoisResponseHandler(this, getCallbackManager());
+
         setIgnoreList(new IgnoreList());
         setPingTimerInterval(10000);
         setPingTimerFraction(6);
         resetState();
+
     }
 
     /**
@@ -648,6 +653,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
             parseChanModes();
         }
 
+        whoisHandler.start();
         getCallbackManager().publish(new ServerReadyEvent(this, new Date()));
     }
 
@@ -684,6 +690,8 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
 
         currentSocketState = SocketState.CLOSED;
         setEncoding(IRCEncoding.RFC1459);
+
+        whoisHandler.stop();
     }
 
     /**
