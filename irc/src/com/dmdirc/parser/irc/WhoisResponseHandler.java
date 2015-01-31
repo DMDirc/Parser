@@ -61,60 +61,58 @@ public class WhoisResponseHandler {
         manager.unsubscribe(this);
     }
 
-    @Handler
-    void handleNumericEvent(final NumericEvent event) {
-        if (event.getNumeric() == 311) {
-            // RPL_WHOISUSER
-            client = event.getToken()[3];
-            info.clear();
-        }
+    @Handler(condition = "msg.numeric == 311")
+    void handleStartOfWhois(final NumericEvent event) {
+        client = event.getToken()[3];
+        info.clear();
+    }
 
-        if (event.getNumeric() == 318 && client != null) {
-            // RPL_ENDOFWHOIS
+    @Handler(condition = "msg.numeric == 318")
+    void handleEndOfWhois(final NumericEvent event) {
+        if (client != null) {
             sendEvent();
             client = null;
         }
-
-        if (client != null && event.getToken().length > 4 && event.getToken()[3].equals(client)) {
-            handleWhoisResponse(event.getNumeric(), event.getToken());
-        }
     }
 
-    private void handleWhoisResponse(final int numeric, final String... tokens) {
-        switch (numeric) {
-            case 301:
-                // :server 301 DMDirc User :away message
-                info.put(UserInfoType.AWAY_MESSAGE, tokens[4]);
-                break;
+    @Handler(condition = "msg.numeric == 301")
+    void handleAwayMessage(final NumericEvent event) {
+        // :server 301 DMDirc User :away message
+        info.put(UserInfoType.AWAY_MESSAGE, event.getToken()[4]);
+    }
 
-            case 311:
-                // :server 311 DMDirc User ~Ident host.dmdirc.com * :Real name
-                info.put(UserInfoType.ADDRESS, tokens[3] + '!' + tokens[4] + '@' + tokens[5]);
-                info.put(UserInfoType.REAL_NAME, tokens[7]);
-                break;
+    @Handler(condition = "msg.numeric == 311")
+    void handleUserInfo(final NumericEvent event) {
+        // :server 311 DMDirc User ~Ident host.dmdirc.com * :Real name
+        info.put(UserInfoType.ADDRESS,
+                event.getToken()[3] + '!' + event.getToken()[4] + '@' + event.getToken()[5]);
+        info.put(UserInfoType.REAL_NAME, event.getToken()[7]);
+    }
 
-            case 312:
-                // :server 312 DMDirc User *.quakenet.org :QuakeNet IRC Server
-                info.put(UserInfoType.SERVER_NAME, tokens[4]);
-                info.put(UserInfoType.SERVER_INFO, tokens[5]);
-                break;
+    @Handler(condition = "msg.numeric == 312")
+    void handleServerInfo(final NumericEvent event) {
+        // :server 312 DMDirc User *.quakenet.org :QuakeNet IRC Server
+        info.put(UserInfoType.SERVER_NAME, event.getToken()[4]);
+        info.put(UserInfoType.SERVER_INFO, event.getToken()[5]);
+    }
 
-            case 319:
-                // :server 319 DMDirc User :@#channel1 +#channel2 ...
-                info.put(UserInfoType.GROUP_CHAT_LIST, tokens[4]);
-                break;
+    @Handler(condition = "msg.numeric == 319")
+    void handleChannelList(final NumericEvent event) {
+        // :server 319 DMDirc User :@#channel1 +#channel2 ...
+        info.put(UserInfoType.GROUP_CHAT_LIST, event.getToken()[4]);
+    }
 
-            case 317:
-                // :server 317 DMDirc User 305 1422561556 :seconds idle, signon time
-                info.put(UserInfoType.IDLE_TIME, tokens[4]);
-                info.put(UserInfoType.CONNECTION_TIME, tokens[5]);
-                break;
+    @Handler(condition = "msg.numeric == 317")
+    void handleIdleTime(final NumericEvent event) {
+        // :server 317 DMDirc User 305 1422561556 :seconds idle, signon time
+        info.put(UserInfoType.IDLE_TIME, event.getToken()[4]);
+        info.put(UserInfoType.CONNECTION_TIME, event.getToken()[5]);
+    }
 
-            case 330:
-                // :server 330 DMDirc User Account :is authed as
-                info.put(UserInfoType.ACCOUNT_NAME, tokens[4]);
-                break;
-        }
+    @Handler(condition = "msg.numeric == 330")
+    void handleAccount(final NumericEvent event) {
+        // :server 330 DMDirc User Account :is authed as
+        info.put(UserInfoType.ACCOUNT_NAME, event.getToken()[4]);
     }
 
     private void sendEvent() {
