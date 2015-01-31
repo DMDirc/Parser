@@ -58,7 +58,6 @@ import java.net.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -80,7 +79,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 
 import dagger.ObjectGraph;
 
@@ -220,22 +218,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     /** Used for reading from the server. */
     private IRCReader in;
     /** This is the default TrustManager for SSL Sockets, it trusts all ssl certs. */
-    private final TrustManager[] trustAllCerts = {
-        new X509TrustManager() {
-
-            @Override
-            public X509Certificate[] getAcceptedIssuers() {
-                return null;
-            }
-
-            @Override
-            public void checkClientTrusted(final X509Certificate[] certs, final String authType) {
-            }
-
-            @Override
-            public void checkServerTrusted(final X509Certificate[] certs, final String authType) {
-            }
-        },};
+    private final TrustManager[] trustAllCerts = {new TrustingTrustManager()};
     /** Should channels automatically request list modes? */
     private boolean autoListMode = true;
     /** Should part/quit/kick callbacks be fired before removing the user internally? */
