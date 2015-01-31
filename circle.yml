@@ -12,6 +12,4 @@ dependencies:
 
 test:
   override:
-    - ./gradlew check
-  post:
-    - ./gradlew coveralls
+    - ./gradlew test jacocoTestReport coveralls
