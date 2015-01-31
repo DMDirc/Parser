@@ -34,6 +34,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Contains information about known users.
  *
@@ -50,7 +52,7 @@ public class IRCClientInfo implements LocalClientInfo {
     /** Known host of client. */
     private String host = "";
     /** Known user modes of client. */
-    private String modes;
+    private String modes = "";
     /** Known Away Reason of client. */
     private String awayReason = "";
     /** Known Account name of client. */
@@ -307,7 +309,7 @@ public class IRCClientInfo implements LocalClientInfo {
      * @param newMode new string containing boolean channel modes.
      */
     public void setUserMode(final String newMode) {
-        modes = newMode;
+        modes = checkNotNull(newMode);
     }
 
     /**
