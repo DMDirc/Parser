@@ -140,12 +140,12 @@ def find(name) {
 buildscript {
     repositories {
         mavenCentral()
-        maven { url 'https://dl.bintray.com/dmdirc/releases/' }
+        jcenter()
     }
 
     dependencies {
         classpath group: 'com.dmdirc', name: 'git-version', version: '1.0'
-        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.1.0'
+        classpath group: 'org.kt3k.gradle.plugin', name: 'coveralls-gradle-plugin', version: '2.1.0'
     }
 }
 
