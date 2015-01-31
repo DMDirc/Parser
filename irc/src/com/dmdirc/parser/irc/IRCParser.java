@@ -195,15 +195,13 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     /** Hashtable storing all information gathered from 005. */
     public final Map<String, String> h005Info = new HashMap<>();
     /** difference in ms between our time and the servers time (used for timestampedIRC). */
-    long tsdiff;
+    private long tsdiff;
     /** Reference to the Processing Manager. */
     private final ProcessingManager myProcessingManager;
     /** Should we automatically disconnect on fatal errors?. */
     private boolean disconnectOnFatal = true;
     /** Current Socket State. */
     protected SocketState currentSocketState = SocketState.NULL;
-    /** This is the socket used for reading from/writing to the IRC server. */
-    private Socket socket;
     /**
      * The underlying socket used for reading/writing to the IRC server.
      * For normal sockets this will be the same as {@link #socket} but for SSL
@@ -727,10 +725,10 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
         currentSocketState = SocketState.OPENING;
 
         final URI connectUri = getConnectURI(getURI());
-        socket = getSocketFactory().createSocket(connectUri.getHost(), connectUri.getPort());
 
-        rawSocket = socket;
+        rawSocket = getSocketFactory().createSocket(connectUri.getHost(), connectUri.getPort());
 
+        final Socket socket;
         if (getURI().getScheme().endsWith("s")) {
             callDebugInfo(DEBUG_SOCKET, "Server is SSL.");
 
@@ -742,7 +740,8 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
             sc.init(myKeyManagers, myTrustManager, new SecureRandom());
 
             final SSLSocketFactory socketFactory = sc.getSocketFactory();
-            socket = socketFactory.createSocket(socket, getURI().getHost(), getURI().getPort(), false);
+            socket = socketFactory.createSocket(rawSocket, getURI().getHost(), getURI()
+                    .getPort(), false);
 
             // Manually start a handshake so we get proper SSL errors here,
             // and so that we can control the connection timeout
@@ -752,6 +751,8 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
             socket.setSoTimeout(timeout);
 
             currentSocketState = SocketState.OPENING;
+        } else {
+            socket = rawSocket;
         }
 
         callDebugInfo(DEBUG_SOCKET, "\t-> Opening socket output stream PrintWriter");
