@@ -70,7 +70,7 @@ public abstract class IRCProcessor {
      * @param args Formatting String Options
      */
     protected final void callDebugInfo(final int level, final String data, final Object... args) {
-        parser.callDebugInfo(level, String.format(data, args));
+        parser.callDebugInfo(level, data, args);
     }
 
     /**
