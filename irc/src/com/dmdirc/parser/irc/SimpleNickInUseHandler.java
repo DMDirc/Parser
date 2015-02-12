@@ -23,41 +23,47 @@
 package com.dmdirc.parser.irc;
 
 import com.dmdirc.parser.events.DebugInfoEvent;
+import com.dmdirc.parser.events.NickInUseEvent;
 import com.dmdirc.parser.interfaces.Parser;
 
 import java.util.Date;
+
+import net.engio.mbassy.listener.Handler;
+import net.engio.mbassy.listener.Listener;
+import net.engio.mbassy.listener.References;
 
 /**
  * Simple nick in use handler that tries the alternative nickname, then prepends a character until
  * it gets a nickname.
  */
+@Listener(references = References.Strong)
 public class SimpleNickInUseHandler {
 
     private final String altNickname;
     private final char prependChar;
     private boolean triedAlt;
 
-    public SimpleNickInUseHandler(final String altNickname, final char prependChar) {
+    SimpleNickInUseHandler(final String altNickname, final char prependChar) {
         this.altNickname = altNickname;
         this.prependChar = prependChar;
     }
 
-    // TODO: Subscribe
-    public void onNickInUse(final Parser parser, final Date date, final String nickname) {
-        final IRCParser ircParser = (IRCParser) parser;
+    @Handler
+    public void onNickInUse(final NickInUseEvent event) {
+        final IRCParser parser = (IRCParser) event.getParser();
         callDebugInfo(parser, IRCParser.DEBUG_INFO, "No Nick in use Handler.");
-        if (!ircParser.got001) {
+        if (!parser.got001) {
             callDebugInfo(parser, IRCParser.DEBUG_INFO, "Using inbuilt handler");
             // If this is before 001 we will try and get a nickname, else we will leave the
             // nick as-is
             if (triedAlt) {
-                final String magicAltNick = prependChar + ircParser.getMyInfo().getNickname();
-                if (parser.getStringConverter().equalsIgnoreCase(ircParser.thinkNickname,
+                final String magicAltNick = prependChar + parser.getMyInfo().getNickname();
+                if (parser.getStringConverter().equalsIgnoreCase(parser.thinkNickname,
                         altNickname)
                         && !altNickname.equalsIgnoreCase(magicAltNick)) {
-                    ircParser.thinkNickname = ircParser.getMyInfo().getNickname();
+                    parser.thinkNickname = parser.getMyInfo().getNickname();
                 }
-                parser.getLocalClient().setNickname(prependChar + ircParser.thinkNickname);
+                parser.getLocalClient().setNickname(prependChar + parser.thinkNickname);
             } else {
                 parser.getLocalClient().setNickname(altNickname);
                 triedAlt = true;
@@ -69,4 +75,17 @@ public class SimpleNickInUseHandler {
         parser.getCallbackManager().publish(
                 new DebugInfoEvent(parser, new Date(), level, data));
     }
+
+    /**
+     * Installs a new {@link SimpleNickInUseHandler} on the given parser.
+     *
+     * @param parser The parser to install the handler on.
+     * @param altNickname The alternate nickname to try using.
+     * @param prependChar The character to prepend if the alt nickname is in use.
+     */
+    public static void install(
+            final Parser parser, final String altNickname, final char prependChar) {
+        parser.getCallbackManager().subscribe(new SimpleNickInUseHandler(altNickname, prependChar));
+    }
+
 }

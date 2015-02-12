@@ -22,21 +22,37 @@
 
 package com.dmdirc.parser.irc;
 
+import com.dmdirc.parser.events.PingFailureEvent;
 import com.dmdirc.parser.interfaces.Parser;
 
-import java.util.Date;
+import net.engio.mbassy.listener.Handler;
+import net.engio.mbassy.listener.Listener;
+import net.engio.mbassy.listener.References;
 
 /**
  * Simple ping failure listener that disconnects on missed pings.
  */
+@Listener(references = References.Strong)
 public class SimplePingFailureHandler {
 
-    // TODO: Subscribe
-    public void onPingFailed(final Parser parser, final Date date) {
-        final IRCParser ircParser = (IRCParser) parser;
+    SimplePingFailureHandler() {}
+
+    @Handler
+    public void onPingFailed(final PingFailureEvent event) {
+        final IRCParser ircParser = (IRCParser) event.getParser();
         if (ircParser.getPingNeeded()) {
             ircParser.stopPingTimer();
             ircParser.disconnect("Server not responding");
         }
     }
+
+    /**
+     * Installs a new {@link SimplePingFailureHandler} on the given parser.
+     *
+     * @param parser The parser to install the handler on.
+     */
+    public static void install(final Parser parser) {
+        parser.getCallbackManager().subscribe(new SimplePingFailureHandler());
+    }
+
 }
