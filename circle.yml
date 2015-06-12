@@ -6,6 +6,11 @@ machine:
   environment:
     TERM: dumb
 
+checkout:
+  post:
+    - "if [ -e .git/shallow ]; then git fetch --unshallow; fi"
+    - git fetch --tags
+
 dependencies:
   override:
     - ./gradlew dependencies
