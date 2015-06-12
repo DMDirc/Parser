@@ -32,117 +32,117 @@ import dagger.Provides;
 public class ProcessorsModule {
 
     @Provides(type = Provides.Type.SET)
-    public IRCProcessor getProcessor(final Process001 processor) {
+    public IRCProcessor get001Processor(final Process001 processor) {
         return processor;
     }
 
     @Provides(type = Provides.Type.SET)
-    public IRCProcessor getProcessor(final Process464 processor) {
+    public IRCProcessor get464Processor(final Process464 processor) {
         return processor;
     }
 
     @Provides(type = Provides.Type.SET)
-    public IRCProcessor getProcessor(final Process004005 processor) {
+    public IRCProcessor get004005Processor(final Process004005 processor) {
         return processor;
     }
 
     @Provides(type = Provides.Type.SET)
-    public IRCProcessor getProcessor(final ProcessAccount processor) {
+    public IRCProcessor getAccountProcessor(final ProcessAccount processor) {
         return processor;
     }
 
     @Provides(type = Provides.Type.SET)
-    public IRCProcessor getProcessor(final ProcessAway processor) {
+    public IRCProcessor getAwayProcessor(final ProcessAway processor) {
         return processor;
     }
 
     @Provides(type = Provides.Type.SET)
-    public IRCProcessor getProcessor(final ProcessCap processor) {
+    public IRCProcessor getCapProcessor(final ProcessCap processor) {
         return processor;
     }
 
     @Provides(type = Provides.Type.SET)
-    public IRCProcessor getProcessor(final ProcessInvite processor) {
+    public IRCProcessor getInviteProcessor(final ProcessInvite processor) {
         return processor;
     }
 
     @Provides(type = Provides.Type.SET)
-    public IRCProcessor getProcessor(final ProcessJoin processor) {
+    public IRCProcessor getJoinProcessor(final ProcessJoin processor) {
         return processor;
     }
 
     @Provides(type = Provides.Type.SET)
-    public IRCProcessor getProcessor(final ProcessKick processor) {
+    public IRCProcessor getKickProcessor(final ProcessKick processor) {
         return processor;
     }
 
     @Provides(type = Provides.Type.SET)
-    public IRCProcessor getProcessor(final ProcessList processor) {
+    public IRCProcessor getListProcessor(final ProcessList processor) {
         return processor;
     }
 
     @Provides(type = Provides.Type.SET)
-    public IRCProcessor getProcessor(final ProcessListModes processor) {
+    public IRCProcessor getModesProcessor(final ProcessListModes processor) {
         return processor;
     }
 
     @Provides(type = Provides.Type.SET)
-    public IRCProcessor getProcessor(final ProcessMessage processor) {
+    public IRCProcessor getMessageProcessor(final ProcessMessage processor) {
         return processor;
     }
 
     @Provides(type = Provides.Type.SET)
-    public IRCProcessor getProcessor(final ProcessMode processor) {
+    public IRCProcessor getModeProcessor(final ProcessMode processor) {
         return processor;
     }
 
     @Provides(type = Provides.Type.SET)
-    public IRCProcessor getProcessor(final ProcessMOTD processor) {
+    public IRCProcessor getMOTDProcessor(final ProcessMOTD processor) {
         return processor;
     }
 
     @Provides(type = Provides.Type.SET)
-    public IRCProcessor getProcessor(final ProcessNames processor) {
+    public IRCProcessor getNamesProcessor(final ProcessNames processor) {
         return processor;
     }
 
     @Provides(type = Provides.Type.SET)
-    public IRCProcessor getProcessor(final ProcessNick processor) {
+    public IRCProcessor getNickProcessor(final ProcessNick processor) {
         return processor;
     }
 
     @Provides(type = Provides.Type.SET)
-    public IRCProcessor getProcessor(final ProcessNickInUse processor) {
+    public IRCProcessor getNickInUseProcessor(final ProcessNickInUse processor) {
         return processor;
     }
 
     @Provides(type = Provides.Type.SET)
-    public IRCProcessor getProcessor(final ProcessNoticeAuth processor) {
+    public IRCProcessor getNoticeAuthProcessor(final ProcessNoticeAuth processor) {
         return processor;
     }
 
     @Provides(type = Provides.Type.SET)
-    public IRCProcessor getProcessor(final ProcessPart processor) {
+    public IRCProcessor getPartProcessor(final ProcessPart processor) {
         return processor;
     }
 
     @Provides(type = Provides.Type.SET)
-    public IRCProcessor getProcessor(final ProcessQuit processor) {
+    public IRCProcessor getQuitProcessor(final ProcessQuit processor) {
         return processor;
     }
 
     @Provides(type = Provides.Type.SET)
-    public IRCProcessor getProcessor(final ProcessTopic processor) {
+    public IRCProcessor getTopicProcessor(final ProcessTopic processor) {
         return processor;
     }
 
     @Provides(type = Provides.Type.SET)
-    public IRCProcessor getProcessor(final ProcessWallops processor) {
+    public IRCProcessor getWallopsProcessor(final ProcessWallops processor) {
         return processor;
     }
 
     @Provides(type = Provides.Type.SET)
-    public IRCProcessor getProcessor(final ProcessWho processor) {
+    public IRCProcessor getWhoProcessor(final ProcessWho processor) {
         return processor;
     }
 
