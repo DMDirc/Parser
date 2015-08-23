@@ -61,7 +61,7 @@ public class IRCChannelInfo implements ChannelInfo {
     /** Has this channel ever had a topic? */
     private boolean hadTopic;
     /** Known boolean-modes for channel. */
-    private String modes;
+    private String modes = "";
     /** Reference to the parser object that owns this channel, Used for modes. */
     private final IRCParser parser;
     /** Mode manager to use for user modes. */
