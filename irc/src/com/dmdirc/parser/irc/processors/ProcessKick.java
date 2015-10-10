@@ -90,7 +90,7 @@ public class ProcessKick extends IRCProcessor {
                 // callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got kick for channel ("+token[2]+") for a non-existant user. [User: "+token[0]+"]", parser.getLastLine()));
                 return;
             }
-            final IRCChannelClientInfo iChannelKicker = iChannel.getChannelClient(token[0]);
+            final IRCChannelClientInfo iChannelKicker = iChannel.getChannelClient(token[0], true);
             if (parser.getRemoveAfterCallback()) {
                 callDebugInfo(IRCParser.DEBUG_INFO, "processKick: calling kick before. {%s | %s | %s | %s | %s}", iChannel, iChannelClient, iChannelKicker, sReason, token[0]);
                 callChannelKick(iChannel, iChannelClient, iChannelKicker, sReason, token[0]);
@@ -114,7 +114,7 @@ public class ProcessKick extends IRCProcessor {
      *
      * @param cChannel Channel where the kick took place
      * @param cKickedClient ChannelClient that got kicked
-     * @param cKickedByClient ChannelClient that did the kicking (may be null if server)
+     * @param cKickedByClient ChannelClient that did the kicking
      * @param sReason Reason for kick (may be "")
      * @param sKickedByHost Hostname of Kicker (or servername)
      */
