@@ -231,6 +231,8 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     private final Map<String, CapabilityState> capabilities = new HashMap<>();
     /** Handler for whois responses. */
     private final WhoisResponseHandler whoisHandler;
+    /** Semaphore for calls to resetState. */
+    private final Semaphore resetStateSem = new Semaphore(1);
 
     /**
      * Default constructor, ServerInfo and MyInfo need to be added separately (using IRC.me and IRC.server).
@@ -590,7 +592,11 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * Callback to all objects implementing the SocketClosed Callback.
      */
     protected void callSocketClosed() {
+        // Don't allow state resetting whilst there may be handlers requiring
+        // state.
+        resetStateSem.acquireUninterruptibly();
         getCallbackManager().publish(new SocketCloseEvent(this, new Date()));
+        resetStateSem.release();
     }
 
     /**
@@ -643,6 +649,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     //---------------------------------------------------------------------------
     /** Reset internal state (use before doConnect). */
     private void resetState() {
+        resetStateSem.acquireUninterruptibly();
         // Reset General State info
         got001 = false;
         post005 = false;
@@ -673,6 +680,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
         setEncoding(IRCEncoding.RFC1459);
 
         whoisHandler.stop();
+        resetStateSem.release();
     }
 
     /**
