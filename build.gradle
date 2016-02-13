@@ -94,7 +94,7 @@ subprojects {
         compile group: 'com.squareup.dagger', name: 'dagger', version: '1.2.1'
         compile group: 'com.google.guava', name:'guava', version: '18.0'
 
-        compile group: 'net.engio', name: 'mbassador', version: '1.2.0'
+        compile group: 'net.engio', name: 'mbassador', version: '1.2.4'
         compile group: 'de.odysseus.juel', name: 'juel-api', version: '2.2.7'
         compile group: 'de.odysseus.juel', name: 'juel-impl', version: '2.2.7'
         compile group: 'de.odysseus.juel', name: 'juel-spi', version: '2.2.7'

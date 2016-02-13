@@ -22,6 +22,7 @@
 
 package com.dmdirc.parser.common;
 
+import com.dmdirc.parser.events.ParserErrorEvent;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.ClientInfo;
 
@@ -31,7 +32,10 @@ import java.net.ProxySelector;
 import java.net.SocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Date;
 import java.util.List;
+
+import net.engio.mbassy.bus.error.PublicationError;
 
 /**
  * Implements common base functionality for parsers.
@@ -40,6 +44,8 @@ import java.util.List;
  * the implementations to use for instances of {@link ClientInfo}, {@link ChannelInfo}, etc.
  */
 public abstract class BaseParser extends ThreadedParser {
+
+    private final Object errorHandlerLock = new Object();
 
     /** The URI that this parser was constructed for. */
     private final URI uri;
@@ -76,7 +82,27 @@ public abstract class BaseParser extends ThreadedParser {
     public BaseParser(final URI uri) {
         this.uri = uri;
 
-        callbackManager = new CallbackManager(this);
+        callbackManager = new CallbackManager(this::handleCallbackError);
+    }
+
+    @SuppressWarnings({
+            "ThrowableResultOfMethodCallIgnored",
+            "CallToPrintStackTrace",
+            "UseOfSystemOutOrSystemErr"
+    })
+    private void handleCallbackError(final PublicationError e) {
+        if (Thread.holdsLock(errorHandlerLock)) {
+            // ABORT ABORT ABORT - we're publishing an error on the same thread we just tried
+            // to publish an error on. Something in the error reporting pipeline must be
+            // breaking, so don't try adding any more errors.
+            System.err.println("ERROR: Error when reporting error");
+            e.getCause().printStackTrace();
+            return;
+        }
+
+        synchronized (errorHandlerLock) {
+            callbackManager.publish(new ParserErrorEvent(this, new Date(), e.getCause()));
+        }
     }
 
     @Override
