@@ -39,7 +39,8 @@ public class CallbackManager extends MBassador<ParserEvent> {
         super(new BusConfiguration().addFeature(Feature.SyncPubSub.Default())
                 .addFeature(Feature.AsynchronousHandlerInvocation.Default(1, 1))
                 .addFeature(Feature.AsynchronousMessageDispatch.Default()
-                        .setNumberOfMessageDispatchers(1)));
+                        .setNumberOfMessageDispatchers(1))
+                .addPublicationErrorHandler(errorHandler));
     }
 
 }
