@@ -231,6 +231,8 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     private final Map<String, CapabilityState> capabilities = new HashMap<>();
     /** Handler for whois responses. */
     private final WhoisResponseHandler whoisHandler;
+    /** Used to synchronize calls to resetState. */
+    private final Object resetStateSync = new Object();
 
     /**
      * Default constructor, ServerInfo and MyInfo need to be added separately (using IRC.me and IRC.server).
@@ -590,7 +592,11 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * Callback to all objects implementing the SocketClosed Callback.
      */
     protected void callSocketClosed() {
-        getCallbackManager().publish(new SocketCloseEvent(this, new Date()));
+        // Don't allow state resetting whilst there may be handlers requiring
+        // state.
+        synchronized (resetStateSync) {
+            getCallbackManager().publish(new SocketCloseEvent(this, new Date()));
+        }
     }
 
     /**
@@ -643,36 +649,38 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     //---------------------------------------------------------------------------
     /** Reset internal state (use before doConnect). */
     private void resetState() {
-        // Reset General State info
-        got001 = false;
-        post005 = false;
-        // Clear the hash tables
-        channelList.clear();
-        clientList.clear();
-        h005Info.clear();
-        prefixModes.clear();
-        chanModesOther.clear();
-        chanModesBool.clear();
-        userModes.clear();
-        chanPrefix = DEFAULT_CHAN_PREFIX;
-        // Clear output queue.
-        if (out != null) {
-            out.clearQueue();
+        synchronized (resetStateSync) {
+            // Reset General State info
+            got001 = false;
+            post005 = false;
+            // Clear the hash tables
+            channelList.clear();
+            clientList.clear();
+            h005Info.clear();
+            prefixModes.clear();
+            chanModesOther.clear();
+            chanModesBool.clear();
+            userModes.clear();
+            chanPrefix = DEFAULT_CHAN_PREFIX;
+            // Clear output queue.
+            if (out != null) {
+                out.clearQueue();
+            }
+            setServerName("");
+            networkName = "";
+            lastLine = null;
+            myself = new IRCClientInfo(this, userModes, "myself").setFake(true);
+
+            synchronized (serverInformationLines) {
+                serverInformationLines.clear();
+            }
+            stopPingTimer();
+
+            currentSocketState = SocketState.CLOSED;
+            setEncoding(IRCEncoding.RFC1459);
+
+            whoisHandler.stop();
         }
-        setServerName("");
-        networkName = "";
-        lastLine = null;
-        myself = new IRCClientInfo(this, userModes, "myself").setFake(true);
-
-        synchronized (serverInformationLines) {
-            serverInformationLines.clear();
-        }
-        stopPingTimer();
-
-        currentSocketState = SocketState.CLOSED;
-        setEncoding(IRCEncoding.RFC1459);
-
-        whoisHandler.stop();
     }
 
     /**

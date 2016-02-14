@@ -65,6 +65,11 @@ public class WhoisResponseHandler {
     void handleStartOfWhois(final NumericEvent event) {
         client = event.getToken()[3];
         info.clear();
+
+        // :server 311 DMDirc User ~Ident host.dmdirc.com * :Real name
+        info.put(UserInfoType.ADDRESS,
+                event.getToken()[3] + '!' + event.getToken()[4] + '@' + event.getToken()[5]);
+        info.put(UserInfoType.REAL_NAME, event.getToken()[7]);
     }
 
     @Handler(condition = "msg.numeric == 318")
@@ -79,14 +84,6 @@ public class WhoisResponseHandler {
     void handleAwayMessage(final NumericEvent event) {
         // :server 301 DMDirc User :away message
         info.put(UserInfoType.AWAY_MESSAGE, event.getToken()[4]);
-    }
-
-    @Handler(condition = "msg.numeric == 311")
-    void handleUserInfo(final NumericEvent event) {
-        // :server 311 DMDirc User ~Ident host.dmdirc.com * :Real name
-        info.put(UserInfoType.ADDRESS,
-                event.getToken()[3] + '!' + event.getToken()[4] + '@' + event.getToken()[5]);
-        info.put(UserInfoType.REAL_NAME, event.getToken()[7]);
     }
 
     @Handler(condition = "msg.numeric == 312")

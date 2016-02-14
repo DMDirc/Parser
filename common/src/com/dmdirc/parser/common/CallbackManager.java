@@ -22,15 +22,12 @@
 
 package com.dmdirc.parser.common;
 
-import com.dmdirc.parser.events.ParserErrorEvent;
 import com.dmdirc.parser.events.ParserEvent;
-import com.dmdirc.parser.interfaces.Parser;
-
-import java.util.Date;
 
 import net.engio.mbassy.bus.MBassador;
 import net.engio.mbassy.bus.config.BusConfiguration;
 import net.engio.mbassy.bus.config.Feature;
+import net.engio.mbassy.bus.error.IPublicationErrorHandler;
 
 /**
  * Parser Callback Manager.
@@ -38,44 +35,12 @@ import net.engio.mbassy.bus.config.Feature;
  */
 public class CallbackManager extends MBassador<ParserEvent> {
 
-    private final Object errorHandlerLock = new Object();
-    private final Parser parser;
-
-    public CallbackManager(final Parser parser) {
+    public CallbackManager(final IPublicationErrorHandler errorHandler) {
         super(new BusConfiguration().addFeature(Feature.SyncPubSub.Default())
-                .addFeature(Feature.AsynchronousHandlerInvocation.Default(1, 1)).addFeature(
-                        Feature.AsynchronousMessageDispatch.Default()
-                                .setNumberOfMessageDispatchers(1)));
-        this.parser = parser;
-        setupErrorHandler();
+                .addFeature(Feature.AsynchronousHandlerInvocation.Default(1, 1))
+                .addFeature(Feature.AsynchronousMessageDispatch.Default()
+                        .setNumberOfMessageDispatchers(1))
+                .addPublicationErrorHandler(errorHandler));
     }
 
-    @SuppressWarnings("TypeMayBeWeakened")
-    public CallbackManager(final BusConfiguration configuration, final Parser parser) {
-        super(configuration);
-        setupErrorHandler();
-        this.parser = parser;
-    }
-
-    @SuppressWarnings({
-            "ThrowableResultOfMethodCallIgnored",
-            "CallToPrintStackTrace",
-            "UseOfSystemOutOrSystemErr"
-    })
-    private void setupErrorHandler() {
-        addErrorHandler(e -> {
-            if (Thread.holdsLock(errorHandlerLock)) {
-                // ABORT ABORT ABORT - we're publishing an error on the same thread we just tried
-                // to publish an error on. Something in the error reporting pipeline must be
-                // breaking, so don't try adding any more errors.
-                System.err.println("ERROR: Error when reporting error");
-                e.getCause().printStackTrace();
-                return;
-            }
-
-            synchronized (errorHandlerLock) {
-                publish(new ParserErrorEvent(parser, new Date(), e.getCause()));
-            }
-        });
-    }
 }
