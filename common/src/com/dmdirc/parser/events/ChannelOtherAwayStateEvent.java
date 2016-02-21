@@ -27,7 +27,7 @@ import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.Parser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -41,7 +41,7 @@ public class ChannelOtherAwayStateEvent extends ParserEvent {
     private final AwayState oldState;
     private final AwayState newState;
 
-    public ChannelOtherAwayStateEvent(final Parser parser, final Date date,
+    public ChannelOtherAwayStateEvent(final Parser parser, final LocalDateTime date,
             final ChannelInfo channel, final ChannelClientInfo client, final AwayState oldState,
             final AwayState newState) {
         super(parser, date);

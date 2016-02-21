@@ -25,7 +25,7 @@ package com.dmdirc.parser.irc.processors;
 import com.dmdirc.parser.events.AuthNoticeEvent;
 import com.dmdirc.parser.irc.IRCParser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.inject.Inject;
 
@@ -61,7 +61,7 @@ public class ProcessNoticeAuth extends IRCProcessor {
      * @param data Incomming Line.
      */
     protected void callNoticeAuth(final String data) {
-        getCallbackManager().publish(new AuthNoticeEvent(parser, new Date(), data));
+        getCallbackManager().publish(new AuthNoticeEvent(parser, LocalDateTime.now(), data));
     }
 
 }

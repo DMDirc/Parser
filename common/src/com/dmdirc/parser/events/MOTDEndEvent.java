@@ -24,7 +24,7 @@ package com.dmdirc.parser.events;
 
 import com.dmdirc.parser.interfaces.Parser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -36,7 +36,7 @@ public class MOTDEndEvent extends ParserEvent {
     private final boolean noMOTD;
     private final String data;
 
-    public MOTDEndEvent(final Parser parser, final Date date, final boolean noMOTD,
+    public MOTDEndEvent(final Parser parser, final LocalDateTime date, final boolean noMOTD,
             final String data) {
         super(parser, date);
         this.noMOTD = noMOTD;

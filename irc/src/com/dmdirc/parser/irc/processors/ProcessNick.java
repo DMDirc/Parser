@@ -33,7 +33,7 @@ import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.inject.Inject;
 
@@ -110,7 +110,8 @@ public class ProcessNick extends IRCProcessor {
     protected void callChannelNickChanged(final ChannelInfo cChannel,
             final ChannelClientInfo cChannelClient, final String sOldNick) {
         getCallbackManager().publish(
-                new ChannelNickChangeEvent(parser, new Date(), cChannel, cChannelClient, sOldNick));
+                new ChannelNickChangeEvent(parser, LocalDateTime.now(), cChannel, cChannelClient,
+                        sOldNick));
     }
 
     /**
@@ -120,7 +121,8 @@ public class ProcessNick extends IRCProcessor {
      * @param sOldNick Nickname before change
      */
     protected void callNickChanged(final ClientInfo cClient, final String sOldNick) {
-        getCallbackManager().publish(new NickChangeEvent(parser, new Date(), cClient, sOldNick));
+        getCallbackManager().publish(new NickChangeEvent(parser, LocalDateTime.now(), cClient,
+                sOldNick));
     }
 
 }

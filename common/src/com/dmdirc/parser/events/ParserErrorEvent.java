@@ -24,7 +24,7 @@ package com.dmdirc.parser.events;
 
 import com.dmdirc.parser.interfaces.Parser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -35,7 +35,8 @@ public class ParserErrorEvent extends ParserEvent {
 
     private final Throwable throwable;
 
-    public ParserErrorEvent(final Parser parser, final Date date, final Throwable throwable) {
+    public ParserErrorEvent(final Parser parser, final LocalDateTime date,
+            final Throwable throwable) {
         super(parser, date);
         this.throwable = checkNotNull(throwable);
     }

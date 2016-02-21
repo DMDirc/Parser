@@ -24,14 +24,14 @@ package com.dmdirc.parser.events;
 
 import com.dmdirc.parser.interfaces.Parser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * Interface Used when a raw 464 is recieved.
  */
 public class PasswordRequiredEvent extends ParserEvent {
 
-    public PasswordRequiredEvent(final Parser parser, final Date date) {
+    public PasswordRequiredEvent(final Parser parser, final LocalDateTime date) {
         super(parser, date);
     }
 }

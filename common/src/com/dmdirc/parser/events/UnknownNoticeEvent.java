@@ -24,7 +24,7 @@ package com.dmdirc.parser.events;
 
 import com.dmdirc.parser.interfaces.Parser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -37,7 +37,7 @@ public class UnknownNoticeEvent extends ParserEvent {
     private final String target;
     private final String host;
 
-    public UnknownNoticeEvent(final Parser parser, final Date date,
+    public UnknownNoticeEvent(final Parser parser, final LocalDateTime date,
             final String message, final String target, final String host) {
         super(parser, date);
         this.message = checkNotNull(message);

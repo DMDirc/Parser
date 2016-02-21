@@ -26,7 +26,7 @@ import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.Parser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -38,8 +38,8 @@ public class ChannelJoinEvent extends ParserEvent {
     private final ChannelInfo channel;
     private final ChannelClientInfo client;
 
-    public ChannelJoinEvent(final Parser parser, final Date date, final ChannelInfo channel,
-            final ChannelClientInfo client) {
+    public ChannelJoinEvent(final Parser parser, final LocalDateTime date,
+            final ChannelInfo channel, final ChannelClientInfo client) {
         super(parser, date);
         this.channel = checkNotNull(channel);
         this.client = checkNotNull(client);

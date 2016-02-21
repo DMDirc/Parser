@@ -32,7 +32,7 @@ import java.net.ProxySelector;
 import java.net.SocketAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import net.engio.mbassy.bus.error.PublicationError;
@@ -101,7 +101,7 @@ public abstract class BaseParser extends ThreadedParser {
         }
 
         synchronized (errorHandlerLock) {
-            callbackManager.publish(new ParserErrorEvent(this, new Date(), e.getCause()));
+            callbackManager.publish(new ParserErrorEvent(this, LocalDateTime.now(), e.getCause()));
         }
     }
 

@@ -25,7 +25,7 @@ package com.dmdirc.parser.irc.processors;
 import com.dmdirc.parser.events.NickInUseEvent;
 import com.dmdirc.parser.irc.IRCParser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.inject.Inject;
 
@@ -73,7 +73,7 @@ public class ProcessNickInUse extends IRCProcessor {
      * @param nickname Nickname that was wanted.
      */
     protected void callNickInUse(final String nickname) {
-        getCallbackManager().publish(new NickInUseEvent(parser, new Date(), nickname));
+        getCallbackManager().publish(new NickInUseEvent(parser, LocalDateTime.now(), nickname));
     }
 
 }

@@ -40,8 +40,8 @@ import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ModeManager;
 import com.dmdirc.parser.irc.PrefixModeManager;
 
+import java.time.LocalDateTime;
 import java.util.Calendar;
-import java.util.Date;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -232,7 +232,8 @@ public class ProcessMode extends IRCProcessor {
                         callDebugInfo(IRCParser.DEBUG_INFO, "List Mode: %c [%s] {Positive: %b}", cMode, sModeParam, bPositive);
                         if (!"324".equals(sParam)) {
                             getCallbackManager().publish(
-                                    new ChannelSingleModeChangeEvent(parser, new Date(), iChannel,
+                                    new ChannelSingleModeChangeEvent(
+                                            parser, LocalDateTime.now(), iChannel,
                                             setterCCI, token[0], cPositive + cMode + " " +
                                             sModeParam));
                         }
@@ -246,7 +247,8 @@ public class ProcessMode extends IRCProcessor {
                             iChannel.setModeParam(cMode, sModeParam);
                             if (!"324".equals(sParam)) {
                                 getCallbackManager().publish(
-                                        new ChannelSingleModeChangeEvent(parser, new Date(),
+                                        new ChannelSingleModeChangeEvent(
+                                                parser, LocalDateTime.now(),
                                                 iChannel, setterCCI, token[0],
                                                 cPositive + cMode + " " +
                                                         sModeParam));
@@ -263,7 +265,8 @@ public class ProcessMode extends IRCProcessor {
                             iChannel.setModeParam(cMode, "");
                             if (!"324".equals(sParam)) {
                                 getCallbackManager().publish(
-                                        new ChannelSingleModeChangeEvent(parser, new Date(),
+                                        new ChannelSingleModeChangeEvent(
+                                                parser, LocalDateTime.now(),
                                                 iChannel, setterCCI, token[0],
                                                 trim(cPositive + cMode + " " + sModeParam)));
                             }
@@ -284,8 +287,9 @@ public class ProcessMode extends IRCProcessor {
         } else {
             callChannelModeChanged(iChannel, setterCCI, token[0], sFullModeStr.toString().trim());
             getCallbackManager().publish(
-                    new ChannelNonUserModeChangeEvent(parser, new Date(), iChannel, setterCCI,
-                            token[0], trim(sNonUserModeStr.toString() + sNonUserModeStrParams)));
+                    new ChannelNonUserModeChangeEvent(parser, LocalDateTime.now(), iChannel,
+                            setterCCI, token[0],
+                            trim(sNonUserModeStr.toString() + sNonUserModeStrParams)));
         }
     }
 
@@ -353,8 +357,8 @@ public class ProcessMode extends IRCProcessor {
     protected void callChannelModeChanged(final ChannelInfo cChannel,
             final ChannelClientInfo cChannelClient, final String sHost, final String sModes) {
         getCallbackManager().publish(
-                new ChannelModeChangeEvent(parser, new Date(), cChannel, cChannelClient, sHost,
-                        sModes));
+                new ChannelModeChangeEvent(parser, LocalDateTime.now(), cChannel, cChannelClient,
+                        sHost, sModes));
     }
 
     /**
@@ -370,8 +374,8 @@ public class ProcessMode extends IRCProcessor {
             final ChannelClientInfo cChangedClient, final ChannelClientInfo cSetByClient,
             final String sHost, final String sMode) {
         getCallbackManager().publish(
-                new ChannelUserModeChangeEvent(parser, new Date(), cChannel, cChangedClient,
-                        cSetByClient, sHost, sMode));
+                new ChannelUserModeChangeEvent(parser, LocalDateTime.now(), cChannel,
+                        cChangedClient, cSetByClient, sHost, sMode));
     }
 
     /**
@@ -384,7 +388,7 @@ public class ProcessMode extends IRCProcessor {
     protected void callUserModeChanged(final ClientInfo cClient, final String sSetby,
             final String sModes) {
         getCallbackManager().publish(
-                new UserModeChangeEvent(parser, new Date(), cClient, sSetby, sModes));
+                new UserModeChangeEvent(parser, LocalDateTime.now(), cClient, sSetby, sModes));
     }
 
     /**
@@ -395,7 +399,7 @@ public class ProcessMode extends IRCProcessor {
      */
     protected void callUserModeDiscovered(final ClientInfo cClient, final String sModes) {
         getCallbackManager().publish(
-                new UserModeDiscoveryEvent(parser, new Date(), cClient, sModes));
+                new UserModeDiscoveryEvent(parser, LocalDateTime.now(), cClient, sModes));
     }
 
 }

@@ -37,8 +37,8 @@ import com.dmdirc.parser.irc.ModeManager;
 import com.dmdirc.parser.irc.PrefixModeManager;
 import com.dmdirc.parser.irc.ProcessorNotFoundException;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Date;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -185,7 +185,7 @@ public class ProcessJoin extends IRCProcessor {
     protected void callChannelJoin(final ChannelInfo cChannel,
             final ChannelClientInfo cChannelClient) {
         getCallbackManager().publish(
-                new ChannelJoinEvent(parser, new Date(), cChannel, cChannelClient));
+                new ChannelJoinEvent(parser, LocalDateTime.now(), cChannel, cChannelClient));
     }
 
     /**
@@ -194,7 +194,8 @@ public class ProcessJoin extends IRCProcessor {
      * @param cChannel Channel Object
      */
     protected void callChannelSelfJoin(final ChannelInfo cChannel) {
-        getCallbackManager().publish(new ChannelSelfJoinEvent(parser, new Date(), cChannel));
+        getCallbackManager().publish(new ChannelSelfJoinEvent(
+                parser, LocalDateTime.now(), cChannel));
     }
 
 }

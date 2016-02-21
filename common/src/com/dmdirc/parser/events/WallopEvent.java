@@ -24,7 +24,7 @@ package com.dmdirc.parser.events;
 
 import com.dmdirc.parser.interfaces.Parser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -36,7 +36,7 @@ public class WallopEvent extends ParserEvent {
     private final String message;
     private final String host;
 
-    public WallopEvent(final Parser parser, final Date date, final String message,
+    public WallopEvent(final Parser parser, final LocalDateTime date, final String message,
             final String host) {
         super(parser, date);
         this.message = checkNotNull(message);

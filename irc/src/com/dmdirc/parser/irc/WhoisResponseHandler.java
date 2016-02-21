@@ -28,7 +28,7 @@ import com.dmdirc.parser.events.UserInfoEvent;
 import com.dmdirc.parser.events.UserInfoEvent.UserInfoType;
 import com.dmdirc.parser.interfaces.Parser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -113,7 +113,8 @@ public class WhoisResponseHandler {
     }
 
     private void sendEvent() {
-        manager.publish(new UserInfoEvent(parser, new Date(), parser.getClient(client), info));
+        manager.publish(new UserInfoEvent(parser, LocalDateTime.now(),
+                parser.getClient(client), info));
     }
 
 }

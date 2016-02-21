@@ -32,7 +32,7 @@ import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ModeManager;
 import com.dmdirc.parser.irc.PrefixModeManager;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -149,7 +149,7 @@ public class ProcessNames extends IRCProcessor {
     protected void callChannelTopic(final ChannelInfo cChannel, final boolean bIsJoinTopic) {
         ((IRCChannelInfo) cChannel).setHadTopic();
         getCallbackManager().publish(
-                new ChannelTopicEvent(parser, new Date(), cChannel, bIsJoinTopic));
+                new ChannelTopicEvent(parser, LocalDateTime.now(), cChannel, bIsJoinTopic));
     }
 
     /**
@@ -158,7 +158,7 @@ public class ProcessNames extends IRCProcessor {
      * @param cChannel Channel which the names reply is for
      */
     protected void callChannelGotNames(final ChannelInfo cChannel) {
-        getCallbackManager().publish(new ChannelNamesEvent(parser, new Date(), cChannel));
+        getCallbackManager().publish(new ChannelNamesEvent(parser, LocalDateTime.now(), cChannel));
     }
 
 }

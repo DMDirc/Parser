@@ -24,14 +24,14 @@ package com.dmdirc.parser.events;
 
 import com.dmdirc.parser.interfaces.Parser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * Called after 001.
  */
 public class ServerReadyEvent extends ParserEvent {
 
-    public ServerReadyEvent(final Parser parser, final Date date) {
+    public ServerReadyEvent(final Parser parser, final LocalDateTime date) {
         super(parser, date);
     }
 }

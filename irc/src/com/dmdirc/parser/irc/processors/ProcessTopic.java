@@ -28,7 +28,7 @@ import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.inject.Inject;
 
@@ -105,7 +105,7 @@ public class ProcessTopic extends IRCProcessor {
     protected void callChannelTopic(final ChannelInfo cChannel, final boolean bIsJoinTopic) {
         ((IRCChannelInfo) cChannel).setHadTopic();
         getCallbackManager().publish(
-                new ChannelTopicEvent(parser, new Date(), cChannel, bIsJoinTopic));
+                new ChannelTopicEvent(parser, LocalDateTime.now(), cChannel, bIsJoinTopic));
     }
 
 }

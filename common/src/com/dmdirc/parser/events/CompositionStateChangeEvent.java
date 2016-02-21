@@ -25,7 +25,7 @@ package com.dmdirc.parser.events;
 import com.dmdirc.parser.common.CompositionState;
 import com.dmdirc.parser.interfaces.Parser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -37,7 +37,7 @@ public class CompositionStateChangeEvent extends ParserEvent {
     private final CompositionState state;
     private final String host;
 
-    public CompositionStateChangeEvent(final Parser parser, final Date date,
+    public CompositionStateChangeEvent(final Parser parser, final LocalDateTime date,
             final CompositionState state, final String host) {
         super(parser, date);
         this.state = checkNotNull(state);

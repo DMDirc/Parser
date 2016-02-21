@@ -24,14 +24,14 @@ package com.dmdirc.parser.events;
 
 import com.dmdirc.parser.interfaces.Parser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * Callback interface for when the parser receives the start of a group list response.
  */
 public class GroupListStartEvent extends ParserEvent {
 
-    public GroupListStartEvent(final Parser parser, final Date date) {
+    public GroupListStartEvent(final Parser parser, final LocalDateTime date) {
         super(parser, date);
     }
 }

@@ -24,7 +24,7 @@ package com.dmdirc.parser.events;
 
 import com.dmdirc.parser.interfaces.Parser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -36,7 +36,7 @@ public class NumericEvent extends ParserEvent {
     private final int numeric;
     private final String[] token;
 
-    public NumericEvent(final Parser parser, final Date date, final int numeric,
+    public NumericEvent(final Parser parser, final LocalDateTime date, final int numeric,
             final String[] token) {
         super(parser, date);
         this.numeric = checkNotNull(numeric);

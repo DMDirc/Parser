@@ -25,7 +25,7 @@ package com.dmdirc.parser.irc.processors;
 import com.dmdirc.parser.events.InviteEvent;
 import com.dmdirc.parser.irc.IRCParser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.inject.Inject;
 
@@ -65,7 +65,8 @@ public class ProcessInvite extends IRCProcessor {
      * @param channel The name of the channel we were invited to
      */
     protected void callInvite(final String userHost, final String channel) {
-        getCallbackManager().publish(new InviteEvent(parser, new Date(), userHost, channel));
+        getCallbackManager().publish(new InviteEvent(
+                parser, LocalDateTime.now(), userHost, channel));
     }
 
 }

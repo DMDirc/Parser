@@ -26,9 +26,9 @@ import com.dmdirc.parser.irc.CapabilityState;
 import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.TimestampedIRCProcessor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 
 import javax.inject.Inject;
 
@@ -81,7 +81,7 @@ public class ProcessCap extends TimestampedIRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final Date date, final String sParam, final String... token) {
+    public void process(final LocalDateTime date, final String sParam, final String... token) {
         // We will only automatically handle the first ever pre-001 CAP LS
         // response.
         // After that, the user may be sending stuff themselves so we do

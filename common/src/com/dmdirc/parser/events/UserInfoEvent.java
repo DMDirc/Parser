@@ -25,8 +25,8 @@ package com.dmdirc.parser.events;
 import com.dmdirc.parser.interfaces.ClientInfo;
 import com.dmdirc.parser.interfaces.Parser;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.Date;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Optional;
@@ -39,7 +39,7 @@ public class UserInfoEvent extends ParserEvent {
     private final ClientInfo client;
     private final Map<UserInfoType, String> info;
 
-    public UserInfoEvent(final Parser parser, final Date date, final ClientInfo client,
+    public UserInfoEvent(final Parser parser, final LocalDateTime date, final ClientInfo client,
             final Map<UserInfoType, String> info) {
         super(parser, date);
         this.client = client;

@@ -24,14 +24,14 @@ package com.dmdirc.parser.events;
 
 import com.dmdirc.parser.interfaces.Parser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * Called when a Ping Failed.
  */
 public class PingFailureEvent extends ParserEvent {
 
-    public PingFailureEvent(final Parser parser, final Date date) {
+    public PingFailureEvent(final Parser parser, final LocalDateTime date) {
         super(parser, date);
     }
 }

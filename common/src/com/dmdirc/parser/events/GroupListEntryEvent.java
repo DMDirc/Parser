@@ -24,7 +24,7 @@ package com.dmdirc.parser.events;
 
 import com.dmdirc.parser.interfaces.Parser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -37,7 +37,7 @@ public class GroupListEntryEvent extends ParserEvent {
     private final int users;
     private final String topic;
 
-    public GroupListEntryEvent(final Parser parser, final Date date, final String name,
+    public GroupListEntryEvent(final Parser parser, final LocalDateTime date, final String name,
             final int users, final String topic) {
         super(parser, date);
         this.name = checkNotNull(name);

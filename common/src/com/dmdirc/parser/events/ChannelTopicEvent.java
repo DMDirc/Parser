@@ -25,7 +25,7 @@ package com.dmdirc.parser.events;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.Parser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -37,8 +37,8 @@ public class ChannelTopicEvent extends ParserEvent {
     private final ChannelInfo channel;
     private final boolean isJoinTopic;
 
-    public ChannelTopicEvent(final Parser parser, final Date date, final ChannelInfo channel,
-            final boolean isJoinTopic) {
+    public ChannelTopicEvent(final Parser parser, final LocalDateTime date,
+            final ChannelInfo channel, final boolean isJoinTopic) {
         super(parser, date);
         this.channel = checkNotNull(channel);
         this.isJoinTopic = isJoinTopic;

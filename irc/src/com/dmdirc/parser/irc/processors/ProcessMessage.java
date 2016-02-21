@@ -52,6 +52,7 @@ import com.dmdirc.parser.irc.PrefixModeManager;
 import com.dmdirc.parser.irc.ProcessorNotFoundException;
 import com.dmdirc.parser.irc.TimestampedIRCProcessor;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.regex.PatternSyntaxException;
 
@@ -94,7 +95,7 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final Date date, final String sParam, final String... token) {
+    public void process(final LocalDateTime date, final String sParam, final String... token) {
         // Ignore people!
         String sMessage;
         if (token[0].charAt(0) == ':') {
@@ -296,7 +297,7 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      * @param sMessage action contents
      * @param sHost Hostname of sender (or servername)
      */
-    protected void callChannelAction(final Date date, final ChannelInfo cChannel,
+    protected void callChannelAction(final LocalDateTime date, final ChannelInfo cChannel,
             final ChannelClientInfo cChannelClient, final String sMessage, final String sHost) {
         getCallbackManager().publish(
                 new ChannelActionEvent(parser, date, cChannel, cChannelClient, sMessage, sHost));
@@ -312,7 +313,7 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      * @param sMessage Additional contents
      * @param sHost Hostname of sender (or servername)
      */
-    protected void callChannelCTCP(final Date date, final ChannelInfo cChannel,
+    protected void callChannelCTCP(final LocalDateTime date, final ChannelInfo cChannel,
             final ChannelClientInfo cChannelClient, final String sType, final String sMessage,
             final String sHost) {
         getCallbackManager().publish(
@@ -330,7 +331,7 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      * @param sMessage Reply Contents
      * @param sHost Hostname of sender (or servername)
      */
-    protected void callChannelCTCPReply(final Date date, final ChannelInfo cChannel,
+    protected void callChannelCTCPReply(final LocalDateTime date, final ChannelInfo cChannel,
             final ChannelClientInfo cChannelClient, final String sType, final String sMessage,
             final String sHost) {
         getCallbackManager().publish(
@@ -347,7 +348,7 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      * @param sMessage Message contents
      * @param sHost Hostname of sender (or servername)
      */
-    protected void callChannelMessage(final Date date, final ChannelInfo cChannel,
+    protected void callChannelMessage(final LocalDateTime date, final ChannelInfo cChannel,
             final ChannelClientInfo cChannelClient, final String sMessage, final String sHost) {
         getCallbackManager().publish(
                 new ChannelMessageEvent(parser, date, cChannel, cChannelClient, sMessage, sHost));
@@ -362,7 +363,7 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      * @param sMessage notice contents
      * @param sHost Hostname of sender (or servername)
      */
-    protected void callChannelNotice(final Date date, final ChannelInfo cChannel,
+    protected void callChannelNotice(final LocalDateTime date, final ChannelInfo cChannel,
             final ChannelClientInfo cChannelClient, final String sMessage, final String sHost) {
         getCallbackManager().publish(
                 new ChannelNoticeEvent(parser, date, cChannel, cChannelClient, sMessage, sHost));
@@ -378,7 +379,7 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      * @param sMessage notice contents
      * @param sHost Hostname of sender (or servername)
      */
-    protected void callChannelModeNotice(final Date date, final char prefix,
+    protected void callChannelModeNotice(final LocalDateTime date, final char prefix,
             final ChannelInfo cChannel, final ChannelClientInfo cChannelClient,
             final String sMessage, final String sHost) {
         getCallbackManager().publish(
@@ -396,7 +397,7 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      * @param sMessage message contents
      * @param sHost Hostname of sender (or servername)
      */
-    protected void callChannelModeMessage(final Date date, final char prefix,
+    protected void callChannelModeMessage(final LocalDateTime date, final char prefix,
             final ChannelInfo cChannel, final ChannelClientInfo cChannelClient,
             final String sMessage, final String sHost) {
         getCallbackManager().publish(
@@ -411,7 +412,8 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      * @param sMessage action contents
      * @param sHost Hostname of sender (or servername)
      */
-    protected void callPrivateAction(final Date date, final String sMessage, final String sHost) {
+    protected void callPrivateAction(final LocalDateTime date, final String sMessage,
+            final String sHost) {
         getCallbackManager().publish(new PrivateActionEvent(parser, date, sMessage, sHost));
     }
 
@@ -423,8 +425,8 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      * @param sMessage Additional contents
      * @param sHost Hostname of sender (or servername)
      */
-    protected void callPrivateCTCP(final Date date, final String sType, final String sMessage,
-            final String sHost) {
+    protected void callPrivateCTCP(final LocalDateTime date, final String sType,
+            final String sMessage, final String sHost) {
         getCallbackManager().publish(new PrivateCTCPEvent(parser, date, sType, sMessage, sHost));
     }
 
@@ -436,8 +438,8 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      * @param sMessage Reply Contents
      * @param sHost Hostname of sender (or servername)
      */
-    protected void callPrivateCTCPReply(final Date date, final String sType, final String sMessage,
-            final String sHost) {
+    protected void callPrivateCTCPReply(final LocalDateTime date, final String sType,
+            final String sMessage, final String sHost) {
         getCallbackManager().publish(
                 new PrivateCTCPReplyEvent(parser, date, sType, sMessage, sHost));
     }
@@ -449,7 +451,8 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      * @param sMessage Message contents
      * @param sHost Hostname of sender (or servername)
      */
-    protected void callPrivateMessage(final Date date, final String sMessage, final String sHost) {
+    protected void callPrivateMessage(final LocalDateTime date, final String sMessage,
+            final String sHost) {
         getCallbackManager().publish(new PrivateMessageEvent(parser, date, sMessage, sHost));
     }
 
@@ -460,7 +463,8 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      * @param sMessage Notice contents
      * @param sHost Hostname of sender (or servername)
      */
-    protected void callPrivateNotice(final Date date, final String sMessage, final String sHost) {
+    protected void callPrivateNotice(final LocalDateTime date, final String sMessage,
+            final String sHost) {
         getCallbackManager().publish(new PrivateNoticeEvent(parser, date, sMessage, sHost));
     }
 
@@ -471,7 +475,8 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      * @param sMessage Notice contents
      * @param sHost Hostname of sender (or servername)
      */
-    protected void callServerNotice(final Date date, final String sMessage, final String sHost) {
+    protected void callServerNotice(final LocalDateTime date, final String sMessage,
+            final String sHost) {
         getCallbackManager().publish(new ServerNoticeEvent(parser, date, sMessage, sHost));
     }
 
@@ -483,8 +488,8 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      * @param sTarget Actual target of action
      * @param sHost Hostname of sender (or servername)
      */
-    protected void callUnknownAction(final Date date, final String sMessage, final String sTarget,
-            final String sHost) {
+    protected void callUnknownAction(final LocalDateTime date, final String sMessage,
+            final String sTarget, final String sHost) {
         getCallbackManager().publish(new UnknownActionEvent(parser, date, sMessage, sTarget, sHost));
     }
 
@@ -497,8 +502,8 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      * @param sTarget Actual Target of CTCP
      * @param sHost Hostname of sender (or servername)
      */
-    protected void callUnknownCTCP(final Date date, final String sType, final String sMessage,
-            final String sTarget, final String sHost) {
+    protected void callUnknownCTCP(final LocalDateTime date, final String sType,
+            final String sMessage, final String sTarget, final String sHost) {
         getCallbackManager().publish(
                 new UnknownCTCPEvent(parser, date, sType, sMessage, sTarget, sHost));
     }
@@ -512,8 +517,8 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      * @param sTarget Actual Target of CTCPReply
      * @param sHost Hostname of sender (or servername)
      */
-    protected void callUnknownCTCPReply(final Date date, final String sType, final String sMessage,
-            final String sTarget, final String sHost) {
+    protected void callUnknownCTCPReply(final LocalDateTime date, final String sType,
+            final String sMessage, final String sTarget, final String sHost) {
         getCallbackManager().publish(
                 new UnknownCTCPReplyEvent(parser, date, sType, sMessage, sTarget, sHost));
     }
@@ -526,8 +531,8 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      * @param sTarget Actual target of message
      * @param sHost Hostname of sender (or servername)
      */
-    protected void callUnknownMessage(final Date date, final String sMessage, final String sTarget,
-            final String sHost) {
+    protected void callUnknownMessage(final LocalDateTime date, final String sMessage,
+            final String sTarget, final String sHost) {
         getCallbackManager().publish(
                 new UnknownMessageEvent(parser, date, sMessage, sTarget, sHost));
     }
@@ -540,9 +545,10 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      * @param sTarget Actual target of notice
      * @param sHost Hostname of sender (or servername)
      */
-    protected void callUnknownNotice(final Date date, final String sMessage, final String sTarget,
-            final String sHost) {
-        getCallbackManager().publish(new UnknownNoticeEvent(parser, date, sMessage, sTarget, sHost));
+    protected void callUnknownNotice(final LocalDateTime date, final String sMessage,
+            final String sTarget, final String sHost) {
+        getCallbackManager().publish(new UnknownNoticeEvent(parser, date, sMessage, sTarget,
+                sHost));
     }
 
     /**
@@ -553,7 +559,7 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      * @param sTarget Actual target of notice
      * @param sHost Hostname of sender (or servername)
      */
-    protected void callUnknownServerNotice(final Date date, final String sMessage,
+    protected void callUnknownServerNotice(final LocalDateTime date, final String sMessage,
             final String sTarget, final String sHost) {
         getCallbackManager().publish(
                 new UnknownServerNoticeEvent(parser, date, sMessage, sTarget, sHost));
