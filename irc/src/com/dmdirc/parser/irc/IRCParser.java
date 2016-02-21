@@ -1090,8 +1090,8 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
 
         if (line.getTags().containsKey("tsirc date")) {
             try {
-                final long ts = Long.parseLong(line.getTags().get("tsirc date"));
-                lineTS = LocalDateTime.ofEpochSecond(ts - tsdiff, 0, ZoneOffset.UTC);
+                final long ts = Long.parseLong(line.getTags().get("tsirc date")) - tsdiff;
+                lineTS = LocalDateTime.ofEpochSecond(ts / 1000L, (int) (ts % 1000L), ZoneOffset.UTC);
             } catch (final NumberFormatException nfe) { /* Do nothing. */ }
         } else if (line.getTags().containsKey("time")) {
             try {
