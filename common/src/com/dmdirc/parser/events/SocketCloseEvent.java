@@ -24,14 +24,14 @@ package com.dmdirc.parser.events;
 
 import com.dmdirc.parser.interfaces.Parser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * Called when the socket is closed.
  */
 public class SocketCloseEvent extends ParserEvent {
 
-    public SocketCloseEvent(final Parser parser, final Date date) {
+    public SocketCloseEvent(final Parser parser, final LocalDateTime date) {
         super(parser, date);
     }
 }

@@ -26,7 +26,7 @@ import com.dmdirc.parser.common.AwayState;
 import com.dmdirc.parser.interfaces.ClientInfo;
 import com.dmdirc.parser.interfaces.Parser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -39,8 +39,8 @@ public class OtherAwayStateEvent extends ParserEvent {
     private final AwayState oldState;
     private final AwayState newState;
 
-    public OtherAwayStateEvent(final Parser parser, final Date date, final ClientInfo client,
-            final AwayState oldState, final AwayState newState) {
+    public OtherAwayStateEvent(final Parser parser, final LocalDateTime date,
+            final ClientInfo client, final AwayState oldState, final AwayState newState) {
         super(parser, date);
         this.client = checkNotNull(client);
         this.oldState = checkNotNull(oldState);

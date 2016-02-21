@@ -26,7 +26,7 @@ import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.events.NumericEvent;
 import com.dmdirc.parser.irc.processors.IRCProcessor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -133,7 +133,7 @@ public class ProcessingManager {
      * @throws ProcessorNotFoundException exception if no processors exists to handle the line
      */
     public void process(final String sParam, final String... token) throws ProcessorNotFoundException {
-        process(new Date(), sParam, token);
+        process(LocalDateTime.now(), sParam, token);
     }
 
     /**
@@ -144,7 +144,8 @@ public class ProcessingManager {
      * @param token IRCTokenised line to process
      * @throws ProcessorNotFoundException exception if no processors exists to handle the line
      */
-    public void process(final Date date, final String sParam, final String... token) throws ProcessorNotFoundException {
+    public void process(final LocalDateTime date, final String sParam, final String... token)
+            throws ProcessorNotFoundException {
         IRCProcessor messageProcessor = null;
         try {
             messageProcessor = getProcessor(sParam);
@@ -178,6 +179,7 @@ public class ProcessingManager {
      * @param token IRC Tokenised line
      */
     protected void callNumeric(final int numeric, final String... token) {
-        parser.getCallbackManager().publish(new NumericEvent(parser, new Date(), numeric, token));
+        parser.getCallbackManager().publish(new NumericEvent(parser, LocalDateTime.now(), numeric,
+                token));
     }
 }

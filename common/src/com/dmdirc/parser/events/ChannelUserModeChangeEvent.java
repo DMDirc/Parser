@@ -26,7 +26,7 @@ import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.Parser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -41,7 +41,7 @@ public class ChannelUserModeChangeEvent extends ParserEvent {
     private final String host;
     private final String mode;
 
-    public ChannelUserModeChangeEvent(final Parser parser, final Date date,
+    public ChannelUserModeChangeEvent(final Parser parser, final LocalDateTime date,
             final ChannelInfo channel, final ChannelClientInfo targetClient,
             final ChannelClientInfo client, final String host, final String mode) {
         super(parser, date);

@@ -24,7 +24,7 @@ package com.dmdirc.parser.events;
 
 import com.dmdirc.parser.interfaces.Parser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -37,8 +37,8 @@ public class NetworkDetectedEvent extends ParserEvent {
     private final String ircdVersion;
     private final String ircdType;
 
-    public NetworkDetectedEvent(final Parser parser, final Date date, final String networkName,
-            final String ircdVersion, final String ircdType) {
+    public NetworkDetectedEvent(final Parser parser, final LocalDateTime date,
+            final String networkName, final String ircdVersion, final String ircdType) {
         super(parser, date);
         this.networkName = checkNotNull(networkName);
         this.ircdVersion = checkNotNull(ircdVersion);

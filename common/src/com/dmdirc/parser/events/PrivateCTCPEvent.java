@@ -24,7 +24,7 @@ package com.dmdirc.parser.events;
 
 import com.dmdirc.parser.interfaces.Parser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -37,7 +37,7 @@ public class PrivateCTCPEvent extends ParserEvent {
     private final String message;
     private final String host;
 
-    public PrivateCTCPEvent(final Parser parser, final Date date, final String type,
+    public PrivateCTCPEvent(final Parser parser, final LocalDateTime date, final String type,
             final String message, final String host) {
         super(parser, date);
         this.type = checkNotNull(type);

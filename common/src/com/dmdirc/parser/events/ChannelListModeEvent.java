@@ -25,7 +25,7 @@ package com.dmdirc.parser.events;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.Parser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -37,8 +37,8 @@ public class ChannelListModeEvent extends ParserEvent {
     private final ChannelInfo channel;
     private final char mode;
 
-    public ChannelListModeEvent(final Parser parser, final Date date, final ChannelInfo channel,
-            final char mode) {
+    public ChannelListModeEvent(final Parser parser, final LocalDateTime date,
+            final ChannelInfo channel, final char mode) {
         super(parser, date);
         this.channel = checkNotNull(channel);
         this.mode = mode;

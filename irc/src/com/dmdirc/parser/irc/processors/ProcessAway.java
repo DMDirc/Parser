@@ -26,7 +26,7 @@ import com.dmdirc.parser.events.AwayStateEvent;
 import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.inject.Inject;
 
@@ -93,7 +93,7 @@ public class ProcessAway extends IRCProcessor {
     protected void callAwayState(final AwayState oldState, final AwayState currentState,
             final String reason) {
         getCallbackManager().publish(
-                new AwayStateEvent(parser, new Date(), oldState, currentState, reason));
+                new AwayStateEvent(parser, LocalDateTime.now(), oldState, currentState, reason));
     }
 
 }

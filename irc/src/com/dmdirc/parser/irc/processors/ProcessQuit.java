@@ -32,8 +32,8 @@ import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 
 import javax.inject.Inject;
 
@@ -122,7 +122,8 @@ public class ProcessQuit extends IRCProcessor {
     protected void callChannelQuit(final ChannelInfo cChannel,
             final ChannelClientInfo cChannelClient, final String sReason) {
         getCallbackManager().publish(
-                new ChannelQuitEvent(parser, new Date(), cChannel, cChannelClient, sReason));
+                new ChannelQuitEvent(parser, LocalDateTime.now(), cChannel, cChannelClient,
+                        sReason));
     }
 
     /**
@@ -132,7 +133,7 @@ public class ProcessQuit extends IRCProcessor {
      * @param sReason Reason for quitting (may be "")
      */
     protected void callQuit(final ClientInfo cClient, final String sReason) {
-        getCallbackManager().publish(new QuitEvent(parser, new Date(), cClient, sReason));
+        getCallbackManager().publish(new QuitEvent(parser, LocalDateTime.now(), cClient, sReason));
     }
 
 }

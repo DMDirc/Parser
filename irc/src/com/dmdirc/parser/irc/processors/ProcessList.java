@@ -27,7 +27,7 @@ import com.dmdirc.parser.events.GroupListEntryEvent;
 import com.dmdirc.parser.events.GroupListStartEvent;
 import com.dmdirc.parser.irc.IRCParser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.inject.Inject;
 
@@ -59,14 +59,14 @@ public class ProcessList extends IRCProcessor {
         // :port80b.se.quakenet.org 323 MD87 :End of /LIST
         switch (sParam) {
             case "321":
-                getCallbackManager().publish(new GroupListStartEvent(parser, new Date()));
+                getCallbackManager().publish(new GroupListStartEvent(parser, LocalDateTime.now()));
                 break;
             case "322":
-                getCallbackManager().publish(new GroupListEntryEvent(parser, new Date(), token[3],
-                        Integer.parseInt(token[4]), token[5]));
+                getCallbackManager().publish(new GroupListEntryEvent(parser, LocalDateTime.now(),
+                        token[3], Integer.parseInt(token[4]), token[5]));
                 break;
             case "323":
-                getCallbackManager().publish(new GroupListEndEvent(parser, new Date()));
+                getCallbackManager().publish(new GroupListEndEvent(parser, LocalDateTime.now()));
                 break;
         }
     }

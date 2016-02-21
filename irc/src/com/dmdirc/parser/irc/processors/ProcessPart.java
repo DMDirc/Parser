@@ -31,7 +31,7 @@ import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.inject.Inject;
 
@@ -115,7 +115,8 @@ public class ProcessPart extends IRCProcessor {
     protected void callChannelPart(final ChannelInfo cChannel,
             final ChannelClientInfo cChannelClient, final String sReason) {
         getCallbackManager().publish(
-                new ChannelPartEvent(parser, new Date(), cChannel, cChannelClient, sReason));
+                new ChannelPartEvent(parser, LocalDateTime.now(), cChannel, cChannelClient,
+                        sReason));
     }
 
 }

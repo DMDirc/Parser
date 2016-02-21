@@ -30,9 +30,9 @@ import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ServerType;
 import com.dmdirc.parser.irc.ServerTypeGroup;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Queue;
 
 import javax.inject.Inject;
@@ -286,6 +286,7 @@ public class ProcessListModes extends IRCProcessor {
      * @param mode the mode that we got list modes for.
      */
     protected void callChannelGotListModes(final ChannelInfo cChannel, final char mode) {
-        getCallbackManager().publish(new ChannelListModeEvent(parser, new Date(), cChannel, mode));
+        getCallbackManager().publish(new ChannelListModeEvent(parser, LocalDateTime.now(), cChannel,
+                mode));
     }
 }

@@ -26,7 +26,7 @@ import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.Parser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -41,7 +41,7 @@ public class ChannelKickEvent extends ParserEvent {
     private final String reason;
     private final String host;
 
-    public ChannelKickEvent(final Parser parser, final Date date, final ChannelInfo channel,
+    public ChannelKickEvent(final Parser parser, final LocalDateTime date, final ChannelInfo channel,
             final ChannelClientInfo kickedClient, final ChannelClientInfo client,
             final String reason, final String host) {
         super(parser, date);

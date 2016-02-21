@@ -24,7 +24,7 @@ package com.dmdirc.parser.events;
 
 import com.dmdirc.parser.interfaces.Parser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -36,7 +36,7 @@ public class InviteEvent extends ParserEvent {
     private final String userHost;
     private final String channel;
 
-    public InviteEvent(final Parser parser, final Date date, final String userHost,
+    public InviteEvent(final Parser parser, final LocalDateTime date, final String userHost,
             final String channel) {
         super(parser, date);
         this.userHost = checkNotNull(userHost);

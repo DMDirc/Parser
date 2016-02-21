@@ -25,7 +25,7 @@ package com.dmdirc.parser.events;
 import com.dmdirc.parser.interfaces.ClientInfo;
 import com.dmdirc.parser.interfaces.Parser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -37,7 +37,7 @@ public class NickChangeEvent extends ParserEvent {
     private final ClientInfo client;
     private final String oldNick;
 
-    public NickChangeEvent(final Parser parser, final Date date, final ClientInfo client,
+    public NickChangeEvent(final Parser parser, final LocalDateTime date, final ClientInfo client,
             final String oldNick) {
         super(parser, date);
         this.client = checkNotNull(client);

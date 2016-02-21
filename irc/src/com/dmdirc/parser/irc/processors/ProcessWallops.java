@@ -27,7 +27,7 @@ import com.dmdirc.parser.events.WallopEvent;
 import com.dmdirc.parser.events.WalluserEvent;
 import com.dmdirc.parser.irc.IRCParser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.inject.Inject;
 
@@ -84,7 +84,7 @@ public class ProcessWallops extends IRCProcessor {
      * @param host Host of the user who sent the wallop
      */
     protected void callWallop(final String message, final String host) {
-        getCallbackManager().publish(new WallopEvent(parser, new Date(), message, host));
+        getCallbackManager().publish(new WallopEvent(parser, LocalDateTime.now(), message, host));
     }
 
     /**
@@ -94,7 +94,7 @@ public class ProcessWallops extends IRCProcessor {
      * @param host Host of the user who sent the walluser
      */
     protected void callWalluser(final String message, final String host) {
-        getCallbackManager().publish(new WalluserEvent(parser, new Date(), message, host));
+        getCallbackManager().publish(new WalluserEvent(parser, LocalDateTime.now(), message, host));
     }
 
     /**
@@ -104,7 +104,8 @@ public class ProcessWallops extends IRCProcessor {
      * @param host Host of the user who sent the WallDesync
      */
     protected void callWallDesync(final String message, final String host) {
-        getCallbackManager().publish(new WallDesyncEvent(parser, new Date(), message, host));
+        getCallbackManager().publish(new WallDesyncEvent(
+                parser, LocalDateTime.now(), message, host));
     }
 
 }

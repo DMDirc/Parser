@@ -31,8 +31,8 @@ import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Date;
 
 import javax.inject.Inject;
 
@@ -122,8 +122,8 @@ public class ProcessKick extends IRCProcessor {
             final ChannelClientInfo cKickedClient, final ChannelClientInfo cKickedByClient,
             final String sReason, final String sKickedByHost) {
         getCallbackManager().publish(
-                new ChannelKickEvent(parser, new Date(), cChannel, cKickedClient, cKickedByClient,
-                        sReason, sKickedByHost));
+                new ChannelKickEvent(parser, LocalDateTime.now(), cChannel, cKickedClient,
+                        cKickedByClient, sReason, sKickedByHost));
     }
 
 }

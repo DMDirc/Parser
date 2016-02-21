@@ -26,7 +26,7 @@ import com.dmdirc.parser.events.DebugInfoEvent;
 import com.dmdirc.parser.events.NickInUseEvent;
 import com.dmdirc.parser.interfaces.Parser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import net.engio.mbassy.listener.Handler;
 import net.engio.mbassy.listener.Listener;
@@ -73,7 +73,7 @@ public class SimpleNickInUseHandler {
 
     private void callDebugInfo(final Parser parser, final int level, final String data) {
         parser.getCallbackManager().publish(
-                new DebugInfoEvent(parser, new Date(), level, data));
+                new DebugInfoEvent(parser, LocalDateTime.now(), level, data));
     }
 
     /**

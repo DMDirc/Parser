@@ -24,7 +24,7 @@ package com.dmdirc.parser.irc;
 
 import com.dmdirc.parser.irc.processors.IRCProcessor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * TimestampedIRCProcessor.
@@ -45,7 +45,7 @@ public abstract class TimestampedIRCProcessor extends IRCProcessor {
 
     @Override
     public final void process(final String sParam, final String... token) {
-        process(new Date(), sParam, token);
+        process(LocalDateTime.now(), sParam, token);
     }
 
     /**
@@ -55,7 +55,8 @@ public abstract class TimestampedIRCProcessor extends IRCProcessor {
      * @param sParam Type of line to process ("005", "PRIVMSG" etc)
      * @param token IRCTokenised line to process
      */
-    public abstract void process(final Date date, final String sParam, final String... token);
+    public abstract void process(final LocalDateTime date, final String sParam,
+            final String... token);
 
 
 }

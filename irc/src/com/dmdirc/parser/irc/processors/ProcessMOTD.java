@@ -27,7 +27,7 @@ import com.dmdirc.parser.events.MOTDLineEvent;
 import com.dmdirc.parser.events.MOTDStartEvent;
 import com.dmdirc.parser.irc.IRCParser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.inject.Inject;
 
@@ -74,7 +74,7 @@ public class ProcessMOTD extends IRCProcessor {
      * @param data The contents of the line (incase of language changes or so)
      */
     protected void callMOTDEnd(final boolean noMOTD, final String data) {
-        getCallbackManager().publish(new MOTDEndEvent(parser, new Date(), noMOTD, data));
+        getCallbackManager().publish(new MOTDEndEvent(parser, LocalDateTime.now(), noMOTD, data));
     }
 
     /**
@@ -83,7 +83,7 @@ public class ProcessMOTD extends IRCProcessor {
      * @param data Incomming Line.
      */
     protected void callMOTDLine(final String data) {
-        getCallbackManager().publish(new MOTDLineEvent(parser, new Date(), data));
+        getCallbackManager().publish(new MOTDLineEvent(parser, LocalDateTime.now(), data));
     }
 
     /**
@@ -92,7 +92,7 @@ public class ProcessMOTD extends IRCProcessor {
      * @param data Incomming Line.
      */
     protected void callMOTDStart(final String data) {
-        getCallbackManager().publish(new MOTDStartEvent(parser, new Date(), data));
+        getCallbackManager().publish(new MOTDStartEvent(parser, LocalDateTime.now(), data));
     }
 
 }

@@ -58,13 +58,14 @@ import java.net.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -527,7 +528,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @param message The error message
      */
     protected void callServerError(final String message) {
-        getCallbackManager().publish(new ServerErrorEvent(this, new Date(), message));
+        getCallbackManager().publish(new ServerErrorEvent(this, LocalDateTime.now(), message));
     }
 
     /**
@@ -536,7 +537,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @param data Incoming Line.
      */
     protected void callDataIn(final String data) {
-        getCallbackManager().publish(new DataInEvent(this, new Date(), data));
+        getCallbackManager().publish(new DataInEvent(this, LocalDateTime.now(), data));
     }
 
     /**
@@ -546,7 +547,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @param fromParser True if parser sent the data, false if sent using .sendLine
      */
     protected void callDataOut(final String data, final boolean fromParser) {
-        getCallbackManager().publish(new DataOutEvent(this, new Date(), data));
+        getCallbackManager().publish(new DataOutEvent(this, LocalDateTime.now(), data));
     }
 
     /**
@@ -567,7 +568,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @param data Debugging Information
      */
     protected void callDebugInfo(final int level, final String data) {
-        getCallbackManager().publish(new DebugInfoEvent(this, new Date(), level, data));
+        getCallbackManager().publish(new DebugInfoEvent(this, LocalDateTime.now(), level, data));
     }
 
     /**
@@ -576,7 +577,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @param errorInfo ParserError object representing the error.
      */
     public void callErrorInfo(final ParserError errorInfo) {
-        getCallbackManager().publish(new ErrorInfoEvent(this, new Date(), errorInfo));
+        getCallbackManager().publish(new ErrorInfoEvent(this, LocalDateTime.now(), errorInfo));
     }
 
     /**
@@ -585,7 +586,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @param errorInfo ParserError object representing the error.
      */
     protected void callConnectError(final ParserError errorInfo) {
-        getCallbackManager().publish(new ConnectErrorEvent(this, new Date(), errorInfo));
+        getCallbackManager().publish(new ConnectErrorEvent(this, LocalDateTime.now(), errorInfo));
     }
 
     /**
@@ -595,7 +596,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
         // Don't allow state resetting whilst there may be handlers requiring
         // state.
         synchronized (resetStateSync) {
-            getCallbackManager().publish(new SocketCloseEvent(this, new Date()));
+            getCallbackManager().publish(new SocketCloseEvent(this, LocalDateTime.now()));
         }
     }
 
@@ -603,21 +604,21 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * Callback to all objects implementing the PingFailed Callback.
      */
     protected void callPingFailed() {
-        getCallbackManager().publish(new PingFailureEvent(this, new Date()));
+        getCallbackManager().publish(new PingFailureEvent(this, LocalDateTime.now()));
     }
 
     /**
      * Callback to all objects implementing the PingSent Callback.
      */
     protected void callPingSent() {
-        getCallbackManager().publish(new PingSentEvent(this, new Date()));
+        getCallbackManager().publish(new PingSentEvent(this, LocalDateTime.now()));
     }
 
     /**
      * Callback to all objects implementing the PingSuccess Callback.
      */
     protected void callPingSuccess() {
-        getCallbackManager().publish(new PingSuccessEvent(this, new Date()));
+        getCallbackManager().publish(new PingSuccessEvent(this, LocalDateTime.now()));
     }
 
     /**
@@ -641,7 +642,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
         }
 
         whoisHandler.start();
-        getCallbackManager().publish(new ServerReadyEvent(this, new Date()));
+        getCallbackManager().publish(new ServerReadyEvent(this, LocalDateTime.now()));
     }
 
     //---------------------------------------------------------------------------
@@ -1085,18 +1086,18 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     protected void processLine(final ReadLine line) {
         callDataIn(line.getLine());
         final String[] token = line.getTokens();
-        Date lineTS = new Date();
+        LocalDateTime lineTS = LocalDateTime.now();
 
         if (line.getTags().containsKey("tsirc date")) {
             try {
                 final long ts = Long.parseLong(line.getTags().get("tsirc date"));
-                lineTS = new Date(ts - tsdiff);
+                lineTS = LocalDateTime.ofEpochSecond(ts - tsdiff, 0, ZoneOffset.UTC);
             } catch (final NumberFormatException nfe) { /* Do nothing. */ }
         } else if (line.getTags().containsKey("time")) {
-            final SimpleDateFormat servertime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
             try {
-                lineTS = servertime.parse(line.getTags().get("time"));
-            } catch (final ParseException pe) { /* Do nothing. */ }
+                lineTS = LocalDateTime.parse(line.getTags().get("time"),
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+            } catch (final DateTimeParseException pe) { /* Do nothing. */ }
         }
 
         setPingNeeded(false);

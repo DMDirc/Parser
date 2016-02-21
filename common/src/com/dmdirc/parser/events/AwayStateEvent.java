@@ -25,7 +25,7 @@ package com.dmdirc.parser.events;
 import com.dmdirc.parser.common.AwayState;
 import com.dmdirc.parser.interfaces.Parser;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.annotation.Nullable;
 
@@ -40,7 +40,7 @@ public class AwayStateEvent extends ParserEvent {
     private final AwayState newState;
     private final String reason;
 
-    public AwayStateEvent(final Parser parser, final Date date, final AwayState oldState,
+    public AwayStateEvent(final Parser parser, final LocalDateTime date, final AwayState oldState,
             final AwayState newState, @Nullable final String reason) {
         super(parser, date);
         this.oldState = checkNotNull(oldState);
