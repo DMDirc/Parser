@@ -90,9 +90,9 @@ public class ClientInfoTest {
     @Test
     public void testAwayState() {
         final IRCClientInfo ci = new IRCClientInfo(new IRCParser(), null, "nick!ident@host");
-        assertFalse(ci.getAwayState() == AwayState.AWAY);
+        assertNotSame(AwayState.AWAY, ci.getAwayState());
         ci.setAwayState(AwayState.HERE);
-        assertTrue(ci.getAwayState() == AwayState.HERE);
+        assertSame(AwayState.HERE, ci.getAwayState());
     }
 
     @Test
