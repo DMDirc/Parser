@@ -93,6 +93,26 @@ public class WhoisResponseHandler {
         info.put(UserInfoType.SERVER_INFO, event.getToken()[5]);
     }
 
+    @Handler(condition = "msg.numeric == 313")
+    void handleUserPrivileges(final NumericEvent event) {
+        // :server 313 DMDirc User :is an IRC Operator
+        info.put(UserInfoType.SERVER_OPER, event.getToken()[4]);
+    }
+
+    @Handler(condition = "msg.numeric == 378")
+    void handleConnectingFrom(final NumericEvent event) {
+        // :server 378 DMDirc User :is connecting from *@hostname.tld xx.xx.xx.xx
+        if (client.equalsIgnoreCase(event.getToken()[3])) {
+            info.put(UserInfoType.REAL_ADDRESS, event.getToken()[4]);
+        }
+    }
+
+    @Handler(condition = "msg.numeric == 671")
+    void handleSecureConnection(final NumericEvent event) {
+        // :server 671 DMDirc User :is using a secure connection
+        info.put(UserInfoType.CONNECTION_SECURITY, event.getToken()[4]);
+    }
+
     @Handler(condition = "msg.numeric == 319")
     void handleChannelList(final NumericEvent event) {
         // :server 319 DMDirc User :@#channel1 +#channel2 ...

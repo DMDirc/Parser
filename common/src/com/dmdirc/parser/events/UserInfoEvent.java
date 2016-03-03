@@ -81,6 +81,8 @@ public class UserInfoEvent extends ParserEvent {
 
         /** The user's full address. */
         ADDRESS,
+        /** The user's real address. */
+        REAL_ADDRESS,
         /** The user's real name. */
         REAL_NAME,
         /** The list of group chats the user is in. */
