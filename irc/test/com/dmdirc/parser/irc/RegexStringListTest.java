@@ -89,9 +89,9 @@ public class RegexStringListTest {
 
         final IgnoreList list = new IgnoreList(tempList);
 
-        assertTrue(list.matches("a!b@c") == 0);
-        assertTrue(list.matches("foo") == -1);
-        assertTrue(list.matches("Dataforce") == 1);
+        assertEquals(0, list.matches("a!b@c"));
+        assertEquals(-1, list.matches("foo"));
+        assertEquals(1, list.matches("Dataforce"));
         assertFalse(list.matches(100, "Dataforce"));
         assertTrue(list.matches(1, "Dataforce"));
     }
