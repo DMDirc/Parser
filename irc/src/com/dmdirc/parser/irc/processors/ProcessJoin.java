@@ -204,7 +204,7 @@ public class ProcessJoin extends IRCProcessor {
         }
     }
 
-    @Handler(delivery = Invoke.Synchronously, condition = "msg.action == 'JOIN'")
+    @Handler(condition = "msg.action == 'JOIN'")
     public void handleDataOut(final IRCDataOutEvent event) {
         // As long as this is called before the resulting DataIn
         // Processors fire then this will work, otherwise we'll end
