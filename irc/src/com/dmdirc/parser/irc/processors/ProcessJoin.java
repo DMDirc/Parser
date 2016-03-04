@@ -253,7 +253,8 @@ public class ProcessJoin extends IRCProcessor {
     }
 
 
-    private class PendingJoin {
+    /** Class to link channels to pending keys. */
+    private static class PendingJoin {
         /** Channel name. */
         private final String channel;
         /** Guessed Key. */
