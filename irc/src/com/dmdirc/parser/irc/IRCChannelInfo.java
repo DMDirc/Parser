@@ -24,11 +24,13 @@ package com.dmdirc.parser.irc;
 import com.dmdirc.parser.common.ChannelListModeItem;
 import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.common.QueuePriority;
+import com.dmdirc.parser.events.ChannelPasswordChangedEvent;
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.ClientInfo;
 import com.dmdirc.parser.interfaces.Parser;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -72,6 +74,8 @@ public class IRCChannelInfo implements ChannelInfo {
     private final PrefixModeManager prefixModeManager;
     /** Channel Name. */
     private final String name;
+    /** Channel Key. */
+    private String password = "";
     /** Hashtable containing references to ChannelClients. */
     private final Map<String, IRCChannelClientInfo> clients = Collections.synchronizedMap(new HashMap<>());
     /** Hashtable storing values for modes set in the channel that use parameters. */
@@ -440,6 +444,21 @@ public class IRCChannelInfo implements ChannelInfo {
         return topicUser;
     }
 
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * Set the internal value of the channel password,
+     *
+     * @param newValue New Value to set
+     */
+    public void setInternalPassword(final String newValue) {
+        password = newValue;
+        parser.getCallbackManager().publish(new ChannelPasswordChangedEvent(parser, LocalDateTime.now(), this));
+    }
+
     /**
      * Set the channel modes.
      *
@@ -487,6 +506,13 @@ public class IRCChannelInfo implements ChannelInfo {
             }
         } else {
             paramModes.put(cMode, sValue);
+            if (cMode == 'k') {
+                if (sValue.equalsIgnoreCase("*") && !getPassword().equalsIgnoreCase("*")) {
+                    // Don't overwrite a guessed password with a hidden one.
+                    return;
+                }
+                setInternalPassword(sValue);
+            }
         }
     }
 

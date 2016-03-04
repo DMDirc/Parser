@@ -43,6 +43,13 @@ public interface ChannelInfo {
     String getName();
 
     /**
+     * Returns the password for this channel.
+     *
+     * @return The password for this channel
+     */
+    String getPassword();
+
+    /**
      * Changes the topic of this channel.
      *
      * @param topic This channel's new topic

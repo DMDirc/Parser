@@ -69,6 +69,11 @@ public abstract class BaseChannelInfo implements ChannelInfo {
     }
 
     @Override
+    public String getPassword() {
+        return "";
+    }
+
+    @Override
     public void sendMessage(final String message) {
         parser.sendMessage(name, message);
     }
