@@ -32,6 +32,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Called on every outgoing line BEFORE being sent.
+ *
+ * This extends the standard DataOutEvent to also pre-tokenise the data.
  */
 public class IRCDataOutEvent extends DataOutEvent {
 
