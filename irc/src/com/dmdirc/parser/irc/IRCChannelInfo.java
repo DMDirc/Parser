@@ -24,6 +24,7 @@ package com.dmdirc.parser.irc;
 import com.dmdirc.parser.common.ChannelListModeItem;
 import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.common.QueuePriority;
+import com.dmdirc.parser.events.ChannelPasswordChangedEvent;
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.ClientInfo;
@@ -454,6 +455,7 @@ public class IRCChannelInfo implements ChannelInfo {
      */
     public void setInternalPassword(final String newValue) {
         password = newValue;
+        parser.getCallbackManager().publish(new ChannelPasswordChangedEvent(parser, LocalDateTime.now(), this));
     }
 
     /**
