@@ -67,7 +67,7 @@ public class ProcessJoin extends IRCProcessor {
     public ProcessJoin(final IRCParser parser, final PrefixModeManager prefixModeManager,
             @Named("user") final ModeManager userModeManager,
             @Named("channel") final ModeManager chanModeManager) {
-        super(parser, "JOIN", "329");
+        super(parser, "JOIN", "329", "471", "473", "474", "475", "476", "477", "479");
         this.prefixModeManager = prefixModeManager;
         this.userModeManager = userModeManager;
         this.chanModeManager = chanModeManager;
@@ -95,13 +95,12 @@ public class ProcessJoin extends IRCProcessor {
                     // Oh well, not a normal ircd I guess
                 }
             }
-        } else {
+        } else if ("JOIN".equals(sParam)) {
             // :nick!ident@host JOIN (:)#Channel
             if (token.length < 3) {
                 return;
             }
             final boolean extendedJoin = parser.getCapabilityState("extended-join") == CapabilityState.ENABLED;
-
 
             IRCClientInfo iClient = getClientInfo(token[0]);
             final String realName;
@@ -172,7 +171,22 @@ public class ProcessJoin extends IRCProcessor {
             parser.addChannel(iChannel);
             sendString("MODE " + iChannel.getName(), QueuePriority.LOW);
 
+            final String pendingJoin = parser.getPendingJoins().poll();
+            final String pendingJoinKey = parser.getPendingJoinKeys().poll();
+            if (pendingJoin.equalsIgnoreCase(channelName)) {
+                callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Guessing channel Key: " + pendingJoin + " -> " + pendingJoinKey);
+                iChannel.setInternalPassword(pendingJoinKey == null ? "" : pendingJoinKey);
+            } else {
+                // Out of sync, clear.
+                parser.getPendingJoins().clear();
+                parser.getPendingJoinKeys().clear();
+            }
+
             callChannelSelfJoin(iChannel);
+        } else {
+            // Some kind of failed to join, pop the pending join queues.
+            parser.getPendingJoins().poll();
+            parser.getPendingJoinKeys().poll();
         }
     }
 
