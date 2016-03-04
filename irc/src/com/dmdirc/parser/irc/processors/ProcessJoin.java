@@ -26,6 +26,7 @@ import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.common.QueuePriority;
 import com.dmdirc.parser.events.ChannelJoinEvent;
 import com.dmdirc.parser.events.ChannelSelfJoinEvent;
+import com.dmdirc.parser.events.DataOutEvent;
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.irc.CapabilityState;
@@ -36,9 +37,14 @@ import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ModeManager;
 import com.dmdirc.parser.irc.PrefixModeManager;
 import com.dmdirc.parser.irc.ProcessorNotFoundException;
+import com.dmdirc.parser.irc.events.IRCDataOutEvent;
+import net.engio.mbassy.listener.Handler;
+import net.engio.mbassy.listener.Invoke;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -54,6 +60,10 @@ public class ProcessJoin extends IRCProcessor {
     private final ModeManager userModeManager;
     /** Mode manager to use for channel modes. */
     private final ModeManager chanModeManager;
+    /** Pending Joins. */
+    private final Queue<String> pendingJoins = new LinkedList<>();
+    /** Pending Join Keys. */
+    private final Queue<String> pendingJoinKeys = new LinkedList<>();
 
     /**
      * Create a new instance of the IRCProcessor Object.
@@ -71,6 +81,8 @@ public class ProcessJoin extends IRCProcessor {
         this.prefixModeManager = prefixModeManager;
         this.userModeManager = userModeManager;
         this.chanModeManager = chanModeManager;
+
+        getCallbackManager().subscribe(this);
     }
 
     /**
@@ -171,22 +183,58 @@ public class ProcessJoin extends IRCProcessor {
             parser.addChannel(iChannel);
             sendString("MODE " + iChannel.getName(), QueuePriority.LOW);
 
-            final String pendingJoin = parser.getPendingJoins().poll();
-            final String pendingJoinKey = parser.getPendingJoinKeys().poll();
-            if (pendingJoin.equalsIgnoreCase(channelName)) {
+            final String pendingJoin = pendingJoins.poll();
+            final String pendingJoinKey = pendingJoinKeys.poll();
+            if (pendingJoin != null && pendingJoin.equalsIgnoreCase(channelName)) {
                 callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Guessing channel Key: " + pendingJoin + " -> " + pendingJoinKey);
                 iChannel.setInternalPassword(pendingJoinKey == null ? "" : pendingJoinKey);
             } else {
-                // Out of sync, clear.
-                parser.getPendingJoins().clear();
-                parser.getPendingJoinKeys().clear();
+                // Out of sync, clear
+                callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: pending join keys out of sync (Got: " + pendingJoin + ", Wanted: " + channelName + ") - Clearing.");
+                pendingJoins.clear();
+                pendingJoinKeys.clear();
             }
 
             callChannelSelfJoin(iChannel);
         } else {
             // Some kind of failed to join, pop the pending join queues.
-            parser.getPendingJoins().poll();
-            parser.getPendingJoinKeys().poll();
+            final String pendingJoin = pendingJoins.poll();
+            final String pendingJoinKey = pendingJoinKeys.poll();
+            callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Failed to join channel (" + sParam + ") - Skipping " + pendingJoin + " (" + pendingJoinKey + ")");
+        }
+    }
+
+    @Handler(delivery = Invoke.Synchronously, condition = "msg.action == 'JOIN'")
+    public void handleDataOut(final IRCDataOutEvent event) {
+        // As long as this is called before the resulting DataIn
+        // Processors fire then this will work, otherwise we'll end
+        // up with an out-of-sync pendingJoins list.
+
+        final String[] newLine = event.getTokenisedData();
+        if (newLine.length > 1) {
+            final Queue<String> keys = new LinkedList<>();
+
+            if (newLine.length > 2) {
+                keys.addAll(Arrays.asList(newLine[2].split(",")));
+            }
+
+            // PendingJoins and PendingJoinKeys should always be the same length (even if no key was given).
+            //
+            // We don't get any errors for channels we try to join that we are already in
+            // But the IRCD will still swallow the key attempt.
+            //
+            // Make sure that we always have a guessed key for every channel (even if null) and that we
+            // don't have guesses for channels we are already in.
+            for (final String chan : newLine[1].split(",")) {
+                final String key = keys.poll();
+                if (getChannel(chan) == null) {
+                    callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Intercepted possible channel Key: " + chan + " -> " + key);
+                    pendingJoins.add(chan);
+                    pendingJoinKeys.add(key);
+                } else {
+                    callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Ignoring possible channel Key for existing channel: " + chan + " -> " + key);
+                }
+            }
         }
     }
 

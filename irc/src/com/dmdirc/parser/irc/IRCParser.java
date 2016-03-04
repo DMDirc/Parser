@@ -47,6 +47,7 @@ import com.dmdirc.parser.interfaces.Encoder;
 import com.dmdirc.parser.interfaces.EncodingParser;
 import com.dmdirc.parser.interfaces.SecureParser;
 import com.dmdirc.parser.irc.IRCReader.ReadLine;
+import com.dmdirc.parser.irc.events.IRCDataOutEvent;
 import com.dmdirc.parser.irc.outputqueue.OutputQueue;
 
 import java.io.IOException;
@@ -234,10 +235,6 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     private final WhoisResponseHandler whoisHandler;
     /** Used to synchronize calls to resetState. */
     private final Object resetStateSync = new Object();
-    /** Pending Joins. */
-    private final Queue<String> pendingJoins = new LinkedList<>();
-    /** Pending Join Keys. */
-    private final Queue<String> pendingJoinKeys = new LinkedList<>();
 
     /**
      * Default constructor, ServerInfo and MyInfo need to be added separately (using IRC.me and IRC.server).
@@ -551,7 +548,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @param fromParser True if parser sent the data, false if sent using .sendLine
      */
     protected void callDataOut(final String data, final boolean fromParser) {
-        getCallbackManager().publish(new DataOutEvent(this, LocalDateTime.now(), data));
+        getCallbackManager().publish(new IRCDataOutEvent(this, LocalDateTime.now(), data));
     }
 
     /**
@@ -1059,48 +1056,9 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
                     }
                 }
             }
-        } else if ("join".equalsIgnoreCase(newLine[0]) && newLine.length > 1) {
-            final Queue<String> keys = new LinkedList<>();
-
-            if (newLine.length > 2) {
-                keys.addAll(Arrays.asList(newLine[2].split(",")));
-            }
-
-            // PendingJoins and PendingJoinKeys should always be the same length (even if no key was given).
-            //
-            // We don't get any errors for channels we try to join that we are already in
-            // But the IRCD will still swallow the key attempt.
-            //
-            // Make sure that we always have a guessed key for every channel (even if null) and that we
-            // don't have guesses for channels we are already in.
-            for (final String chan : newLine[1].split(",")) {
-                final String key = keys.poll();
-                if (getChannel(chan) == null) {
-                    pendingJoins.add(chan);
-                    pendingJoinKeys.add(key);
-                }
-            }
         }
 
         return true;
-    }
-
-    /**
-     * Get the current pending Joins.
-     *
-     * @return Current pending Joins
-     */
-    public Queue<String> getPendingJoins() {
-        return pendingJoins;
-    }
-
-    /**
-     * Get the current pending join keys.
-     *
-     * @return Current pending join keys.
-     */
-    public Queue<String> getPendingJoinKeys() {
-        return pendingJoinKeys;
     }
 
     @Override
