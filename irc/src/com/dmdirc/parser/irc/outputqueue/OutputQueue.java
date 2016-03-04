@@ -38,6 +38,8 @@ public class OutputQueue {
     private PrintWriter out;
     /** Is queueing enabled? */
     private boolean queueEnabled = true;
+    /** Are we discarding all futher input? */
+    private boolean discarding = false;
     /** The output queue! */
     private final BlockingQueue<QueueItem> queue = new PriorityBlockingQueue<>();
     /** Object for synchronising access to the {@link #queueHandler}. */
@@ -111,6 +113,8 @@ public class OutputQueue {
         final boolean old = this.queueEnabled;
         this.queueEnabled = queueEnabled;
 
+        // If the new value is not the same as the old one, and we used to be enabled
+        // then flush the queue.
         if (old != queueEnabled && old) {
             synchronized (queueHandlerLock) {
                 if (queueHandler != null) {
@@ -127,6 +131,24 @@ public class OutputQueue {
                 }
             }
         }
+    }
+
+    /**
+     * Should we be discarding?
+     *
+     * @param newValue true to enable discarding.
+     */
+    public void setDiscarding(final boolean newValue) {
+        discarding = newValue;
+    }
+
+    /**
+     * Are we discarding?
+     *
+     * @return true if discarding
+     */
+    public boolean isDiscarding() {
+        return discarding;
     }
 
     /**
@@ -174,11 +196,12 @@ public class OutputQueue {
      * @param priority Priority of item (ignored if queue is disabled)
      */
     public void sendLine(final String line, final QueuePriority priority) {
+        if (discarding) { return; }
         if (out == null) {
             throw new NullPointerException("No output stream has been set.");
         }
 
-        if (queueEnabled) {
+        if (queueEnabled && priority != QueuePriority.IMMEDIATE) {
             synchronized (queueHandlerLock) {
                 if (queueHandler == null || !queueHandler.isAlive()) {
                     queueHandler = queueFactory.getQueueHandler(this, queue, out);

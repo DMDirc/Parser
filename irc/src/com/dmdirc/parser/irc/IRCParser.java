@@ -50,6 +50,7 @@ import com.dmdirc.parser.irc.IRCReader.ReadLine;
 import com.dmdirc.parser.irc.outputqueue.OutputQueue;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URI;
@@ -205,11 +206,13 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     protected SocketState currentSocketState = SocketState.NULL;
     /**
      * The underlying socket used for reading/writing to the IRC server.
-     * For normal sockets this will be the same as {@link #socket} but for SSL
+     * For normal sockets this will be the same as {@link #mySocket} but for SSL
      * connections this will be the underlying {@link Socket} while
-     * {@link #socket} will be an {@link SSLSocket}.
+     * {@link #mySocket} will be an {@link SSLSocket}.
      */
     private Socket rawSocket;
+    /** Socket that we can do stuff to. */
+    private Socket mySocket;
     /** Used for writing to the server. */
     private final OutputQueue out;
     /** The encoder to use to encode incoming lines. */
@@ -741,7 +744,6 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
 
         rawSocket = getSocketFactory().createSocket(connectUri.getHost(), connectUri.getPort());
 
-        final Socket socket;
         if (getURI().getScheme().endsWith("s")) {
             callDebugInfo(DEBUG_SOCKET, "Server is SSL.");
 
@@ -753,27 +755,27 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
             sc.init(myKeyManagers, myTrustManager, new SecureRandom());
 
             final SSLSocketFactory socketFactory = sc.getSocketFactory();
-            socket = socketFactory.createSocket(rawSocket, getURI().getHost(), getURI()
+            mySocket = socketFactory.createSocket(rawSocket, getURI().getHost(), getURI()
                     .getPort(), false);
 
             // Manually start a handshake so we get proper SSL errors here,
             // and so that we can control the connection timeout
-            final int timeout = socket.getSoTimeout();
-            socket.setSoTimeout(10000);
-            ((SSLSocket) socket).startHandshake();
-            socket.setSoTimeout(timeout);
+            final int timeout = mySocket.getSoTimeout();
+            mySocket.setSoTimeout(10000);
+            ((SSLSocket) mySocket).startHandshake();
+            mySocket.setSoTimeout(timeout);
 
             currentSocketState = SocketState.OPENING;
         } else {
-            socket = rawSocket;
+            mySocket = rawSocket;
         }
 
         callDebugInfo(DEBUG_SOCKET, "\t-> Opening socket output stream PrintWriter");
-        out.setOutputStream(socket.getOutputStream());
+        out.setOutputStream(mySocket.getOutputStream());
         out.setQueueEnabled(true);
         currentSocketState = SocketState.OPEN;
         callDebugInfo(DEBUG_SOCKET, "\t-> Opening socket input stream BufferedReader");
-        in = new IRCReader(socket.getInputStream(), encoder);
+        in = new IRCReader(mySocket.getInputStream(), encoder);
         callDebugInfo(DEBUG_SOCKET, "\t-> Socket Opened");
     }
 
@@ -1765,17 +1767,22 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
 
     @Override
     public void quit(final String reason) {
-        sendString("QUIT", reason);
+        // Don't attempt to send anything further.
+        getOutputQueue().clearQueue();
+        final String output = (reason == null || reason.isEmpty()) ? "QUIT" : "QUIT :" + reason;
+        doSendString(output, QueuePriority.IMMEDIATE, true);
+        // Don't bother queueing anything else.
+        getOutputQueue().setDiscarding(true);
     }
 
     @Override
     public void disconnect(final String message) {
         super.disconnect(message);
         if (currentSocketState == SocketState.OPENING || currentSocketState == SocketState.OPEN) {
-            currentSocketState = SocketState.CLOSING;
             if (got001) {
                 quit(message);
             }
+            currentSocketState = SocketState.CLOSING;
         }
 
         try {
