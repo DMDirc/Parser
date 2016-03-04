@@ -61,9 +61,7 @@ public class ProcessJoin extends IRCProcessor {
     /** Mode manager to use for channel modes. */
     private final ModeManager chanModeManager;
     /** Pending Joins. */
-    private final Queue<String> pendingJoins = new LinkedList<>();
-    /** Pending Join Keys. */
-    private final Queue<String> pendingJoinKeys = new LinkedList<>();
+    private final Queue<PendingJoin> pendingJoins = new LinkedList<>();
 
     /**
      * Create a new instance of the IRCProcessor Object.
@@ -183,24 +181,21 @@ public class ProcessJoin extends IRCProcessor {
             parser.addChannel(iChannel);
             sendString("MODE " + iChannel.getName(), QueuePriority.LOW);
 
-            final String pendingJoin = pendingJoins.poll();
-            final String pendingJoinKey = pendingJoinKeys.poll();
-            if (pendingJoin != null && pendingJoin.equalsIgnoreCase(channelName)) {
-                callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Guessing channel Key: " + pendingJoin + " -> " + pendingJoinKey);
-                iChannel.setInternalPassword(pendingJoinKey == null ? "" : pendingJoinKey);
+            final PendingJoin pendingJoin = pendingJoins.poll();
+            if (pendingJoin != null && parser.getStringConverter().equalsIgnoreCase(pendingJoin.getChannel(), channelName)) {
+                callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Guessing channel Key: " + pendingJoin.getChannel() + " -> " + pendingJoin.getKey());
+                iChannel.setInternalPassword(pendingJoin.getKey());
             } else {
                 // Out of sync, clear
-                callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: pending join keys out of sync (Got: " + pendingJoin + ", Wanted: " + channelName + ") - Clearing.");
+                callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: pending join keys out of sync (Got: " + pendingJoin.getChannel() + ", Wanted: " + channelName + ") - Clearing.");
                 pendingJoins.clear();
-                pendingJoinKeys.clear();
             }
 
             callChannelSelfJoin(iChannel);
         } else {
             // Some kind of failed to join, pop the pending join queues.
-            final String pendingJoin = pendingJoins.poll();
-            final String pendingJoinKey = pendingJoinKeys.poll();
-            callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Failed to join channel (" + sParam + ") - Skipping " + pendingJoin + " (" + pendingJoinKey + ")");
+            final PendingJoin pendingJoin = pendingJoins.poll();
+            callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Failed to join channel (" + sParam + ") - Skipping " + pendingJoin.getChannel() + " (" + pendingJoin.getKey() + ")");
         }
     }
 
@@ -218,8 +213,6 @@ public class ProcessJoin extends IRCProcessor {
                 keys.addAll(Arrays.asList(newLine[2].split(",")));
             }
 
-            // PendingJoins and PendingJoinKeys should always be the same length (even if no key was given).
-            //
             // We don't get any errors for channels we try to join that we are already in
             // But the IRCD will still swallow the key attempt.
             //
@@ -229,8 +222,7 @@ public class ProcessJoin extends IRCProcessor {
                 final String key = keys.poll();
                 if (getChannel(chan) == null) {
                     callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Intercepted possible channel Key: " + chan + " -> " + key);
-                    pendingJoins.add(chan);
-                    pendingJoinKeys.add(key);
+                    pendingJoins.add(new PendingJoin(chan, key));
                 } else {
                     callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Ignoring possible channel Key for existing channel: " + chan + " -> " + key);
                 }
@@ -260,4 +252,41 @@ public class ProcessJoin extends IRCProcessor {
                 parser, LocalDateTime.now(), cChannel));
     }
 
+
+    /** Class to link channels to pending keys. */
+    private static class PendingJoin {
+        /** Channel name. */
+        private final String channel;
+        /** Guessed Key. */
+        private final String key;
+
+        /**
+         * Create a new PendingJoin
+         *
+         * @param channel Channel
+         * @param key Guessed Key (if there is one)
+         */
+        public PendingJoin(final String channel, final String key) {
+            this.channel = channel;
+            this.key = (key == null ? "" : key);
+        }
+
+        /**
+         * Get the channel name.
+         *
+         * @return Channel name,
+         */
+        public String getChannel() {
+            return channel;
+        }
+
+        /**
+         * Get the key
+         *
+         * @return Key
+         */
+        public String getKey() {
+            return key;
+        }
+    }
 }
