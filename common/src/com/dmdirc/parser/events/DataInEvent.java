@@ -29,7 +29,7 @@ import java.time.LocalDateTime;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * Interface Used on every incoming line BEFORE parsing.
+ * Called on every incoming line BEFORE parsing.
  */
 public class DataInEvent extends ParserEvent {
 
