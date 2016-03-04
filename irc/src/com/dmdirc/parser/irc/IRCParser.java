@@ -47,6 +47,7 @@ import com.dmdirc.parser.interfaces.Encoder;
 import com.dmdirc.parser.interfaces.EncodingParser;
 import com.dmdirc.parser.interfaces.SecureParser;
 import com.dmdirc.parser.irc.IRCReader.ReadLine;
+import com.dmdirc.parser.irc.events.IRCDataInEvent;
 import com.dmdirc.parser.irc.events.IRCDataOutEvent;
 import com.dmdirc.parser.irc.outputqueue.OutputQueue;
 
@@ -535,10 +536,10 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     /**
      * Callback to all objects implementing the DataIn Callback.
      *
-     * @param data Incoming Line.
+     * @param line Incoming Line.
      */
-    protected void callDataIn(final String data) {
-        getCallbackManager().publish(new DataInEvent(this, LocalDateTime.now(), data));
+    protected void callDataIn(final ReadLine line) {
+        getCallbackManager().publish(new IRCDataInEvent(this, LocalDateTime.now(), line));
     }
 
     /**
@@ -1085,7 +1086,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      */
     @SuppressWarnings("fallthrough")
     protected void processLine(final ReadLine line) {
-        callDataIn(line.getLine());
+        callDataIn(line);
         final String[] token = line.getTokens();
         LocalDateTime lineTS = LocalDateTime.now();
 
