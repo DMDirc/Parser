@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2015 DMDirc Developers
+ * Copyright (c) 2006-2014 DMDirc Developers
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -20,9 +20,11 @@
  * SOFTWARE.
  */
 
-package com.dmdirc.parser.events;
+package com.dmdirc.parser.irc.events;
 
+import com.dmdirc.parser.events.DataOutEvent;
 import com.dmdirc.parser.interfaces.Parser;
+import com.dmdirc.parser.irc.IRCParser;
 
 import java.time.LocalDateTime;
 
@@ -30,17 +32,25 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Called on every outgoing line BEFORE being sent.
+ *
+ * This extends the standard DataOutEvent to also pre-tokenise the data.
  */
-public class DataOutEvent extends ParserEvent {
+public class IRCDataOutEvent extends DataOutEvent {
 
-    private final String data;
+    private final String[] tokenisedData;
+    private final String action;
 
-    public DataOutEvent(final Parser parser, final LocalDateTime date, final String data) {
-        super(parser, date);
-        this.data = checkNotNull(data);
+    public IRCDataOutEvent(final Parser parser, final LocalDateTime date, final String data) {
+        super(parser, date, data);
+        tokenisedData = IRCParser.tokeniseLine(checkNotNull(data));
+        action = tokenisedData[0].toUpperCase();
     }
 
-    public String getData() {
-        return data;
+    public String[] getTokenisedData() {
+        return tokenisedData;
+    }
+
+    public String getAction() {
+        return action;
     }
 }
