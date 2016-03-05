@@ -41,6 +41,8 @@ public class IRCDataInEvent extends DataInEvent {
     private final ReadLine line;
     private final String[] tokenisedData;
     private final String action;
+    private final int numeric;
+    private final boolean isNumeric;
 
     public IRCDataInEvent(final IRCParser parser, final LocalDateTime date, final ReadLine line) {
         super(parser, date, checkNotNull(line).getLine());
@@ -63,6 +65,11 @@ public class IRCDataInEvent extends DataInEvent {
         } else {
             action = "";
         }
+
+        int num = -1;
+        try { num = Integer.parseInt(action); } catch (final NumberFormatException e) { }
+        numeric = num;
+        isNumeric = (numeric != -1);
     }
 
     public String[] getTokenisedData() {
@@ -75,5 +82,13 @@ public class IRCDataInEvent extends DataInEvent {
 
     public String getAction() {
         return action;
+    }
+
+    public boolean isNumeric() {
+        return isNumeric;
+    }
+
+    public int getNumeric() {
+        return numeric;
     }
 }

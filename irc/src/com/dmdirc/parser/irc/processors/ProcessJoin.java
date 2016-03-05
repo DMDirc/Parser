@@ -187,7 +187,7 @@ public class ProcessJoin extends IRCProcessor {
                 iChannel.setInternalPassword(pendingJoin.getKey());
             } else {
                 // Out of sync, clear
-                callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: pending join keys out of sync (Got: " + pendingJoin.getChannel() + ", Wanted: " + channelName + ") - Clearing.");
+                callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: pending join keys out of sync (Got: " + (pendingJoin == null ? pendingJoin : pendingJoin.getChannel()) + ", Wanted: " + channelName + ") - Clearing.");
                 pendingJoins.clear();
             }
 
@@ -220,7 +220,9 @@ public class ProcessJoin extends IRCProcessor {
             // don't have guesses for channels we are already in.
             for (final String chan : newLine[1].split(",")) {
                 final String key = keys.poll();
-                if (getChannel(chan) == null) {
+                if (chan.equals("0")) {
+                    callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Ignoring possible channel Key for part-all channel: " + chan + " -> " + key);
+                } else if (getChannel(chan) == null) {
                     callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Intercepted possible channel Key: " + chan + " -> " + key);
                     pendingJoins.add(new PendingJoin(chan, key));
                 } else {
