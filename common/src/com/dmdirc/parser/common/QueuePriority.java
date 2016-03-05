@@ -26,6 +26,8 @@ package com.dmdirc.parser.common;
  * Queue Priority.
  */
 public enum QueuePriority {
+    /** Immediate priority (Skip Queue). */
+    IMMEDIATE,
     /** High priority. */
     HIGH,
     /** Normal priority. */
