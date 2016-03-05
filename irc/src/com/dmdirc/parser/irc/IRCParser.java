@@ -1791,13 +1791,11 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
 
     @Override
     public boolean isUserSettable(final char mode) {
-        final String validmodes;
-        if (h005Info.containsKey(IrcConstants.ISUPPORT_USER_CHANNEL_MODES)) {
-            validmodes = h005Info.get(IrcConstants.ISUPPORT_USER_CHANNEL_MODES);
-        } else {
-            validmodes = "bklimnpstrc";
-        }
-        return validmodes.matches(".*" + mode + ".*");
+        final String validmodes =
+                h005Info.containsKey(IrcConstants.ISUPPORT_USER_CHANNEL_MODES)
+                        ? h005Info.get(IrcConstants.ISUPPORT_USER_CHANNEL_MODES)
+                        : "bklimnpstrc";
+        return validmodes.indexOf(mode) > -1;
     }
 
     /**
@@ -1843,7 +1841,6 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * Set the value of checkServerPing.
      *
      * @param newValue New value to use.
-     * @see #setCheckServerPing
      */
     public void setCheckServerPing(final boolean newValue) {
         checkServerPing = newValue;
