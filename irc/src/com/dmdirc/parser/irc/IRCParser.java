@@ -211,8 +211,6 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * {@link #mySocket} will be an {@link SSLSocket}.
      */
     private Socket rawSocket;
-    /** Socket that we can do stuff to. */
-    private Socket mySocket;
     /** Used for writing to the server. */
     private final OutputQueue out;
     /** The encoder to use to encode incoming lines. */
@@ -744,6 +742,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
 
         rawSocket = getSocketFactory().createSocket(connectUri.getHost(), connectUri.getPort());
 
+        final Socket mySocket;
         if (getURI().getScheme().endsWith("s")) {
             callDebugInfo(DEBUG_SOCKET, "Server is SSL.");
 
