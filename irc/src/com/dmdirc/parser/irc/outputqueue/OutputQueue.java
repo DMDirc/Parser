@@ -46,8 +46,8 @@ public class OutputQueue {
     private final Object queueHandlerLock = new Object();
     /** Thread for the sending queue. */
     private QueueHandler queueHandler;
-    /** The QueueFactory for this OutputQueue. */
-    private QueueFactory queueFactory = PriorityQueueHandler.getFactory();
+    /** The QueueHandlerFactory for this OutputQueue. */
+    private QueueHandlerFactory queueHandlerFactory = PriorityQueueHandler.getFactory();
 
     /**
      * Set the output stream for this queue.
@@ -68,25 +68,25 @@ public class OutputQueue {
     }
 
     /**
-     * Set the QueueFactory.
+     * Set the QueueHandlerFactory.
      * Changing this will not change an existing QueueHandler unless queueing is
      * disabled and reenabled.
      * If this is called before the first lien of output is queued then there is
      * no need to disable and reenable the queue.
      *
-     * @param factory New QueueFactory to use.
+     * @param factory New QueueHandlerFactory to use.
      */
-    public void setQueueFactory(final QueueFactory factory) {
-        queueFactory = factory;
+    public void setQueueHandlerFactory(final QueueHandlerFactory factory) {
+        queueHandlerFactory = factory;
     }
 
     /**
-     * Get the QueueFactory.
+     * Get the QueueHandlerFactory.
      *
-     * @return The current QueueFactory.
+     * @return The current QueueHandlerFactory.
      */
-    public QueueFactory getQueueManager() {
-        return queueFactory;
+    public QueueHandlerFactory getQueueHandlerFactory() {
+        return queueHandlerFactory;
     }
 
     /**
@@ -204,7 +204,7 @@ public class OutputQueue {
         if (queueEnabled && priority != QueuePriority.IMMEDIATE) {
             synchronized (queueHandlerLock) {
                 if (queueHandler == null || !queueHandler.isAlive()) {
-                    queueHandler = queueFactory.getQueueHandler(this, queue, out);
+                    queueHandler = queueHandlerFactory.getQueueHandler(this, queue, out);
                     queueHandler.start();
                 }
 

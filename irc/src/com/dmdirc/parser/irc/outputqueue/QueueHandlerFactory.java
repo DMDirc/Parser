@@ -26,9 +26,9 @@ import java.io.PrintWriter;
 import java.util.concurrent.BlockingQueue;
 
 /**
- * A QueueFactory produces QueueHandlers for OutputQueue.
+ * A QueueHandlerFactory produces QueueHandlers for OutputQueue.
  */
-public interface QueueFactory {
+public interface QueueHandlerFactory {
 
     /**
      * Get a new QueueHandler instance as needed.
