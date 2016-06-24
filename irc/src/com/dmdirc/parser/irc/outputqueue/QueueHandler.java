@@ -25,6 +25,8 @@ package com.dmdirc.parser.irc.outputqueue;
 import com.dmdirc.parser.common.QueuePriority;
 
 import java.io.PrintWriter;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.concurrent.BlockingQueue;
 
@@ -99,7 +101,8 @@ public abstract class QueueHandler extends Thread implements Comparator<QueueIte
      */
     @Override
     public int compare(final QueueItem mainObject, final QueueItem otherObject) {
-        if (mainObject.getTime() < 10 * 1000 && mainObject.getPriority().compareTo(otherObject.getPriority()) != 0) {
+        if (!isStarved(mainObject)
+                && mainObject.getPriority().compareTo(otherObject.getPriority()) != 0) {
             return mainObject.getPriority().compareTo(otherObject.getPriority());
         }
 
@@ -111,6 +114,17 @@ public abstract class QueueHandler extends Thread implements Comparator<QueueIte
             // This can't happen.
             return 0;
         }
+    }
+
+    /**
+     * Determines whether the given item has been starved (i.e., it has sat waiting in the queue
+     * for too long due to higher priority items).
+     *
+     * @param item The item to check
+     * @return True if the item has been queued for longer than 10 seconds, false otherwise
+     */
+    private static boolean isStarved(final QueueItem item) {
+        return item.getTime().isBefore(LocalDateTime.now().minus(10, ChronoUnit.SECONDS));
     }
 
     /**

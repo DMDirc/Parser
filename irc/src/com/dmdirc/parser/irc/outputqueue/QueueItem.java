@@ -24,6 +24,8 @@ package com.dmdirc.parser.irc.outputqueue;
 
 import com.dmdirc.parser.common.QueuePriority;
 
+import java.time.LocalDateTime;
+
 /**
  * Queued Item.
  */
@@ -34,7 +36,7 @@ public class QueueItem implements Comparable<QueueItem> {
     /** Line to send. */
     private final String line;
     /** Time this line was added. */
-    private final long time;
+    private final LocalDateTime time;
     /** Item Number. */
     private final long itemNumber;
     /** What is the priority of this line? */
@@ -54,7 +56,7 @@ public class QueueItem implements Comparable<QueueItem> {
         this.line = line;
         this.priority = priority;
 
-        this.time = System.currentTimeMillis();
+        this.time = LocalDateTime.now();
         this.itemNumber = number++;
     }
 
@@ -68,11 +70,11 @@ public class QueueItem implements Comparable<QueueItem> {
     }
 
     /**
-     * Get the value of time.
+     * Gets the time at which this item was queued.
      *
-     * @return the value of time
+     * @return the time this item was queued.
      */
-    public long getTime() {
+    public LocalDateTime getTime() {
         return time;
     }
 
