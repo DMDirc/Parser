@@ -42,11 +42,11 @@ public class PriorityQueueHandler extends QueueHandler {
     }
 
     /**
-     * Get a QueueFactory that produces PriorityQueueHandlers.
+     * Get a QueueHandlerFactory that produces PriorityQueueHandlers.
      *
-     * @return a QueueFactory that produces PrirortyQueueHandlers.
+     * @return a QueueHandlerFactory that produces PrirortyQueueHandlers.
      */
-    public static QueueFactory getFactory() {
+    public static QueueHandlerFactory getFactory() {
         return PriorityQueueHandler::new;
     }
 
