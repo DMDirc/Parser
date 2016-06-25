@@ -23,7 +23,6 @@
 package com.dmdirc.parser.irc.outputqueue;
 
 import java.io.PrintWriter;
-import java.util.concurrent.BlockingQueue;
 
 /**
  * A QueueHandlerFactory produces QueueHandlers for OutputQueue.
@@ -34,10 +33,9 @@ public interface QueueHandlerFactory {
      * Get a new QueueHandler instance as needed.
      *
      * @param outputQueue the OutputQueue that will own this QueueHandler
-     * @param queue The queue to handle.
      * @param out Where to send crap.
      * @return the new queue handler object.
      */
-    QueueHandler getQueueHandler(final OutputQueue outputQueue,
-            final BlockingQueue<QueueItem> queue, final PrintWriter out);
+    QueueHandler getQueueHandler(final OutputQueue outputQueue, final PrintWriter out);
+
 }

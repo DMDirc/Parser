@@ -25,7 +25,6 @@ package com.dmdirc.parser.irc.outputqueue;
 import com.dmdirc.parser.common.QueuePriority;
 
 import java.io.PrintWriter;
-import java.util.concurrent.BlockingQueue;
 
 /**
  * This is a simple rate limiting queue.
@@ -54,14 +53,12 @@ public class SimpleRateLimitedQueueHandler extends QueueHandler {
      * Create a new SimpleRateLimitedQueueHandler.
      *
      * @param outputQueue Owner of this Queue Handler
-     * @param queue Queue to use
      * @param out Output Stream to use
      */
     public SimpleRateLimitedQueueHandler(
             final OutputQueue outputQueue,
-            final BlockingQueue<QueueItem> queue,
             final PrintWriter out) {
-        super(outputQueue, queue, QueueComparators.byPriorityThenNumber(), out);
+        super(outputQueue, QueueComparators.byPriorityThenNumber(), out);
     }
 
     /**
@@ -182,7 +179,7 @@ public class SimpleRateLimitedQueueHandler extends QueueHandler {
                 // It has been longer than limitTime and we are still shown as
                 // limiting, check to see if the queue is empty or not, if it is
                 // disable limiting.
-                if (queue.isEmpty()) {
+                if (outputQueue.getQueue().isEmpty()) {
                     isLimiting = false;
                 }
             } else {
@@ -203,14 +200,14 @@ public class SimpleRateLimitedQueueHandler extends QueueHandler {
     public void run() {
         try {
             while (outputQueue.isQueueEnabled()) {
-                final QueueItem item = queue.take();
+                final QueueItem item = outputQueue.getQueue().take();
 
                 sendLine(item.getLine());
 
                 final boolean doSleep;
                 synchronized (this) {
                     doSleep = isLimiting;
-                    if (isLimiting && queue.isEmpty()) {
+                    if (isLimiting && outputQueue.getQueue().isEmpty()) {
                         isLimiting = false;
                     }
                 }
