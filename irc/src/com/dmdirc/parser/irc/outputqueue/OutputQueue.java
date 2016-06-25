@@ -134,6 +134,15 @@ public class OutputQueue {
     }
 
     /**
+     * Direct access to the queue of items waiting to be sent.
+     *
+     * @return This queue's backing queue.
+     */
+    public BlockingQueue<QueueItem> getQueue() {
+        return queue;
+    }
+
+    /**
      * Should we be discarding?
      *
      * @param newValue true to enable discarding.
@@ -204,7 +213,7 @@ public class OutputQueue {
         if (queueEnabled && priority != QueuePriority.IMMEDIATE) {
             synchronized (queueHandlerLock) {
                 if (queueHandler == null || !queueHandler.isAlive()) {
-                    queueHandler = queueHandlerFactory.getQueueHandler(this, queue, out);
+                    queueHandler = queueHandlerFactory.getQueueHandler(this, out);
                     queueHandler.start();
                 }
 

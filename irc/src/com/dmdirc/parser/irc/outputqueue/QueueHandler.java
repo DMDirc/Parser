@@ -28,15 +28,12 @@ import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
-import java.util.concurrent.BlockingQueue;
 
 /**
  * Sending queue.
  */
 public abstract class QueueHandler extends Thread implements Comparator<QueueItem> {
 
-    /** Queue we are handling. */
-    protected final BlockingQueue<QueueItem> queue;
     /** The output queue that owns us. */
     protected OutputQueue outputQueue;
     /** Comparator to use to sort queue items. */
@@ -48,18 +45,15 @@ public abstract class QueueHandler extends Thread implements Comparator<QueueIte
      * Create a new Queue Thread.
      *
      * @param outputQueue the OutputQueue that owns us.
-     * @param queue Queue to handle.
      * @param comparator Comparator to use to sort items in the queue.
      * @param out Writer to send to.
      */
     public QueueHandler(
             final OutputQueue outputQueue,
-            final BlockingQueue<QueueItem> queue,
             final Comparator<QueueItem> comparator,
             final PrintWriter out) {
         super("IRC Parser queue handler");
 
-        this.queue = queue;
         this.comparator = comparator;
         this.out = out;
         this.outputQueue = outputQueue;

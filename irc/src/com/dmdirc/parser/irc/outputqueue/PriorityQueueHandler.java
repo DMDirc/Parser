@@ -24,7 +24,6 @@ package com.dmdirc.parser.irc.outputqueue;
 
 import java.io.PrintWriter;
 import java.time.Duration;
-import java.util.concurrent.BlockingQueue;
 
 /**
  * This does no rate limiting, and just sends based on priority.
@@ -35,15 +34,12 @@ public class PriorityQueueHandler extends QueueHandler {
      * Create a new PriorityQueueHandler.
      *
      * @param outputQueue Owner of this Queue Handler
-     * @param queue Queue to use
      * @param out Output Stream to use
      */
     public PriorityQueueHandler(
             final OutputQueue outputQueue,
-            final BlockingQueue<QueueItem> queue,
             final PrintWriter out) {
         super(outputQueue,
-                queue,
                 QueueComparators.byPriorityThenNumber(Duration.ofSeconds(10)),
                 out);
     }
@@ -61,7 +57,7 @@ public class PriorityQueueHandler extends QueueHandler {
     public void run() {
         try {
             while (outputQueue.isQueueEnabled()) {
-                final QueueItem item = queue.take();
+                final QueueItem item = outputQueue.getQueue().take();
 
                 sendLine(item.getLine());
             }
