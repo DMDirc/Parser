@@ -24,6 +24,7 @@ package com.dmdirc.parser.irc.outputqueue;
 
 import com.dmdirc.parser.common.QueuePriority;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 
 /**
@@ -52,11 +53,23 @@ public class QueueItem implements Comparable<QueueItem> {
      * @param priority Priority for the queue item
      */
     public QueueItem(final QueueHandler handler, final String line, final QueuePriority priority) {
+        this(handler, Clock.systemDefaultZone(), line, priority);
+    }
+
+    /**
+     * Create a new QueueItem.
+     *
+     * @param handler Handler for this QueueItem
+     * @param line Line to send
+     * @param priority Priority for the queue item
+     */
+    public QueueItem(final QueueHandler handler, final Clock clock, final String line,
+            final QueuePriority priority) {
         this.handler = handler;
         this.line = line;
         this.priority = priority;
 
-        this.time = LocalDateTime.now();
+        this.time = LocalDateTime.now(clock);
         this.itemNumber = number++;
     }
 
