@@ -23,6 +23,7 @@
 package com.dmdirc.parser.irc.outputqueue;
 
 import java.io.PrintWriter;
+import java.time.Duration;
 import java.util.concurrent.BlockingQueue;
 
 /**
@@ -37,8 +38,14 @@ public class PriorityQueueHandler extends QueueHandler {
      * @param queue Queue to use
      * @param out Output Stream to use
      */
-    public PriorityQueueHandler(final OutputQueue outputQueue, final BlockingQueue<QueueItem> queue, final PrintWriter out) {
-        super(outputQueue, queue, out);
+    public PriorityQueueHandler(
+            final OutputQueue outputQueue,
+            final BlockingQueue<QueueItem> queue,
+            final PrintWriter out) {
+        super(outputQueue,
+                queue,
+                QueueComparators.byPriorityThenNumber(Duration.ofSeconds(10)),
+                out);
     }
 
     /**
@@ -62,4 +69,5 @@ public class PriorityQueueHandler extends QueueHandler {
             // Do nothing
         }
     }
+
 }

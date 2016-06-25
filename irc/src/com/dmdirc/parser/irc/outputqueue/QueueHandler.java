@@ -39,6 +39,8 @@ public abstract class QueueHandler extends Thread implements Comparator<QueueIte
     protected final BlockingQueue<QueueItem> queue;
     /** The output queue that owns us. */
     protected OutputQueue outputQueue;
+    /** Comparator to use to sort queue items. */
+    private final Comparator<QueueItem> comparator;
     /** Where to send the output. */
     private final PrintWriter out;
 
@@ -46,13 +48,19 @@ public abstract class QueueHandler extends Thread implements Comparator<QueueIte
      * Create a new Queue Thread.
      *
      * @param outputQueue the OutputQueue that owns us.
-     * @param queue Queue to handle
+     * @param queue Queue to handle.
+     * @param comparator Comparator to use to sort items in the queue.
      * @param out Writer to send to.
      */
-    public QueueHandler(final OutputQueue outputQueue, final BlockingQueue<QueueItem> queue, final PrintWriter out) {
+    public QueueHandler(
+            final OutputQueue outputQueue,
+            final BlockingQueue<QueueItem> queue,
+            final Comparator<QueueItem> comparator,
+            final PrintWriter out) {
         super("IRC Parser queue handler");
 
         this.queue = queue;
+        this.comparator = comparator;
         this.out = out;
         this.outputQueue = outputQueue;
     }
@@ -81,39 +89,9 @@ public abstract class QueueHandler extends Thread implements Comparator<QueueIte
         return new QueueItem(this, line, priority);
     }
 
-    /**
-     * Compare two QueueItems for sorting purposes.
-     * This is called by the default QueueItem in its compareTo method. The
-     * calling object will be the first parameter, the object to compare it to
-     * will be second.
-     * This allows QueueHandlers to sort items differently if needed.
-     *
-     * The default implementation works as follows:
-     * Compare based on priorty firstly, if the priorities are the same,
-     * compare based on the order the items were added to the queue.
-     *
-     * If an item has been in the queue longer than 10 seconds, it will not
-     * check its priority and soley position itself based on adding order.
-     *
-     * @param mainObject Main object we are comparing against.
-     * @param otherObject Object we are comparing to.
-     * @return A QueueItem for teh given parameters
-     */
     @Override
     public int compare(final QueueItem mainObject, final QueueItem otherObject) {
-        if (!isStarved(mainObject)
-                && mainObject.getPriority().compareTo(otherObject.getPriority()) != 0) {
-            return mainObject.getPriority().compareTo(otherObject.getPriority());
-        }
-
-        if (mainObject.getItemNumber() > otherObject.getItemNumber()) {
-            return 1;
-        } else if (mainObject.getItemNumber() < otherObject.getItemNumber()) {
-            return -1;
-        } else {
-            // This can't happen.
-            return 0;
-        }
+        return comparator.compare(mainObject, otherObject);
     }
 
     /**

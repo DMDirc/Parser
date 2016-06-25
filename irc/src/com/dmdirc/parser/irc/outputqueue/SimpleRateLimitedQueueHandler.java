@@ -57,8 +57,11 @@ public class SimpleRateLimitedQueueHandler extends QueueHandler {
      * @param queue Queue to use
      * @param out Output Stream to use
      */
-    public SimpleRateLimitedQueueHandler(final OutputQueue outputQueue, final BlockingQueue<QueueItem> queue, final PrintWriter out) {
-        super(outputQueue, queue, out);
+    public SimpleRateLimitedQueueHandler(
+            final OutputQueue outputQueue,
+            final BlockingQueue<QueueItem> queue,
+            final PrintWriter out) {
+        super(outputQueue, queue, QueueComparators.byPriorityThenNumber(), out);
     }
 
     /**
@@ -163,21 +166,6 @@ public class SimpleRateLimitedQueueHandler extends QueueHandler {
         return isLimiting;
     }
 
-    /**
-     * Compare queue items, if priorities differ, then  higher priority items
-     * will always be put further ahead in the queue (This queue ignores the
-     * 10-second rule of the normal queue) otherwise the normal comparison is
-     * used.
-     */
-    @Override
-    public int compare(final QueueItem mainObject, final QueueItem otherObject) {
-        if (mainObject.getPriority().compareTo(otherObject.getPriority()) == 0) {
-            return super.compare(mainObject, otherObject);
-        } else {
-            return mainObject.getPriority().compareTo(otherObject.getPriority());
-        }
-    }
-
     @Override
     public QueueItem getQueueItem(final String line, final QueuePriority priority) {
         // Was the last line added less than limitTime ago?
@@ -186,7 +174,7 @@ public class SimpleRateLimitedQueueHandler extends QueueHandler {
             if (overTime) {
                 // If we are not currently limiting, and this is the items-th item
                 // added in the last limitTime, start limiting.
-                if (!isLimiting && ++count > (items - 1)) {
+                if (!isLimiting && ++count >= items) {
                     isLimiting = true;
                     count = 0;
                 }
