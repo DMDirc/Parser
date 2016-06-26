@@ -47,7 +47,23 @@ public class OutputQueue {
     /** Thread for the sending queue. */
     private QueueHandler queueHandler;
     /** The QueueHandlerFactory for this OutputQueue. */
-    private QueueHandlerFactory queueHandlerFactory = PriorityQueueHandler.getFactory();
+    private final QueueHandlerFactory queueHandlerFactory;
+
+    /**
+     * Creates a new output queue using the default handler.
+     */
+    public OutputQueue() {
+        this(PriorityQueueHandler.getFactory());
+    }
+
+    /**
+     * Creates a new output queue using a handler from the given factory.
+     *
+     * @param queueHandlerFactory The factory to use to create {@link QueueHandler}s.
+     */
+    public OutputQueue(final QueueHandlerFactory queueHandlerFactory) {
+        this.queueHandlerFactory = queueHandlerFactory;
+    }
 
     /**
      * Set the output stream for this queue.
@@ -65,28 +81,6 @@ public class OutputQueue {
      */
     public boolean isQueueEnabled() {
         return queueEnabled;
-    }
-
-    /**
-     * Set the QueueHandlerFactory.
-     * Changing this will not change an existing QueueHandler unless queueing is
-     * disabled and reenabled.
-     * If this is called before the first lien of output is queued then there is
-     * no need to disable and reenable the queue.
-     *
-     * @param factory New QueueHandlerFactory to use.
-     */
-    public void setQueueHandlerFactory(final QueueHandlerFactory factory) {
-        queueHandlerFactory = factory;
-    }
-
-    /**
-     * Get the QueueHandlerFactory.
-     *
-     * @return The current QueueHandlerFactory.
-     */
-    public QueueHandlerFactory getQueueHandlerFactory() {
-        return queueHandlerFactory;
     }
 
     /**
