@@ -32,8 +32,6 @@ import com.dmdirc.parser.common.QueuePriority;
 import com.dmdirc.parser.common.SRVRecord;
 import com.dmdirc.parser.common.SystemEncoder;
 import com.dmdirc.parser.events.ConnectErrorEvent;
-import com.dmdirc.parser.events.DataInEvent;
-import com.dmdirc.parser.events.DataOutEvent;
 import com.dmdirc.parser.events.DebugInfoEvent;
 import com.dmdirc.parser.events.ErrorInfoEvent;
 import com.dmdirc.parser.events.PingFailureEvent;
@@ -52,7 +50,6 @@ import com.dmdirc.parser.irc.events.IRCDataOutEvent;
 import com.dmdirc.parser.irc.outputqueue.OutputQueue;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.URI;
@@ -207,10 +204,8 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     /** Current Socket State. */
     protected SocketState currentSocketState = SocketState.NULL;
     /**
-     * The underlying socket used for reading/writing to the IRC server.
-     * For normal sockets this will be the same as {@link #mySocket} but for SSL
-     * connections this will be the underlying {@link Socket} while
-     * {@link #mySocket} will be an {@link SSLSocket}.
+     * The underlying socket connected to the IRC server. For SSL connections this socket will be
+     * wrapped, and should therefore not be used to send or receive data.
      */
     private Socket rawSocket;
     /** Used for writing to the server. */
@@ -803,7 +798,9 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      */
     private void handleConnectException(final Exception e, final boolean isUserError) {
         callDebugInfo(DEBUG_SOCKET, "Error Connecting (" + e.getMessage() + "), Aborted");
-        final ParserError ei = new ParserError(ParserError.ERROR_ERROR + (isUserError ? ParserError.ERROR_USER : 0), "Exception with server socket", getLastLine());
+        final ParserError ei = new ParserError(
+                ParserError.ERROR_ERROR + (isUserError ? ParserError.ERROR_USER : 0),
+                "Exception with server socket", getLastLine());
         ei.setException(e);
         callConnectError(ei);
 
@@ -978,12 +975,12 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
 
     @Override
     public void sendRawMessage(final String message) {
-        doSendString(message, QueuePriority.NORMAL, false);
+        sendString(message, QueuePriority.NORMAL, false);
     }
 
     @Override
     public void sendRawMessage(final String message, final QueuePriority priority) {
-        doSendString(message, priority, false);
+        sendString(message, priority, false);
     }
 
     /**
@@ -993,7 +990,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @return True if line was sent, else false.
      */
     public boolean sendString(final String line) {
-        return doSendString(line, QueuePriority.NORMAL, true);
+        return sendString(line, QueuePriority.NORMAL, true);
     }
 
     /**
@@ -1017,7 +1014,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @return True if line was sent, else false.
      */
     public boolean sendString(final String line, final QueuePriority priority) {
-        return doSendString(line, priority, true);
+        return sendString(line, priority, true);
     }
 
     /**
@@ -1028,12 +1025,23 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @param fromParser is this line from the parser? (used for callDataOut)
      * @return True if line was sent, else false.
      */
-    protected boolean doSendString(final String line, final QueuePriority priority, final boolean fromParser) {
+    protected boolean sendString(final String line, final QueuePriority priority, final boolean fromParser) {
         if (out == null || getSocketState() != SocketState.OPEN) {
             return false;
         }
         callDataOut(line, fromParser);
         out.sendLine(line, priority);
+        parseOutgoingLine(line);
+
+        return true;
+    }
+
+    /**
+     * Parses a line that has been sent to the server in order to track state.
+     *
+     * @param line The line to be parsed.
+     */
+    private void parseOutgoingLine(final String line) {
         final String[] newLine = tokeniseLine(line);
         if ("away".equalsIgnoreCase(newLine[0]) && newLine.length > 1) {
             myself.setAwayReason(newLine[newLine.length - 1]);
@@ -1059,8 +1067,6 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
                 }
             }
         }
-
-        return true;
     }
 
     @Override
@@ -1728,7 +1734,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
         // Don't attempt to send anything further.
         getOutputQueue().clearQueue();
         final String output = (reason == null || reason.isEmpty()) ? "QUIT" : "QUIT :" + reason;
-        doSendString(output, QueuePriority.IMMEDIATE, true);
+        sendString(output, QueuePriority.IMMEDIATE, true);
         // Don't bother queueing anything else.
         getOutputQueue().setDiscarding(true);
     }
