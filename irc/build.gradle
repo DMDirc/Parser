@@ -1,3 +1,21 @@
+sourceSets {
+    integTest {
+        java.srcDirs = ['integ-test']
+    }
+}
+
+task integTest(type: Test) {
+    testClassesDir = sourceSets.integTest.output.classesDir
+    classpath = sourceSets.integTest.runtimeClasspath
+}
+
+check.dependsOn integTest
+
 dependencies {
     compile find("common")
+    integTestCompile sourceSets.main.output
+    integTestCompile configurations.testCompile
+    integTestCompile sourceSets.test.output
+    integTestCompile group: 'com.github.docker-java', name: 'docker-java', version: '3.0.0'
+    integTestRuntime configurations.testRuntime
 }
