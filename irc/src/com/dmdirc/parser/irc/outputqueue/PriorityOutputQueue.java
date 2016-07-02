@@ -22,20 +22,29 @@
 
 package com.dmdirc.parser.irc.outputqueue;
 
-import java.io.PrintWriter;
+import java.time.Duration;
 
 /**
- * A QueueHandlerFactory produces QueueHandlers for OutputQueue.
+ * This does no rate limiting, and just sends based on priority.
  */
-public interface QueueHandlerFactory {
+public class PriorityOutputQueue extends OutputQueue {
 
     /**
-     * Get a new QueueHandler instance as needed.
-     *
-     * @param outputQueue the OutputQueue that will own this QueueHandler
-     * @param out Where to send crap.
-     * @return the new queue handler object.
+     * Create a new PriorityOutputQueue.
      */
-    QueueHandler getQueueHandler(final OutputQueue outputQueue, final PrintWriter out);
+    public PriorityOutputQueue() {
+        super(QueueComparators.byPriorityThenNumber(Duration.ofSeconds(10)));
+    }
+
+    @Override
+    protected void handleQueuedItems() {
+        try {
+            while (isQueueEnabled()) {
+                send(getQueue().take().getLine());
+            }
+        } catch (InterruptedException ex) {
+            // Do nothing
+        }
+    }
 
 }
