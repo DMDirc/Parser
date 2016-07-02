@@ -48,6 +48,7 @@ import com.dmdirc.parser.irc.IRCReader.ReadLine;
 import com.dmdirc.parser.irc.events.IRCDataInEvent;
 import com.dmdirc.parser.irc.events.IRCDataOutEvent;
 import com.dmdirc.parser.irc.outputqueue.OutputQueue;
+import com.dmdirc.parser.irc.outputqueue.PriorityOutputQueue;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -275,7 +276,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
         myProcessingManager = graph.get(ProcessingManager.class);
         myself = new IRCClientInfo(this, userModes, "myself").setFake(true);
 
-        out = new OutputQueue();
+        out = new PriorityOutputQueue();
         if (myDetails != null) {
             this.me = myDetails;
         }
@@ -662,9 +663,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
             userModes.clear();
             chanPrefix = DEFAULT_CHAN_PREFIX;
             // Clear output queue.
-            if (out != null) {
-                out.clearQueue();
-            }
+            out.clearQueue();
             setServerName("");
             networkName = "";
             lastLine = null;
@@ -1026,7 +1025,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @return True if line was sent, else false.
      */
     protected boolean sendString(final String line, final QueuePriority priority, final boolean fromParser) {
-        if (out == null || getSocketState() != SocketState.OPEN) {
+        if (getSocketState() != SocketState.OPEN) {
             return false;
         }
         callDataOut(line, fromParser);

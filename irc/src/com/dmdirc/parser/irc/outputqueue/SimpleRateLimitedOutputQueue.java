@@ -24,15 +24,13 @@ package com.dmdirc.parser.irc.outputqueue;
 
 import com.dmdirc.parser.common.QueuePriority;
 
-import java.io.PrintWriter;
-
 /**
  * This is a simple rate limiting queue.
  * If more than 4 items are added in 4 seconds it will start limiting.
  * The first 4 items will be sent un-limited and then limiting will commence at
  * a rate of 1 per second.
  */
-public class SimpleRateLimitedQueueHandler extends QueueHandler {
+public class SimpleRateLimitedOutputQueue extends OutputQueue {
 
     /** Current count. */
     private int count;
@@ -50,24 +48,10 @@ public class SimpleRateLimitedQueueHandler extends QueueHandler {
     private boolean alwaysUpdateTime = true;
 
     /**
-     * Create a new SimpleRateLimitedQueueHandler.
-     *
-     * @param outputQueue Owner of this Queue Handler
-     * @param out Output Stream to use
+     * Create a new SimpleRateLimitedOutputQueue.
      */
-    public SimpleRateLimitedQueueHandler(
-            final OutputQueue outputQueue,
-            final PrintWriter out) {
-        super(outputQueue, QueueComparators.byPriorityThenNumber(), out);
-    }
-
-    /**
-     * Get a QueueHandlerFactory that produces PriorityQueueHandlers.
-     *
-     * @return a QueueHandlerFactory that produces PrirortyQueueHandlers.
-     */
-    public static QueueHandlerFactory getFactory() {
-        return SimpleRateLimitedQueueHandler::new;
+    public SimpleRateLimitedOutputQueue() {
+        super(QueueComparators.byPriorityThenNumber());
     }
 
     /**
@@ -164,7 +148,7 @@ public class SimpleRateLimitedQueueHandler extends QueueHandler {
     }
 
     @Override
-    public QueueItem getQueueItem(final String line, final QueuePriority priority) {
+    protected void enqueue(final String line, final QueuePriority priority) {
         // Was the last line added less than limitTime ago?
         synchronized (this) {
             final boolean overTime = lastItemTime + limitTime > System.currentTimeMillis();
@@ -179,7 +163,7 @@ public class SimpleRateLimitedQueueHandler extends QueueHandler {
                 // It has been longer than limitTime and we are still shown as
                 // limiting, check to see if the queue is empty or not, if it is
                 // disable limiting.
-                if (outputQueue.getQueue().isEmpty()) {
+                if (getQueue().isEmpty()) {
                     isLimiting = false;
                 }
             } else {
@@ -193,21 +177,19 @@ public class SimpleRateLimitedQueueHandler extends QueueHandler {
             }
         }
 
-        return super.getQueueItem(line, priority);
+        super.enqueue(line, priority);
     }
 
     @Override
-    public void run() {
+    protected void handleQueuedItems() {
         try {
-            while (outputQueue.isQueueEnabled()) {
-                final QueueItem item = outputQueue.getQueue().take();
-
-                sendLine(item.getLine());
+            while (isQueueEnabled()) {
+                sendLine(getQueue().take().getLine());
 
                 final boolean doSleep;
                 synchronized (this) {
                     doSleep = isLimiting;
-                    if (isLimiting && outputQueue.getQueue().isEmpty()) {
+                    if (isLimiting && getQueue().isEmpty()) {
                         isLimiting = false;
                     }
                 }
@@ -215,11 +197,14 @@ public class SimpleRateLimitedQueueHandler extends QueueHandler {
                 if (doSleep) {
                     try {
                         Thread.sleep(waitTime);
-                    } catch (InterruptedException ex) { /* Do Nothing. */ }
+                    } catch (InterruptedException ex) {
+                        /* Do Nothing. */
+                    }
                 }
             }
         } catch (InterruptedException ex) {
             // Do nothing
         }
     }
+
 }

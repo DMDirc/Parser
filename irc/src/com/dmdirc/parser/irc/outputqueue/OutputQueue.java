@@ -26,43 +26,34 @@ import com.dmdirc.parser.common.QueuePriority;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.Comparator;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 
 /**
  * This class handles the Parser output Queue.
  */
-public class OutputQueue {
+public abstract class OutputQueue {
 
     /** PrintWriter for sending output. */
     private PrintWriter out;
     /** Is queueing enabled? */
     private boolean queueEnabled = true;
     /** Are we discarding all futher input? */
-    private boolean discarding = false;
+    private boolean discarding;
     /** The output queue! */
-    private BlockingQueue<QueueItem> queue = new PriorityBlockingQueue<>();
-    /** Object for synchronising access to the {@link #queueHandler}. */
-    private final Object queueHandlerLock = new Object();
-    /** Thread for the sending queue. */
-    private QueueHandler queueHandler;
-    /** The QueueHandlerFactory for this OutputQueue. */
-    private final QueueHandlerFactory queueHandlerFactory;
+    private final BlockingQueue<QueueItem> queue;
+    /** The thread on which we will send items. */
+    private Thread sendingThread;
 
     /**
-     * Creates a new output queue using the default handler.
-     */
-    public OutputQueue() {
-        this(PriorityQueueHandler.getFactory());
-    }
-
-    /**
-     * Creates a new output queue using a handler from the given factory.
+     * Creates a new instance of {@link OutputQueue} that will sort items using the given
+     * comparator.
      *
-     * @param queueHandlerFactory The factory to use to create {@link QueueHandler}s.
+     * @param itemComparator The comparator to use to sort queued items.
      */
-    public OutputQueue(final QueueHandlerFactory queueHandlerFactory) {
-        this.queueHandlerFactory = queueHandlerFactory;
+    protected OutputQueue(final Comparator<QueueItem> itemComparator) {
+        queue = new PriorityBlockingQueue<>(10, itemComparator);
     }
 
     /**
@@ -84,15 +75,6 @@ public class OutputQueue {
     }
 
     /**
-     * Get the QueueHandler.
-     *
-     * @return The current QueueHandler if there is one, else null.
-     */
-    public QueueHandler getQueueHandler() {
-        return queueHandler;
-    }
-
-    /**
      * Set if queueing is enabled.
      * if this is changed from enabled to disabled, all currently queued items
      * will be sent immediately!
@@ -110,11 +92,9 @@ public class OutputQueue {
         // If the new value is not the same as the old one, and we used to be enabled
         // then flush the queue.
         if (old != queueEnabled && old) {
-            synchronized (queueHandlerLock) {
-                if (queueHandler != null) {
-                    queueHandler.interrupt();
-                    queueHandler = null;
-                }
+            if (sendingThread != null) {
+                sendingThread.interrupt();
+                sendingThread = null;
             }
 
             while (!queue.isEmpty()) {
@@ -155,18 +135,14 @@ public class OutputQueue {
     }
 
     /**
-     * Clear the queue and stop the thread that is sending stuff.
+     * Clears any pending items.
      */
     public void clearQueue() {
-        this.queueEnabled = false;
-
-        synchronized (queueHandlerLock) {
-            if (queueHandler != null) {
-                queueHandler.interrupt();
-                queueHandler = null;
-            }
+        queueEnabled = false;
+        if (sendingThread != null) {
+            sendingThread.interrupt();
+            sendingThread = null;
         }
-
         queue.clear();
     }
 
@@ -181,8 +157,8 @@ public class OutputQueue {
 
     /**
      * Send the given line.
-     * If queueing is enabled, this will queue it, else it will send it
-     * immediately.
+     *
+     * <p>If queueing is enabled, this will queue it, else it will send it immediately.
      *
      * @param line Line to send
      */
@@ -192,44 +168,58 @@ public class OutputQueue {
 
     /**
      * Send the given line.
-     * If queueing is enabled, this will queue it, else it will send it
-     * immediately.
+     *
+     * <p>If queueing is enabled, this will queue it, else it will send it immediately.
      *
      * @param line Line to send
      * @param priority Priority of item (ignored if queue is disabled)
      */
     public void sendLine(final String line, final QueuePriority priority) {
-        if (discarding) { return; }
-        if (out == null) {
-            throw new NullPointerException("No output stream has been set.");
+        if (discarding) {
+            return;
         }
 
-        if (queueEnabled && priority != QueuePriority.IMMEDIATE) {
-            synchronized (queueHandlerLock) {
-                if (queueHandler == null || !queueHandler.isAlive()) {
-                    setQueueHandler(queueHandlerFactory.getQueueHandler(this, out));
-                    queueHandler.start();
-                }
-
-                queue.add(queueHandler.getQueueItem(line, priority));
-            }
+        if (queueEnabled && priority == QueuePriority.IMMEDIATE) {
+            send(line);
         } else {
-            out.printf("%s\r\n", line);
+            if (sendingThread == null || !sendingThread.isAlive()) {
+                sendingThread = new Thread(this::handleQueuedItems, "IRC Parser queue handler");
+                sendingThread.start();
+            }
+
+            enqueue(line, priority);
         }
     }
 
     /**
-     * Sets the hanlder that this queue will use. This will cause the existing {@link #queue}
-     * to be replaced with a new version with an updated comparator.
+     * Sends queued items to the output channel, blocking or waiting as necessary.
      *
-     * @param queueHandler The new queue handler to use.
+     * <p>This is a long running method that will be executed in a separate thread.
      */
-    private void setQueueHandler(final QueueHandler queueHandler) {
-        this.queueHandler = queueHandler;
-        final BlockingQueue<QueueItem> newQueue = new PriorityBlockingQueue<>(
-                10, queueHandler.getQueueItemComparator());
-        newQueue.addAll(queue);
-        queue = newQueue;
+    protected abstract void handleQueuedItems();
+
+    /**
+     * Enqueues a new line to be sent.
+     *
+     * @param line The raw line to be sent to the server.
+     * @param priority The priority at which the line should be sent.
+     */
+    protected void enqueue(final String line, final QueuePriority priority) {
+        queue.add(new QueueItem(line, priority));
     }
+
+    /**
+     * Sends a line immediately to the server.
+     *
+     * @param line The line to be sent.
+     */
+    protected void send(final String line) {
+        if (out == null) {
+            throw new IllegalStateException("No output stream has been set.");
+        }
+
+        out.printf("%s\r\n", line);
+    }
+
 
 }
