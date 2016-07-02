@@ -45,19 +45,19 @@ public class QueueComparatorsTest {
     private static final Clock NOW_MINUS_TEN = Clock.fixed(Instant.ofEpochMilli(90 * 1000),
             ZoneId.systemDefault());
 
-    private final QueueItem currentLowPriority1 = new QueueItem(null, NOW_MINUS_FIVE,
+    private final QueueItem currentLowPriority1 = new QueueItem(NOW_MINUS_FIVE,
             "", QueuePriority.LOW);
 
-    private final QueueItem currentLowPriority2 = new QueueItem(null, NOW_MINUS_FIVE,
+    private final QueueItem currentLowPriority2 = new QueueItem(NOW_MINUS_FIVE,
             "", QueuePriority.LOW);
 
-    private final QueueItem currentNormalPriority = new QueueItem(null, NOW_MINUS_FIVE,
+    private final QueueItem currentNormalPriority = new QueueItem(NOW_MINUS_FIVE,
             "", QueuePriority.NORMAL);
 
-    private final QueueItem currentHighPriority = new QueueItem(null, NOW_MINUS_FIVE,
+    private final QueueItem currentHighPriority = new QueueItem(NOW_MINUS_FIVE,
             "", QueuePriority.HIGH);
 
-    private final QueueItem oldLowPriority = new QueueItem(null, NOW_MINUS_TEN,
+    private final QueueItem oldLowPriority = new QueueItem(NOW_MINUS_TEN,
             "", QueuePriority.LOW);
 
     @Test
