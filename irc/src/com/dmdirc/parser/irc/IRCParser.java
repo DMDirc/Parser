@@ -84,6 +84,8 @@ import javax.net.ssl.TrustManager;
 
 import dagger.ObjectGraph;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * IRC Parser.
  */
@@ -210,7 +212,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      */
     private Socket rawSocket;
     /** Used for writing to the server. */
-    private final OutputQueue out;
+    private OutputQueue out;
     /** The encoder to use to encode incoming lines. */
     private Encoder encoder = new SystemEncoder();
     /** Used for reading from the server. */
@@ -297,6 +299,19 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      */
     public OutputQueue getOutputQueue() {
         return out;
+    }
+
+    /**
+     * Sets the output queue that this parser will use.
+     *
+     * <p>Any existing items in the queue will be removed.
+     *
+     * @param queue The queue to be added.
+     */
+    public void setOutputQueue(final OutputQueue queue) {
+        checkNotNull(queue);
+        out.clearQueue();
+        out = queue;
     }
 
     @Override
