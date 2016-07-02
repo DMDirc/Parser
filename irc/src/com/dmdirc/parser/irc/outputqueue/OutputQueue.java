@@ -205,7 +205,7 @@ public abstract class OutputQueue {
      * @param priority The priority at which the line should be sent.
      */
     protected void enqueue(final String line, final QueuePriority priority) {
-        queue.add(new QueueItem(line, priority));
+        queue.add(QueueItem.create(line, priority));
     }
 
     /**

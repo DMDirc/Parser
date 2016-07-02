@@ -24,89 +24,78 @@ package com.dmdirc.parser.irc.outputqueue;
 
 import com.dmdirc.parser.common.QueuePriority;
 
+import com.google.auto.value.AutoValue;
+
 import java.time.Clock;
 import java.time.LocalDateTime;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Queued Item.
  */
-public class QueueItem {
+@AutoValue
+public abstract class QueueItem {
 
-    /** Global Item Number. */
-    private static long number;
-    /** Line to send. */
-    private final String line;
-    /** Time this line was added. */
-    private final LocalDateTime time;
-    /** Item Number. */
-    private final long itemNumber;
-    /** What is the priority of this line? */
-    private final QueuePriority priority;
+    /** Static counter to assign IDs to items. */
+    // TODO: Move this into OutputQueue or somewhere not static.
+    private static final AtomicLong itemCounter = new AtomicLong(0);
 
     /**
-     * Create a new QueueItem.
+     * Get the line that is to be sent to the server.
      *
-     * @param line Line to send
-     * @param priority Priority for the queue item
+     * @return the line to be sent.
      */
-    public QueueItem(final String line, final QueuePriority priority) {
-        this(Clock.systemDefaultZone(), line, priority);
-    }
-
-    /**
-     * Create a new QueueItem.
-     *
-     * @param line Line to send
-     * @param priority Priority for the queue item
-     */
-    public QueueItem(final Clock clock, final String line,
-            final QueuePriority priority) {
-        this.line = line;
-        this.priority = priority;
-
-        this.time = LocalDateTime.now(clock);
-        this.itemNumber = number++;
-    }
-
-    /**
-     * Get the value of line.
-     *
-     * @return the value of line
-     */
-    public String getLine() {
-        return line;
-    }
+    public abstract String getLine();
 
     /**
      * Gets the time at which this item was queued.
      *
      * @return the time this item was queued.
      */
-    public LocalDateTime getTime() {
-        return time;
-    }
+    public abstract LocalDateTime getTime();
 
     /**
      * Get the number of this item.
      *
-     * @return the value of itemNumber
+     * @return the number of this item (representing the order it was queued in).
      */
-    public long getItemNumber() {
-        return itemNumber;
-    }
+    public abstract long getItemNumber();
 
     /**
-     * Get the value of priority.
+     * Get the priority of this item.
      *
-     * @return the value of priority
+     * @return the item priority
      */
-    public QueuePriority getPriority() {
-        return priority;
-    }
+    public abstract QueuePriority getPriority();
 
     @Override
     public String toString() {
-        return String.format("[%s %s] %s", priority, time, line);
+        return String.format("[%s %s] %s", getPriority(), getTime(), getLine());
+    }
+
+    /**
+     * Creates a new {@link QueueItem}.
+     *
+     * @param line The line to be sent to the server.
+     * @param priority The priority of the line.
+     * @return A new item to be submitted to the queue.
+     */
+    public static QueueItem create(final String line, final QueuePriority priority) {
+        return create(Clock.systemDefaultZone(), line, priority);
+    }
+
+    /**
+     * Creates a new {@link QueueItem}.
+     *
+     * @param clock The clock to use to get the current time.
+     * @param line The line to be sent to the server.
+     * @param priority The priority of the line.
+     * @return A new item to be submitted to the queue.
+     */
+    public static QueueItem create(
+            final Clock clock, final String line, final QueuePriority priority) {
+        return new AutoValue_QueueItem(line, LocalDateTime.now(clock),
+                itemCounter.getAndIncrement(), priority);
     }
 
 }
