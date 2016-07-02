@@ -25,14 +25,12 @@ package com.dmdirc.parser.irc.outputqueue;
 import com.dmdirc.parser.common.QueuePriority;
 
 import java.io.PrintWriter;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 
 /**
  * Sending queue.
  */
-public abstract class QueueHandler extends Thread implements Comparator<QueueItem> {
+public abstract class QueueHandler extends Thread {
 
     /** The output queue that owns us. */
     protected OutputQueue outputQueue;
@@ -80,23 +78,16 @@ public abstract class QueueHandler extends Thread implements Comparator<QueueIte
      * @return A QueueItem for teh given parameters
      */
     public QueueItem getQueueItem(final String line, final QueuePriority priority) {
-        return new QueueItem(this, line, priority);
-    }
-
-    @Override
-    public int compare(final QueueItem mainObject, final QueueItem otherObject) {
-        return comparator.compare(mainObject, otherObject);
+        return new QueueItem(line, priority);
     }
 
     /**
-     * Determines whether the given item has been starved (i.e., it has sat waiting in the queue
-     * for too long due to higher priority items).
+     * Gets the comparator to use to sort queue items.
      *
-     * @param item The item to check
-     * @return True if the item has been queued for longer than 10 seconds, false otherwise
+     * @return The comparator to use to sort queue items.
      */
-    private static boolean isStarved(final QueueItem item) {
-        return item.getTime().isBefore(LocalDateTime.now().minus(10, ChronoUnit.SECONDS));
+    public Comparator<QueueItem> getQueueItemComparator() {
+        return comparator;
     }
 
     /**
@@ -108,4 +99,5 @@ public abstract class QueueHandler extends Thread implements Comparator<QueueIte
      */
     @Override
     public abstract void run();
+
 }

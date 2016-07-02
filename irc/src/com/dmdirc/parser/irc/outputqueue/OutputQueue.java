@@ -41,7 +41,7 @@ public class OutputQueue {
     /** Are we discarding all futher input? */
     private boolean discarding = false;
     /** The output queue! */
-    private final BlockingQueue<QueueItem> queue = new PriorityBlockingQueue<>();
+    private BlockingQueue<QueueItem> queue = new PriorityBlockingQueue<>();
     /** Object for synchronising access to the {@link #queueHandler}. */
     private final Object queueHandlerLock = new Object();
     /** Thread for the sending queue. */
@@ -71,7 +71,7 @@ public class OutputQueue {
      * @param outputStream Output Stream to use.
      */
     public void setOutputStream(final OutputStream outputStream) {
-        this.out = new PrintWriter(outputStream, true);
+        out = new PrintWriter(outputStream, true);
     }
 
     /**
@@ -207,7 +207,7 @@ public class OutputQueue {
         if (queueEnabled && priority != QueuePriority.IMMEDIATE) {
             synchronized (queueHandlerLock) {
                 if (queueHandler == null || !queueHandler.isAlive()) {
-                    queueHandler = queueHandlerFactory.getQueueHandler(this, out);
+                    setQueueHandler(queueHandlerFactory.getQueueHandler(this, out));
                     queueHandler.start();
                 }
 
@@ -217,4 +217,19 @@ public class OutputQueue {
             out.printf("%s\r\n", line);
         }
     }
+
+    /**
+     * Sets the hanlder that this queue will use. This will cause the existing {@link #queue}
+     * to be replaced with a new version with an updated comparator.
+     *
+     * @param queueHandler The new queue handler to use.
+     */
+    private void setQueueHandler(final QueueHandler queueHandler) {
+        this.queueHandler = queueHandler;
+        final BlockingQueue<QueueItem> newQueue = new PriorityBlockingQueue<>(
+                10, queueHandler.getQueueItemComparator());
+        newQueue.addAll(queue);
+        queue = newQueue;
+    }
+
 }

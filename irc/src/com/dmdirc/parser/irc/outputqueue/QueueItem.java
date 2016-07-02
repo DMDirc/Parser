@@ -30,7 +30,7 @@ import java.time.LocalDateTime;
 /**
  * Queued Item.
  */
-public class QueueItem implements Comparable<QueueItem> {
+public class QueueItem {
 
     /** Global Item Number. */
     private static long number;
@@ -42,30 +42,25 @@ public class QueueItem implements Comparable<QueueItem> {
     private final long itemNumber;
     /** What is the priority of this line? */
     private final QueuePriority priority;
-    /** Our handler. */
-    private final QueueHandler handler;
 
     /**
      * Create a new QueueItem.
      *
-     * @param handler Handler for this QueueItem
      * @param line Line to send
      * @param priority Priority for the queue item
      */
-    public QueueItem(final QueueHandler handler, final String line, final QueuePriority priority) {
-        this(handler, Clock.systemDefaultZone(), line, priority);
+    public QueueItem(final String line, final QueuePriority priority) {
+        this(Clock.systemDefaultZone(), line, priority);
     }
 
     /**
      * Create a new QueueItem.
      *
-     * @param handler Handler for this QueueItem
      * @param line Line to send
      * @param priority Priority for the queue item
      */
-    public QueueItem(final QueueHandler handler, final Clock clock, final String line,
+    public QueueItem(final Clock clock, final String line,
             final QueuePriority priority) {
-        this.handler = handler;
         this.line = line;
         this.priority = priority;
 
@@ -109,20 +104,9 @@ public class QueueItem implements Comparable<QueueItem> {
         return priority;
     }
 
-    /**
-     * Compare objects.
-     * This will use the compareQueueItem method of the current QueueHandler.
-     *
-     * @param o Object to compare to
-     * @return Position of this item in reference to the given item.
-     */
-    @Override
-    public int compareTo(final QueueItem o) {
-        return handler.compare(this, o);
-    }
-
     @Override
     public String toString() {
-        return String.format("[%s %d] %s", priority, time, line);
+        return String.format("[%s %s] %s", priority, time, line);
     }
+
 }
