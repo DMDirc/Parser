@@ -1,7 +1,5 @@
 sourceSets {
-    integTest {
-        java.srcDirs = ['integ-test']
-    }
+    integTest
 }
 
 task integTest(type: Test) {

@@ -4,12 +4,16 @@ subprojects {
     apply plugin: 'com.dmdirc.git-version'
     apply plugin: 'maven-publish'
     apply plugin: 'java'
+    apply plugin: 'idea'
 
     apply from: '../gradle/coverage.gradle'
 
-    sourceSets {
-        main.java.srcDirs = ['src']
-        test.java.srcDirs = ['test']
+    idea {
+        module {
+             sourceDirs += file('src/main/generated')
+             testSourceDirs += file('src/test/generated_tests')
+             generatedSourceDirs = [file('src/main/generated'), file('src/test/generated_tests')]
+        }
     }
 
     publishing {
