@@ -1,3 +1,7 @@
 include 'common'
 include 'irc'
 include 'xmpp'
+
+project(':common').name = 'parser-common'
+project(':irc').name = 'parser-irc'
+project(':xmpp').name = 'parser-xmpp'
