@@ -11,5 +11,8 @@ build-before-profiler.xml
 /etc/nexus-teamcity.properties
 /.gradle
 /*/build
-/*/generated
 /nexus-teamcity.gradle
+
+# Generated files created by IDEA
+/*/src/*/generated
+/*/src/*/generated_tests
