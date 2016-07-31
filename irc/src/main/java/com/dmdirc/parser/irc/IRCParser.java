@@ -59,8 +59,9 @@ import java.net.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -1114,7 +1115,8 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
         if (line.getTags().containsKey("tsirc date")) {
             try {
                 final long ts = Long.parseLong(line.getTags().get("tsirc date")) - tsdiff;
-                lineTS = LocalDateTime.ofEpochSecond(ts / 1000L, (int) (ts % 1000L), ZoneOffset.UTC);
+                lineTS = LocalDateTime.ofInstant(Instant.ofEpochSecond(ts / 1000L, (int) (ts % 1000L)),
+                        ZoneId.systemDefault());
             } catch (final NumberFormatException nfe) { /* Do nothing. */ }
         } else if (line.getTags().containsKey("time")) {
             try {
