@@ -34,11 +34,6 @@ import java.net.URI;
 public class IRCProtocolDescription implements ProtocolDescription {
 
     @Override
-    public int getDefaultPort() {
-        return 6667;
-    }
-
-    @Override
     public String[] parseHostmask(final String hostmask) {
         return IRCClientInfo.parseHostFull(hostmask);
     }
