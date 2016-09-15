@@ -79,7 +79,11 @@ subprojects {
         repositories {
             maven {
                 name 'snapshots'
-                url 'http://artifactory.dmdirc.com/artifactory/repo'
+                url 'http://artifactory.dmdirc.com/artifactory/snapshots'
+                credentials {
+                    username System.getenv('ARTIFACTORY_USER')
+                    password System.getenv('ARTIFACTORY_PASSWORD')
+                }
             }
         }
     }
