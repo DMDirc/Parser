@@ -129,7 +129,7 @@ public class Process001Test {
         when(localClient.getNickname()).thenAnswer(invocation -> nickname.toString());
         doAnswer(invocation -> {
             nickname.setLength(0);
-            nickname.append(invocation.getArgumentAt(0, String.class));
+            nickname.append(invocation.<String>getArgument(0));
             return null;
         }).when(localClient).setUserBits(anyString(), eq(true), anyBoolean());
     }
