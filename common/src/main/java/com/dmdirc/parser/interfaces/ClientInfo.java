@@ -82,7 +82,7 @@ public interface ClientInfo {
      *
      * @return int with the count of known channels
      */
-    public List<ChannelClientInfo> getChannelClients();
+    List<ChannelClientInfo> getChannelClients();
 
     /**
      * Get the away state of a user.

@@ -26,7 +26,6 @@ import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.common.QueuePriority;
 import com.dmdirc.parser.events.ChannelJoinEvent;
 import com.dmdirc.parser.events.ChannelSelfJoinEvent;
-import com.dmdirc.parser.events.DataOutEvent;
 import com.dmdirc.parser.interfaces.ChannelClientInfo;
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.irc.CapabilityState;
@@ -39,7 +38,6 @@ import com.dmdirc.parser.irc.PrefixModeManager;
 import com.dmdirc.parser.irc.ProcessorNotFoundException;
 import com.dmdirc.parser.irc.events.IRCDataOutEvent;
 import net.engio.mbassy.listener.Handler;
-import net.engio.mbassy.listener.Invoke;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;

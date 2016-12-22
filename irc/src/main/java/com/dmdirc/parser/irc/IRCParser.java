@@ -1532,11 +1532,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
 
         for (ChannelJoinRequest channel : channels) {
             // Make sure we have a list to put stuff in.
-            StringBuffer list = joinMap.get(channel.getPassword());
-            if (list == null) {
-                list = new StringBuffer();
-                joinMap.put(channel.getPassword(), list);
-            }
+            StringBuffer list = joinMap.computeIfAbsent(channel.getPassword(), k -> new StringBuffer());
 
             // Add the channel to the list. If the name is invalid and
             // autoprefix is off we will just skip this channel.
