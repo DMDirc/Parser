@@ -53,7 +53,6 @@ import com.dmdirc.parser.irc.ProcessorNotFoundException;
 import com.dmdirc.parser.irc.TimestampedIRCProcessor;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.regex.PatternSyntaxException;
 
 import javax.inject.Inject;

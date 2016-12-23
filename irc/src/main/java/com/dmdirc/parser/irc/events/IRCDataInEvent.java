@@ -23,7 +23,6 @@
 package com.dmdirc.parser.irc.events;
 
 import com.dmdirc.parser.events.DataInEvent;
-import com.dmdirc.parser.interfaces.Parser;
 import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.IRCReader.ReadLine;
 
