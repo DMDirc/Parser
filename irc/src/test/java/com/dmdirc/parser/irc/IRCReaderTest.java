@@ -24,20 +24,27 @@ package com.dmdirc.parser.irc;
 
 import com.dmdirc.parser.interfaces.Encoder;
 import com.dmdirc.parser.irc.IRCReader.ReadLine;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
-
 import org.junit.Assert;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.isNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class IRCReaderTest {
 
@@ -71,8 +78,8 @@ public class IRCReaderTest {
         final InputStream stream = new ByteArrayInputStream("te t :foo\r\n".getBytes());
         final Encoder encoder = mock(Encoder.class);
 
-        when(encoder.encode((String) isNull(), (String) isNull(),
-                (byte[]) anyObject(), anyInt(), eq(3)))
+        when(encoder.encode(isNull(), isNull(),
+                any(), anyInt(), eq(3)))
                 .thenReturn("encoded");
 
         final IRCReader reader = new IRCReader(stream, encoder);
@@ -88,9 +95,7 @@ public class IRCReaderTest {
         final InputStream stream = new ByteArrayInputStream("foo bar  baz  :qux  baz\r\n".getBytes());
         final Encoder encoder = mock(Encoder.class);
 
-        when(encoder.encode((String) isNull(), (String) isNull(),
-                (byte[]) anyObject(), eq(15), eq(8)))
-                .thenReturn("qux  baz");
+        when(encoder.encode(isNull(), isNull(), any(), eq(15), eq(8))).thenReturn("qux  baz");
 
         final IRCReader reader = new IRCReader(stream, encoder);
         final ReadLine line = reader.readLine();
@@ -106,8 +111,7 @@ public class IRCReaderTest {
 
         new IRCReader(stream, encoder).readLine();
 
-        verify(encoder).encode(eq("src"), anyString(),
-                (byte[]) anyObject(), anyInt(), anyInt());
+        verify(encoder).encode(eq("src"), isNull(), any(), anyInt(), anyInt());
     }
 
     /** Verifies that no source is passed if the source is empty. */
@@ -118,8 +122,7 @@ public class IRCReaderTest {
 
         new IRCReader(stream, encoder).readLine();
 
-        verify(encoder).encode((String) isNull(), anyString(),
-                (byte[]) anyObject(), anyInt(), anyInt());
+        verify(encoder).encode(isNull(), isNull(), any(), anyInt(), anyInt());
     }
 
     /** Verifies that a destination is extracted properly. */
@@ -130,8 +133,7 @@ public class IRCReaderTest {
 
         new IRCReader(stream, encoder).readLine();
 
-        verify(encoder).encode(anyString(), eq("y"), (byte[]) anyObject(),
-                anyInt(), anyInt());
+        verify(encoder).encode(anyString(), eq("y"), any(), anyInt(), anyInt());
     }
 
     /** Verifies that no destination is extracted if there's no source. */
@@ -142,8 +144,7 @@ public class IRCReaderTest {
 
         new IRCReader(stream, encoder).readLine();
 
-        verify(encoder).encode(anyString(), (String) isNull(),
-                (byte[]) anyObject(), anyInt(), anyInt());
+        verify(encoder).encode(isNull(), isNull(), any(), anyInt(), anyInt());
     }
 
     /** Verifies that no destination is extracted if there are too few args. */
@@ -154,8 +155,7 @@ public class IRCReaderTest {
 
         new IRCReader(stream, encoder).readLine();
 
-        verify(encoder).encode(anyString(), (String) isNull(),
-                (byte[]) anyObject(), anyInt(), anyInt());
+        verify(encoder).encode(anyString(), isNull(), any(), anyInt(), anyInt());
     }
 
     /** Verifies that a numeric's destination is extracted properly. */
@@ -166,7 +166,7 @@ public class IRCReaderTest {
 
         new IRCReader(stream, encoder).readLine();
 
-        verify(encoder).encode(anyString(), eq("y"), (byte[]) anyObject(), anyInt(), anyInt());
+        verify(encoder).encode(anyString(), eq("y"), any(), anyInt(), anyInt());
     }
 
     /** Verifies that the close call is proxied to the stream. */
@@ -190,8 +190,7 @@ public class IRCReaderTest {
                 (int) '1', (int) ' ', 0xF6, (int) ' ', (int) 'y', (int) ' ', (int) 'z', (int) ' ',
                 (int) ':', (int) 'x', (int) '\r', (int) '\n');
 
-        when(encoder.encode(anyString(), anyString(),
-                (byte[]) any(), anyInt(), anyInt())).thenReturn("x");
+        when(encoder.encode(anyString(), anyString(), any(), anyInt(), anyInt())).thenReturn("x");
 
         final ReadLine line = new IRCReader(stream, encoder, Charset.forName("UTF-8")).readLine();
 

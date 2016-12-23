@@ -18,3 +18,10 @@ dependencies:
 test:
   override:
     - ./gradlew test jacocoTestReport coveralls
+
+deployment:
+  snapshots:
+    branch: master
+    owner: DMDirc
+    commands:
+      - ./gradlew publishSnapshot

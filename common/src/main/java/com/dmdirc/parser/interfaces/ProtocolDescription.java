@@ -33,13 +33,6 @@ import java.net.URI;
 public interface ProtocolDescription {
 
     /**
-     * Retrieves the default port to use for this protocol if none is specified.
-     *
-     * @return This protocol's default port
-     */
-    int getDefaultPort();
-
-    /**
      * Parses the specified hostmask into an array containing a nickname,
      * username and hostname, in that order.
      *

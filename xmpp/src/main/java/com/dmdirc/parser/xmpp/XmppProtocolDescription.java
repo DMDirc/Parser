@@ -32,11 +32,6 @@ import java.net.URI;
 public class XmppProtocolDescription implements ProtocolDescription {
 
     @Override
-    public int getDefaultPort() {
-        return 5222;
-    }
-
-    @Override
     public String[] parseHostmask(final String hostmask) {
         final String[] parts = hostmask.split("/");
         return new String[]{parts[0], parts.length > 1 ? parts[1] : "unknown", ""};
