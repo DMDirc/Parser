@@ -212,6 +212,8 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * wrapped, and should therefore not be used to send or receive data.
      */
     private Socket rawSocket;
+    /** The socket connected to the IRC server, used for sending or receiving data. */
+    private Socket socket;
     /** Used for writing to the server. */
     private OutputQueue out;
     /** The encoder to use to encode incoming lines. */
@@ -309,9 +311,10 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      *
      * @param queue The queue to be added.
      */
-    public void setOutputQueue(final OutputQueue queue) {
+    public void setOutputQueue(final OutputQueue queue) throws IOException {
         checkNotNull(queue);
         out.clearQueue();
+        queue.setOutputStream(socket.getOutputStream());
         out = queue;
     }
 
@@ -750,7 +753,6 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
 
         rawSocket = getSocketFactory().createSocket(connectUri.getHost(), connectUri.getPort());
 
-        final Socket mySocket;
         if (getURI().getScheme().endsWith("s")) {
             callDebugInfo(DEBUG_SOCKET, "Server is SSL.");
 
@@ -762,27 +764,27 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
             sc.init(myKeyManagers, myTrustManager, new SecureRandom());
 
             final SSLSocketFactory socketFactory = sc.getSocketFactory();
-            mySocket = socketFactory.createSocket(rawSocket, getURI().getHost(), getURI()
+            socket = socketFactory.createSocket(rawSocket, getURI().getHost(), getURI()
                     .getPort(), false);
 
             // Manually start a handshake so we get proper SSL errors here,
             // and so that we can control the connection timeout
-            final int timeout = mySocket.getSoTimeout();
-            mySocket.setSoTimeout(10000);
-            ((SSLSocket) mySocket).startHandshake();
-            mySocket.setSoTimeout(timeout);
+            final int timeout = socket.getSoTimeout();
+            socket.setSoTimeout(10000);
+            ((SSLSocket) socket).startHandshake();
+            socket.setSoTimeout(timeout);
 
             currentSocketState = SocketState.OPENING;
         } else {
-            mySocket = rawSocket;
+            socket = rawSocket;
         }
 
         callDebugInfo(DEBUG_SOCKET, "\t-> Opening socket output stream PrintWriter");
-        out.setOutputStream(mySocket.getOutputStream());
+        out.setOutputStream(socket.getOutputStream());
         out.setQueueEnabled(true);
         currentSocketState = SocketState.OPEN;
         callDebugInfo(DEBUG_SOCKET, "\t-> Opening socket input stream BufferedReader");
-        in = new IRCReader(mySocket.getInputStream(), encoder);
+        in = new IRCReader(socket.getInputStream(), encoder);
         callDebugInfo(DEBUG_SOCKET, "\t-> Socket Opened");
     }
 
