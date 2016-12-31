@@ -314,7 +314,11 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     public void setOutputQueue(final OutputQueue queue) throws IOException {
         checkNotNull(queue);
         out.clearQueue();
-        queue.setOutputStream(socket.getOutputStream());
+
+        if (socket != null) {
+            queue.setOutputStream(socket.getOutputStream());
+        }
+
         out = queue;
     }
 
