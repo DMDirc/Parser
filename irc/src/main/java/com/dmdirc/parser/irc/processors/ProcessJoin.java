@@ -193,7 +193,13 @@ public class ProcessJoin extends IRCProcessor {
         } else {
             // Some kind of failed to join, pop the pending join queues.
             final PendingJoin pendingJoin = pendingJoins.poll();
-            callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Failed to join channel (" + sParam + ") - Skipping " + pendingJoin.getChannel() + " (" + pendingJoin.getKey() + ")");
+            if (pendingJoin != null && parser.getStringConverter().equalsIgnoreCase(pendingJoin.getChannel(), sParam)) {
+                callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Failed to join channel (" + sParam + ") - Skipping " + pendingJoin.getChannel() + " (" + pendingJoin.getKey() + ")");
+            } else {
+                // Out of sync, clear
+                callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Failed to join channel (" + sParam + ") - pending join keys out of sync (Got: " + (pendingJoin == null ? pendingJoin : pendingJoin.getChannel()) + ", Wanted: " + sParam + ") - Clearing.");
+                pendingJoins.clear();
+            }
         }
     }
 
