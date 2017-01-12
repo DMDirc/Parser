@@ -1,0 +1,2 @@
+# Parser
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/062d1bb47b1f48379600672155a70cf9)](https://www.codacy.com/app/DMDirc/Parser?utm_source=github.com&utm_medium=referral&utm_content=DMDirc/Parser&utm_campaign=badger)
