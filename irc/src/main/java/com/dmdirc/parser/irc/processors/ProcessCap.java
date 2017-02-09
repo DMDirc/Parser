@@ -66,6 +66,7 @@ public class ProcessCap extends TimestampedIRCProcessor {
         supportedCapabilities.add("account-notify");
         supportedCapabilities.add("extended-join");
         supportedCapabilities.add("self-message");
+        supportedCapabilities.add("server-time");
 
         // Freenode
         // supportedCapabilities.add("identify-msg");
