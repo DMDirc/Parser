@@ -250,8 +250,6 @@ public class IRCReader implements Closeable {
         public ReadLine(final String line, final String... lineTokens) {
             this.line = line;
 
-            String[] tokens = lineTokens;
-
             // In the case where TSIRC and message tags are used, the TSIRC tag can appear in 1 of 2 places depending
             // on interpretation of the spec - Either right at the start of the line, or as part of the actual message.
             // EG:
@@ -259,8 +257,22 @@ public class IRCReader implements Closeable {
             // @tag=value @123@:test ing
             //
             // are both functionally equivalent.
-
+            //
             // Look for old-style TSIRC timestamp first.
+            // Then look for message tags.
+            // Then look again for tsirc, as it may be after the message tags.
+            this.tokens = checkTSIRC(checkMessageTags(checkTSIRC(lineTokens)));
+        }
+
+        /**
+         * Look for TSIRC Timestamp.
+         *
+         * @param lineTokens Current line tokens
+         * @return The line tokens after we have removed the TSIRC Timestamp if
+         *         there was one, else we return lineTokens as-is.
+         */
+        private String[] checkTSIRC(final String[] lineTokens) {
+            String[] tokens = lineTokens;
             if (!tokens[0].isEmpty() && tokens[0].charAt(0) == '@') {
                 final int tsEnd = tokens[0].indexOf('@', 1);
                 if (tsEnd > -1) {
@@ -272,7 +284,18 @@ public class IRCReader implements Closeable {
                 }
             }
 
-            // Now look for message tags.
+            return tokens;
+        }
+
+        /**
+         * Look for Message-Tags
+         *
+         * @param lineTokens Current line tokens
+         * @return The line tokens after we have removed the message-tags if
+         *         there was any, else we return lineTokens as-is.
+         */
+        private String[] checkMessageTags(final String[] lineTokens) {
+            String[] tokens = lineTokens;
             if (!tokens[0].isEmpty() && tokens[0].charAt(0) == '@') {
                 final String[] lineTags = tokens[0].substring(1).split(";");
                 for (final String keyVal : lineTags) {
@@ -286,19 +309,7 @@ public class IRCReader implements Closeable {
                 System.arraycopy(lineTokens, 1, tokens, 0, lineTokens.length - 1);
             }
 
-            // Look again for tsirc, as it may be after the message tags.
-            if (!tokens[0].isEmpty() && tokens[0].charAt(0) == '@') {
-                final int tsEnd = tokens[0].indexOf('@', 1);
-                if (tsEnd > -1) {
-                    try {
-                        final long ts = Long.parseLong(tokens[0].substring(1, tsEnd));
-                        tags.put("tsirc date", tokens[0].substring(1, tsEnd));
-                        tokens[0] = tokens[0].substring(tsEnd + 1);
-                    } catch (final NumberFormatException nfe) { /* Not a timestamp. */ }
-                }
-            }
-
-            this.tokens = tokens;
+            return tokens;
         }
 
         /**
