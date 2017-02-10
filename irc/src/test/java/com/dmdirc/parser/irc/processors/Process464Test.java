@@ -35,6 +35,8 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.time.LocalDateTime;
+
 import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -56,7 +58,7 @@ public class Process464Test {
 
     @Test
     public void testFiresPasswordListenerOn464() {
-        processor.process("464", ":server.com", "464", ":Bad password!");
+        processor.process(LocalDateTime.now(), "464", ":server.com", "464", ":Bad password!");
         verify(callbackManager).publish(eventCaptor.capture());
         assertSame(parser, eventCaptor.getValue().getParser());
     }
