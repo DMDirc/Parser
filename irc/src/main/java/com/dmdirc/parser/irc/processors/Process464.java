@@ -25,6 +25,7 @@ package com.dmdirc.parser.irc.processors;
 import com.dmdirc.parser.events.PasswordRequiredEvent;
 import com.dmdirc.parser.irc.IRCParser;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import javax.inject.Inject;
@@ -51,14 +52,14 @@ public class Process464 extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String... token) {
-        callPasswordRequired();
+    public void process(final LocalDateTime time, final String sParam, final String... token) {
+        callPasswordRequired(time);
     }
 
     /**
      * Callback to all objects implementing the PasswordRequired Callback.
      */
-    protected void callPasswordRequired() {
-        getCallbackManager().publish(new PasswordRequiredEvent(parser, LocalDateTime.now()));
+    protected void callPasswordRequired(final LocalDateTime time) {
+        getCallbackManager().publish(new PasswordRequiredEvent(parser, time));
     }
 }

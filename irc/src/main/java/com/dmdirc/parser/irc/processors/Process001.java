@@ -26,6 +26,7 @@ import com.dmdirc.parser.common.ChannelJoinRequest;
 import com.dmdirc.parser.common.ParserError;
 import com.dmdirc.parser.irc.IRCParser;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 import javax.inject.Inject;
@@ -52,7 +53,7 @@ public class Process001 extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String... token) {
+    public void process(final LocalDateTime time, final String sParam, final String... token) {
         parser.got001 = true;
         // << :demon1.uk.quakenet.org 001 Java-Test :Welcome to the QuakeNet IRC Network, Java-Test
         parser.updateServerName(token[0].substring(1, token[0].length()));

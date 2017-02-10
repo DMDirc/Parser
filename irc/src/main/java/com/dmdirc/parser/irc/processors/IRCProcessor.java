@@ -29,6 +29,8 @@ import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
 
+import java.time.LocalDateTime;
+
 /**
  * IRCProcessor.
  * Superclass for all IRCProcessor types.
@@ -130,10 +132,11 @@ public abstract class IRCProcessor {
     /**
      * Process a Line.
      *
+     * @param date Date of this line
      * @param sParam Type of line to process ("005", "PRIVMSG" etc)
      * @param token IRCTokenised line to process
      */
-    public abstract void process(final String sParam, final String... token);
+    public abstract void process(final LocalDateTime date, final String sParam, final String... token);
 
     /**
      * What does this IRCProcessor handle.

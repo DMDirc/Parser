@@ -69,7 +69,7 @@ public class ProcessNames extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String... token) {
+    public void process(final LocalDateTime time, final String sParam, final String... token) {
         final IRCChannelInfo iChannel;
         if ("366".equals(sParam)) {
             // End of names
@@ -79,11 +79,11 @@ public class ProcessNames extends IRCProcessor {
             }
 
             if (!iChannel.hadTopic()) {
-                callChannelTopic(iChannel, true);
+                callChannelTopic(time, iChannel, true);
             }
 
             iChannel.setAddingNames(false);
-            callChannelGotNames(iChannel);
+            callChannelGotNames(time, iChannel);
 
             if (!iChannel.hasAskedForListModes()
                     && parser.getAutoListMode()) {
@@ -146,10 +146,10 @@ public class ProcessNames extends IRCProcessor {
      * @param cChannel Channel that topic was set on
      * @param bIsJoinTopic True when getting topic on join, false if set by user/server
      */
-    protected void callChannelTopic(final ChannelInfo cChannel, final boolean bIsJoinTopic) {
+    protected void callChannelTopic(final LocalDateTime time, final ChannelInfo cChannel, final boolean bIsJoinTopic) {
         ((IRCChannelInfo) cChannel).setHadTopic();
         getCallbackManager().publish(
-                new ChannelTopicEvent(parser, LocalDateTime.now(), cChannel, bIsJoinTopic));
+                new ChannelTopicEvent(parser, time, cChannel, bIsJoinTopic));
     }
 
     /**
@@ -157,8 +157,8 @@ public class ProcessNames extends IRCProcessor {
      *
      * @param cChannel Channel which the names reply is for
      */
-    protected void callChannelGotNames(final ChannelInfo cChannel) {
-        getCallbackManager().publish(new ChannelNamesEvent(parser, LocalDateTime.now(), cChannel));
+    protected void callChannelGotNames(final LocalDateTime time, final ChannelInfo cChannel) {
+        getCallbackManager().publish(new ChannelNamesEvent(parser, time, cChannel));
     }
 
 }

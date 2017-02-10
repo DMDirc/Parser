@@ -63,8 +63,8 @@ public class ProcessNickInUse extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String... token) {
-        callNickInUse(token[3]);
+    public void process(final LocalDateTime time, final String sParam, final String... token) {
+        callNickInUse(time, token[3]);
     }
 
     /**
@@ -72,8 +72,8 @@ public class ProcessNickInUse extends IRCProcessor {
      *
      * @param nickname Nickname that was wanted.
      */
-    protected void callNickInUse(final String nickname) {
-        getCallbackManager().publish(new NickInUseEvent(parser, LocalDateTime.now(), nickname));
+    protected void callNickInUse(final LocalDateTime time, final String nickname) {
+        getCallbackManager().publish(new NickInUseEvent(parser, time, nickname));
     }
 
 }

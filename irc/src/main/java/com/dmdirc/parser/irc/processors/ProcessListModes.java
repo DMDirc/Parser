@@ -29,7 +29,6 @@ import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ServerType;
 import com.dmdirc.parser.irc.ServerTypeGroup;
-import com.dmdirc.parser.irc.TimestampedIRCProcessor;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -41,7 +40,7 @@ import javax.inject.Inject;
 /**
  * Process a List Modes.
  */
-public class ProcessListModes extends TimestampedIRCProcessor {
+public class ProcessListModes extends IRCProcessor {
 
     /**
      * Create a new instance of the IRCProcessor Object.

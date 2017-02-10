@@ -58,7 +58,7 @@ public class ProcessWho extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String... token) {
+    public void process(final LocalDateTime time, final String sParam, final String... token) {
         // :blueyonder2.uk.quakenet.org 352 Dataforce #mdbot shane Tobavaj.users.quakenet.org *.quakenet.org Tobavaj G+x :3 Tobavaj - http://shane.dmdirc.com/scriptbot.php
         //              0               1      2        3     4              5                      6           7     8        9
         // :blueyonder2.uk.quakenet.org 352 Dataforce #mdbot ~Dataforce ResNetUser-BrynDinas-147.143.246.102.bangor.ac.uk *.quakenet.org Dataforce H@ :0 Dataforce
@@ -84,14 +84,14 @@ public class ProcessWho extends IRCProcessor {
                 final AwayState oldState = client.getAwayState();
                 client.setAwayState(isAway);
                 if (client == parser.getLocalClient()) {
-                    callAwayState(oldState, client.getAwayState(), client.getAwayReason());
+                    callAwayState(time, oldState, client.getAwayState(), client.getAwayReason());
                 } else {
-                    callAwayStateOther(client, oldState, isAway);
+                    callAwayStateOther(time, client, oldState, isAway);
 
                     for (ChannelInfo iChannel : parser.getChannels()) {
                         final ChannelClientInfo iChannelClient = iChannel.getChannelClient(client);
                         if (iChannelClient != null) {
-                            callChannelAwayStateOther(iChannel, iChannelClient, oldState, isAway);
+                            callChannelAwayStateOther(time, iChannel, iChannelClient, oldState, isAway);
                         }
                     }
                 }
@@ -106,10 +106,10 @@ public class ProcessWho extends IRCProcessor {
      * @param currentState Current Away State
      * @param reason Best guess at away reason
      */
-    protected void callAwayState(final AwayState oldState, final AwayState currentState,
+    protected void callAwayState(final LocalDateTime time, final AwayState oldState, final AwayState currentState,
             final String reason) {
         getCallbackManager().publish(
-                new AwayStateEvent(parser, LocalDateTime.now(), oldState, currentState, reason));
+                new AwayStateEvent(parser, time, oldState, currentState, reason));
     }
 
     /**
@@ -119,10 +119,10 @@ public class ProcessWho extends IRCProcessor {
      * @param oldState Old Away State
      * @param state Current Away State
      */
-    protected void callAwayStateOther(final ClientInfo client, final AwayState oldState,
+    protected void callAwayStateOther(final LocalDateTime time, final ClientInfo client, final AwayState oldState,
             final AwayState state) {
         getCallbackManager().publish(
-                new OtherAwayStateEvent(parser, LocalDateTime.now(), client, oldState, state));
+                new OtherAwayStateEvent(parser, time, client, oldState, state));
     }
 
     /**
@@ -133,10 +133,10 @@ public class ProcessWho extends IRCProcessor {
      * @param oldState Old Away State
      * @param state Current Away State
      */
-    protected void callChannelAwayStateOther(final ChannelInfo channel,
+    protected void callChannelAwayStateOther(final LocalDateTime time, final ChannelInfo channel,
             final ChannelClientInfo channelClient, final AwayState oldState, final AwayState state) {
         getCallbackManager().publish(
-                new ChannelOtherAwayStateEvent(parser, LocalDateTime.now(), channel, channelClient,
+                new ChannelOtherAwayStateEvent(parser, time, channel, channelClient,
                         oldState, state));
     }
 

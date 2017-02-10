@@ -24,7 +24,6 @@ package com.dmdirc.parser.irc.processors;
 
 import com.dmdirc.parser.irc.CapabilityState;
 import com.dmdirc.parser.irc.IRCParser;
-import com.dmdirc.parser.irc.TimestampedIRCProcessor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -44,7 +43,7 @@ import javax.inject.Inject;
  * See: http://www.leeh.co.uk/draft-mitchell-irc-capabilities-02.html
  * See: http://ircv3.atheme.org/specification/capability-negotiation-3.1
  */
-public class ProcessCap extends TimestampedIRCProcessor {
+public class ProcessCap extends IRCProcessor {
     /** Have we handled the pre-connect cap request? */
     private boolean hasCapped;
     /** List of supported capabilities. */

@@ -51,10 +51,10 @@ public class ProcessInvite extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String... token) {
+    public void process(final LocalDateTime time, final String sParam, final String... token) {
         // :Tobavaj!shane@Tobavaj.users.quakenet.org INVITE Dataforce #dataforceisgod 1188846462
         if (token.length > 2) {
-            callInvite(token[0].substring(1), token[3]);
+            callInvite(time, token[0].substring(1), token[3]);
         }
     }
 
@@ -64,9 +64,9 @@ public class ProcessInvite extends IRCProcessor {
      * @param userHost The hostname of the person who invited us
      * @param channel The name of the channel we were invited to
      */
-    protected void callInvite(final String userHost, final String channel) {
+    protected void callInvite(final LocalDateTime time, final String userHost, final String channel) {
         getCallbackManager().publish(new InviteEvent(
-                parser, LocalDateTime.now(), userHost, channel));
+                parser, time, userHost, channel));
     }
 
 }

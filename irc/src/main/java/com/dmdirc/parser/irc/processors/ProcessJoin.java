@@ -36,7 +36,6 @@ import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ModeManager;
 import com.dmdirc.parser.irc.PrefixModeManager;
 import com.dmdirc.parser.irc.ProcessorNotFoundException;
-import com.dmdirc.parser.irc.TimestampedIRCProcessor;
 import com.dmdirc.parser.irc.events.IRCDataOutEvent;
 import net.engio.mbassy.listener.Handler;
 
@@ -51,7 +50,7 @@ import javax.inject.Named;
 /**
  * Process a channel join.
  */
-public class ProcessJoin extends TimestampedIRCProcessor {
+public class ProcessJoin extends IRCProcessor {
 
     /** The manager to use to access prefix modes. */
     private final PrefixModeManager prefixModeManager;
@@ -155,7 +154,7 @@ public class ProcessJoin extends TimestampedIRCProcessor {
                         } else {
                             // If we are joining a channel we are already on, fake a part from
                             // the channel internally, and rejoin.
-                            parser.getProcessingManager().process("PART", token);
+                            parser.getProcessingManager().process(date, "PART", token);
                         }
                     } catch (ProcessorNotFoundException e) {
                     }

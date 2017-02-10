@@ -52,7 +52,7 @@ public class ProcessAway extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String... token) {
+    public void process(final LocalDateTime time, final String sParam, final String... token) {
         final IRCClientInfo iClient = getClientInfo(token[0]);
         switch (sParam) {
             case "AWAY":
@@ -64,7 +64,7 @@ public class ProcessAway extends IRCProcessor {
                     iClient.setAwayState(reason.isEmpty() ? AwayState.HERE : AwayState.AWAY);
 
                     if (iClient == parser.getLocalClient()) {
-                        callAwayState(oldState, iClient.getAwayState(), iClient.getAwayReason());
+                        callAwayState(time, oldState, iClient.getAwayState(), iClient.getAwayReason());
                     }
                 }
                 break;
@@ -78,7 +78,7 @@ public class ProcessAway extends IRCProcessor {
                 // IRC HERE/BACK response
                 final AwayState oldState = parser.getLocalClient().getAwayState();
                 parser.getLocalClient().setAwayState("306".equals(sParam) ? AwayState.AWAY : AwayState.HERE);
-                callAwayState(oldState, parser.getLocalClient().getAwayState(), parser.getLocalClient().getAwayReason());
+                callAwayState(time, oldState, parser.getLocalClient().getAwayState(), parser.getLocalClient().getAwayReason());
                 break;
         }
     }
@@ -90,10 +90,10 @@ public class ProcessAway extends IRCProcessor {
      * @param currentState Current Away State
      * @param reason Best guess at away reason
      */
-    protected void callAwayState(final AwayState oldState, final AwayState currentState,
+    protected void callAwayState(final LocalDateTime time, final AwayState oldState, final AwayState currentState,
             final String reason) {
         getCallbackManager().publish(
-                new AwayStateEvent(parser, LocalDateTime.now(), oldState, currentState, reason));
+                new AwayStateEvent(parser, time, oldState, currentState, reason));
     }
 
 }

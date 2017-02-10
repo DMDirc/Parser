@@ -53,7 +53,7 @@ public class ProcessWallops extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String... token) {
+    public void process(final LocalDateTime time, final String sParam, final String... token) {
         if (token.length < 3) {
             return;
         }
@@ -67,14 +67,14 @@ public class ProcessWallops extends IRCProcessor {
 
         if (bits.length > 1) {
             if (message.charAt(0) == '*') {
-                callWallop(bits[1], user);
+                callWallop(time, bits[1], user);
                 return;
             } else if (message.charAt(0) == '$') {
-                callWalluser(bits[1], user);
+                callWalluser(time, bits[1], user);
                 return;
             }
         }
-        callWallDesync(message, user);
+        callWallDesync(time, message, user);
     }
 
     /**
@@ -83,8 +83,8 @@ public class ProcessWallops extends IRCProcessor {
      * @param message The message
      * @param host Host of the user who sent the wallop
      */
-    protected void callWallop(final String message, final String host) {
-        getCallbackManager().publish(new WallopEvent(parser, LocalDateTime.now(), message, host));
+    protected void callWallop(final LocalDateTime time, final String message, final String host) {
+        getCallbackManager().publish(new WallopEvent(parser, time, message, host));
     }
 
     /**
@@ -93,8 +93,8 @@ public class ProcessWallops extends IRCProcessor {
      * @param message The message
      * @param host Host of the user who sent the walluser
      */
-    protected void callWalluser(final String message, final String host) {
-        getCallbackManager().publish(new WalluserEvent(parser, LocalDateTime.now(), message, host));
+    protected void callWalluser(final LocalDateTime time, final String message, final String host) {
+        getCallbackManager().publish(new WalluserEvent(parser, time, message, host));
     }
 
     /**
@@ -103,9 +103,9 @@ public class ProcessWallops extends IRCProcessor {
      * @param message The message
      * @param host Host of the user who sent the WallDesync
      */
-    protected void callWallDesync(final String message, final String host) {
+    protected void callWallDesync(final LocalDateTime time, final String message, final String host) {
         getCallbackManager().publish(new WallDesyncEvent(
-                parser, LocalDateTime.now(), message, host));
+                parser, time, message, host));
     }
 
 }

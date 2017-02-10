@@ -31,7 +31,6 @@ import com.dmdirc.parser.irc.IRCChannelClientInfo;
 import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
-import com.dmdirc.parser.irc.TimestampedIRCProcessor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -41,7 +40,7 @@ import javax.inject.Inject;
 /**
  * Process a Quit message.
  */
-public class ProcessQuit extends TimestampedIRCProcessor {
+public class ProcessQuit extends IRCProcessor {
 
     /**
      * Create a new instance of the IRCProcessor Object.
@@ -125,7 +124,7 @@ public class ProcessQuit extends TimestampedIRCProcessor {
     protected void callChannelQuit(final LocalDateTime date, final ChannelInfo cChannel,
             final ChannelClientInfo cChannelClient, final String sReason) {
         getCallbackManager().publish(
-                new ChannelQuitEvent(parser, LocalDateTime.now(), cChannel, cChannelClient,
+                new ChannelQuitEvent(parser, date, cChannel, cChannelClient,
                         sReason));
     }
 

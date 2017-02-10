@@ -58,7 +58,7 @@ public class Process004005 extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String... token) {
+    public void process(final LocalDateTime time, final String sParam, final String... token) {
         switch (sParam) {
             case "002":
                 process002();

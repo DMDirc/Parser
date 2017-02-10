@@ -128,17 +128,6 @@ public class ProcessingManager {
     /**
      * Process a Line.
      *
-     * @param sParam Type of line to process ("005", "PRIVMSG" etc)
-     * @param token IRCTokenised line to process
-     * @throws ProcessorNotFoundException exception if no processors exists to handle the line
-     */
-    public void process(final String sParam, final String... token) throws ProcessorNotFoundException {
-        process(LocalDateTime.now(), sParam, token);
-    }
-
-    /**
-     * Process a Line.
-     *
      * @param date Date of line.
      * @param sParam Type of line to process ("005", "PRIVMSG" etc)
      * @param token IRCTokenised line to process
@@ -149,11 +138,7 @@ public class ProcessingManager {
         IRCProcessor messageProcessor = null;
         try {
             messageProcessor = getProcessor(sParam);
-            if (messageProcessor instanceof TimestampedIRCProcessor) {
-                ((TimestampedIRCProcessor)messageProcessor).process(date, sParam, token);
-            } else {
-                messageProcessor.process(sParam, token);
-            }
+            messageProcessor.process(date, sParam, token);
         } catch (ProcessorNotFoundException p) {
             throw p;
         } catch (Exception e) {
@@ -164,9 +149,9 @@ public class ProcessingManager {
             parser.callErrorInfo(ei);
         } finally {
             // Try to call callNumeric. We don't want this to work if sParam is a non
-            // integer param, hense the empty catch
+            // integer param, hence the empty catch
             try {
-                callNumeric(Integer.parseInt(sParam), token);
+                callNumeric(date, Integer.parseInt(sParam), token);
             } catch (NumberFormatException e) {
             }
         }
@@ -178,8 +163,8 @@ public class ProcessingManager {
      * @param numeric What numeric is this for
      * @param token IRC Tokenised line
      */
-    protected void callNumeric(final int numeric, final String... token) {
-        parser.getCallbackManager().publish(new NumericEvent(parser, LocalDateTime.now(), numeric,
+    protected void callNumeric(final LocalDateTime time, final int numeric, final String... token) {
+        parser.getCallbackManager().publish(new NumericEvent(parser, time, numeric,
                 token));
     }
 }

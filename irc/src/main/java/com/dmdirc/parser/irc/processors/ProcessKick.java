@@ -30,7 +30,6 @@ import com.dmdirc.parser.irc.IRCChannelClientInfo;
 import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
-import com.dmdirc.parser.irc.TimestampedIRCProcessor;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -40,7 +39,7 @@ import javax.inject.Inject;
 /**
  * Process a channel kick.
  */
-public class ProcessKick extends TimestampedIRCProcessor {
+public class ProcessKick extends IRCProcessor {
 
     /**
      * Create a new instance of the IRCProcessor Object.

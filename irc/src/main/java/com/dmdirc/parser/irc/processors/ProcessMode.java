@@ -39,7 +39,6 @@ import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ModeManager;
 import com.dmdirc.parser.irc.PrefixModeManager;
-import com.dmdirc.parser.irc.TimestampedIRCProcessor;
 
 import java.time.LocalDateTime;
 import java.util.Calendar;
@@ -50,7 +49,7 @@ import javax.inject.Named;
 /**
  * Process a Mode line.
  */
-public class ProcessMode extends TimestampedIRCProcessor {
+public class ProcessMode extends IRCProcessor {
 
     /** The manager to use to access prefix modes. */
     private final PrefixModeManager prefixModeManager;
@@ -236,7 +235,7 @@ public class ProcessMode extends TimestampedIRCProcessor {
                         if (!"324".equals(sParam)) {
                             getCallbackManager().publish(
                                     new ChannelSingleModeChangeEvent(
-                                            parser, LocalDateTime.now(), iChannel,
+                                            parser, date, iChannel,
                                             setterCCI, token[0], cPositive + cMode + " " +
                                             sModeParam));
                         }
@@ -251,7 +250,7 @@ public class ProcessMode extends TimestampedIRCProcessor {
                             if (!"324".equals(sParam)) {
                                 getCallbackManager().publish(
                                         new ChannelSingleModeChangeEvent(
-                                                parser, LocalDateTime.now(),
+                                                parser, date,
                                                 iChannel, setterCCI, token[0],
                                                 cPositive + cMode + " " +
                                                         sModeParam));
@@ -269,7 +268,7 @@ public class ProcessMode extends TimestampedIRCProcessor {
                             if (!"324".equals(sParam)) {
                                 getCallbackManager().publish(
                                         new ChannelSingleModeChangeEvent(
-                                                parser, LocalDateTime.now(),
+                                                parser, date,
                                                 iChannel, setterCCI, token[0],
                                                 trim(cPositive + cMode + " " + sModeParam)));
                             }
@@ -290,7 +289,7 @@ public class ProcessMode extends TimestampedIRCProcessor {
         } else {
             callChannelModeChanged(date, iChannel, setterCCI, token[0], sFullModeStr.toString().trim());
             getCallbackManager().publish(
-                    new ChannelNonUserModeChangeEvent(parser, LocalDateTime.now(), iChannel,
+                    new ChannelNonUserModeChangeEvent(parser, date, iChannel,
                             setterCCI, token[0],
                             trim(sNonUserModeStr.toString() + sNonUserModeStrParams)));
         }

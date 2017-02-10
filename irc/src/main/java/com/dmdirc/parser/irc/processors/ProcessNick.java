@@ -32,7 +32,6 @@ import com.dmdirc.parser.irc.IRCChannelClientInfo;
 import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
-import com.dmdirc.parser.irc.TimestampedIRCProcessor;
 
 import java.time.LocalDateTime;
 
@@ -41,7 +40,7 @@ import javax.inject.Inject;
 /**
  * Process a Nick change.
  */
-public class ProcessNick extends TimestampedIRCProcessor {
+public class ProcessNick extends IRCProcessor {
 
     /**
      * Create a new instance of the IRCProcessor Object.

@@ -27,7 +27,6 @@ import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
-import com.dmdirc.parser.irc.TimestampedIRCProcessor;
 
 import java.time.LocalDateTime;
 
@@ -36,7 +35,7 @@ import javax.inject.Inject;
 /**
  * Process a topic change.
  */
-public class ProcessTopic extends TimestampedIRCProcessor {
+public class ProcessTopic extends IRCProcessor {
 
     /**
      * Create a new instance of the IRCProcessor Object.
