@@ -29,6 +29,7 @@ import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ServerType;
 import com.dmdirc.parser.irc.ServerTypeGroup;
+import com.dmdirc.parser.irc.TimestampedIRCProcessor;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -40,7 +41,7 @@ import javax.inject.Inject;
 /**
  * Process a List Modes.
  */
-public class ProcessListModes extends IRCProcessor {
+public class ProcessListModes extends TimestampedIRCProcessor {
 
     /**
      * Create a new instance of the IRCProcessor Object.
@@ -66,11 +67,12 @@ public class ProcessListModes extends IRCProcessor {
     /**
      * Process a ListModes.
      *
+     * @param date The LocalDateTime that this event occurred at.
      * @param sParam Type of line to process
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String... token) {
+    public void process(final LocalDateTime date, final String sParam, final String... token) {
         final IRCChannelInfo channel = getChannel(token[3]);
         final ServerType serverType = parser.getServerType();
         if (channel == null) {
@@ -271,9 +273,9 @@ public class ProcessListModes extends IRCProcessor {
                             .stream()
                             .filter(thisMode -> parser.chanModesOther
                                     .get(thisMode) == IRCParser.MODE_LIST)
-                            .forEach(thisMode -> callChannelGotListModes(channel, thisMode));
+                            .forEach(thisMode -> callChannelGotListModes(date, channel, thisMode));
                 } else {
-                    callChannelGotListModes(channel, mode);
+                    callChannelGotListModes(date, channel, mode);
                 }
             }
         }
@@ -282,11 +284,12 @@ public class ProcessListModes extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelGotListModes Callback.
      *
+     * @param date The LocalDateTime that this event occurred at.
      * @param cChannel Channel which the ListModes reply is for
      * @param mode the mode that we got list modes for.
      */
-    protected void callChannelGotListModes(final ChannelInfo cChannel, final char mode) {
-        getCallbackManager().publish(new ChannelListModeEvent(parser, LocalDateTime.now(), cChannel,
+    protected void callChannelGotListModes(final LocalDateTime date, final ChannelInfo cChannel, final char mode) {
+        getCallbackManager().publish(new ChannelListModeEvent(parser, date, cChannel,
                 mode));
     }
 }

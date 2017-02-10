@@ -90,6 +90,7 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      * Actions are handled here aswell separately from CTCPs.<br>
      * Each type has 5 Calls, making 15 callbacks handled here.
      *
+     * @param date The LocalDateTime that this event occurred at.
      * @param sParam Type of line to process ("NOTICE", "PRIVMSG")
      * @param token IRCTokenised line to process
      */

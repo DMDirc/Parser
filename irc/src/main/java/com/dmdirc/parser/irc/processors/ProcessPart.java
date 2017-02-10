@@ -30,6 +30,7 @@ import com.dmdirc.parser.irc.IRCChannelClientInfo;
 import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
+import com.dmdirc.parser.irc.TimestampedIRCProcessor;
 
 import java.time.LocalDateTime;
 
@@ -38,7 +39,7 @@ import javax.inject.Inject;
 /**
  * Process a channel part.
  */
-public class ProcessPart extends IRCProcessor {
+public class ProcessPart extends TimestampedIRCProcessor {
 
     /**
      * Create a new instance of the IRCProcessor Object.
@@ -53,11 +54,12 @@ public class ProcessPart extends IRCProcessor {
     /**
      * Process a channel part.
      *
+     * @param date The LocalDateTime that this event occurred at.
      * @param sParam Type of line to process ("PART")
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String... token) {
+    public void process(final LocalDateTime date, final String sParam, final String... token) {
         // :nick!ident@host PART #Channel
         // :nick!ident@host PART #Channel :reason
         if (token.length < 3) {
@@ -91,12 +93,12 @@ public class ProcessPart extends IRCProcessor {
                 return;
             }
             if (parser.getRemoveAfterCallback()) {
-                callChannelPart(iChannel, iChannelClient, sReason);
+                callChannelPart(date, iChannel, iChannelClient, sReason);
             }
             callDebugInfo(IRCParser.DEBUG_INFO, "Removing %s from %s", iClient.getNickname(), iChannel.getName());
             iChannel.delClient(iClient);
             if (!parser.getRemoveAfterCallback()) {
-                callChannelPart(iChannel, iChannelClient, sReason);
+                callChannelPart(date, iChannel, iChannelClient, sReason);
             }
             if (iClient == parser.getLocalClient()) {
                 iChannel.emptyChannel();
@@ -108,14 +110,15 @@ public class ProcessPart extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelPart Callback.
      *
+     * @param date The LocalDateTime that this event occurred at.
      * @param cChannel Channel that the user parted
      * @param cChannelClient Client that parted
      * @param sReason Reason given for parting (May be "")
      */
-    protected void callChannelPart(final ChannelInfo cChannel,
+    protected void callChannelPart(final LocalDateTime date, final ChannelInfo cChannel,
             final ChannelClientInfo cChannelClient, final String sReason) {
         getCallbackManager().publish(
-                new ChannelPartEvent(parser, LocalDateTime.now(), cChannel, cChannelClient,
+                new ChannelPartEvent(parser, date, cChannel, cChannelClient,
                         sReason));
     }
 

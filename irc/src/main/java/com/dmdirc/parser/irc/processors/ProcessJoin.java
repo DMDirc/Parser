@@ -36,6 +36,7 @@ import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.ModeManager;
 import com.dmdirc.parser.irc.PrefixModeManager;
 import com.dmdirc.parser.irc.ProcessorNotFoundException;
+import com.dmdirc.parser.irc.TimestampedIRCProcessor;
 import com.dmdirc.parser.irc.events.IRCDataOutEvent;
 import net.engio.mbassy.listener.Handler;
 
@@ -50,7 +51,7 @@ import javax.inject.Named;
 /**
  * Process a channel join.
  */
-public class ProcessJoin extends IRCProcessor {
+public class ProcessJoin extends TimestampedIRCProcessor {
 
     /** The manager to use to access prefix modes. */
     private final PrefixModeManager prefixModeManager;
@@ -84,11 +85,12 @@ public class ProcessJoin extends IRCProcessor {
     /**
      * Process a channel join.
      *
+     * @param date The LocalDateTime that this event occurred at.
      * @param sParam Type of line to process ("JOIN")
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String... token) {
+    public void process(final LocalDateTime date, final String sParam, final String... token) {
         callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: %s | %s", sParam, Arrays.toString(token));
 
         if ("329".equals(sParam)) {
@@ -162,7 +164,7 @@ public class ProcessJoin extends IRCProcessor {
                     // joined.
                     callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Adding client to channel.");
                     final IRCChannelClientInfo iChannelClient = iChannel.addClient(iClient);
-                    callChannelJoin(iChannel, iChannelClient);
+                    callChannelJoin(date, iChannel, iChannelClient);
                     callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Added client to channel.");
                     return;
                 } else {
@@ -189,7 +191,7 @@ public class ProcessJoin extends IRCProcessor {
                 pendingJoins.clear();
             }
 
-            callChannelSelfJoin(iChannel);
+            callChannelSelfJoin(date, iChannel);
         } else {
             // Some kind of failed to join, pop the pending join queues.
             final PendingJoin pendingJoin = pendingJoins.poll();
@@ -239,23 +241,25 @@ public class ProcessJoin extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelJoin Callback.
      *
+     * @param date The LocalDateTime that this event occurred at.
      * @param cChannel Channel Object
      * @param cChannelClient ChannelClient object for new person
      */
-    protected void callChannelJoin(final ChannelInfo cChannel,
+    protected void callChannelJoin(final LocalDateTime date, final ChannelInfo cChannel,
             final ChannelClientInfo cChannelClient) {
         getCallbackManager().publish(
-                new ChannelJoinEvent(parser, LocalDateTime.now(), cChannel, cChannelClient));
+                new ChannelJoinEvent(parser, date, cChannel, cChannelClient));
     }
 
     /**
      * Callback to all objects implementing the ChannelSelfJoin Callback.
      *
+     * @param date The LocalDateTime that this event occurred at.
      * @param cChannel Channel Object
      */
-    protected void callChannelSelfJoin(final ChannelInfo cChannel) {
+    protected void callChannelSelfJoin(final LocalDateTime date, final ChannelInfo cChannel) {
         getCallbackManager().publish(new ChannelSelfJoinEvent(
-                parser, LocalDateTime.now(), cChannel));
+                parser, date, cChannel));
     }
 
 

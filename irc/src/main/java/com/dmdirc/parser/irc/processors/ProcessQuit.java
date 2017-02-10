@@ -31,6 +31,7 @@ import com.dmdirc.parser.irc.IRCChannelClientInfo;
 import com.dmdirc.parser.irc.IRCChannelInfo;
 import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
+import com.dmdirc.parser.irc.TimestampedIRCProcessor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ import javax.inject.Inject;
 /**
  * Process a Quit message.
  */
-public class ProcessQuit extends IRCProcessor {
+public class ProcessQuit extends TimestampedIRCProcessor {
 
     /**
      * Create a new instance of the IRCProcessor Object.
@@ -55,11 +56,12 @@ public class ProcessQuit extends IRCProcessor {
     /**
      * Process a Quit message.
      *
+     * @param date The LocalDateTime that this event occurred at.
      * @param sParam Type of line to process ("QUIT")
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String... token) {
+    public void process(final LocalDateTime date, final String sParam, final String... token) {
         // :nick!ident@host QUIT
         // :nick!ident@host QUIT :reason
         if (token.length < 2) {
@@ -85,7 +87,7 @@ public class ProcessQuit extends IRCProcessor {
             final IRCChannelClientInfo iChannelClient = iChannel.getChannelClient(iClient);
             if (iChannelClient != null) {
                 if (parser.getRemoveAfterCallback()) {
-                    callChannelQuit(iChannel, iChannelClient, sReason);
+                    callChannelQuit(date, iChannel, iChannelClient, sReason);
                 }
                 if (iClient == parser.getLocalClient()) {
                     iChannel.emptyChannel();
@@ -94,13 +96,13 @@ public class ProcessQuit extends IRCProcessor {
                     iChannel.delClient(iClient);
                 }
                 if (!parser.getRemoveAfterCallback()) {
-                    callChannelQuit(iChannel, iChannelClient, sReason);
+                    callChannelQuit(date, iChannel, iChannelClient, sReason);
                 }
             }
         }
 
         if (parser.getRemoveAfterCallback()) {
-            callQuit(iClient, sReason);
+            callQuit(date, iClient, sReason);
         }
         if (iClient == parser.getLocalClient()) {
             parser.clearClients();
@@ -108,18 +110,19 @@ public class ProcessQuit extends IRCProcessor {
             parser.removeClient(iClient);
         }
         if (!parser.getRemoveAfterCallback()) {
-            callQuit(iClient, sReason);
+            callQuit(date, iClient, sReason);
         }
     }
 
     /**
      * Callback to all objects implementing the ChannelQuit Callback.
      *
+     * @param date The LocalDateTime that this event occurred at.
      * @param cChannel Channel that user was on
      * @param cChannelClient User thats quitting
      * @param sReason Quit reason
      */
-    protected void callChannelQuit(final ChannelInfo cChannel,
+    protected void callChannelQuit(final LocalDateTime date, final ChannelInfo cChannel,
             final ChannelClientInfo cChannelClient, final String sReason) {
         getCallbackManager().publish(
                 new ChannelQuitEvent(parser, LocalDateTime.now(), cChannel, cChannelClient,
@@ -129,11 +132,12 @@ public class ProcessQuit extends IRCProcessor {
     /**
      * Callback to all objects implementing the Quit Callback.
      *
+     * @param date The LocalDateTime that this event occurred at.
      * @param cClient Client Quitting
      * @param sReason Reason for quitting (may be "")
      */
-    protected void callQuit(final ClientInfo cClient, final String sReason) {
-        getCallbackManager().publish(new QuitEvent(parser, LocalDateTime.now(), cClient, sReason));
+    protected void callQuit(final LocalDateTime date, final ClientInfo cClient, final String sReason) {
+        getCallbackManager().publish(new QuitEvent(parser, date, cClient, sReason));
     }
 
 }
