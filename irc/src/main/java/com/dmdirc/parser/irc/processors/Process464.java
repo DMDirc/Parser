@@ -25,7 +25,6 @@ package com.dmdirc.parser.irc.processors;
 import com.dmdirc.parser.events.PasswordRequiredEvent;
 import com.dmdirc.parser.irc.IRCParser;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import javax.inject.Inject;
