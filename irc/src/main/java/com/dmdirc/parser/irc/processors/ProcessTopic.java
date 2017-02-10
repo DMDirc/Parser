@@ -50,11 +50,12 @@ public class ProcessTopic extends IRCProcessor {
     /**
      * Process a topic change.
      *
+     * @param date The LocalDateTime that this event occurred at.
      * @param sParam Type of line to process ("TOPIC", "332", "333")
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String... token) {
+    public void process(final LocalDateTime date, final String sParam, final String... token) {
         final IRCChannelInfo iChannel;
         switch (sParam) {
             case "332":
@@ -75,7 +76,7 @@ public class ProcessTopic extends IRCProcessor {
                             iChannel.setTopicTime(Long.parseLong(token[5]));
                         }
                     }
-                    callChannelTopic(iChannel, true);
+                    callChannelTopic(date, iChannel, true);
                 }   break;
             default:
                 if (IRCParser.ALWAYS_UPDATECLIENT) {
@@ -91,7 +92,7 @@ public class ProcessTopic extends IRCProcessor {
                 iChannel.setTopicTime(System.currentTimeMillis() / 1000);
                 iChannel.setTopicUser(token[0].charAt(0) == ':' ? token[0].substring(1) : token[0]);
                 iChannel.setInternalTopic(token[token.length - 1]);
-                callChannelTopic(iChannel, false);
+                callChannelTopic(date, iChannel, false);
                 break;
         }
     }
@@ -99,13 +100,14 @@ public class ProcessTopic extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelTopic Callback.
      *
+     * @param date The LocalDateTime that this event occurred at.
      * @param cChannel Channel that topic was set on
      * @param bIsJoinTopic True when getting topic on join, false if set by user/server
      */
-    protected void callChannelTopic(final ChannelInfo cChannel, final boolean bIsJoinTopic) {
+    protected void callChannelTopic(final LocalDateTime date, final ChannelInfo cChannel, final boolean bIsJoinTopic) {
         ((IRCChannelInfo) cChannel).setHadTopic();
         getCallbackManager().publish(
-                new ChannelTopicEvent(parser, LocalDateTime.now(), cChannel, bIsJoinTopic));
+                new ChannelTopicEvent(parser, date, cChannel, bIsJoinTopic));
     }
 
 }

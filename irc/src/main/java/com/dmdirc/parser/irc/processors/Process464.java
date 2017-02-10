@@ -51,14 +51,14 @@ public class Process464 extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String... token) {
-        callPasswordRequired();
+    public void process(final LocalDateTime time, final String sParam, final String... token) {
+        callPasswordRequired(time);
     }
 
     /**
      * Callback to all objects implementing the PasswordRequired Callback.
      */
-    protected void callPasswordRequired() {
-        getCallbackManager().publish(new PasswordRequiredEvent(parser, LocalDateTime.now()));
+    protected void callPasswordRequired(final LocalDateTime time) {
+        getCallbackManager().publish(new PasswordRequiredEvent(parser, time));
     }
 }

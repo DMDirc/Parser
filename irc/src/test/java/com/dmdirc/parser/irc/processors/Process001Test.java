@@ -33,6 +33,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.time.LocalDateTime;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeFalse;
@@ -64,28 +66,28 @@ public class Process001Test {
     public void testSets001Received() {
         when(localClient.isFake()).thenReturn(true);
         assumeFalse(parser.got001);
-        processor.process("001", ":test.server.com", "001", "userName", "Hello!");
+        processor.process(LocalDateTime.now(), "001", ":test.server.com", "001", "userName", "Hello!");
         assertTrue(parser.got001);
     }
 
     @Test
     public void testUpdatesServerName() {
         when(localClient.isFake()).thenReturn(true);
-        processor.process("001", ":test.server.com", "001", "userName", "Hello!");
+        processor.process(LocalDateTime.now(), "001", ":test.server.com", "001", "userName", "Hello!");
         verify(parser).updateServerName("test.server.com");
     }
 
     @Test
     public void testAddsLocalClientIfFake() {
         when(localClient.isFake()).thenReturn(true);
-        processor.process("001", ":test.server.com", "001", "userName", "Hello!");
+        processor.process(LocalDateTime.now(), "001", ":test.server.com", "001", "userName", "Hello!");
         verify(parser).addClient(localClient);
     }
 
     @Test
     public void testUpdatesLocalClientIfFake() {
         when(localClient.isFake()).thenReturn(true);
-        processor.process("001", ":test.server.com", "001", "userName", "Hello!");
+        processor.process(LocalDateTime.now(), "001", ":test.server.com", "001", "userName", "Hello!");
         verify(localClient).setUserBits(eq("userName"), eq(true), anyBoolean());
         verify(localClient).setFake(false);
     }
@@ -93,7 +95,7 @@ public class Process001Test {
     @Test
     public void testIgnoresDuplicate001WithSameNick() {
         when(localClient.getNickname()).thenReturn("UsernaME");
-        processor.process("001", ":test.server.com", "001", "userName", "Hello!");
+        processor.process(LocalDateTime.now(), "001", ":test.server.com", "001", "userName", "Hello!");
         verify(parser, never()).addClient(any());
         verify(parser, never()).forceRemoveClient(any());
     }
@@ -101,7 +103,7 @@ public class Process001Test {
     @Test
     public void testReplacesLocalUserOnDuplicate001() {
         when(localClient.getNickname()).thenReturn("UsernaME");
-        processor.process("001", ":test.server.com", "001", "newName", "Hello!");
+        processor.process(LocalDateTime.now(), "001", ":test.server.com", "001", "newName", "Hello!");
         verify(parser).forceRemoveClient(localClient);
         verify(localClient).setUserBits(eq("newName"), eq(true), anyBoolean());
         verify(parser).addClient(localClient);
@@ -114,7 +116,7 @@ public class Process001Test {
         when(parser.isKnownClient("newName")).thenReturn(true);
         when(parser.getClient("newName")).thenReturn(mock(IRCClientInfo.class));
 
-        processor.process("001", ":test.server.com", "001", "newName", "Hello!");
+        processor.process(LocalDateTime.now(), "001", ":test.server.com", "001", "newName", "Hello!");
 
         final ArgumentCaptor<ParserError> errorCaptor = ArgumentCaptor.forClass(ParserError.class);
         verify(parser).callErrorInfo(errorCaptor.capture());

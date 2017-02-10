@@ -55,11 +55,12 @@ public class ProcessNick extends IRCProcessor {
     /**
      * Process a Nick change.
      *
+     * @param date The LocalDateTime that this event occurred at.
      * @param sParam Type of line to process ("NICK")
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String... token) {
+    public void process(final LocalDateTime date, final String sParam, final String... token) {
 
         final IRCClientInfo iClient = getClientInfo(token[0]);
         if (iClient == null) {
@@ -92,36 +93,38 @@ public class ProcessNick extends IRCProcessor {
                     if (!isSameNick) {
                         iChannel.renameClient(oldNickname, iChannelClient);
                     }
-                    callChannelNickChanged(iChannel, iChannelClient, IRCClientInfo.parseHost(token[0]));
+                    callChannelNickChanged(date, iChannel, iChannelClient, IRCClientInfo.parseHost(token[0]));
                 }
             }
 
-            callNickChanged(iClient, IRCClientInfo.parseHost(token[0]));
+            callNickChanged(date, iClient, IRCClientInfo.parseHost(token[0]));
         }
     }
 
     /**
      * Callback to all objects implementing the ChannelNickChanged Callback.
      *
+     * @param date The LocalDateTime that this event occurred at.
      * @param cChannel One of the channels that the user is on
      * @param cChannelClient Client changing nickname
      * @param sOldNick Nickname before change
      */
-    protected void callChannelNickChanged(final ChannelInfo cChannel,
+    protected void callChannelNickChanged(final LocalDateTime date, final ChannelInfo cChannel,
             final ChannelClientInfo cChannelClient, final String sOldNick) {
         getCallbackManager().publish(
-                new ChannelNickChangeEvent(parser, LocalDateTime.now(), cChannel, cChannelClient,
+                new ChannelNickChangeEvent(parser, date, cChannel, cChannelClient,
                         sOldNick));
     }
 
     /**
      * Callback to all objects implementing the NickChanged Callback.
      *
+     * @param date The LocalDateTime that this event occurred at.
      * @param cClient Client changing nickname
      * @param sOldNick Nickname before change
      */
-    protected void callNickChanged(final ClientInfo cClient, final String sOldNick) {
-        getCallbackManager().publish(new NickChangeEvent(parser, LocalDateTime.now(), cClient,
+    protected void callNickChanged(final LocalDateTime date, final ClientInfo cClient, final String sOldNick) {
+        getCallbackManager().publish(new NickChangeEvent(parser, date, cClient,
                 sOldNick));
     }
 

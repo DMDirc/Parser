@@ -1214,7 +1214,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
                         case IrcConstants.NUMERIC_ERROR_PASSWORD_MISMATCH:
                         case IrcConstants.NUMERIC_ERROR_NICKNAME_IN_USE:
                             try {
-                                myProcessingManager.process(sParam, token);
+                                myProcessingManager.process(lineTS, sParam, token);
                             } catch (ProcessorNotFoundException e) {
                             }
                             break;

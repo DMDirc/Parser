@@ -53,16 +53,16 @@ public class ProcessMOTD extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String... token) {
+    public void process(final LocalDateTime time, final String sParam, final String... token) {
         switch (sParam) {
             case "375":
-                callMOTDStart(token[token.length - 1]);
+                callMOTDStart(time, token[token.length - 1]);
                 break;
             case "372":
-                callMOTDLine(token[token.length - 1]);
+                callMOTDLine(time, token[token.length - 1]);
                 break;
             default:
-                callMOTDEnd("422".equals(sParam), token[token.length - 1]);
+                callMOTDEnd(time, "422".equals(sParam), token[token.length - 1]);
                 break;
         }
     }
@@ -73,8 +73,8 @@ public class ProcessMOTD extends IRCProcessor {
      * @param noMOTD Was this an MOTDEnd or NoMOTD
      * @param data The contents of the line (incase of language changes or so)
      */
-    protected void callMOTDEnd(final boolean noMOTD, final String data) {
-        getCallbackManager().publish(new MOTDEndEvent(parser, LocalDateTime.now(), noMOTD, data));
+    protected void callMOTDEnd(final LocalDateTime time, final boolean noMOTD, final String data) {
+        getCallbackManager().publish(new MOTDEndEvent(parser, time, noMOTD, data));
     }
 
     /**
@@ -82,8 +82,8 @@ public class ProcessMOTD extends IRCProcessor {
      *
      * @param data Incomming Line.
      */
-    protected void callMOTDLine(final String data) {
-        getCallbackManager().publish(new MOTDLineEvent(parser, LocalDateTime.now(), data));
+    protected void callMOTDLine(final LocalDateTime time, final String data) {
+        getCallbackManager().publish(new MOTDLineEvent(parser, time, data));
     }
 
     /**
@@ -91,8 +91,8 @@ public class ProcessMOTD extends IRCProcessor {
      *
      * @param data Incomming Line.
      */
-    protected void callMOTDStart(final String data) {
-        getCallbackManager().publish(new MOTDStartEvent(parser, LocalDateTime.now(), data));
+    protected void callMOTDStart(final LocalDateTime time, final String data) {
+        getCallbackManager().publish(new MOTDStartEvent(parser, time, data));
     }
 
 }

@@ -51,8 +51,8 @@ public class ProcessNoticeAuth extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String... token) {
-        callNoticeAuth(token[token.length - 1]);
+    public void process(final LocalDateTime time, final String sParam, final String... token) {
+        callNoticeAuth(time, token[token.length - 1]);
     }
 
     /**
@@ -60,8 +60,8 @@ public class ProcessNoticeAuth extends IRCProcessor {
      *
      * @param data Incomming Line.
      */
-    protected void callNoticeAuth(final String data) {
-        getCallbackManager().publish(new AuthNoticeEvent(parser, LocalDateTime.now(), data));
+    protected void callNoticeAuth(final LocalDateTime time, final String data) {
+        getCallbackManager().publish(new AuthNoticeEvent(parser, time, data));
     }
 
 }

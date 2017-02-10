@@ -54,11 +54,12 @@ public class ProcessKick extends IRCProcessor {
     /**
      * Process a channel kick.
      *
+     * @param date The LocalDateTime that this event occurred at.
      * @param sParam Type of line to process ("KICK")
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String... token) {
+    public void process(final LocalDateTime date, final String sParam, final String... token) {
         callDebugInfo(IRCParser.DEBUG_INFO, "processKick: %s | %s", sParam, Arrays.toString(token));
 
         final IRCClientInfo iClient = getClientInfo(token[3]);
@@ -93,14 +94,14 @@ public class ProcessKick extends IRCProcessor {
             final IRCChannelClientInfo iChannelKicker = iChannel.getChannelClient(token[0], true);
             if (parser.getRemoveAfterCallback()) {
                 callDebugInfo(IRCParser.DEBUG_INFO, "processKick: calling kick before. {%s | %s | %s | %s | %s}", iChannel, iChannelClient, iChannelKicker, sReason, token[0]);
-                callChannelKick(iChannel, iChannelClient, iChannelKicker, sReason, token[0]);
+                callChannelKick(date, iChannel, iChannelClient, iChannelKicker, sReason, token[0]);
             }
             callDebugInfo(IRCParser.DEBUG_INFO, "processKick: removing client from channel { %s | %s }", iChannel, iClient);
             iChannel.delClient(iClient);
             callDebugInfo(IRCParser.DEBUG_INFO, "processKick: removed client from channel { %s | %s }", iChannel, iClient);
             if (!parser.getRemoveAfterCallback()) {
                 callDebugInfo(IRCParser.DEBUG_INFO, "processKick: calling kick after. {%s | %s | %s | %s | %s}", iChannel, iChannelClient, iChannelKicker, sReason, token[0]);
-                callChannelKick(iChannel, iChannelClient, iChannelKicker, sReason, token[0]);
+                callChannelKick(date, iChannel, iChannelClient, iChannelKicker, sReason, token[0]);
             }
             if (iClient == parser.getLocalClient()) {
                 iChannel.emptyChannel();
@@ -112,17 +113,18 @@ public class ProcessKick extends IRCProcessor {
     /**
      * Callback to all objects implementing the ChannelKick Callback.
      *
+     * @param date The LocalDateTime that this event occurred at.
      * @param cChannel Channel where the kick took place
      * @param cKickedClient ChannelClient that got kicked
      * @param cKickedByClient ChannelClient that did the kicking
      * @param sReason Reason for kick (may be "")
      * @param sKickedByHost Hostname of Kicker (or servername)
      */
-    protected void callChannelKick(final ChannelInfo cChannel,
+    protected void callChannelKick(final LocalDateTime date, final ChannelInfo cChannel,
             final ChannelClientInfo cKickedClient, final ChannelClientInfo cKickedByClient,
             final String sReason, final String sKickedByHost) {
         getCallbackManager().publish(
-                new ChannelKickEvent(parser, LocalDateTime.now(), cChannel, cKickedClient,
+                new ChannelKickEvent(parser, date, cChannel, cKickedClient,
                         cKickedByClient, sReason, sKickedByHost));
     }
 

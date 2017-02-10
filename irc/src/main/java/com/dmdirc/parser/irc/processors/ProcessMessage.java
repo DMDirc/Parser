@@ -50,7 +50,6 @@ import com.dmdirc.parser.irc.IRCClientInfo;
 import com.dmdirc.parser.irc.IRCParser;
 import com.dmdirc.parser.irc.PrefixModeManager;
 import com.dmdirc.parser.irc.ProcessorNotFoundException;
-import com.dmdirc.parser.irc.TimestampedIRCProcessor;
 
 import java.time.LocalDateTime;
 import java.util.regex.PatternSyntaxException;
@@ -65,7 +64,7 @@ import javax.inject.Inject;
  * Actions are handled here aswell separately from CTCPs.<br>
  * Each type has 5 Calls, making 15 callbacks handled here.
  */
-public class ProcessMessage extends TimestampedIRCProcessor {
+public class ProcessMessage extends IRCProcessor {
 
     /** The manager to use to access prefix modes. */
     private final PrefixModeManager prefixModeManager;
@@ -90,6 +89,7 @@ public class ProcessMessage extends TimestampedIRCProcessor {
      * Actions are handled here aswell separately from CTCPs.<br>
      * Each type has 5 Calls, making 15 callbacks handled here.
      *
+     * @param date The LocalDateTime that this event occurred at.
      * @param sParam Type of line to process ("NOTICE", "PRIVMSG")
      * @param token IRCTokenised line to process
      */

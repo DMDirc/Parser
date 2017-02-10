@@ -53,20 +53,20 @@ public class ProcessList extends IRCProcessor {
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String... token) {
+    public void process(final LocalDateTime time, final String sParam, final String... token) {
         // :port80b.se.quakenet.org 321 MD87 Channel :Users  Name
         // :port80b.se.quakenet.org 322 MD87 #DMDirc 10 :
         // :port80b.se.quakenet.org 323 MD87 :End of /LIST
         switch (sParam) {
             case "321":
-                getCallbackManager().publish(new GroupListStartEvent(parser, LocalDateTime.now()));
+                getCallbackManager().publish(new GroupListStartEvent(parser, time));
                 break;
             case "322":
-                getCallbackManager().publish(new GroupListEntryEvent(parser, LocalDateTime.now(),
+                getCallbackManager().publish(new GroupListEntryEvent(parser, time,
                         token[3], Integer.parseInt(token[4]), token[5]));
                 break;
             case "323":
-                getCallbackManager().publish(new GroupListEndEvent(parser, LocalDateTime.now()));
+                getCallbackManager().publish(new GroupListEndEvent(parser, time));
                 break;
         }
     }

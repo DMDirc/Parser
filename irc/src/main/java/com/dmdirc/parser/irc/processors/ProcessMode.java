@@ -79,11 +79,12 @@ public class ProcessMode extends IRCProcessor {
     /**
      * Process a Mode Line.
      *
+     * @param date The LocalDateTime that this event occurred at.
      * @param sParam Type of line to process ("MODE", "324")
      * @param token IRCTokenised line to process
      */
     @Override
-    public void process(final String sParam, final String... token) {
+    public void process(final LocalDateTime date, final String sParam, final String... token) {
         final String[] sModestr;
         final String sChannelName;
         switch (sParam) {
@@ -93,7 +94,7 @@ public class ProcessMode extends IRCProcessor {
                 System.arraycopy(token, 4, sModestr, 0, token.length - 4);
                 break;
             case "221":
-                processUserMode(sParam, token, new String[]{token[token.length - 1]}, true);
+                processUserMode(date, sParam, token, new String[]{token[token.length - 1]}, true);
                 return;
             default:
                 sChannelName = token[2];
@@ -103,9 +104,9 @@ public class ProcessMode extends IRCProcessor {
         }
 
         if (isValidChannelName(sChannelName)) {
-            processChanMode(sParam, token, sModestr, sChannelName);
+            processChanMode(date, sParam, token, sModestr, sChannelName);
         } else {
-            processUserMode(sParam, token, sModestr, false);
+            processUserMode(date, sParam, token, sModestr, false);
         }
     }
 
@@ -122,12 +123,13 @@ public class ProcessMode extends IRCProcessor {
     /**
      * Process Chan modes.
      *
+     * @param date The LocalDateTime that this event occurred at.
      * @param sParam String representation of parameter to parse
      * @param token IRCTokenised Array of the incomming line
      * @param sModestr The modes and params
      * @param sChannelName Channel these modes are for
      */
-    public void processChanMode(final String sParam, final String[] token, final String[] sModestr, final String sChannelName) {
+    public void processChanMode(final LocalDateTime date, final String sParam, final String[] token, final String[] sModestr, final String sChannelName) {
         final StringBuilder sFullModeStr = new StringBuilder();
 
         final IRCChannelInfo iChannel = getChannel(sChannelName);
@@ -197,7 +199,7 @@ public class ProcessMode extends IRCProcessor {
                     } else {
                         iChannelClientInfo.removeMode(cMode);
                     }
-                    callChannelUserModeChanged(iChannel, iChannelClientInfo, setterCCI, token[0],
+                    callChannelUserModeChanged(date, iChannel, iChannelClientInfo, setterCCI, token[0],
                             (bPositive ? "+" : "-") + cMode);
                     continue;
                 } else {
@@ -233,7 +235,7 @@ public class ProcessMode extends IRCProcessor {
                         if (!"324".equals(sParam)) {
                             getCallbackManager().publish(
                                     new ChannelSingleModeChangeEvent(
-                                            parser, LocalDateTime.now(), iChannel,
+                                            parser, date, iChannel,
                                             setterCCI, token[0], cPositive + cMode + " " +
                                             sModeParam));
                         }
@@ -248,7 +250,7 @@ public class ProcessMode extends IRCProcessor {
                             if (!"324".equals(sParam)) {
                                 getCallbackManager().publish(
                                         new ChannelSingleModeChangeEvent(
-                                                parser, LocalDateTime.now(),
+                                                parser, date,
                                                 iChannel, setterCCI, token[0],
                                                 cPositive + cMode + " " +
                                                         sModeParam));
@@ -266,7 +268,7 @@ public class ProcessMode extends IRCProcessor {
                             if (!"324".equals(sParam)) {
                                 getCallbackManager().publish(
                                         new ChannelSingleModeChangeEvent(
-                                                parser, LocalDateTime.now(),
+                                                parser, date,
                                                 iChannel, setterCCI, token[0],
                                                 trim(cPositive + cMode + " " + sModeParam)));
                             }
@@ -283,11 +285,11 @@ public class ProcessMode extends IRCProcessor {
 
         iChannel.setMode(nCurrent);
         if ("324".equals(sParam)) {
-            callChannelModeChanged(iChannel, setterCCI, "", sFullModeStr.toString().trim());
+            callChannelModeChanged(date, iChannel, setterCCI, "", sFullModeStr.toString().trim());
         } else {
-            callChannelModeChanged(iChannel, setterCCI, token[0], sFullModeStr.toString().trim());
+            callChannelModeChanged(date, iChannel, setterCCI, token[0], sFullModeStr.toString().trim());
             getCallbackManager().publish(
-                    new ChannelNonUserModeChangeEvent(parser, LocalDateTime.now(), iChannel,
+                    new ChannelNonUserModeChangeEvent(parser, date, iChannel,
                             setterCCI, token[0],
                             trim(sNonUserModeStr.toString() + sNonUserModeStrParams)));
         }
@@ -296,11 +298,12 @@ public class ProcessMode extends IRCProcessor {
     /**
      * Process user modes.
      *
+     * @param date The LocalDateTime that this event occurred at.
      * @param sParam String representation of parameter to parse
      * @param token IRCTokenised Array of the incomming line
      * @param clearOldModes Clear old modes before applying these modes (used by 221)
      */
-    private void processUserMode(final String sParam, final String[] token, final String[] sModestr,
+    private void processUserMode(final LocalDateTime date, final String sParam, final String[] token, final String[] sModestr,
             final boolean clearOldModes) {
         final IRCClientInfo iClient = getClientInfo(token[2]);
 
@@ -340,66 +343,70 @@ public class ProcessMode extends IRCProcessor {
 
         iClient.setUserMode(nCurrent);
         if ("221".equals(sParam)) {
-            callUserModeDiscovered(iClient, sModestr[0]);
+            callUserModeDiscovered(date, iClient, sModestr[0]);
         } else {
-            callUserModeChanged(iClient, token[0], sModestr[0]);
+            callUserModeChanged(date, iClient, token[0], sModestr[0]);
         }
     }
 
     /**
      * Callback to all objects implementing the ChannelModeChanged Callback.
      *
+     * @param date The LocalDateTime that this event occurred at.
      * @param cChannel Channel where modes were changed
      * @param cChannelClient Client chaning the modes (null if server)
      * @param sHost Host doing the mode changing (User host or server name)
      * @param sModes Exact String parsed
      */
-    protected void callChannelModeChanged(final ChannelInfo cChannel,
+    protected void callChannelModeChanged(final LocalDateTime date, final ChannelInfo cChannel,
             final ChannelClientInfo cChannelClient, final String sHost, final String sModes) {
         getCallbackManager().publish(
-                new ChannelModeChangeEvent(parser, LocalDateTime.now(), cChannel, cChannelClient,
+                new ChannelModeChangeEvent(parser, date, cChannel, cChannelClient,
                         sHost, sModes));
     }
 
     /**
      * Callback to all objects implementing the ChannelUserModeChanged Callback.
      *
+     * @param date The LocalDateTime that this event occurred at.
      * @param cChannel Channel where modes were changed
      * @param cChangedClient Client being changed
      * @param cSetByClient Client chaning the modes (null if server)
      * @param sHost Host doing the mode changing (User host or server name)
      * @param sMode String representing mode change (ie +o)
      */
-    protected void callChannelUserModeChanged(final ChannelInfo cChannel,
+    protected void callChannelUserModeChanged(final LocalDateTime date, final ChannelInfo cChannel,
             final ChannelClientInfo cChangedClient, final ChannelClientInfo cSetByClient,
             final String sHost, final String sMode) {
         getCallbackManager().publish(
-                new ChannelUserModeChangeEvent(parser, LocalDateTime.now(), cChannel,
+                new ChannelUserModeChangeEvent(parser, date, cChannel,
                         cChangedClient, cSetByClient, sHost, sMode));
     }
 
     /**
      * Callback to all objects implementing the UserModeChanged Callback.
      *
+     * @param date The LocalDateTime that this event occurred at.
      * @param cClient Client that had the mode changed (almost always us)
      * @param sSetby Host that set the mode (us or servername)
      * @param sModes The modes set.
      */
-    protected void callUserModeChanged(final ClientInfo cClient, final String sSetby,
+    protected void callUserModeChanged(final LocalDateTime date, final ClientInfo cClient, final String sSetby,
             final String sModes) {
         getCallbackManager().publish(
-                new UserModeChangeEvent(parser, LocalDateTime.now(), cClient, sSetby, sModes));
+                new UserModeChangeEvent(parser, date, cClient, sSetby, sModes));
     }
 
     /**
      * Callback to all objects implementing the UserModeDiscovered Callback.
      *
+     * @param date The LocalDateTime that this event occurred at.
      * @param cClient Client that had the mode changed (almost always us)
      * @param sModes The modes set.
      */
-    protected void callUserModeDiscovered(final ClientInfo cClient, final String sModes) {
+    protected void callUserModeDiscovered(final LocalDateTime date, final ClientInfo cClient, final String sModes) {
         getCallbackManager().publish(
-                new UserModeDiscoveryEvent(parser, LocalDateTime.now(), cClient, sModes));
+                new UserModeDiscoveryEvent(parser, date, cClient, sModes));
     }
 
 }
