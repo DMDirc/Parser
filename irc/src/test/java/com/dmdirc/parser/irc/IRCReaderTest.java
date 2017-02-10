@@ -208,6 +208,28 @@ public class IRCReaderTest {
         assertNull(line.getTags().get("time"));
     }
 
+    /** Verify tokeniser with TSIRC Time Stamp and Message Tags (tags first). */
+    @Test
+    public void testReadLineTSIRCandTag() throws IOException {
+        final ReadLine line = new ReadLine("", IRCParser.tokeniseLine("@tag=value @123@:test ing"));
+
+        assertEquals(":test", line.getTokens()[0]);
+        assertEquals("ing", line.getTokens()[1]);
+        assertEquals("123", line.getTags().get("tsirc date"));
+        assertEquals("value", line.getTags().get("tag"));
+    }
+
+    /** Verify tokeniser with TSIRC Time Stamp and Message Tags (tags second). */
+    @Test
+    public void testReadLineTSIRCandTag2() throws IOException {
+        final ReadLine line = new ReadLine("", IRCParser.tokeniseLine("@123@@tag=value :test ing"));
+
+        assertEquals(":test", line.getTokens()[0]);
+        assertEquals("ing", line.getTokens()[1]);
+        assertEquals("123", line.getTags().get("tsirc date"));
+        assertEquals("value", line.getTags().get("tag"));
+    }
+
     /** Verify tokeniser with IRCv3 tags */
     @Test
     public void testReadLineIRCv3TS() throws IOException {

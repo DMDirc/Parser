@@ -32,6 +32,7 @@ import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -251,30 +252,50 @@ public class IRCReader implements Closeable {
             this.line = line;
 
             String[] tokens = lineTokens;
+
+            // In the case where TSIRC and message tags are used, the TSIRC tag can appear in 1 of 2 places depending
+            // on interpretation of the spec - Either right at the start of the line, or as part of the actual message.
+            // EG:
+            // @123@@tag=value :test ing
+            // @tag=value @123@:test ing
+            //
+            // are both functionally equivalent.
+
+            // Look for old-style TSIRC timestamp first.
             if (!tokens[0].isEmpty() && tokens[0].charAt(0) == '@') {
-                // Look for old-style TSIRC timestamp first.
                 final int tsEnd = tokens[0].indexOf('@', 1);
-                boolean hasTSIRCDate = false;
                 if (tsEnd > -1) {
                     try {
                         final long ts = Long.parseLong(tokens[0].substring(1, tsEnd));
                         tags.put("tsirc date", tokens[0].substring(1, tsEnd));
-                        hasTSIRCDate = true;
                         tokens[0] = tokens[0].substring(tsEnd + 1);
                     } catch (final NumberFormatException nfe) { /* Not a timestamp. */ }
                 }
+            }
 
-                if (!hasTSIRCDate) {
-                    final String[] lineTags = tokens[0].substring(1).split(";");
-                    for (final String keyVal : lineTags) {
-                        if (!keyVal.isEmpty()) {
-                            final String[] keyValue = keyVal.split("=", 2);
-                            tags.put(keyValue[0], keyValue.length > 1 ? keyValue[1] : "");
-                        }
+            // Now look for message tags.
+            if (!tokens[0].isEmpty() && tokens[0].charAt(0) == '@') {
+                final String[] lineTags = tokens[0].substring(1).split(";");
+                for (final String keyVal : lineTags) {
+                    if (!keyVal.isEmpty()) {
+                        final String[] keyValue = keyVal.split("=", 2);
+                        tags.put(keyValue[0], keyValue.length > 1 ? keyValue[1] : "");
                     }
+                }
 
-                    tokens = new String[lineTokens.length - 1];
-                    System.arraycopy(lineTokens, 1, tokens, 0, lineTokens.length - 1);
+                tokens = new String[lineTokens.length - 1];
+                System.arraycopy(lineTokens, 1, tokens, 0, lineTokens.length - 1);
+            }
+
+            // Look again for tsirc, as it may be after the message tags.
+            if (!tokens[0].isEmpty() && tokens[0].charAt(0) == '@') {
+                final int tsEnd = tokens[0].indexOf('@', 1);
+                if (tsEnd > -1) {
+                    try {
+                        final long ts = Long.parseLong(tokens[0].substring(1, tsEnd));
+                        tags.put("tsirc date", tokens[0].substring(1, tsEnd));
+                        tokens[0] = tokens[0].substring(tsEnd + 1);
+                    } catch (final NumberFormatException nfe) { /* Not a timestamp. */ }
                 }
             }
 

@@ -929,17 +929,20 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
         // Check for IRC Tags.
         if (line.charAt(0) == '@') {
             // We have tags.
+            boolean hasIRCv3Tags = true;
             tokens = line.split(" ", 2);
             final int tsEnd = tokens[0].indexOf('@', 1);
-            boolean hasTSIRCDate = false;
             if (tsEnd > -1) {
                 try {
                     final long ts = Long.parseLong(tokens[0].substring(1, tsEnd));
-                    hasTSIRCDate = true;
+
+                    // We might have both IRCv3 tags and TSIRC, with TSIRC first, eg:
+                    // @123@@tag=value :test ing
+                    hasIRCv3Tags = tokens[0].length() > tsEnd && tokens[0].charAt(tsEnd) == '@';
                 } catch (final NumberFormatException nfe) { /* Not a timestamp. */ }
             }
 
-            if (!hasTSIRCDate) {
+            if (hasIRCv3Tags) {
                 // IRCv3 Tags, last arg is actually the second " :"
                 lastarg = line.indexOf(" :", lastarg+1);
             }
