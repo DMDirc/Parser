@@ -69,6 +69,17 @@ public abstract class BaseSocketAwareParser extends BaseParser {
         return localPort;
     }
 
+    @Override
+    public void shutdown() {
+        try {
+            if (socket != null) {
+                socket.close();
+            }
+        } catch (IOException e) {
+        }
+        super.shutdown();
+    }
+
     /**
      * Gets the current connection timeout.
      *

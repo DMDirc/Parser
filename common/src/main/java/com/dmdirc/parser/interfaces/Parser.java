@@ -55,6 +55,13 @@ public interface Parser {
     void disconnect(String message);
 
     /**
+     * Called when we are finished with this parser and no longer need it anymore.
+     *
+     * This allows the parser to cleanup after itself.
+     */
+    void shutdown();
+
+    /**
      *
      * Disconnect from server.  This method will wait for the server to
      * close the socket.

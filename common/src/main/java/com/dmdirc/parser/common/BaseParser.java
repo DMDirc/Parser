@@ -106,6 +106,11 @@ public abstract class BaseParser extends ThreadedParser {
     }
 
     @Override
+    public void shutdown() {
+        callbackManager.shutdown();
+    }
+
+    @Override
     public void quit(final String reason) {
         disconnect(reason);
     }
