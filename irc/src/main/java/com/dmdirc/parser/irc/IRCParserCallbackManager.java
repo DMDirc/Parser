@@ -34,6 +34,11 @@ import java.util.concurrent.TimeUnit;
 /**
  * Parser Callback Manager.
  * Manages adding/removing/calling callbacks.
+ *
+ * Because IRCParser was designed for synchronous callbacks not async events, we enforce synchronous publish only
+ * in this CallbackManager for now.
+ *
+ * This may change in future.
  */
 public class IRCParserCallbackManager extends CallbackManager {
     public IRCParserCallbackManager(final IPublicationErrorHandler errorHandler) {
