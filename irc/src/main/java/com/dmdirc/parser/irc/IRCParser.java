@@ -274,6 +274,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      */
     public IRCParser(final MyInfo myDetails, final URI uri) {
         super(uri);
+        setCallbackManager(new IRCParserCallbackManager(this::handleCallbackError));
 
         // TODO: There should be a factory or builder for parsers that can construct the graph
         final ObjectGraph graph = ObjectGraph.create(new IRCParserModule(this, prefixModes,

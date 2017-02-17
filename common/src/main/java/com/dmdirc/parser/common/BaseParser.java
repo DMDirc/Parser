@@ -72,7 +72,7 @@ public abstract class BaseParser extends ThreadedParser {
     private URI proxy;
 
     /** The callback manager to use for this parser. */
-    private final CallbackManager callbackManager;
+    private CallbackManager callbackManager;
 
     /**
      * Creates a new base parser for the specified URI.
@@ -90,7 +90,7 @@ public abstract class BaseParser extends ThreadedParser {
             "CallToPrintStackTrace",
             "UseOfSystemOutOrSystemErr"
     })
-    private void handleCallbackError(final PublicationError e) {
+    protected void handleCallbackError(final PublicationError e) {
         if (Thread.holdsLock(errorHandlerLock)) {
             // ABORT ABORT ABORT - we're publishing an error on the same thread we just tried
             // to publish an error on. Something in the error reporting pipeline must be
@@ -173,6 +173,23 @@ public abstract class BaseParser extends ThreadedParser {
     @Override
     public CallbackManager getCallbackManager() {
         return callbackManager;
+    }
+
+    /**
+     * Change the {@link CallbackManager} in use by this parser.
+     *
+     * This will shutdown the old CallbackManager before setting the new one.
+     *
+     * Subscribers are not carried across between callback managers.
+     *
+     * @param manager new CallbackManager to use (ignored if null)
+     */
+    protected void setCallbackManager(final CallbackManager manager) {
+        if (manager == null) {
+            return;
+        }
+        callbackManager.shutdown();
+        callbackManager = manager;
     }
 
     @Override

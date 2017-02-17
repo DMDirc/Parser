@@ -20,31 +20,38 @@
  * SOFTWARE.
  */
 
-package com.dmdirc.parser.common;
+package com.dmdirc.parser.irc;
 
+import com.dmdirc.parser.common.CallbackManager;
 import com.dmdirc.parser.events.ParserEvent;
-
-import net.engio.mbassy.bus.MBassador;
+import net.engio.mbassy.bus.IMessagePublication;
 import net.engio.mbassy.bus.config.BusConfiguration;
 import net.engio.mbassy.bus.config.Feature;
 import net.engio.mbassy.bus.error.IPublicationErrorHandler;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Parser Callback Manager.
  * Manages adding/removing/calling callbacks.
  */
-public class CallbackManager extends MBassador<ParserEvent> {
-
-    public CallbackManager(final IPublicationErrorHandler errorHandler) {
-        this(new BusConfiguration().addFeature(Feature.SyncPubSub.Default())
+public class IRCParserCallbackManager extends CallbackManager {
+    public IRCParserCallbackManager(final IPublicationErrorHandler errorHandler) {
+        super(new BusConfiguration().addFeature(Feature.SyncPubSub.Default())
                 .addFeature(Feature.AsynchronousHandlerInvocation.Default(1, 1))
                 .addFeature(Feature.AsynchronousMessageDispatch.Default()
-                        .setNumberOfMessageDispatchers(1))
+                        .setNumberOfMessageDispatchers(0))
                 .addPublicationErrorHandler(errorHandler));
     }
 
-    protected CallbackManager(final BusConfiguration busConfiguration) {
-        super(busConfiguration);
+    @Override
+    public IMessagePublication publishAsync(final ParserEvent message) {
+        throw new UnsupportedOperationException("IRCParser does not support publishAsync");
+    }
+
+    @Override
+    public IMessagePublication publishAsync(final ParserEvent message, final long timeout, final TimeUnit unit) {
+        throw new UnsupportedOperationException("IRCParser does not support publishAsync");
     }
 
 }
