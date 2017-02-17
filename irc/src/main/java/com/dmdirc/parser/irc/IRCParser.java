@@ -885,18 +885,19 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
         callDebugInfo(DEBUG_INFO, "End Thread Execution");
     }
 
-    /** Close socket on destroy. */
     @Override
-    protected void finalize() throws Throwable {
+    public void shutdown() {
         try {
             // See note at disconnect() method for why we close rawSocket.
             if (rawSocket != null) {
                 rawSocket.close();
+                socket = null;
+                rawSocket = null;
             }
         } catch (IOException e) {
             callDebugInfo(DEBUG_SOCKET, "Could not close socket");
         }
-        super.finalize();
+        super.shutdown();
     }
 
     /**
