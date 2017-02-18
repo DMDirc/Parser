@@ -185,9 +185,9 @@ public abstract class BaseParser extends ThreadedParser {
      */
     protected void setCallbackManager(final CallbackManager manager) {
         if (manager == null) {
-            throw new UnsupportedOperationException("setCallbackManager can not be called with a null parameter.");
+            throw new NullPointerException("setCallbackManager can not be called with a null parameter.");
         } else if (callbackManager != null) {
-            throw new UnsupportedOperationException("setCallbackManager can only be called once.");
+            throw new IllegalStateException("setCallbackManager can only be called once.");
         }
         callbackManager = manager;
     }
