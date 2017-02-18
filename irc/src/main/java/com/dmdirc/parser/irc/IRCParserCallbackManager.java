@@ -58,5 +58,4 @@ public class IRCParserCallbackManager extends CallbackManager {
     public IMessagePublication publishAsync(final ParserEvent message, final long timeout, final TimeUnit unit) {
         throw new UnsupportedOperationException("IRCParser does not support publishAsync");
     }
-
 }

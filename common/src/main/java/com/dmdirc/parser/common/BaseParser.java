@@ -81,8 +81,6 @@ public abstract class BaseParser extends ThreadedParser {
      */
     public BaseParser(final URI uri) {
         this.uri = uri;
-
-        callbackManager = new CallbackManager(this::handleCallbackError);
     }
 
     @SuppressWarnings({
@@ -101,7 +99,7 @@ public abstract class BaseParser extends ThreadedParser {
         }
 
         synchronized (errorHandlerLock) {
-            callbackManager.publish(new ParserErrorEvent(this, LocalDateTime.now(), e.getCause()));
+            getCallbackManager().publish(new ParserErrorEvent(this, LocalDateTime.now(), e.getCause()));
         }
     }
 
@@ -172,23 +170,25 @@ public abstract class BaseParser extends ThreadedParser {
 
     @Override
     public CallbackManager getCallbackManager() {
+        // If setCallbackManager hasn't been called, assume we want to use the default CallbackManager
+        if (callbackManager == null) {
+            setCallbackManager(new CallbackManager(this::handleCallbackError));
+        }
         return callbackManager;
     }
 
     /**
-     * Change the {@link CallbackManager} in use by this parser.
+     * Set the {@link CallbackManager} used by this parser.
+     * This can only be called once
      *
-     * This will shutdown the old CallbackManager before setting the new one.
-     *
-     * Subscribers are not carried across between callback managers.
-     *
-     * @param manager new CallbackManager to use (ignored if null)
+     * @param manager CallbackManager to use
      */
     protected void setCallbackManager(final CallbackManager manager) {
         if (manager == null) {
-            return;
+            throw new UnsupportedOperationException("setCallbackManager can not be called with a null parameter.");
+        } else if (callbackManager != null) {
+            throw new UnsupportedOperationException("setCallbackManager can only be called once.");
         }
-        callbackManager.shutdown();
         callbackManager = manager;
     }
 
