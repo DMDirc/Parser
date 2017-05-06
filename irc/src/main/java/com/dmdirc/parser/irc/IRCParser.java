@@ -62,6 +62,7 @@ import java.security.SecureRandom;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -1133,6 +1134,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
             try {
                 lineTS = LocalDateTime.parse(line.getTags().get("time"),
                         DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+                lineTS = lineTS.atOffset(ZoneOffset.UTC).atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
             } catch (final DateTimeParseException pe) { /* Do nothing. */ }
         }
 
