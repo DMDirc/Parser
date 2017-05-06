@@ -62,7 +62,7 @@ import java.security.SecureRandom;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -117,6 +117,9 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     static final byte MODE_SET = 2;
     /** Byte used to show that a non-boolean mode is not a list, and requires a parameter to unset (k). */
     public static final byte MODE_UNSET = 4;
+
+    /** server-time time format */
+    private static final DateTimeFormatter serverTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
 
     /**
      * Default channel prefixes if none are specified by the IRCd.
@@ -1132,9 +1135,8 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
             } catch (final NumberFormatException nfe) { /* Do nothing. */ }
         } else if (line.getTags().containsKey("time")) {
             try {
-                lineTS = LocalDateTime.parse(line.getTags().get("time"),
-                        DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
-                lineTS = lineTS.atOffset(ZoneOffset.UTC).atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
+                lineTS = OffsetDateTime.parse(line.getTags().get("time"), serverTimeFormat)
+                        .atZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
             } catch (final DateTimeParseException pe) { /* Do nothing. */ }
         }
 
