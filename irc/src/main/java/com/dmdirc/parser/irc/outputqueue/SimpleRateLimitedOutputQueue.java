@@ -184,7 +184,7 @@ public class SimpleRateLimitedOutputQueue extends OutputQueue {
     protected void handleQueuedItems() {
         try {
             while (isQueueEnabled()) {
-                sendLine(getQueue().take().getLine());
+                send(getQueue().take().getLine());
 
                 final boolean doSleep;
                 synchronized (this) {
