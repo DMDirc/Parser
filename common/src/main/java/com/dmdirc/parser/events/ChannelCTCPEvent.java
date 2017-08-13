@@ -33,9 +33,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Called when a person sends a CTCP to a channel.
  */
-public class ChannelCTCPEvent extends ParserEvent {
+public class ChannelCTCPEvent extends ChannelEvent {
 
-    private final ChannelInfo channel;
     private final ChannelClientInfo client;
     private final String type;
     private final String message;
@@ -44,16 +43,11 @@ public class ChannelCTCPEvent extends ParserEvent {
     public ChannelCTCPEvent(final Parser parser, final LocalDateTime date,
             final ChannelInfo channel, final ChannelClientInfo client, final String type,
             final String message, final String host) {
-        super(parser, date);
-        this.channel = checkNotNull(channel);
+        super(parser, date, channel);
         this.client = checkNotNull(client);
         this.type = checkNotNull(type);
         this.message = checkNotNull(message);
         this.host = checkNotNull(host);
-    }
-
-    public ChannelInfo getChannel() {
-        return channel;
     }
 
     public ChannelClientInfo getClient() {

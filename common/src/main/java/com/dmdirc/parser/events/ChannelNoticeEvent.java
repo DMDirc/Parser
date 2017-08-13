@@ -33,25 +33,19 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Called when a person sends a notice to a channel.
  */
-public class ChannelNoticeEvent extends ParserEvent {
+public class ChannelNoticeEvent extends ChannelEvent {
 
-    private final ChannelInfo channel;
-    private final ChannelClientInfo client;
+        private final ChannelClientInfo client;
     private final String message;
     private final String host;
 
     public ChannelNoticeEvent(final Parser parser, final LocalDateTime date,
             final ChannelInfo channel, final ChannelClientInfo client, final String message,
             final String host) {
-        super(parser, date);
-        this.channel = checkNotNull(channel);
+        super(parser, date, channel);
         this.client = checkNotNull(client);
         this.message = checkNotNull(message);
         this.host = checkNotNull(host);
-    }
-
-    public ChannelInfo getChannel() {
-        return channel;
     }
 
     public ChannelClientInfo getClient() {

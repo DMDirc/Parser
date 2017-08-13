@@ -33,22 +33,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Called When we, or another client quits IRC (Called once per channel the user was on).
  */
-public class ChannelQuitEvent extends ParserEvent {
+public class ChannelQuitEvent extends ChannelEvent {
 
-    private final ChannelInfo channel;
     private final ChannelClientInfo client;
     private final String reason;
 
     public ChannelQuitEvent(final Parser parser, final LocalDateTime date,
             final ChannelInfo channel, final ChannelClientInfo client, final String reason) {
-        super(parser, date);
-        this.channel = checkNotNull(channel);
+        super(parser, date, channel);
         this.client = checkNotNull(client);
         this.reason = checkNotNull(reason);
-    }
-
-    public ChannelInfo getChannel() {
-        return channel;
     }
 
     public ChannelClientInfo getClient() {

@@ -24,25 +24,16 @@ package com.dmdirc.parser.events;
 
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.Parser;
-
 import java.time.LocalDateTime;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Called when we join a channel.
  */
-public class ChannelSelfJoinEvent extends ParserEvent {
-
-    private final ChannelInfo channel;
+public class ChannelSelfJoinEvent extends ChannelEvent {
 
     public ChannelSelfJoinEvent(final Parser parser, final LocalDateTime date,
             final ChannelInfo channel) {
-        super(parser, date);
-        this.channel = checkNotNull(channel);
+        super(parser, date, channel);
     }
 
-    public ChannelInfo getChannel() {
-        return channel;
-    }
 }

@@ -26,20 +26,22 @@ import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.Parser;
 import java.time.LocalDateTime;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
- * Called when the topic is changed or discovered for the first time.
+ * Base class for events that are tied to a {@link ChannelInfo}.
  */
-public class ChannelTopicEvent extends ChannelEvent {
+public abstract class ChannelEvent extends ParserEvent {
 
-    private final boolean isJoinTopic;
+    private final ChannelInfo channel;
 
-    public ChannelTopicEvent(final Parser parser, final LocalDateTime date,
-            final ChannelInfo channel, final boolean isJoinTopic) {
-        super(parser, date, channel);
-        this.isJoinTopic = isJoinTopic;
+    public ChannelEvent(final Parser parser, final LocalDateTime date, final ChannelInfo channel) {
+        super(parser, date);
+        this.channel = checkNotNull(channel);
     }
 
-    public boolean isJoinTopic() {
-        return isJoinTopic;
+    public ChannelInfo getChannel() {
+        return channel;
     }
+
 }

@@ -33,9 +33,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Called when a person sends a Message to a channel with a mode prefix.
  */
-public class ChannelModeMessageEvent extends ParserEvent {
+public class ChannelModeMessageEvent extends ChannelEvent {
 
-    private final ChannelInfo channel;
     private final char prefix;
     private final ChannelClientInfo client;
     private final String message;
@@ -44,16 +43,11 @@ public class ChannelModeMessageEvent extends ParserEvent {
     public ChannelModeMessageEvent(final Parser parser, final LocalDateTime date,
             final ChannelInfo channel, final char prefix, final ChannelClientInfo client,
             final String message, final String host) {
-        super(parser, date);
-        this.channel = checkNotNull(channel);
-        this.prefix = checkNotNull(prefix);
+        super(parser, date, channel);
+        this.prefix = prefix;
         this.client = checkNotNull(client);
         this.message = checkNotNull(message);
         this.host = checkNotNull(host);
-    }
-
-    public ChannelInfo getChannel() {
-        return channel;
     }
 
     public char getPrefix() {

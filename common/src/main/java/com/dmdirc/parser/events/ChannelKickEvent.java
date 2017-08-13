@@ -33,9 +33,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Called when a person is kicked.
  */
-public class ChannelKickEvent extends ParserEvent {
+public class ChannelKickEvent extends ChannelEvent {
 
-    private final ChannelInfo channel;
     private final ChannelClientInfo kickedClient;
     private final ChannelClientInfo client;
     private final String reason;
@@ -44,16 +43,11 @@ public class ChannelKickEvent extends ParserEvent {
     public ChannelKickEvent(final Parser parser, final LocalDateTime date, final ChannelInfo channel,
             final ChannelClientInfo kickedClient, final ChannelClientInfo client,
             final String reason, final String host) {
-        super(parser, date);
-        this.channel = checkNotNull(channel);
+        super(parser, date, channel);
         this.kickedClient = checkNotNull(kickedClient);
         this.client = checkNotNull(client);
         this.reason = checkNotNull(reason);
         this.host = checkNotNull(host);
-    }
-
-    public ChannelInfo getChannel() {
-        return channel;
     }
 
     public ChannelClientInfo getKickedClient() {

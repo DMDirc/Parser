@@ -24,25 +24,15 @@ package com.dmdirc.parser.events;
 
 import com.dmdirc.parser.interfaces.ChannelInfo;
 import com.dmdirc.parser.interfaces.Parser;
-
 import java.time.LocalDateTime;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Called when a channel password changes.
  */
-public class ChannelPasswordChangedEvent extends ParserEvent {
+public class ChannelPasswordChangedEvent extends ChannelEvent {
 
-    private final ChannelInfo channel;
-
-    public ChannelPasswordChangedEvent(final Parser parser, final LocalDateTime date,
-                                  final ChannelInfo channel) {
-        super(parser, date);
-        this.channel = checkNotNull(channel);
+    public ChannelPasswordChangedEvent(final Parser parser, final LocalDateTime date, final ChannelInfo channel) {
+        super(parser, date, channel);
     }
 
-    public ChannelInfo getChannel() {
-        return channel;
-    }
 }

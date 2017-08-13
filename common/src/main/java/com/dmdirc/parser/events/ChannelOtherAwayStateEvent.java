@@ -34,9 +34,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Called when we go away, or come back.
  */
-public class ChannelOtherAwayStateEvent extends ParserEvent {
+public class ChannelOtherAwayStateEvent extends ChannelEvent {
 
-    private final ChannelInfo channel;
     private final ChannelClientInfo client;
     private final AwayState oldState;
     private final AwayState newState;
@@ -44,15 +43,10 @@ public class ChannelOtherAwayStateEvent extends ParserEvent {
     public ChannelOtherAwayStateEvent(final Parser parser, final LocalDateTime date,
             final ChannelInfo channel, final ChannelClientInfo client, final AwayState oldState,
             final AwayState newState) {
-        super(parser, date);
-        this.channel = checkNotNull(channel);
+        super(parser, date, channel);
         this.client = checkNotNull(client);
         this.oldState = checkNotNull(oldState);
         this.newState = checkNotNull(newState);
-    }
-
-    public ChannelInfo getChannel() {
-        return channel;
     }
 
     public ChannelClientInfo getClient() {
