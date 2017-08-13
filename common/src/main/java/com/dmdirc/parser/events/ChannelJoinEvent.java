@@ -33,20 +33,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Called When we, or another client joins a channel.
  */
-public class ChannelJoinEvent extends ParserEvent {
+public class ChannelJoinEvent extends ChannelEvent {
 
-    private final ChannelInfo channel;
     private final ChannelClientInfo client;
 
     public ChannelJoinEvent(final Parser parser, final LocalDateTime date,
             final ChannelInfo channel, final ChannelClientInfo client) {
-        super(parser, date);
-        this.channel = checkNotNull(channel);
+        super(parser, date, channel);
         this.client = checkNotNull(client);
-    }
-
-    public ChannelInfo getChannel() {
-        return channel;
     }
 
     public ChannelClientInfo getClient() {

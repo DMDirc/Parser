@@ -33,9 +33,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  *  Called when a users channel mode is changed.
  */
-public class ChannelUserModeChangeEvent extends ParserEvent {
+public class ChannelUserModeChangeEvent extends ChannelEvent {
 
-    private final ChannelInfo channel;
     private final ChannelClientInfo targetClient;
     private final ChannelClientInfo client;
     private final String host;
@@ -44,16 +43,11 @@ public class ChannelUserModeChangeEvent extends ParserEvent {
     public ChannelUserModeChangeEvent(final Parser parser, final LocalDateTime date,
             final ChannelInfo channel, final ChannelClientInfo targetClient,
             final ChannelClientInfo client, final String host, final String mode) {
-        super(parser, date);
-        this.channel = checkNotNull(channel);
+        super(parser, date, channel);
         this.targetClient = checkNotNull(targetClient);
         this.client = checkNotNull(client);
         this.host = checkNotNull(host);
         this.mode = checkNotNull(mode);
-    }
-
-    public ChannelInfo getChannel() {
-        return channel;
     }
 
     public ChannelClientInfo getTargetClient() {
