@@ -273,7 +273,7 @@ public class IRCReader implements Closeable {
          */
         private String[] checkTSIRC(final String[] lineTokens) {
             String[] tokens = lineTokens;
-            if (!tokens[0].isEmpty() && tokens[0].charAt(0) == '@') {
+            if (tokens.length > 0 && !tokens[0].isEmpty() && tokens[0].charAt(0) == '@') {
                 final int tsEnd = tokens[0].indexOf('@', 1);
                 if (tsEnd > -1) {
                     try {
@@ -296,7 +296,7 @@ public class IRCReader implements Closeable {
          */
         private String[] checkMessageTags(final String[] lineTokens) {
             String[] tokens = lineTokens;
-            if (!tokens[0].isEmpty() && tokens[0].charAt(0) == '@') {
+            if (tokens.length > 0 && !tokens[0].isEmpty() && tokens[0].charAt(0) == '@') {
                 final String[] lineTags = tokens[0].substring(1).split(";");
                 for (final String keyVal : lineTags) {
                     if (!keyVal.isEmpty()) {
