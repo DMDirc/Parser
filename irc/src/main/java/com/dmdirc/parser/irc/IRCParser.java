@@ -585,7 +585,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @param args Formatting String Options
      */
     public void callDebugInfo(final int level, final String data, final Object... args) {
-        callDebugInfo(level, String.format(data, args));
+        callDebugInfo(level, args == null || args.length == 0 ? data : String.format(data, args));
     }
 
     /**
