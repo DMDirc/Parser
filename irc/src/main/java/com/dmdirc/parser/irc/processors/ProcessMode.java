@@ -183,24 +183,20 @@ public class ProcessMode extends IRCProcessor {
                         return;
                     }
                     sModeParam = sModestr[nParam++];
-                    callDebugInfo(IRCParser.DEBUG_INFO, "User Mode: %c / %s {Positive: %b}",
-                            cMode, sModeParam, bPositive);
+                    callDebugInfo(IRCParser.DEBUG_INFO, "User Mode: %c / %s {Positive: %b}", cMode, sModeParam, bPositive);
                     final IRCChannelClientInfo iChannelClientInfo = iChannel.getChannelClient(sModeParam);
                     if (iChannelClientInfo == null) {
                         // Client not known?
-                        callDebugInfo(IRCParser.DEBUG_INFO, "User Mode for client not on channel." +
-                                " Ignoring (%s)", sModeParam);
+                        callDebugInfo(IRCParser.DEBUG_INFO, "User Mode for client not on channel. Ignoring (%s)", sModeParam);
                         continue;
                     }
-                    callDebugInfo(IRCParser.DEBUG_INFO, "\tOld Mode Value: %s",
-                            iChannelClientInfo.getAllModes());
+                    callDebugInfo(IRCParser.DEBUG_INFO, "\tOld Mode Value: %s", iChannelClientInfo.getAllModes());
                     if (bPositive) {
                         iChannelClientInfo.addMode(cMode);
                     } else {
                         iChannelClientInfo.removeMode(cMode);
                     }
-                    callChannelUserModeChanged(date, iChannel, iChannelClientInfo, setterCCI, token[0],
-                            (bPositive ? "+" : "-") + cMode);
+                    callChannelUserModeChanged(date, iChannel, iChannelClientInfo, setterCCI, token[0], (bPositive ? "+" : "-") + cMode);
                     continue;
                 } else {
                     // unknown mode - add as boolean

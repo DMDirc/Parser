@@ -262,7 +262,7 @@ public class ProcessMessage extends IRCProcessor {
                 }
             }
         } else {
-            callDebugInfo(IRCParser.DEBUG_INFO, "Message for Other (" + token[2] + ')');
+            callDebugInfo(IRCParser.DEBUG_INFO, "Message for Other (%s)", token[2]);
             if ("PRIVMSG".equalsIgnoreCase(sParam)) {
                 if (isAction) {
                     callUnknownAction(date, sMessage, token[2], firstToken);
