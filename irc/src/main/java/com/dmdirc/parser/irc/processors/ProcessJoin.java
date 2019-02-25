@@ -182,11 +182,11 @@ public class ProcessJoin extends IRCProcessor {
 
             final PendingJoin pendingJoin = pendingJoins.poll();
             if (pendingJoin != null && parser.getStringConverter().equalsIgnoreCase(pendingJoin.getChannel(), channelName)) {
-                callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Guessing channel Key: " + pendingJoin.getChannel() + " -> " + pendingJoin.getKey());
+                callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Guessing channel Key: %s -> %s", pendingJoin.getChannel(), pendingJoin.getKey());
                 iChannel.setInternalPassword(pendingJoin.getKey());
             } else {
                 // Out of sync, clear
-                callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: pending join keys out of sync (Got: " + (pendingJoin == null ? pendingJoin : pendingJoin.getChannel()) + ", Wanted: " + channelName + ") - Clearing.");
+                callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: pending join keys out of sync (Got: %s, Wanted: %s) - Clearing.", (pendingJoin == null ? pendingJoin : pendingJoin.getChannel()), channelName);
                 pendingJoins.clear();
             }
 
@@ -195,10 +195,10 @@ public class ProcessJoin extends IRCProcessor {
             // Some kind of failed to join, pop the pending join queues.
             final PendingJoin pendingJoin = pendingJoins.poll();
             if (pendingJoin != null && parser.getStringConverter().equalsIgnoreCase(pendingJoin.getChannel(), sParam)) {
-                callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Failed to join channel (" + sParam + ") - Skipping " + pendingJoin.getChannel() + " (" + pendingJoin.getKey() + ")");
+                callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Failed to join channel (%s) - Skipping %s (%s)", sParam, pendingJoin.getChannel(), pendingJoin.getKey());
             } else {
                 // Out of sync, clear
-                callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Failed to join channel (" + sParam + ") - pending join keys out of sync (Got: " + (pendingJoin == null ? pendingJoin : pendingJoin.getChannel()) + ", Wanted: " + sParam + ") - Clearing.");
+                callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Failed to join channel (%s) - pending join keys out of sync (Got: %s, Wanted: %s) - Clearing.", sParam, (pendingJoin == null ? pendingJoin : pendingJoin.getChannel()), sParam);
                 pendingJoins.clear();
             }
         }
@@ -226,12 +226,12 @@ public class ProcessJoin extends IRCProcessor {
             for (final String chan : newLine[1].split(",")) {
                 final String key = keys.poll();
                 if (chan.equals("0")) {
-                    callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Ignoring possible channel Key for part-all channel: " + chan + " -> " + key);
+                    callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Ignoring possible channel Key for part-all channel: %s -> %s", chan, key);
                 } else if (getChannel(chan) == null) {
-                    callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Intercepted possible channel Key: " + chan + " -> " + key);
+                    callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Intercepted possible channel Key: %s -> %s", chan, key);
                     pendingJoins.add(new PendingJoin(chan, key));
                 } else {
-                    callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Ignoring possible channel Key for existing channel: " + chan + " -> " + key);
+                    callDebugInfo(IRCParser.DEBUG_INFO, "processJoin: Ignoring possible channel Key for existing channel: %s -> %s", chan, key);
                 }
             }
         }

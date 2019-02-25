@@ -142,20 +142,20 @@ public class ProcessListModes extends IRCProcessor {
 
         // Unknown mode.
         if (mode == ' ') {
-            parser.callDebugInfo(IRCParser.DEBUG_LMQ, "Unknown mode line: " + Arrays.toString(token));
+            parser.callDebugInfo(IRCParser.DEBUG_LMQ, "Unknown mode line: %s", Arrays.toString(token));
             return;
         }
 
         final Queue<Character> listModeQueue = channel.getListModeQueue();
         if (!isCleverMode && listModeQueue != null) {
             if ("482".equals(sParam)) {
-                parser.callDebugInfo(IRCParser.DEBUG_LMQ, "Dropped LMQ mode " + listModeQueue.poll());
+                parser.callDebugInfo(IRCParser.DEBUG_LMQ, "Dropped LMQ mode %s", listModeQueue.poll());
                 return;
             } else {
                 if (listModeQueue.peek() != null) {
                     final Character oldMode = mode;
                     mode = listModeQueue.peek();
-                    parser.callDebugInfo(IRCParser.DEBUG_LMQ, "LMQ says this is " + mode);
+                    parser.callDebugInfo(IRCParser.DEBUG_LMQ, "LMQ says this is %s", mode);
 
                     boolean error = true;
 
@@ -187,7 +187,7 @@ public class ProcessListModes extends IRCProcessor {
                     // freenode-specific hacks above think the mode should be
                     // something else, error.
                     if (oldMode != mode && error) {
-                        parser.callDebugInfo(IRCParser.DEBUG_LMQ, "LMQ disagrees with guess. LMQ: " + mode + " Guess: " + oldMode);
+                        parser.callDebugInfo(IRCParser.DEBUG_LMQ, "LMQ disagrees with guess. LMQ: %s Guess: %s", mode, oldMode);
                     }
 
                     if (!isItem) {
@@ -215,7 +215,7 @@ public class ProcessListModes extends IRCProcessor {
             } // End Hyperian stupidness of using the same numeric for 3 different things..
 
             if (!channel.getAddState(mode)) {
-                callDebugInfo(IRCParser.DEBUG_INFO, "New List Mode Batch (" + mode + "): Clearing!");
+                callDebugInfo(IRCParser.DEBUG_INFO, "New List Mode Batch (%s): Clearing!", mode);
                 final Collection<ChannelListModeItem> list = channel.getListMode(mode);
                 if (list == null) {
                     parser.callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got list mode: '" + mode + "' - but channel object doesn't agree.", parser.getLastLine()));
@@ -226,7 +226,7 @@ public class ProcessListModes extends IRCProcessor {
                         final Character otherMode = mode == 'b' ? 'q' : 'b';
 
                         if (!channel.getAddState(otherMode)) {
-                            callDebugInfo(IRCParser.DEBUG_INFO, "New List Mode Batch (" + mode + "): Clearing!");
+                            callDebugInfo(IRCParser.DEBUG_INFO, "New List Mode Batch (%s): Clearing!", mode);
                             final Collection<ChannelListModeItem> otherList = channel.getListMode(otherMode);
                             if (otherList == null) {
                                 parser.callErrorInfo(new ParserError(ParserError.ERROR_WARNING, "Got list mode: '" + otherMode + "' - but channel object doesn't agree.", parser.getLastLine()));

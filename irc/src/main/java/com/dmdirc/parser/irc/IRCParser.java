@@ -585,7 +585,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @param args Formatting String Options
      */
     public void callDebugInfo(final int level, final String data, final Object... args) {
-        callDebugInfo(level, String.format(data, args));
+        callDebugInfo(level, args == null || args.length == 0 ? data : String.format(data, args));
     }
 
     /**
@@ -754,7 +754,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
         }
 
         resetState();
-        callDebugInfo(DEBUG_SOCKET, "Connecting to " + getURI().getHost() + ':' + getURI().getPort());
+        callDebugInfo(DEBUG_SOCKET, "Connecting to %s:%s", getURI().getHost(), getURI().getPort());
 
         currentSocketState = SocketState.OPENING;
 
@@ -823,7 +823,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
      * @param isUserError Is this a user error?
      */
     private void handleConnectException(final Exception e, final boolean isUserError) {
-        callDebugInfo(DEBUG_SOCKET, "Error Connecting (" + e.getMessage() + "), Aborted");
+        callDebugInfo(DEBUG_SOCKET, "Error Connecting (%s), Aborted", e.getMessage());
         final ParserError ei = new ParserError(
                 ParserError.ERROR_ERROR + (isUserError ? ParserError.ERROR_USER : 0),
                 "Exception with server socket", getLastLine());
@@ -877,7 +877,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
                     processLine(lastLine);
                 }
             } catch (IOException e) {
-                callDebugInfo(DEBUG_SOCKET, "Exception in main loop (" + e.getMessage() + "), Aborted");
+                callDebugInfo(DEBUG_SOCKET, "Exception in main loop (%s), Aborted", e.getMessage());
 
                 if (currentSocketState != SocketState.CLOSED) {
                     currentSocketState = SocketState.CLOSED;
@@ -1084,7 +1084,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
                 final Queue<Character> listModeQueue = channel.getListModeQueue();
                 for (int i = 0; i < newLine[2].length(); ++i) {
                     final Character mode = newLine[2].charAt(i);
-                    callDebugInfo(DEBUG_LMQ, "Intercepted mode request for " + channel + " for mode " + mode);
+                    callDebugInfo(DEBUG_LMQ, "Intercepted mode request for %s for mode %s", channel, mode);
                     if (chanModesOther.containsKey(mode) && chanModesOther.get(mode) == MODE_LIST) {
                         if (foundModes.contains(mode)) {
                             callDebugInfo(DEBUG_LMQ, "Already added to LMQ");
@@ -1650,7 +1650,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
         // MAXLIST=bdeI:50
         // MAXLIST=b:60,e:60,I:60
         // MAXBANS=30
-        callDebugInfo(DEBUG_INFO, "Looking for maxlistmodes for: " + mode);
+        callDebugInfo(DEBUG_INFO, "Looking for maxlistmodes for: %s", mode);
         // Try in MAXLIST
         int result = -2;
         if (h005Info.get(IrcConstants.ISUPPORT_MAXIMUM_LIST_MODES) != null) {
@@ -1658,15 +1658,13 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
                 result = 0;
             }
             final String maxlist = h005Info.get(IrcConstants.ISUPPORT_MAXIMUM_LIST_MODES);
-            callDebugInfo(DEBUG_INFO, "Found maxlist (" + maxlist + ')');
+            callDebugInfo(DEBUG_INFO, "Found maxlist (%s)", maxlist);
             final String[] bits = maxlist.split(",");
             for (String bit : bits) {
                 final String[] parts = bit.split(":", 2);
-                callDebugInfo(DEBUG_INFO, "Bit: " + bit + " | parts.length = " + parts.length + " ("
-                        + parts[0] + " -> " + parts[0].indexOf(mode) + ')');
+                callDebugInfo(DEBUG_INFO, "Bit: %s | parts.length = %s (%s -> %s)", bit, parts.length, parts[0], parts[0].indexOf(mode));
                 if (parts.length == 2 && parts[0].indexOf(mode) > -1) {
-                    callDebugInfo(DEBUG_INFO, "parts[0] = '" + parts[0] + "' | parts[1] = '"
-                            + parts[1] + '\'');
+                    callDebugInfo(DEBUG_INFO, "parts[0] = '%s' | parts[1] = '%s'", parts[0], parts[1]);
                     try {
                         result = Integer.parseInt(parts[1]);
                         break;
@@ -1694,7 +1692,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
             callDebugInfo(DEBUG_INFO, "Failed");
             callErrorInfo(new ParserError(ParserError.ERROR_ERROR + ParserError.ERROR_USER, "Unable to discover max list modes.", getLastLine()));
         }
-        callDebugInfo(DEBUG_INFO, "Result: " + result);
+        callDebugInfo(DEBUG_INFO, "Result: %s", result);
         return result;
     }
 
