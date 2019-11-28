@@ -10,9 +10,9 @@ subprojects {
 
     idea {
         module {
-             sourceDirs += file('src/main/generated')
-             testSourceDirs += file('src/test/generated_tests')
-             generatedSourceDirs = [file('src/main/generated'), file('src/test/generated_tests')]
+            sourceDirs += file('src/main/generated')
+            testSourceDirs += file('src/test/generated_tests')
+            generatedSourceDirs = [file('src/main/generated'), file('src/test/generated_tests')]
         }
     }
 
@@ -27,8 +27,8 @@ subprojects {
                     root.appendNode('url', 'http://www.dmdirc.com/')
                     root.appendNode('name', "${group}:${artifactId}")
                     root.appendNode('description', project.name == 'common'
-                        ? 'Framework for building parsers for connecting to chat networks '
-                        : 'IRC library')
+                            ? 'Framework for building parsers for connecting to chat networks '
+                            : 'IRC library')
 
                     def scm = root.appendNode('scm')
                     scm.appendNode('url', 'https://github.com/DMDirc/parser')
@@ -78,11 +78,11 @@ subprojects {
         }
         repositories {
             maven {
-                name 'snapshots'
-                url 'http://artifactory.dmdirc.com/artifactory/snapshots'
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/dmdirc/parser")
                 credentials {
-                    username System.getenv('ARTIFACTORY_USER')
-                    password System.getenv('ARTIFACTORY_PASSWORD')
+                    username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+                    password = project.findProperty("gpr.key") ?: System.getenv("PASSWORD")
                 }
             }
         }
