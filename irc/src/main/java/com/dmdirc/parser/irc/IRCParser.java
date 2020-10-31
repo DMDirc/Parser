@@ -490,7 +490,7 @@ public class IRCParser extends BaseSocketAwareParser implements SecureParser, En
     }
 
     /**
-     * Get the current Value of addLastLine.
+     * Sets the Value of addLastLine.
      *
      * @param newValue New value to set addLastLine
      */
