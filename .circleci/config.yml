@@ -30,13 +30,23 @@ jobs:
           key: v1-gradle-cache-{{ checksum "build.gradle" }}
       - run:
           name: Prepare test output
+          when: always
           command: |
             mkdir -p ~/test-results/junit/
             find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/test-results/junit/ \;
       - store_test_results:
           path: ~/test-results
+          when: always
       - store_artifacts:
           path: ~/test-results/junit
+          when: always
+      - store_artifacts:
+          path: irc/build/libs
+      - store_artifacts:
+          path: common/build/libs
+      - store_artifacts:
+          path: build/reports/pmd/*
+          when: always
       - persist_to_workspace:
           root: .
           paths:
