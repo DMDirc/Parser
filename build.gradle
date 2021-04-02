@@ -85,6 +85,21 @@ subprojects {
                     password = project.findProperty("gpr.key") ?: System.getenv("PASSWORD")
                 }
             }
+            maven {
+                name = "Reposilite"
+                if (project.version.endsWith('-SNAPSHOT')) {
+                    url = uri("https://artifactory.dmdirc.com/snapshots")
+                } else {
+                    url = uri("https://artifactory.dmdirc.com/releases")
+                }
+                credentials {
+                    username = project.findProperty("reposiliteUser") ?: System.getenv('REPOSILITE_USER')
+                    password = project.findProperty("reposiliteToken") ?:  System.getenv('REPOSILITE_TOKEN')
+                }
+                authentication {
+                    basic(BasicAuthentication)
+                }
+            }
         }
     }
 
@@ -112,7 +127,7 @@ subprojects {
         testCompile group: 'org.mockito', name: 'mockito-core', version: '2.2.7'
     }
 
-    task publishSnapshot(dependsOn: 'publishMavenJavaPublicationToSnapshotsRepository') << {
+    task publishSnapshot(dependsOn: 'publishMavenJavaPublicationToReposiliteRepository') << {
     }
 
     task javadocJar(type: Jar) {
