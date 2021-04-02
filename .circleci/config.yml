@@ -1,0 +1,66 @@
+---
+version: 2
+
+jobs:
+  build:
+    environment:
+      TERM: dumb
+      _JAVA_OPTIONS: "-Xmx3g"
+      GRADLE_OPTS: "-Xmx2g -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
+    docker: # run the steps with Docker
+      - image: circleci/openjdk:8-jdk
+    steps:
+      - checkout
+      - restore_cache:
+          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+      - restore_cache:
+          key: v1-gradle-cache-{{ checksum "build.gradle" }}
+      - run: if [ -e .git/shallow ]; then git fetch --unshallow; fi
+      - run: git fetch --tags
+      - run: git submodule update --init --remote
+      - run: ./gradlew dependencies
+      - run: ./gradlew test jacocoTestReport coveralls
+      - save_cache:
+          paths:
+            - ~/.gradle/wrapper
+          key: v1-gradle-wrapper-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+      - save_cache:
+          paths:
+            - ~/.gradle/caches
+          key: v1-gradle-cache-{{ checksum "build.gradle" }}
+      - run:
+          name: Prepare test output
+          command: |
+            mkdir -p ~/test-results/junit/
+            find . -type f -regex ".*/build/test-results/.*xml" -exec cp {} ~/test-results/junit/ \;
+      - store_test_results:
+          path: ~/test-results
+      - store_artifacts:
+          path: ~/test-results/junit
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
+  publishSnapshot:
+    environment:
+      TERM: dumb
+      _JAVA_OPTIONS: "-Xmx3g"
+      GRADLE_OPTS: "-Xmx2g -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
+    docker:
+      - image: circleci/openjdk:8-jdk
+    steps:
+      - attach_workspace:
+          at: .
+      - run: ./gradlew publishSnapshot
+
+workflows:
+  version: 2
+  build_and_publish:
+    jobs:
+      - build
+      - publishSnapshot:
+          filters:
+            branches:
+              only: master
+          requires:
+            - build
